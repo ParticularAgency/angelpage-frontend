@@ -1,0 +1,67 @@
+.btn-styles {
+    display: inline-flex;
+    height: 40px;
+    padding: 8px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    background: inherit;
+    color: inherit;
+    font-kerning: none;
+    font-family: var(--secondary-font);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    transition: all 456ms ease-in-out 0s;
+    -webkit-transition: all 456ms ease-in-out 0s;
+    -moz-transition: all 456ms ease-in-out 0s;
+    -ms-transition: all 456ms ease-in-out 0s;
+    -o-transition: all 456ms ease-in-out 0s;
+}
+
+.primary-btn {
+    color: var(--Mono-0, #FFF);
+    background: var(--Mono-100, #0D0113);
+    background: var(--Mono-100, color(display-p3 0.0445 0.0046 0.069));
+}
+
+.secondary-btn {
+    border: 1px solid var(--Mono-100, #0F0014);
+    border: 1px solid var(--Mono-100, color(display-p3 0.0445 0.0046 0.069));
+    color: var(--Mono-100);
+}
+
+.tertiary-btn {
+    color: var(--Mono-0, #FFF);
+    color: var(--Mono-0, color(display-p3 1 1 1));
+    background: var(--Primary-100, #6A0398);
+    background: var(--Primary-100, color(display-p3 0.38 0.0671 0.5717));
+}
+
+.accend-link-btn {
+    color: var(--Primary-100);
+}
+
+/* hover states */
+.primary-btn:hover {
+    background: var(--Mono-90, #484648);
+    background: var(--Mono-90, color(display-p3 0.2799 0.2763 0.2824));
+}
+
+.secondary-btn:hover {
+    background-color: var(--mono-50);
+}
+
+.tertiary-btn:hover {
+    background: var(--Primary-90, #410060);
+    background: var(--Primary-90, color(display-p3 0.2314 0.0196 0.3608));
+}
+
+.accend-link-btn:hover {
+    text-decoration: underline;
+}
+input{
+    background-color: #fff;
+}
