@@ -59,7 +59,7 @@ const Header = () => {
                         <Image src="/images/Search-primary.svg" alt='search icon' width={13} height={13} />
                     </label>
                   </div>
-                </form>
+                </form> 
                </div>
                <div className="post-product-btn sm:hidden hidden">
                <Button variant='primary'  onClick={() => console.log('Should not click')} className="w-full block  max-w-[105px]">Sell an item</Button>
