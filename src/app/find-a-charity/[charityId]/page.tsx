@@ -49,7 +49,6 @@ const CharityDetailsPage = () => {
                         Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl <br className='md:hidden' />
                         auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus.
                     </p>
-
                     <div className="mt-6 flex flex-col space-y-2 mb-[45px]">
                         <div className="flex items-center space-x-2">
                             <Image
