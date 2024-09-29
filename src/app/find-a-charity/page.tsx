@@ -17,7 +17,7 @@ const HomePage: React.FC = () => {
             <div className="container">
                 <div className="grid grid-cols-6 md:grid-cols-3 sm:grid-cols-2 gap-4">
                     {charityImages.map((image, index) => (
-                        <div key={index} className="overflow-hidden shadow-lg w-[237px] h-[299px]">
+                        <div key={index} className="overflow-hidden shadow-lg w-[237px] sm:w-full h-[299px]">
                             <Image src={image} alt={`Charity ${index + 1}`} width={238} height={299} className="w-full h-full object-cover" />
                         </div>
                     ))}
@@ -26,7 +26,9 @@ const HomePage: React.FC = () => {
             <div className='pt-[79px] pb-[59px]'>
             <h4 className="text-center text-[|#000]">Find a Charity</h4>
                 <p className="text-center text-[#0B0112] text-[14px] mt-2 mb-[37px]">Search for a charity to support</p>
-            <SearchBar />
+                <div className="px-4">
+                    <SearchBar />
+           </div>
             </div>
             <div className="bg-[#F9F9F9] pt-[95px] pb-[173px] mb-[23px]">
                 <div className="container">

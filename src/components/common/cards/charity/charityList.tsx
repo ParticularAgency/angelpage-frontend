@@ -7,9 +7,9 @@ import React from 'react';
 const CharityList: React.FC = () => {
 
     return (
-        <div className="grid md:grid-cols-1 lg:grid-cols-2 grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 gap-8">
             {charityData.map((charity: any) => (
-                <div className="w-[358px] overflow-hidden relative" key={charity.id}>
+                <div className="w-[358px] sm:w-full overflow-hidden relative" key={charity.id}>
                     <div className="relative w-full h-48">
                         <span className='absolute top-2 left-2 z-10 uppercase text-[#611192] bg-[#F2E8F8] p-2 text-center text-[10px] font-bold'>{charity.tag}</span>
                         <Image src={charity.image} alt={charity.title} width={358} height={197} className="w-full h-full object-cover" />
