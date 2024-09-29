@@ -278,6 +278,10 @@
 
   }
 
+  .search-border {
+    border-bottom: 1px solid #C9C8CA !important;
+  }
+
   @layer components {
     .custom-container-fluid {
       max-width: 1440px;
