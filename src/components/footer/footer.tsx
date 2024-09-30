@@ -28,7 +28,7 @@ const Footer = () => {
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">about us</Link></li>
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">HOW IT WORKS</Link></li>
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/find-a-charity">Find a charity</Link></li>
-                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">blog</Link></li>
+                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/blog">blog</Link></li>
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">PRODUCTs</Link></li>
               </ul>
             </div>
