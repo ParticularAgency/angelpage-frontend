@@ -2,6 +2,7 @@ import CharityList from "@/components/common/cards/charity/charityList";
 import SearchBar from "@/components/common/search/globalSearch";
 import Image from "next/image";
 import React from "react";
+import { charityData } from '../../libs/charities';
 
 const FindCharity: React.FC = () => {
   const charityImages = [
@@ -43,7 +44,7 @@ const FindCharity: React.FC = () => {
       </div>
       <div className="bg-[#F9F9F9] pt-[95px] pb-[173px] mb-[23px]">
         <div className="container">
-          <CharityList />
+          <CharityList charityData={charityData} />
         </div>
       </div>
     </div>

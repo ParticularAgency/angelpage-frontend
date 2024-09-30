@@ -1,14 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { charityData } from '@/libs/charities';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-const CharityList: React.FC = () => {
+interface CharityDataProps {
+    id: string;
+    title: string;
+    tag: string;
+    description: string;
+    image: string;
+    contact: {
+        phone: string;
+        website: string;
+    };
+    charityNumber: string;
+    btnText: string;
+}
 
+interface CharityListProps {
+    charityData: CharityDataProps[];
+}
+
+const CharityList: React.FC<CharityListProps> = ({ charityData }) => {
     return (
         <div className="grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 gap-8">
-            {charityData.map((charity: any) => (
+            {charityData.map((charity) => (
                 <div className="w-[358px] sm:w-full overflow-hidden relative" key={charity.id}>
                     <div className="relative w-full h-48">
                         <span className='absolute top-2 left-2 z-10 uppercase text-[#611192] bg-[#F2E8F8] p-2 text-center text-[10px] font-bold'>{charity.tag}</span>
