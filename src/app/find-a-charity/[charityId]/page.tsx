@@ -1,14 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { charityData } from "@/libs/charities";
 import Image from "next/image";
 import Link from "next/link";
 
-const CharityDetailsPage = () => {
+const CharityDetailsPage = ({ params }: any) => {
+  const charityId = params;
+
+  const charity = charityData.find(
+    (charityData) => charityData.id === charityId.charityId
+  );
+  const imagePath = charity?.image || "/images/default-image.png";
   return (
     <section className="bg-[#F1F1F7]">
       <div className=" flex md:flex-col md:w-full">
         {/* Left Image Section */}
         <div>
           <Image
-            src="/images/charity/charity6.png"
+            src={imagePath}
             alt="Person"
             width={510}
             height={598}
@@ -18,17 +26,12 @@ const CharityDetailsPage = () => {
 
         {/* Right Text Section */}
         <div className="w-2/3 md:w-full md:p-6 pl-[50px] pt-[121px] pb-[145px]">
-          <h3 className="text-[#0B0112]">Samaritans</h3>
+          <h3 className="text-[#0B0112] capitalize">{charity?.tag}</h3>
           <p className="text-[10px] text-[#611192] font-semibold">
-            CHARITY NUMBER: 000000
+            CHARITY NUMBER: {charity?.contact.phone}
           </p>
-          <p className="mt-4 text-[#0B0112] font-normal text-[14px]">
-            Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor
-            ut nulla accumsan ut tortor sem. <br className="md:hidden " />
-            Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet
-            consectetur. Tempus suscipit nisl <br className="md:hidden" />
-            auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius
-            faucibus in risus.
+          <p className="mt-4 text-[#0B0112] font-normal text-[14px] w-[651px] sm:w-full">
+            {charity?.description}
           </p>
           <div className="mt-6 flex flex-col space-y-2 mb-[45px]">
             <div className="flex items-center space-x-2">
@@ -38,7 +41,7 @@ const CharityDetailsPage = () => {
                 width={16}
                 height={16}
               />
-              <span className="text-[#000]">116 123</span>
+              <span className="text-[#000]">{charity?.contact.phone}</span>
             </div>
             <div className="flex items-center space-x-2">
               <Image
@@ -47,7 +50,9 @@ const CharityDetailsPage = () => {
                 width={16}
                 height={16}
               />
-              <a href="https://www.samaritans.org">www.samaritans.org</a>
+              <a href="https://www.samaritans.org">
+                {charity?.contact.website}
+              </a>
             </div>
           </div>
 
