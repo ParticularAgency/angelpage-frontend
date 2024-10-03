@@ -15,12 +15,12 @@ const FindCharity: React.FC = () => {
   ];
   return (
     <div>
-      <div className="container">
+      <div className="custom-container">
         <div className="grid grid-cols-6 md:grid-cols-3 sm:grid-cols-2 gap-4">
           {charityImages.map((image, index) => (
             <div
               key={index}
-              className="overflow-hidden shadow-lg w-[237px] sm:w-full h-[299px]"
+              className="overflow-hidden shadow-lg max-w-[237px] w-full h-[299px]"
             >
               <Image
                 src={image}
@@ -43,7 +43,7 @@ const FindCharity: React.FC = () => {
         </div>
       </div>
       <div className="bg-[#F9F9F9] pt-[95px] pb-[173px] mb-[23px]">
-        <div className="container">
+        <div className="custom-container">
           <CharityList charityData={charityData} />
         </div>
       </div>
