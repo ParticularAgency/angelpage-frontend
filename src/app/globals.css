@@ -103,7 +103,7 @@
       font-family: var(--secondary-font);
       font-size: 16px;
       font-style: normal;
-      font-weight: 300;
+      /* font-weight: 300; */
       line-height: 150%;
       letter-spacing: 0.8px;
       font-kerning: none;
@@ -278,6 +278,10 @@
 
   }
 
+  .search-border {
+    border-bottom: 1px solid #C9C8CA !important;
+  }
+
   @layer components {
     .custom-container-fluid {
       max-width: 1440px;
@@ -304,12 +308,17 @@
       border-bottom: 1px solid var(--mono-40);
     }
 
-    .global-search-group-field input:focus-within, .global-search-group-field input:focus {
+    .global-search-group-field input:focus-within,
+    .global-search-group-field input:focus {
       border-radius: 24px !important;
       -webkit-border-radius: 24px !important;
       -moz-border-radius: 24px !important;
       -ms-border-radius: 24px !important;
       -o-border-radius: 24px !important;
+    }
+
+    .bg-blog-hero {
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.5) 5.63%, rgba(0, 0, 0, 0.5) 37.81%, rgba(0, 0, 0, 0) 100%);
     }
 
     @media screen and (max-width:767px) {
