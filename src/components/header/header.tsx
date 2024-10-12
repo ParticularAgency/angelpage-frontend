@@ -18,7 +18,7 @@ const Header = () => {
   return (
     <>
     <header className='header-section'>
-      <div className="header-top-cont">
+      <div className="header-top-cont"> 
         <div className="custom-container">
         <div className="header-top-wrapper py-4 grid grid-cols-12 sm:grid-cols-6 gap-6">
              <div className="header-left-cont col-span-7 sm:col-span-4 flex items-center gap-4">
@@ -54,4 +54,4 @@ const Header = () => {
   )
 }
 
-export default Header
+export default Header;
