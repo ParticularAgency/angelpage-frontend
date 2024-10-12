@@ -19,7 +19,7 @@ const Footer = () => {
     }
   };
   return (
-    <footer className='footer-section pt-[120px] pb-20 md:pt-20 sm:pt-[54px] bg-mono-0'>
+    <footer className='footer-section pt-[120px] pb-20 md:pt-20 sm:pb-[127px] sm:pt-[54px] bg-mono-0'>
       <div className="custom-container">
         <div className="footer-wrapper">
           <div className="grid grid-cols-12 sm:grid-cols-6 gap-6 sm:gap-0">

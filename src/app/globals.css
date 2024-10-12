@@ -36,6 +36,7 @@
     input:focus-within,
     input:focus {
       border-radius: 0 !important;
+      outline: none !important;
     }
 
     *,
@@ -319,6 +320,47 @@
 
     .bg-blog-hero {
       background: linear-gradient(0deg, rgba(0, 0, 0, 0.5) 5.63%, rgba(0, 0, 0, 0.5) 37.81%, rgba(0, 0, 0, 0) 100%);
+    }
+    .global-search-bar.global-search-bar-secondary input:focus-within,
+    .global-search-bar.global-search-bar-secondary input:focus {
+      border-radius: 0 !important;
+      -webkit-border-radius: 0 !important;
+      -moz-border-radius: 0 !important;
+      -ms-border-radius: 0 !important;
+      -o-border-radius: 0 !important;
+    }
+
+    .global-search-bar.global-search-bar-secondary input {
+      border-bottom: 2px solid var(--mono-40);
+    }
+
+    .drawer-side {
+      z-index: 99999;
+    }
+
+    .menu :where(li ul):before {
+      display: none;
+    }
+
+    .megamenu-navigation-box>ul li summary {
+      border-bottom: 1px solid var(--mono-40);
+      border-radius: 0 !important;
+      -webkit-border-radius: 0 !important;
+      -moz-border-radius: 0 !important;
+      -ms-border-radius: 0 !important;
+      -o-border-radius: 0 !important;
+    }
+
+    .sticky-mobilenav-elements {
+      border-top: 1px solid var(--mono-40);
+    }
+    .link-lists-item-menu {
+      border-bottom: 1px solid var(--mono-40);
+      border-radius: 0 !important;
+      -webkit-border-radius: 0 !important;
+      -moz-border-radius: 0 !important;
+      -ms-border-radius: 0 !important;
+      -o-border-radius: 0 !important;
     }
 
     @media screen and (max-width:767px) {
