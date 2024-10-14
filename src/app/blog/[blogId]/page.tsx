@@ -20,7 +20,7 @@ const CharityDetailsPage = () => {
           height={434}
         />
         <div className="absolute inset-0 flex flex-col justify-end bg-blog-hero bg-opacity-70 p-8">
-          <div className="container mb-7">
+          <div className="custom-container mb-7">
             <h3 className="text-white text-xl mb-3">
               Clothes, careers and community: the impact of charity shops
             </h3>
@@ -30,7 +30,7 @@ const CharityDetailsPage = () => {
           </div>
         </div>
       </header>
-      <div className="container pt-[67px] grid grid-cols-3 sm:grid-cols-1 gap-12">
+      <div className="custom-container pt-[67px] grid grid-cols-3 sm:grid-cols-1 gap-12">
         {/* Main Content */}
         <article className="col-span-2">
           <p className="mb-8 text-lg text-[#000000]">
