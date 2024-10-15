@@ -50,8 +50,8 @@ const HowItWorks: React.FC = () => {
         </div>
       </section>
       {/* Section 2 - Full-width */}
-      <section className="w-full bg-[#F1F1F7] flex gap-[72px] mt-32">
-        <div className="relative w-2/5">
+      <section className="w-full bg-[#F1F1F7] flex sm:flex-col gap-[72px] mt-20 sm:mt-10">
+        <div className="relative sm:w-full w-2/5">
           {/* Background Image */}
           <Image
             width={530}
@@ -75,7 +75,7 @@ const HowItWorks: React.FC = () => {
         </div>
 
         {/* Text on the right side */}
-        <div className="w-3/5 flex items-center">
+        <div className="w-3/5 sm:w-full  sm:p-4 flex items-center">
           <div className="text-left">
             <h6 className="uppercase text-[10px] font-bold">The Founder</h6>
             <p className="text-[18px] mt-4 mb-[110px]">
@@ -97,7 +97,7 @@ const HowItWorks: React.FC = () => {
         </div>
       </section>
       {/* Section 3: Key Features */}
-      <section className="w-full bg-white pl-20 pt-[146px] pb-[150px]">
+      <section className="w-full bg-white pl-20 pt-[146px] pb-[150px] sm:py-10 sm:px-5">
         <div className="mb-12">
           <h2 className="text-[24px] mb-3 font-normal text-[#1B264F]">
             What makes us different?
@@ -207,10 +207,10 @@ const HowItWorks: React.FC = () => {
       </section>
       {/* Section 4: Mission and Company Description */}
       <section className="w-full">
-        <div className="flex">
+        <div className="flex sm:flex-col">
           {/* Left: Mission statement and image */}
-          <div className="w-3/5">
-            <div className="pl-20 pt-[79px] pb-[91px] pr-[55px] bg-[#F0F3FE]">
+          <div className="w-3/5 sm:w-full">
+            <div className="pl-20 pt-[79px] pb-[91px] pr-[55px] sm:px-5 sm:py-10 bg-[#F0F3FE]">
               <h5 className="text-[12px] uppercase font-semibold text-[#1B264F]">
                 Our Mission
               </h5>
@@ -232,7 +232,7 @@ const HowItWorks: React.FC = () => {
           </div>
 
           {/* Right: What the Company Provides */}
-          <div className="bg-[#F1F1F7] pt-20 pl-[69px] pr-[80px] w-2/5">
+          <div className="bg-[#F1F1F7] sm:w-full pt-20 pl-[69px] pr-[80px] sm:px-5 sm:py-10 w-2/5">
             <h3 className="text-[24px] font-normal text-[#0B0112]">
               What the Company Provides and Why
             </h3>
@@ -251,7 +251,7 @@ const HowItWorks: React.FC = () => {
             </p>
 
             {/* Buttons */}
-            <div className="mt-[70px] flex space-x-4">
+            <div className="mt-[70px] flex sm:flex-col space-x-4">
               <a
                 href="#"
                 className="bg-[#4BA27D] text-white py-2 px-4  hover:bg-green-700"
@@ -260,7 +260,7 @@ const HowItWorks: React.FC = () => {
               </a>
               <a
                 href="#"
-                className="text-[#1B264F] flex gap-2 py-2 px-4 rounded-lg hover:underline"
+                className="text-[#1B264F] flex gap-2 py-2 px-4 sm:mt-4 rounded-lg hover:underline"
               >
                 Browse Items
                 <Image
@@ -274,6 +274,80 @@ const HowItWorks: React.FC = () => {
           </div>
         </div>
       </section>
+      {/* Section 5: Timeline */}
+      {/* <section className="custom-container bg-white py-16">
+        <div className=" text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-800">
+            AngelPage Timeline
+          </h2>
+          <p className="text-lg text-gray-600 mt-4">
+            Transforming everyday transactions into opportunities for charitable
+            giving since 2022, making it easy for individuals and businesses to
+            support causes they care about.
+          </p>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-1 bg-[#611192] h-full"></div>
+          </div>
+
+          <div className="grid sm:grid-cols-1 grid-cols-3 gap-8 relative z-10">
+            <div>
+              <div className="bg-[#1B264F] text-white p-4 rounded-lg shadow-lg mb-4">
+                <h6 className="text-xl font-bold text-[#C9C8CA]">
+                  Conceptualization
+                </h6>
+                <p className="mt-2 text-white">
+                  The idea of AngelPage was born from Dr. Ndasi’s previous
+                  venture,
+                  <a
+                    href="https://charitysupermarkets.com"
+                    className="underline text-[#611192]"
+                  >
+                    {" "}
+                    Charitysupermarkets.com
+                  </a>
+                  .
+                </p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="w-2 h-2 bg-[#611192] rounded-full"></div>
+                <p className="mt-2 text-sm text-gray-600">2022</p>
+              </div>
+            </div>
+
+            <div>
+              <div className="bg-[#1B264F] text-white p-4 rounded-lg shadow-lg mb-4">
+                <h6 className="text-xl font-bold text-[#C9C8CA]">
+                  Development
+                </h6>
+                <p className="mt-2 text-white">
+                  The design and development of AngelPage begins!
+                </p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="w-2 h-2 bg-[#611192] rounded-full"></div>
+                <p className="mt-2 text-sm text-gray-600">2024</p>
+              </div>
+            </div>
+
+            <div>
+              <div className="bg-[#1B264F] text-white p-4 rounded-lg shadow-lg mb-4">
+                <h6 className="text-xl font-bold text-[#C9C8CA]">Launch</h6>
+                <p className="mt-2 text-white">
+                  AngelPage goes public, a global community where every
+                  transaction positively impacts society.
+                </p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="w-2 h-2 bg-[#611192] rounded-full"></div>
+                <p className="mt-2 text-sm text-gray-600">2025</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> */}
     </>
   );
 };
