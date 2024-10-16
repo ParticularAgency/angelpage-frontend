@@ -43,7 +43,7 @@ const TimeLineSection = () => {
             </div>
 
             <div  className='timeline-card-item flex flex-col justify-between  items-center w-full'>
-              <div className="timeline-card-cont-wrap w-full pb-[300px] sm:pb-[170px]">
+              <div className="timeline-card-cont-wrap sm:w-full pb-[300px] sm:pb-[170px]">
               <div className="timeline-card-cont max-w-[314px] sm:mx-auto relative bottom-[-58px] sm:bottom-0 h-[124px] w-full bg-secondary-color-100 text-white p-4 rounded-lg shadow-lg">
                 <h6 className="caption text-[#C9C8CA]">
                   Development
@@ -59,7 +59,7 @@ const TimeLineSection = () => {
             </div>
 
             <div className='timeline-card-item flex flex-col justify-between  items-center w-full'>
-              <div className="timeline-card-cont-wrap w-full pb-[300px] sm:pb-[170px]"> 
+              <div className="timeline-card-cont-wrap sm:w-full pb-[300px] sm:pb-[170px]">  
               <div className="timeline-card-cont max-w-[314px] sm:mx-auto relative bottom-[-33px] sm:bottom-0 h-[124px] w-full bg-secondary-color-100 text-white p-4 rounded-lg shadow-lg">
                 <h6 className="caption text-[#C9C8CA]">Launch</h6>
                 <p className="mt-2 body-small text-mono-0">
