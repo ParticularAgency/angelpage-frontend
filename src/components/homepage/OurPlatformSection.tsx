@@ -17,7 +17,7 @@ const OurPlatformSection = () => {
                   <div className="img-modal-box h-[240px] w-full max-w-[390px]">
                     <Image src="/images/home/category/category-card-img1.png" className='h-full w-full' alt='highlight category overly image' width={390} height={240} />
                   </div>
-                  <div className="category-card-info-box absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
+                  <div className="category-card-info-box z-50  absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
                       <p className="highlight-category-title body-small text-mono-0">Clothing and Accessories </p>
                       <p className="highlight-category-desc mt-1 body-small text-mono-0">Find and sell pre-loved fashion items, supporting sustainable practices and charitable causes.</p>
                   </div>
@@ -26,7 +26,7 @@ const OurPlatformSection = () => {
                   <div className="img-modal-box h-[240px] w-full max-w-[390px]">
                     <Image src="/images/home/category/category-card-img2.png" className='h-full w-full' alt='highlight category overly image' width={390} height={240} />
                   </div>
-                  <div className="category-card-info-box absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
+                  <div className="category-card-info-box z-50  absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
                       <p className="highlight-category-title body-small text-mono-0">Electronics</p>
                       <p className="highlight-category-desc mt-1 body-small text-mono-0">Buy and sell gadgets, ensuring they find a new home while benefiting a charity.</p>
                   </div>
@@ -35,7 +35,7 @@ const OurPlatformSection = () => {
                   <div className="img-modal-box h-[240px] w-full max-w-[390px]">
                     <Image src="/images/home/category/category-card-img3.png" className='h-full w-full' alt='highlight category overly image' width={390} height={240} />
                   </div>
-                  <div className="category-card-info-box absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
+                  <div className="category-card-info-box z-50  absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
                       <p className="highlight-category-title body-small text-mono-0">Homeware</p>
                       <p className="highlight-category-desc mt-1 body-small text-mono-0">Give your furniture and home goods a second life and support local communities.</p>
                   </div>
@@ -44,7 +44,7 @@ const OurPlatformSection = () => {
                   <div className="img-modal-box h-[240px] w-full max-w-[390px]">
                     <Image src="/images/home/category/category-card-img4.png" className='h-full w-full' alt='highlight category overly image' width={390} height={240} />
                   </div>
-                  <div className="category-card-info-box absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
+                  <div className="category-card-info-box z-50  absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
                       <p className="highlight-category-title body-small text-mono-0">Excess Stock</p>
                       <p className="highlight-category-desc mt-1 body-small text-mono-0">Businesses can sell excess stock, fulfilling their CSR commitments without out-of-pocket donations.</p>
                   </div>

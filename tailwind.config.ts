@@ -76,6 +76,7 @@ const config: Config = {
 				error: "#D10C3B",
 				success: "#1FC430",
 				"secondary-color-100": "#1B264F",
+				"secondary-color-50": "#F0F3FE",
 				"primary-color-100": "#611192",
 				"primary-color-50": "#3B055C",
 				"primary-color-70": "#F2E8F8",
