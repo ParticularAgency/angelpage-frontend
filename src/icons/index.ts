@@ -9,6 +9,11 @@ import FavoriteIcon from "@/icons/favorite";
 import NotificationIcon from "@/icons/notification";
 import CloseIcon from "@/icons/close";
 import SearchIcon from "@/icons/search";
+import PlusIcon from "@/icons/plus";
+import MinusIcon from "@/icons/minus";
+import FavoriteOutlineIcon from '@/icons/favoriteOutline';
+import FavoriteFillIcon from './favoriteFill';
+import LocationIcon from './locationIcon';
 
 export {
 	Checkmark,
@@ -22,4 +27,9 @@ export {
 	NotificationIcon,
 	CloseIcon,
 	SearchIcon,
+	PlusIcon,
+	MinusIcon,
+	FavoriteOutlineIcon,
+	FavoriteFillIcon,
+	LocationIcon
 };
