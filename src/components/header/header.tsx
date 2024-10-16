@@ -2,12 +2,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { Button } from '../elements'
-import { FavoriteIcon, NotificationIcon, UserIcon} from '@/icons'
+import {UserIcon} from '@/icons'
 import TopNavList from './topNavList'
 import MobileViewOffcanvas from './mobileViewOffcanvas'
 import MiniCart from '../cart/miniCart'
-import NotificationAlart from './notificationAlart'
-import FavoritesAlart from './favoritesAlart'
+// import NotificationAlart from './notificationAlart'
+// import FavoritesAlart from './favoritesAlart'
 import GlobalSearch from '../elements/search/globalSearch'
 import BottomNavMegmenu from './bottomNavMegmenu'
 import StickyNavMenu from './stickyNavMenu'
@@ -30,23 +30,21 @@ const Header = () => {
              </div>
              <div className="header-right-cont sm:col-span-2 flex items-center gap-4 justify-end col-span-5">
                <GlobalSearch />
-               <div className="post-product-btn sm:hidden">
+               <div className="post-product-btn hidden sm:hidden">
                <Button variant='primary'  onClick={() => console.log('Should not click')} className="w-full block  max-w-[105px]">Sell an item</Button>
                </div>
               <div className="user-account flex items-center sm:hidden">
                 <Link href="/login"><UserIcon/></Link>
               </div>
-              <FavoritesAlart />
-              <NotificationAlart />
+              {/* <FavoritesAlart /> */}
+              {/* <NotificationAlart /> */}
              <MiniCart />
              </div>
         </div>
       </div>
       </div>
       <div className="header-bottom-cont pt-[19px] pb-[22px] sm:hidden">
-        <div className="custom-container">
           <BottomNavMegmenu />
-      </div>
       </div> 
     </header>
     <StickyNavMenu />

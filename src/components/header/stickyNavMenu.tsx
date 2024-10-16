@@ -13,7 +13,7 @@ const StickyNavMenu = () => {
           </Link>
         </li>
          <li className="sticky-mobilenav-list">
-          <Link href="/find-charities" className='text-center flex items-center justify-center flex-col gap-[13px]'>
+          <Link href="/find-a-charity" className='text-center flex items-center justify-center flex-col gap-[13px]'>
             <div className="icons-box"><Image src="/images/group-user-icon.svg" alt="search icon" width={24} height={24} /></div>
             <p className="link-title font-secondary font-normal text-center text-mono-100 text-body-small leading-[150%]">Charities</p>
           </Link>
