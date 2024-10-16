@@ -139,12 +139,12 @@ input {
 /* megamenu nav items style */
 .megamenu-group-items {
     position: absolute;
-    width: calc(100% + 54px);
+    width: 100%;
     top: 47px;
     background: #fff;
     padding: 25px 26px 35px;
     z-index: 999;
-    left: -27px;
+    left: 0;
     border-bottom: 1px solid var(--Mono-40, #E7E3E8);
 
 

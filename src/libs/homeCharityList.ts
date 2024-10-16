@@ -2,7 +2,7 @@ export const charityData = [
   {
     id: "one",
     title: "12 Donors 30 Givers",
-    tag: "samaritans",
+    name: "samaritans",
     description:
       "Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus.",
     image: "/images/charity/charity1.png",
@@ -16,7 +16,7 @@ export const charityData = [
   {
     id: "two",
     title: "12 Donors 30 Givers",
-    tag: "British heart foundation",
+    name: "British heart foundation",
     description:
       "Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus.",
     image: "/images/charity/charity6.png",
@@ -30,7 +30,7 @@ export const charityData = [
   {
     id: "three",
     title: "12 Donors 30 Givers",
-    tag: "save the children",
+    name: "save the children",
     description:
       "Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus.",
     image: "/images/charity/charity4.png",

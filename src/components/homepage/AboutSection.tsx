@@ -1,5 +1,4 @@
 import React from 'react'
-import SearchBar from '../common/search/globalSearch';
 import Image from 'next/image';
 
 const AboutSection = () => {
