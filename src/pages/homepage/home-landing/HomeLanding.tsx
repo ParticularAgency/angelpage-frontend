@@ -1,6 +1,6 @@
 import HomeLandingBanner from '@/components/banner/HomeLandingBanner'
 import AboutSection from '@/components/homepage/AboutSection'
-import AngelPageInfoSection from '@/components/homepage/AngelpageInfoSection'
+import AngelPageInfoSection from '@/components/homepage/AngelPageInfoSection'
 import CharitySection from '@/components/homepage/CharitySection'
 import CtaSection from '@/components/homepage/CtaSection'
 import HowItWorkSection from '@/components/homepage/HowItWorkSection'

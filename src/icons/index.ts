@@ -11,7 +11,7 @@ import CloseIcon from "@/icons/close";
 import SearchIcon from "@/icons/search";
 import PlusIcon from "@/icons/plus";
 import MinusIcon from "@/icons/minus";
-import FavoriteOutlineIcon from '@/icons/favoriteoutline';
+import FavoriteOutlineIcon from '@/icons/favoriteOutline';
 import FavoriteFillIcon from './favoriteFill';
 import LocationIcon from './locationIcon';
 

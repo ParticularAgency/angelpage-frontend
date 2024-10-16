@@ -366,16 +366,18 @@ const categories = [
 ];
 
 const BottomNavMegmenu = () => {
-  const [activeIndex, setActiveIndex] = useState(null);
-  const menuRef = useRef(null); // Ref for the megamenu container
+ const [activeIndex, setActiveIndex] = useState<number | null>(null); // State to track the active menu index
+  const menuRef = useRef<HTMLDivElement | null>(null); // Ref for the megamenu container
 
-  const handleToggleMenu = (index) => {
+  // Explicitly type the index parameter as number
+  const handleToggleMenu = (index: number) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const handleClickOutside = (event) => {
+  // Explicitly type the event parameter as MouseEvent
+  const handleClickOutside = (event: MouseEvent) => {
     // Check if the click is outside the menu
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
       setActiveIndex(null); // Close the megamenu
     }
   };

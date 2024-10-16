@@ -1,6 +1,7 @@
-import React from 'react'
-import { charityData } from '@/libs/homeCharityList';
+import React from 'react';
+import { charityData } from '@/libs/homeCharityList'; // Ensure this is updated with 'name'
 import CharityList from "@/components/common/cards/charity/charityList";
+
 const CharitySection = () => {
   return (
     <section className='Charity-section pt-[75px] pb-20'>
@@ -16,4 +17,5 @@ const CharitySection = () => {
   )
 }
 
-export default CharitySection
+export default CharitySection;
+
