@@ -1,22 +1,432 @@
-import Link from 'next/link'
-import React from 'react'
+"use client"
+import Link from 'next/link';
+import React, { useState, useEffect, useRef } from 'react';
+
+const categories = [
+  {
+    title: "Women",
+    subcategories: [
+      {
+        title: "Clothing",
+        items: [
+          "Skirts", "Trousers", "Tops", "Knitwear", "Dresses", "Jeans", 
+          "Jackets", "Jumpsuits", "Coats", "Leather jackets", "Trench coats", 
+          "Swimwear", "Shorts"
+        ]
+      },
+      {
+        title: "Bags",
+        items: [
+          "Handbags", "Clutch bags", "Backpacks", "Travel bags", 
+          "Suitcases", "Luggage bags"
+        ]
+      },
+      {
+        title: "Accessories",
+        items: [
+          "Sunglasses", "Wallets", "Belts", "Hats", "Scarves", 
+          "Purses", "Hair accessories", "Pins & brochures"
+        ]
+      },
+      {
+        title: "Jewellery",
+        items: [
+          "Earrings", "Necklaces", "Watches", "Rings", 
+          "Bracelets", "Jewellery sets", "Bag charms"
+        ]
+      },
+      {
+        title: "Shoes",
+        items: [
+          "Boots", "Trainers", "Flats", "Sandals", "Clogs", "Heels"
+        ]
+      },
+    ],
+  },
+  {
+    title: "Men",
+     subcategories: [
+      {
+        title: "Clothing",
+        items: [
+          "Skirts", "Trousers", "Tops", "Knitwear", "Dresses", "Jeans", 
+          "Jackets", "Jumpsuits", "Coats", "Leather jackets", "Trench coats", 
+          "Swimwear", "Shorts"
+        ]
+      },
+      {
+        title: "Bags",
+        items: [
+          "Handbags", "Clutch bags", "Backpacks", "Travel bags", 
+          "Suitcases", "Luggage bags"
+        ]
+      },
+      {
+        title: "Accessories",
+        items: [
+          "Sunglasses", "Wallets", "Belts", "Hats", "Scarves", 
+          "Purses", "Hair accessories", "Pins & brochures"
+        ]
+      },
+      {
+        title: "Jewellery",
+        items: [
+          "Earrings", "Necklaces", "Watches", "Rings", 
+          "Bracelets", "Jewellery sets", "Bag charms"
+        ]
+      },
+      {
+        title: "Shoes",
+        items: [
+          "Boots", "Trainers", "Flats", "Sandals", "Clogs", "Heels"
+        ]
+      },
+    ],
+  },
+    {
+    title: "Children",
+     subcategories: [
+      {
+        title: "Clothing",
+        items: [
+          "Skirts", "Trousers", "Tops", "Knitwear", "Dresses", "Jeans", 
+          "Jackets", "Jumpsuits", "Coats", "Leather jackets", "Trench coats", 
+          "Swimwear", "Shorts"
+        ]
+      },
+      {
+        title: "Bags",
+        items: [
+          "Handbags", "Clutch bags", "Backpacks", "Travel bags", 
+          "Suitcases", "Luggage bags"
+        ]
+      },
+      {
+        title: "Accessories",
+        items: [
+          "Sunglasses", "Wallets", "Belts", "Hats", "Scarves", 
+          "Purses", "Hair accessories", "Pins & brochures"
+        ]
+      },
+      {
+        title: "Jewellery",
+        items: [
+          "Earrings", "Necklaces", "Watches", "Rings", 
+          "Bracelets", "Jewellery sets", "Bag charms"
+        ]
+      },
+      {
+        title: "Shoes",
+        items: [
+          "Boots", "Trainers", "Flats", "Sandals", "Clogs", "Heels"
+        ]
+      },
+    ],
+  },
+    {
+    title: "Shoes",
+     subcategories: [
+      {
+        title: "Clothing",
+        items: [
+          "Skirts", "Trousers", "Tops", "Knitwear", "Dresses", "Jeans", 
+          "Jackets", "Jumpsuits", "Coats", "Leather jackets", "Trench coats", 
+          "Swimwear", "Shorts"
+        ]
+      },
+      {
+        title: "Bags",
+        items: [
+          "Handbags", "Clutch bags", "Backpacks", "Travel bags", 
+          "Suitcases", "Luggage bags"
+        ]
+      },
+      {
+        title: "Accessories",
+        items: [
+          "Sunglasses", "Wallets", "Belts", "Hats", "Scarves", 
+          "Purses", "Hair accessories", "Pins & brochures"
+        ]
+      },
+      {
+        title: "Jewellery",
+        items: [
+          "Earrings", "Necklaces", "Watches", "Rings", 
+          "Bracelets", "Jewellery sets", "Bag charms"
+        ]
+      },
+      {
+        title: "Shoes",
+        items: [
+          "Boots", "Trainers", "Flats", "Sandals", "Clogs", "Heels"
+        ]
+      },
+    ],
+  },
+    {
+    title: "Bags",
+     subcategories: [
+      {
+        title: "Clothing",
+        items: [
+          "Skirts", "Trousers", "Tops", "Knitwear", "Dresses", "Jeans", 
+          "Jackets", "Jumpsuits", "Coats", "Leather jackets", "Trench coats", 
+          "Swimwear", "Shorts"
+        ]
+      },
+      {
+        title: "Bags",
+        items: [
+          "Handbags", "Clutch bags", "Backpacks", "Travel bags", 
+          "Suitcases", "Luggage bags"
+        ]
+      },
+      {
+        title: "Accessories",
+        items: [
+          "Sunglasses", "Wallets", "Belts", "Hats", "Scarves", 
+          "Purses", "Hair accessories", "Pins & brochures"
+        ]
+      },
+      {
+        title: "Jewellery",
+        items: [
+          "Earrings", "Necklaces", "Watches", "Rings", 
+          "Bracelets", "Jewellery sets", "Bag charms"
+        ]
+      },
+      {
+        title: "Shoes",
+        items: [
+          "Boots", "Trainers", "Flats", "Sandals", "Clogs", "Heels"
+        ]
+      },
+    ],
+  },
+    {
+    title: "Accessories & Jewellery",
+     subcategories: [
+      {
+        title: "Clothing",
+        items: [
+          "Skirts", "Trousers", "Tops", "Knitwear", "Dresses", "Jeans", 
+          "Jackets", "Jumpsuits", "Coats", "Leather jackets", "Trench coats", 
+          "Swimwear", "Shorts"
+        ]
+      },
+      {
+        title: "Bags",
+        items: [
+          "Handbags", "Clutch bags", "Backpacks", "Travel bags", 
+          "Suitcases", "Luggage bags"
+        ]
+      },
+      {
+        title: "Accessories",
+        items: [
+          "Sunglasses", "Wallets", "Belts", "Hats", "Scarves", 
+          "Purses", "Hair accessories", "Pins & brochures"
+        ]
+      },
+      {
+        title: "Jewellery",
+        items: [
+          "Earrings", "Necklaces", "Watches", "Rings", 
+          "Bracelets", "Jewellery sets", "Bag charms"
+        ]
+      },
+      {
+        title: "Shoes",
+        items: [
+          "Boots", "Trainers", "Flats", "Sandals", "Clogs", "Heels"
+        ]
+      },
+    ],
+  },
+    {
+    title: "Homeware",
+     subcategories: [
+      {
+        title: "Clothing",
+        items: [
+          "Skirts", "Trousers", "Tops", "Knitwear", "Dresses", "Jeans", 
+          "Jackets", "Jumpsuits", "Coats", "Leather jackets", "Trench coats", 
+          "Swimwear", "Shorts"
+        ]
+      },
+      {
+        title: "Bags",
+        items: [
+          "Handbags", "Clutch bags", "Backpacks", "Travel bags", 
+          "Suitcases", "Luggage bags"
+        ]
+      },
+      {
+        title: "Accessories",
+        items: [
+          "Sunglasses", "Wallets", "Belts", "Hats", "Scarves", 
+          "Purses", "Hair accessories", "Pins & brochures"
+        ]
+      },
+      {
+        title: "Jewellery",
+        items: [
+          "Earrings", "Necklaces", "Watches", "Rings", 
+          "Bracelets", "Jewellery sets", "Bag charms"
+        ]
+      },
+      {
+        title: "Shoes",
+        items: [
+          "Boots", "Trainers", "Flats", "Sandals", "Clogs", "Heels"
+        ]
+      },
+    ],
+  },
+    {
+    title: "Books",
+     subcategories: [
+      {
+        title: "Clothing",
+        items: [
+          "Skirts", "Trousers", "Tops", "Knitwear", "Dresses", "Jeans", 
+          "Jackets", "Jumpsuits", "Coats", "Leather jackets", "Trench coats", 
+          "Swimwear", "Shorts"
+        ]
+      },
+      {
+        title: "Bags",
+        items: [
+          "Handbags", "Clutch bags", "Backpacks", "Travel bags", 
+          "Suitcases", "Luggage bags"
+        ]
+      },
+      {
+        title: "Accessories",
+        items: [
+          "Sunglasses", "Wallets", "Belts", "Hats", "Scarves", 
+          "Purses", "Hair accessories", "Pins & brochures"
+        ]
+      },
+      {
+        title: "Jewellery",
+        items: [
+          "Earrings", "Necklaces", "Watches", "Rings", 
+          "Bracelets", "Jewellery sets", "Bag charms"
+        ]
+      },
+      {
+        title: "Shoes",
+        items: [
+          "Boots", "Trainers", "Flats", "Sandals", "Clogs", "Heels"
+        ]
+      },
+    ],
+  },
+    {
+    title: "Electronics",
+     subcategories: [
+      {
+        title: "Clothing",
+        items: [
+          "Skirts", "Trousers", "Tops", "Knitwear", "Dresses", "Jeans", 
+          "Jackets", "Jumpsuits", "Coats", "Leather jackets", "Trench coats", 
+          "Swimwear", "Shorts"
+        ]
+      },
+      {
+        title: "Bags",
+        items: [
+          "Handbags", "Clutch bags", "Backpacks", "Travel bags", 
+          "Suitcases", "Luggage bags"
+        ]
+      },
+      {
+        title: "Accessories",
+        items: [
+          "Sunglasses", "Wallets", "Belts", "Hats", "Scarves", 
+          "Purses", "Hair accessories", "Pins & brochures"
+        ]
+      },
+      {
+        title: "Jewellery",
+        items: [
+          "Earrings", "Necklaces", "Watches", "Rings", 
+          "Bracelets", "Jewellery sets", "Bag charms"
+        ]
+      },
+      {
+        title: "Shoes",
+        items: [
+          "Boots", "Trainers", "Flats", "Sandals", "Clogs", "Heels"
+        ]
+      },
+    ],
+  },
+];
 
 const BottomNavMegmenu = () => {
-  return (
-       <nav className="header-bottom-navbar navbar-megamenu-area">
-          <ul className="navbar-nav-list flex items-center flex-wrap gap-10">
-             <li className="navbar-nav-items"><Link className='text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary' href="/">Women</Link></li>
-             <li className="navbar-nav-items"><Link className='text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary' href="/">Men</Link></li>
-             <li className="navbar-nav-items"><Link className='text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary' href="/">Children</Link></li>
-             <li className="navbar-nav-items"><Link className='text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary' href="/">Shoes</Link></li>
-             <li className="navbar-nav-items"><Link className='text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary' href="/">Bags</Link></li>
-             <li className="navbar-nav-items"><Link className='text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary' href="/">Accessories & Jewellery</Link></li>
-             <li className="navbar-nav-items"><Link className='text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary' href="/">Homeware</Link></li>
-             <li className="navbar-nav-items"><Link className='text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary' href="/">Books</Link></li>
-             <li className="navbar-nav-items"><Link className='text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary' href="/">Electronics</Link></li>
-          </ul>
-        </nav>
-  )
-}
+  const [activeIndex, setActiveIndex] = useState(null);
+  const menuRef = useRef(null); // Ref for the megamenu container
 
-export default BottomNavMegmenu
+  const handleToggleMenu = (index) => {
+    setActiveIndex(activeIndex === index ? null : index);
+  };
+
+  const handleClickOutside = (event) => {
+    // Check if the click is outside the menu
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setActiveIndex(null); // Close the megamenu
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside); // Add event listener to detect outside clicks
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside); // Cleanup event listener on unmount
+    };
+  }, []);
+
+  return (
+    <nav className="header-bottom-navbar navbar-megamenu-area" ref={menuRef}>
+      <div className="custom-container">
+        <ul className="navbar-nav-list flex gap-10 w-full">
+        {categories.map((category, index) => (
+          <li key={category.title} className="navbar-nav-items relative"> {/* Add relative positioning */}
+            <button
+              className='text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary'
+              onClick={() => handleToggleMenu(index)}
+            >
+              {category.title}
+            </button>
+          </li>
+        ))}
+      </ul>
+      </div>
+      {/* Megamenu will be displayed below the ul */}
+      {activeIndex !== null && (
+        <div className="megamenu-group-items">
+          <div className="custom-container">
+            <div className="megamenu grid grid-cols-12 gap-6">
+            {categories[activeIndex].subcategories.map((subcategory) => (
+              <div className="megamenu-column col-span-2" key={subcategory.title}>
+                <div className="group-category-title">{subcategory.title}</div>
+                <ul className="subcategory-lists">
+                  {subcategory.items.map((item) => (
+                    <li key={item}>
+                      <Link href={`/${item.toLowerCase()}`}>{item}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default BottomNavMegmenu;
