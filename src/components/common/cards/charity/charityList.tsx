@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -33,7 +32,7 @@ const CharityList: React.FC<CharityListProps> = ({ charityData }) => {
                     <div>
                         <p className="font-bold text-[10px] uppercase text-[#611192] mt-4 mb-3">{charity.title}</p>
                         <p className="text-[#474648] text-[14px]">{charity.description}</p>
-                        <Link href={`/find-a-charity/${charity.id}`} passHref>
+                        <Link href={`/charity/find-a-charity/${charity.id}`} passHref>
                             <button className="mt-4 bg-[#0B0112] text-white py-2 px-4 w-full text-[14px]">
                                 Donate
                             </button>
