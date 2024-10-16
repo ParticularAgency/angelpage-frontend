@@ -39,7 +39,7 @@ const CharitySearch: React.FC<CharitySearchProps> = ({ onSearch, onClear }) => {
     };
 
     return (
-        <div className="flex justify-center mt-8">
+        <div className="flex flex-col justify-center mt-8">
             <form onSubmit={(e) => e.preventDefault()} className="flex w-full max-w-[542px] mx-auto"> {/* Prevent default form submission */}
                 <input
                     type="text"
@@ -57,7 +57,7 @@ const CharitySearch: React.FC<CharitySearchProps> = ({ onSearch, onClear }) => {
                     Go
                 </button>
             </form>
-            {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>} {/* Display error message */}
+            {errorMessage && <p className="text-red-500 text-center mt-2">{errorMessage}</p>} {/* Display error message */}
         </div>
     );
 };
