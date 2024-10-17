@@ -8,7 +8,7 @@ const Register = () => {
 
     return (
         <div className="flex md:flex-col gap-[143px] lg:gap-14 md:gap-0">
-            <div className="w-1/2 md:w-full bg-cover bg-center h-[710px] md:h-[510px]" style={{ backgroundImage: "url('/images/auth/hero.png')" }}>
+            <div className="w-1/2 md:w-full bg-cover bg-center md:h-[510px]" style={{ backgroundImage: "url('/images/auth/hero.png')" }}>
                 <div className="flex -mt-36 md:-mt-28 justify-center h-full">
                     <Image src='/images/auth/logo.svg' alt='Logo' width={367} height={100} className='md:w-72' />
                 </div>
