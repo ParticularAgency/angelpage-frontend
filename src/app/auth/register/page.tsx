@@ -1,3 +1,6 @@
+"use client"
+
+import Image from 'next/image';
 import { useState } from 'react';
 
 const Register = () => {
@@ -5,9 +8,9 @@ const Register = () => {
 
     return (
         <div className="flex min-h-screen bg-gray-100">
-            <div className="w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('/images/charity.jpg')" }}>
+            <div className="w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('/images/auth/hero.jpg')" }}>
                 <div className="flex items-center justify-center h-full">
-                    <h1 className="text-white text-4xl font-bold">Angelpage</h1>
+                    <Image src='/images/auth/logo.svg' alt='Logo' width={367} height={100} />
                 </div>
             </div>
             <div className="w-1/2 flex items-center justify-center p-8">
@@ -56,7 +59,7 @@ const Register = () => {
                                 Register
                             </button>
                             <p className="text-center text-sm">
-                                Already have an account? <a href="#" className="text-purple-700">Login</a>
+                                Already have an account? <a href="/auth/login" className="text-purple-700">Login</a>
                             </p>
                         </form>
                     )}
@@ -78,10 +81,10 @@ const Register = () => {
                                 </div>
                             ))}
                             <button type="submit" className="w-full bg-purple-700 text-white p-2 rounded hover:bg-purple-800">
-                                Login
+                                Register
                             </button>
                             <p className="text-center text-sm">
-                                New here? <a href="#" className="text-purple-700">Register</a>
+                                Already have an account? <a href="/auth/login" className="text-purple-700">Login</a>
                             </p>
                         </form>
                     )}
