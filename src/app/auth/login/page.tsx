@@ -33,7 +33,7 @@ const Login = () => {
 
                     {activeTab === 'individual' && (
                         <form >
-                            <div className="flex space-x-5 md:flex-col md:space-x-0 md:space-y-5 mb-[18px]">
+                            <div className="flex space-x-5 md:flex-col md:space-x-0 md:space-y-2 mb-[18px]">
                                 <div className="w-1/2 md:w-full">
                                     <Input label='Email address' name='email' placeholder='janed@angelpage.org' type='email' id='email' className='flex-col' />
                                 </div>
@@ -54,7 +54,7 @@ const Login = () => {
 
                     {activeTab === 'charity' && (
                         <form>
-                            <div className="flex space-x-5 md:flex-col md:space-x-0 md:space-y-5 mb-[18px]">
+                            <div className="flex space-x-5 md:flex-col md:space-x-0 md:space-y-2 mb-[18px]">
                                 <div className="w-1/2">
                                     <Input label='Email address' name='email' placeholder='janed@angelpage.org' type='email' id='email' className='flex-col' />
                                 </div>

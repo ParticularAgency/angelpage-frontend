@@ -1,5 +1,5 @@
 "use client"
-
+import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -7,24 +7,24 @@ const Register = () => {
     const [activeTab, setActiveTab] = useState<'individual' | 'charity'>('individual');
 
     return (
-        <div className="flex min-h-screen bg-gray-100">
-            <div className="w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('/images/auth/hero.jpg')" }}>
-                <div className="flex items-center justify-center h-full">
-                    <Image src='/images/auth/logo.svg' alt='Logo' width={367} height={100} />
+        <div className="flex md:flex-col gap-[143px] lg:gap-14 md:gap-0">
+            <div className="w-1/2 md:w-full bg-cover bg-center h-[710px] md:h-[510px]" style={{ backgroundImage: "url('/images/auth/hero.png')" }}>
+                <div className="flex -mt-36 md:-mt-28 justify-center h-full">
+                    <Image src='/images/auth/logo.svg' alt='Logo' width={367} height={100} className='md:w-72' />
                 </div>
             </div>
-            <div className="w-1/2 flex items-center justify-center p-8">
+            <div className="w-1/2 md:w-full md:flex md:justify-center md:px-10 pt-[103px] pb-[260px] md:pb-[160px]">
                 <div className="w-full max-w-md">
-                    <h2 className="text-2xl font-semibold mb-6">Register</h2>
-                    <div className="flex space-x-2 mb-4">
+                    <h4 className=" text-center mb-[18px]">Register</h4>
+                    <div className="flex space-x-2 justify-center mb-[54px]">
                         <button
-                            className={`px-4 py-2 rounded-full ${activeTab === 'individual' ? 'bg-purple-100 text-purple-700' : 'bg-transparent text-gray-500'}`}
+                            className={`p-2 text-body-small rounded-3xl ${activeTab === 'individual' ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold' : 'bg-transparent text-mono-100'}`}
                             onClick={() => setActiveTab('individual')}
                         >
                             Individual
                         </button>
                         <button
-                            className={`px-4 py-2 rounded-full ${activeTab === 'charity' ? 'bg-purple-100 text-purple-700' : 'bg-transparent text-gray-500'}`}
+                            className={`text-body-small p-2 rounded-3xl ${activeTab === 'charity' ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold' : 'bg-transparent text-mono-100'}`}
                             onClick={() => setActiveTab('charity')}
                         >
                             Charity/Brand
@@ -32,59 +32,51 @@ const Register = () => {
                     </div>
 
                     {activeTab === 'individual' && (
-                        <form className="space-y-4">
-                            <div className="flex space-x-4">
-                                <input
-                                    type="text"
-                                    placeholder="First name"
-                                    className="w-1/2 p-2 border border-gray-300 rounded"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Last name"
-                                    className="w-1/2 p-2 border border-gray-300 rounded"
-                                />
+                        <form >
+                            <div className="flex space-x-5 md:flex-col md:space-x-0 md:space-y-2">
+                                <div className="w-1/2 md:w-full">
+                                    <Input label='First name' name='firstName' placeholder='Jane' id='firstName' className='flex-col' />
+                                </div>
+
+                                <div className="w-1/2 md:w-full">
+                                    <Input label='Last name' name='lastName' placeholder='Doe' id='lastName' className='flex-col' />
+                                </div>
                             </div>
-                            <input
-                                type="email"
-                                placeholder="Email address"
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                            <button type="submit" className="w-full bg-purple-700 text-white p-2 rounded hover:bg-purple-800">
-                                Register
-                            </button>
-                            <p className="text-center text-sm">
-                                Already have an account? <a href="/auth/login" className="text-purple-700">Login</a>
+                                <div className="w-full my-2">
+                                    <Input label='Email address' name='email' placeholder='janed@angelpage.org' type='email' id='email' className='flex-col' />
+                                </div>
+
+                                <div className="w-full">
+                                    <Input label='Password' name='password' placeholder='•••••••••' type='password' id='password' className='flex-col' />
+                                </div>
+                            <Button type='submit' variant='tertiary' className='w-full my-6'>Register</Button>
+                            <p className="text-body-small">
+                                Already have an account? <a href="/auth/login" className="text-primary-color-100 underline">Login</a>
                             </p>
                         </form>
                     )}
 
                     {activeTab === 'charity' && (
-                        <form className="space-y-4">
-                            {[1, 2, 3].map((_, index) => (
-                                <div key={index} className="flex space-x-4">
-                                    <input
-                                        type="email"
-                                        placeholder="Email address"
-                                        className="w-1/2 p-2 border border-gray-300 rounded"
-                                    />
-                                    <input
-                                        type="password"
-                                        placeholder="Password"
-                                        className="w-1/2 p-2 border border-gray-300 rounded"
-                                    />
+                        <form >
+                            <div className="flex space-x-5 md:flex-col md:space-x-0 md:space-y-2">
+                                <div className="w-1/2 md:w-full">
+                                    <Input label='First name' name='firstName' placeholder='Jane' id='firstName' className='flex-col' />
                                 </div>
-                            ))}
-                            <button type="submit" className="w-full bg-purple-700 text-white p-2 rounded hover:bg-purple-800">
-                                Register
-                            </button>
-                            <p className="text-center text-sm">
-                                Already have an account? <a href="/auth/login" className="text-purple-700">Login</a>
+
+                                <div className="w-1/2 md:w-full">
+                                    <Input label='Last name' name='lastName' placeholder='Doe' id='lastName' className='flex-col' />
+                                </div>
+                            </div>
+                            <div className="w-full my-2">
+                                <Input label='Email address' name='email' placeholder='janed@angelpage.org' type='email' id='email' className='flex-col' />
+                            </div>
+
+                            <div className="w-full">
+                                <Input label='Password' name='password' placeholder='•••••••••' type='password' id='password' className='flex-col' />
+                            </div>
+                            <Button type='submit' variant='tertiary' className='w-full my-6'>Register</Button>
+                            <p className="text-body-small">
+                                Already have an account? <a href="/auth/login" className="text-primary-color-100 underline">Login</a>
                             </p>
                         </form>
                     )}
