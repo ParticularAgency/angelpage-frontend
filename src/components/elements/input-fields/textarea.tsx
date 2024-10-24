@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 interface TextareaProps {
   label?: string;
   name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   placeholder?: string;
   rows?: number;
   cols?: number;
@@ -70,7 +70,7 @@ const Textarea: React.FC<TextareaProps> = ({
         disabled={disabled}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        className={`textarea-field py-[11px] px-[8px] text-body-caption font=normal leading-[150%] font-secondary text-mono-60 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`textarea-field py-[11px] px-[8px] w-full text-body-caption font=normal leading-[150%] font-secondary text-mono-60 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         style={{
           border: `1px solid ${getStatusBorderColor()}`,
           resize: 'vertical',
