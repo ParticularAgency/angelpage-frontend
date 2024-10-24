@@ -30,11 +30,11 @@ const DetailsForm = () => {
             <div>
                 <Select label='Colour' name='colour' id='colour' options={['Select', 'Red', 'Blue', 'Green']} />
             </div>
-            <p>For clothes and shoes</p>
+            <p className='text-body-small'>For clothes and shoes</p>
             <div>
                 <Select label='Size' name='size' id='size' options={['Select', 'Small', 'Medium', 'Large']} />
             </div>
-            <p>For bags, furniture, electronics, and accessories</p>
+            <p className='text-body-small'>For bags, furniture, electronics, and accessories</p>
             <div className='flex gap-2'>
                 <Input label='Height' name='height' placeholder='Enter height' id='height' type='number' className='flex-col w-11/12' />
                 <Button type='submit' variant='primary' className='self-end w-[35px] h-10'>in</Button>
