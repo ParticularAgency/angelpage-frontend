@@ -10,15 +10,15 @@ const SellAnItem = () => {
     const [activeTab, setActiveTab] = useState('details');
 
     return (
-        <div className="max-w-[590px] m-auto pt-14 pb-[111px] md:pb-18">
-            <div className="flex gap-5">
+        <div className="max-w-[590px] m-auto pt-14 pb-[111px] sm:pb-18">
+            <div className="flex sm:flex-col gap-5">
             {/* Navigation Section */}
-            <div className='w-1/4'>
+            <div className='sm:w-full sm:px-4 w-1/4'>
                 <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
             </div>
 
             {/* Form Section */}
-            <div  className='w-3/4'>
+            <div  className='sm:w-full sm:px-4 w-3/4'>
                 {activeTab === 'details' && (
                     <>
                         <p className="font-medium mb-[19px]">Item Details</p>
