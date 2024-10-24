@@ -1,7 +1,11 @@
 import { Button, Input, Select, Textarea } from '@/components/elements';
 import React from 'react';
 
-const DetailsForm = () => {
+interface FormProps {
+    setActiveTab: (tabName: string) => void;
+}
+
+const DetailsForm: React.FC<FormProps> = ({ setActiveTab }) => {
     return (
         <form className="flex flex-col w-full space-y-4">
             <div>
@@ -52,7 +56,7 @@ const DetailsForm = () => {
             </div>
             <div className="flex justify-end">
                 <Button variant='accend-link' className='flex items-center underline !text-primary-color-100' onClick={() => console.log('Should not click')}>Save as draft</Button>
-                <Button type='submit' variant='primary'>Continue</Button>
+                <Button type='submit' variant='primary' onClick={() => setActiveTab('photos')}>Continue</Button>
             </div>
         </form>
     );

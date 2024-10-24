@@ -22,19 +22,19 @@ const SellAnItem = () => {
                 {activeTab === 'details' && (
                     <>
                         <p className="font-medium mb-[19px]">Item Details</p>
-                        <DetailsForm />
+                        <DetailsForm setActiveTab={setActiveTab} />
                     </>
                 )}
                 {activeTab === 'photos' && (
                     <>
                         <p className="font-medium mb-[19px]">Photos</p>
-                        <PhotosForm />
+                        <PhotosForm setActiveTab={setActiveTab} />
                     </>
                 )}
                 {activeTab === 'price' && (
                     <>
                         <p className="font-medium mb-[19px]">Price</p>
-                        <PriceForm />
+                        <PriceForm setActiveTab={setActiveTab} />
                     </>
                 )}
             </div>

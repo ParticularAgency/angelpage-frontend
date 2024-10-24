@@ -3,7 +3,11 @@ import { Button } from '@/components/elements';
 import Image from 'next/image';
 import React, { useRef } from 'react';
 
-const PhotosForm = () => {
+interface FormProps {
+  setActiveTab: (tabName: string) => void;
+}
+
+const PhotosForm: React.FC<FormProps> = ({ setActiveTab }) => {
   const fileInputRef: any = useRef(null);
 
   const handleBrowseClick = () => {
@@ -78,7 +82,7 @@ const PhotosForm = () => {
 
       {/* Action buttons */}
       <div className="flex justify-between items-center mt-[54px]">
-        <Button variant='accend-link' className='flex items-center !text-primary-color-100' onClick={() => console.log('Should not click')}>
+        <Button variant='accend-link' className='flex items-center !text-primary-color-100' onClick={() => setActiveTab('details')}>
           <Image
           width={16}
           height={16}
@@ -89,7 +93,7 @@ const PhotosForm = () => {
         </Button>
         <div className="flex sm:flex-col space-x-4">
           <Button variant='accend-link' className='flex items-center underline !text-primary-color-100' onClick={() => console.log('Should not click')}>Save as draft</Button>
-          <Button type='submit' variant='primary'>Continue</Button>
+          <Button type='submit' variant='primary' onClick={() => setActiveTab('price')}>Continue</Button>
         </div>
       </div>
     </div>

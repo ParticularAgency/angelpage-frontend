@@ -3,7 +3,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-const PriceForm = () => {
+interface FormProps {
+    setActiveTab: (tabName: string) => void;
+}
+
+const PriceForm: React.FC<FormProps> = ({ setActiveTab }) => {
     return (
         <div className="flex flex-col w-full">
             <div className="flex space-x-2 md:flex-col md:space-x-0 mb-8">
@@ -31,7 +35,7 @@ const PriceForm = () => {
 
             {/* Action buttons */}
             <div className="flex justify-between items-center mt-[27px] mb-4">
-                <Button variant='accend-link' className='flex items-center !text-primary-color-100' onClick={() => console.log('Should not click')}>
+                <Button variant='accend-link' className='flex items-center !text-primary-color-100' onClick={() => setActiveTab('photos')}>
                     <Image
                         width={16}
                         height={16}
