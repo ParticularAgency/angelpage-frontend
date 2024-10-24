@@ -2,6 +2,7 @@ export const charityData = [
   {
     id: "one",
     title: "12 Donors 30 Givers",
+    listingPrtoduct: "24 items",
     name: "samaritans",
     description:
       "Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus.",
@@ -16,6 +17,7 @@ export const charityData = [
   {
     id: "two",
     title: "12 Donors 30 Givers",
+    listingPrtoduct: "24 items",
     name: "British heart foundation",
     description:
       "Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus.",
@@ -30,6 +32,7 @@ export const charityData = [
   {
     id: "three",
     title: "12 Donors 30 Givers",
+    listingPrtoduct: "24 items",
     name: "save the children",
     description:
       "Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus.",
@@ -44,6 +47,7 @@ export const charityData = [
   {
     id: "four",
     title: "12 Donors 30 Givers",
+    listingPrtoduct: "24 items",
     name: "macmillan cancer support",
     description:
       "Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus.",
@@ -58,6 +62,7 @@ export const charityData = [
   {
     id: "five",
     title: "12 Donors 30 Givers",
+    listingPrtoduct: "24 items",
     name: "rspca",
     description:
       "Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus.",
@@ -72,6 +77,7 @@ export const charityData = [
   {
     id: "six",
     title: "12 Donors 30 Givers",
+    listingPrtoduct: "24 items",
     name: "oxfam",
     description:
       "Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus. Lorem ipsum dolor sit amet consectetur. Tempus suscipit nisl auctor ut nulla accumsan ut tortor sem. Amet ac dolor varius faucibus in risus.",

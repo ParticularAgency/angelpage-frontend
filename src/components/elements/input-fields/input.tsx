@@ -77,7 +77,7 @@ const Input: React.FC<InputProps> = ({
         required={required}
         disabled={disabled}
         checked={checked}
-        className={`input-field h-10 py-[11px] px-[8px] text-body-caption font=normal leading-[150%] font-secondary text-mono-60 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100 ${
+        className={`input-field h-10 py-[11px] px-[8px] w-full text-body-caption font-normal leading-[150%] font-secondary text-mono-60 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100 ${
           disabled ? 'opacity-50 cursor-not-allowed' : ''
         }`}
         style={{
