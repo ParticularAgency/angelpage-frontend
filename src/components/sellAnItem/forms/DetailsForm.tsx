@@ -35,14 +35,17 @@ const DetailsForm = () => {
                 <Select label='Size' name='size' id='size' options={['Select', 'Small', 'Medium', 'Large']} />
             </div>
             <p>For bags, furniture, electronics, and accessories</p>
-            <div>
-                <Input label='Height' name='height' placeholder='Enter height' id='height' type='number'className='flex-col' />
+            <div className='flex gap-2'>
+                <Input label='Height' name='height' placeholder='Enter height' id='height' type='number' className='flex-col w-11/12' />
+                <Button type='submit' variant='primary' className='self-end w-[35px] h-10'>in</Button>
             </div>
-            <div>
-                <Input label='Width' name='width' placeholder='Enter width' id='width' type='number' className='flex-col' />
+            <div className='flex gap-2'>
+                <Input label='Width' name='width' placeholder='Enter width' id='width' type='number' className='flex-col w-11/12' />
+                <Button type='submit' variant='primary' className='self-end w-[35px] h-10'>cm</Button>
             </div>
-            <div>
-                <Input label='Depth (optional)' name='depth' placeholder='Enter' id='depth' type='number' className='flex-col' />
+            <div className='flex gap-2'>
+                <Input label='Depth (optional)' name='depth' placeholder='Enter' id='depth' type='number' className='flex-col w-11/12' />
+                <Button type='submit' variant='primary' className='self-end w-[35px] h-10'>in</Button>
             </div>
             <div>
                 <Textarea label='Additional Information' name='additionalInfo' placeholder='Enter any additional information' />
