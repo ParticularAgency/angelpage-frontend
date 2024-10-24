@@ -10,32 +10,34 @@ const SellAnItem = () => {
     const [activeTab, setActiveTab] = useState('details');
 
     return (
-        <div className="flex space-x-8">
+        <div className="max-w-[590px] m-auto pt-14 pb-[111px] md:pb-18">
+            <div className="flex gap-5">
             {/* Navigation Section */}
-            <div className="w-1/4">
+            <div className='w-1/4'>
                 <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
             </div>
 
             {/* Form Section */}
-            <div className="w-3/4">
+            <div  className='w-3/4'>
                 {activeTab === 'details' && (
                     <>
-                        <h1 className="text-2xl font-semibold mb-6">Item Details</h1>
+                        <p className="font-medium mb-[19px]">Item Details</p>
                         <DetailsForm />
                     </>
                 )}
                 {activeTab === 'photos' && (
                     <>
-                        <h1 className="text-2xl font-semibold mb-6">Photos</h1>
+                        <p className="font-medium mb-[19px]">Photos</p>
                         <PhotosForm />
                     </>
                 )}
                 {activeTab === 'price' && (
                     <>
-                        <h1 className="text-2xl font-semibold mb-6">Price</h1>
+                        <p className="font-medium mb-[19px]">Price</p>
                         <PriceForm />
                     </>
                 )}
+            </div>
             </div>
         </div>
     );
