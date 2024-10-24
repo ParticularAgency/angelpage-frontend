@@ -1,28 +1,55 @@
+import { Button, Input, Select, Textarea } from '@/components/elements';
 import React from 'react';
 
 const DetailsForm = () => {
     return (
         <form className="flex flex-col w-full space-y-4">
             <div>
-                <label className="block text-gray-700">Choose Charity</label>
-                <input
-                    type="text"
-                    className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-                    placeholder="Start typing"
-                />
+                <Input label='Choose Charity' name='charity' placeholder='Start typing' id='charity' className='flex-col' />
             </div>
             <div>
-                <label className="block text-gray-700">Item Title</label>
-                <input
-                    type="text"
-                    className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-                    placeholder="Multi-coloured Mules"
-                />
+                <Input label='Item Title' name='item-title' placeholder='Multi-coloured Mules' id='item-title' className='flex-col' />
             </div>
-            {/* Add other form fields here as per design */}
-            <div className="flex justify-between items-center">
-                <button type="button" className="text-purple-600">Save as draft</button>
-                <button type="submit" className="bg-black text-white px-4 py-2 rounded-md">Continue</button>
+            <div className="flex space-x-6 md:flex-col md:space-x-0 md:space-y-4">
+                <div className="w-1/2 md:w-full">
+                    <Select label='Category' name='category' id='category' options={['Select', 'Clothing', 'Shoes', 'Accessories']} />
+                </div>
+                <div className="w-1/2 md:w-full">
+                    <Select label='Sub-category' name='subCategory' id='subCategory' options={['Select', 'Casual Shoes', 'Formal Shoes', 'Sports Shoes']} />
+                </div>
+            </div>
+            <div>
+                <Select label='Condition' name='condition' id='condition' options={['Select', 'New', 'Used', 'Refurbished']} />
+            </div>
+            <div>
+                <Select label='Brand' name='brand' id='brand' options={['Select', 'Nike', 'Adidas', 'Reebok']} />
+            </div>
+            <div>
+                <Select label='Material' name='material' id='material' options={['Select', 'Leather', 'Textile', 'Synthetic']} />
+            </div>
+            <div>
+                <Select label='Colour' name='colour' id='colour' options={['Select', 'Red', 'Blue', 'Green']} />
+            </div>
+            <p>For clothes and shoes</p>
+            <div>
+                <Select label='Size' name='size' id='size' options={['Select', 'Small', 'Medium', 'Large']} />
+            </div>
+            <p>For bags, furniture, electronics, and accessories</p>
+            <div>
+                <Input label='Height' name='height' placeholder='Enter height' id='height' type='number'className='flex-col' />
+            </div>
+            <div>
+                <Input label='Width' name='width' placeholder='Enter width' id='width' type='number' className='flex-col' />
+            </div>
+            <div>
+                <Input label='Depth (optional)' name='depth' placeholder='Enter' id='depth' type='number' className='flex-col' />
+            </div>
+            <div>
+                <Textarea label='Additional Information' name='additionalInfo' placeholder='Enter any additional information' />
+            </div>
+            <div className="flex justify-end">
+                <Button variant='accend-link' className='flex items-center underline !text-primary-color-50' onClick={() => console.log('Should not click')}>Save as draft</Button>
+                <Button type='submit' variant='primary'>Continue</Button>
             </div>
         </form>
     );
