@@ -51,7 +51,7 @@ const DetailsForm = () => {
                 <Textarea label='Additional Information' name='additionalInfo' placeholder='Enter any additional information' />
             </div>
             <div className="flex justify-end">
-                <Button variant='accend-link' className='flex items-center underline !text-primary-color-50' onClick={() => console.log('Should not click')}>Save as draft</Button>
+                <Button variant='accend-link' className='flex items-center underline !text-primary-color-100' onClick={() => console.log('Should not click')}>Save as draft</Button>
                 <Button type='submit' variant='primary'>Continue</Button>
             </div>
         </form>
