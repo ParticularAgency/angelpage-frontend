@@ -1,12 +1,13 @@
 "use client"
+import HomePage from '@/pages/homepage/home';
 import React from 'react';
-import HomeLanding from '@/pages/homepage/home-landing/HomeLanding';
+
 export default function Home() {
 
   return (
     <>
     <div className="homepage-main-wrapper">
-      <HomeLanding />
+     <HomePage />
     </div>
     </>
   );

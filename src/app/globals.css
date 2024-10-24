@@ -100,6 +100,24 @@
       letter-spacing: 0.24px;
     }
 
+    h5,
+    .h5 {
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 135%;
+      letter-spacing: 0.2px;
+    }
+
+    h6,
+    .h6 {
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 135%;
+      letter-spacing: 0.18px;
+    }
+
     @media screen and (max-width:991px) {
 
       h1,
@@ -329,7 +347,7 @@
 
       .body-small {
         font-size: 12px;
-      } 
+      }
     }
   }
 
@@ -354,6 +372,12 @@
       width: 100%;
     }
 
+    .custom-container-full {
+      max-width: 1920px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+    }
     @media screen and (max-width:991px) {
       .custom-container {
         padding-left: 18px;

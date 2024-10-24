@@ -6,8 +6,8 @@ const Contact = () => {
         <div className="flex custom-container gap-[139px] md:gap-5 md:flex-col pt-[73px] pb-[49px] md:pb-20">
             {/* Left Section */}
             <div className="w-1/2 md:w-full flex flex-col justify-center pr-8">
-                <h6 className="mb-2">Contact AngelPage</h6>
-                <p>
+                <h6 className="mb-2 font-primary text-[18px] text-left font-normal leading-[135%] tracking-[.18px] text-mono-100">Contact AngelPage</h6>
+                <p className="body-regular max-w-[433px] w-full">
                     Reach out for information on how to sign up, how the platform works, and potential partnerships.
                 </p>
                 <div className="flex justify-between mt-[60px]">

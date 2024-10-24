@@ -53,7 +53,7 @@ const Footer = () => {
                 <h5 className="title text-mono-80 sm:text-center text-body-eyebrow-large font-normal leading-[150%] uppercase tracking-[.7px] font-secondary text-left mb-4">Join the AngelPage Community</h5>
                 <p className="desc-text text-mono-100 sm:text-center text-body-small font-normal  font-secondary leading-[150%]">Be part of a community that values giving back. Sign up for our newsletter to receive updates on our impact, exclusive offers, and tips on how to make the most of your transactions.</p>
                 <form action="get" className="subscription-form mt-8 w-full">
-                  <div className="form-group-item flex sm:flex-wrap sm:gap-8 items-start gap-2 w-full">
+                  <div className="form-group-item flex sm:flex-wrap sm:gap-4 items-start gap-2 w-full">
                     <Input
                       type="email"
                       placeholder="Enter email"
@@ -64,7 +64,7 @@ const Footer = () => {
                       className='flex-col w-full'
                       errorMessage={inputStatus === 'error' ? 'Input cannot be empty' : ''}
                     />
-                    <Button variant="tertiary" className="max-w-[149px] w-full sm:max-w-full" onClick={() => console.log('Should not click')} >Subscribe</Button>
+                    <Button variant="primary" className="max-w-[149px] w-full sm:max-w-full" onClick={() => console.log('Should not click')} >Subscribe</Button>
                   </div>
                 </form>
               </div>

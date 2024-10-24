@@ -1,11 +1,11 @@
 import React from 'react'
-
-const FavoritePage = () => {
+import FavoritePage from '@/pages/favorite-page/Favorite'
+const FavoritePageMain = () => {
   return (
-    <div>
-      
+    <div className="favorite-page-main-area">
+        <FavoritePage />
     </div>
   )
 }
 
-export default FavoritePage
+export default FavoritePageMain

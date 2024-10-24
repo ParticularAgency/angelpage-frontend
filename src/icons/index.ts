@@ -14,6 +14,13 @@ import MinusIcon from "@/icons/minus";
 import FavoriteOutlineIcon from '@/icons/favoriteOutline';
 import FavoriteFillIcon from './favoriteFill';
 import LocationIcon from './locationIcon';
+import ArrowDownIcon from './arrowdown';
+import FilterIcon from '@/icons/filterIcon';
+import ShearIcon from './shearIcon';
+import FavoriteOutlineSecondaryIcon from './favoriteOutlineSecondary';
+import SaveIcon from './save';
+import EditIcon from './edit';
+import DeleteIcon from './delete';
 
 export {
 	Checkmark,
@@ -31,5 +38,12 @@ export {
 	MinusIcon,
 	FavoriteOutlineIcon,
 	FavoriteFillIcon,
-	LocationIcon
+	LocationIcon,
+	ArrowDownIcon,
+	FilterIcon,
+	ShearIcon,
+	FavoriteOutlineSecondaryIcon,
+	SaveIcon,
+	EditIcon,
+	DeleteIcon
 };

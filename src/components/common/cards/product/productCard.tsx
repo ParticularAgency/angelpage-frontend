@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { FavoriteOutlineIcon, LocationIcon } from '@/icons'; // Adjust paths based on your structure
+import { Button } from '@/components/elements';
 
 // Define the prop types for the ProductCard component
 interface ProductCardProps {
@@ -14,6 +15,7 @@ interface ProductCardProps {
   productPrice: string;
   location: string;
   onFavoriteClick: () => void;
+  isLoggedIn?: boolean;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -27,9 +29,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
   productPrice,
   location,
   onFavoriteClick,
+  isLoggedIn,
 }) => {
+
   return (
-    <div className="product-card-item bg-mono-0 max-w-[289px] sm:min-w-[160px] w-full px-[15px] py-4 flex flex-col gap-[33px]"> 
+    <div className="product-card-item bg-mono-0 max-w-[289px] sm:min-w-[160px]   w-full px-[15px] py-4 flex flex-col gap-[33px]"> 
       <div className="product-head-cont flex justify-between">
         <div className="donate-charity-img h-[46px] flex items-center">
           <Image
@@ -48,7 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <div className="product-body-cont">
         <div className="product-image-modal px-8 w-full flex justify-center items-center">
           <Image
-            className="max-w-[116px] h-[110px] w-full min-w-[118px]"
+            className="max-w-[116px] h-[110px] w-full min-w-[118px] object-cover sm:h-auto"
             src={productImageSrc}
             alt={productImageAlt}
             width={180}
@@ -77,7 +81,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
         <div className="product-card-btn-box">
           {/* Uncomment and modify the button if needed */}
-          {/* <Button variant='primary' className='w-full max-w-full mt-3' type='submit' onClick={() => console.log('Add to basket')} >Add to basket</Button> */}
+         {isLoggedIn && (
+          <Button variant='primary' className='w-full max-w-full mt-3' type='submit' onClick={() => console.log('Add to basket')} >Add to basket</Button>
+         )}
         </div>
       </div>
     </div>

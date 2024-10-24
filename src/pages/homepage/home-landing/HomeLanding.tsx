@@ -13,8 +13,8 @@ const HomeLanding = () => {
   return (
     <div className='homepage-main-wrapper'>
       <HomeLandingBanner />
-      <TopCategoryProduct />
-      <WomansCategoryProducts />
+      <TopCategoryProduct isLoggedIn={false} />
+      <WomansCategoryProducts isLoggedIn={false} />
       <HowItWorkSection />
       <CharitySection />
       <CtaSection /> 
