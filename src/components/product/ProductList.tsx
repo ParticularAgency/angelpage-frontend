@@ -1,55 +1,44 @@
-// ProductList.tsx
 import React from 'react';
-import ProductCard from '@/components/common/cards/product/productCard'; // Assuming you have a ProductCard component
+import ProductCard from '@/components/common/cards/product/productCard'; // Ensure the path is correct
+import { Product } from '@/types/productTypes';
 
-// Define the product type
-interface Product {
-  charityImageSrc: string;
-  charityImageAlt: string;
-  productImageSrc: string;
-  productImageAlt: string;
-  productBrand: string;
-  productTitle: string;
-  productSize: string;
-  productPrice: string;
-  location: string;
-}
-
-// Define props for the ProductList component
 interface ProductListProps {
-  products: Product[];  // Array of Product type
-  isLoggedIn: boolean;  // Boolean for logged-in status
+  products: Product[];  // Now uses the same `Product` type
+  isLoggedIn: boolean; // Ensure this prop is required
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products, isLoggedIn }) => {
-    const handleFavoriteClick = (index: number) => {
-  console.log(`Favorite clicked on product ${index}`);
-};
+  // Function to handle when a product is favorited
+  const handleFavoriteClick = (productTitle: string) => {
+    console.log(`${productTitle} added to favorites`);
+    // Additional logic for handling favorites can go here (e.g., API calls)
+  };
+
   return (
-    <div className="product-list">
+    <div className="product-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {products.length > 0 ? (
-        products.map((product, index) => (
+        products.map((product) => (
           <ProductCard
-            key={index}
-            charityImageSrc={product.charityImageSrc}
-            charityImageAlt={product.charityImageAlt}
-            productImageSrc={product.productImageSrc}
-            productImageAlt={product.productImageAlt}
-            productBrand={product.productBrand}
-            productTitle={product.productTitle}
-            productSize={product.productSize}
-            productPrice={product.productPrice}
-            handleFavoriteClick={handleFavoriteClick}
-            location={product.location}
-            isLoggedIn={isLoggedIn}
+           key={product.id} 
+           id={product.id}
+            charityImageSrc={product.charityImageSrc ?? ""}
+            charityImageAlt={product.charityImageAlt ?? ""}
+            productImageSrc={product.productImageSrc ?? ""}
+            productImageAlt={product.productImageAlt ?? ""}
+            productBrand={product.productBrand ?? ""}
+            productTitle={product.productTitle ?? ""}
+            productSize={product.productSize ?? ""}
+            productPrice={product.productPrice ?? ""}
+            onFavoriteClick={() => handleFavoriteClick(product.productTitle ?? "")}
+            location={product.location ?? ""}
+            isLoggedIn={isLoggedIn ?? ""} // Pass down the isLoggedIn status
           />
         ))
       ) : (
-        <div>No products found</div>
+        <div>No products found</div> // User-friendly message for no products
       )}
     </div>
   );
 };
 
 export default ProductList;
-

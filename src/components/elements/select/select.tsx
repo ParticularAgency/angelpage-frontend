@@ -1,9 +1,21 @@
 import React from "react";
 
-const Select = ({ label, name, value, onChange, options, className }) => {
+interface SelectProps {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: { value: string; label: string }[]; // Adjust this based on your options' structure
+  className?: string;
+}
+
+const Select: React.FC<SelectProps> = ({ label, name, value, onChange, options, className }) => {
   return (
     <div className={`select-field ${className}`}>
-      <label className="font-secondary text-body-form font-normal leading-[150%] text-mono-100" htmlFor={name}>
+      <label
+        className="font-secondary text-body-form font-normal leading-[150%] text-mono-100"
+        htmlFor={name}
+      >
         {label}
       </label>
       <select
@@ -11,12 +23,12 @@ const Select = ({ label, name, value, onChange, options, className }) => {
         name={name}
         value={value}
         onChange={onChange}
-        className="border !bg-transparent p-2 w-full text-body-caption font-normal leading-[150%] font-secondary text-mono-100 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100"
+        className="select-input"
       >
-        {options.map((option, index) => (
-          <option className="text-body-caption font-normal leading-[150%] font-secondary text-mono-60 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100" key={index} value={option.value}>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
             {option.label}
-          </option> 
+          </option>
         ))}
       </select>
     </div>

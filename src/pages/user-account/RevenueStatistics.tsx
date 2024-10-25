@@ -7,11 +7,20 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+// Define an interface for the props
+interface RevenueStatisticsProps {
+  period: 'Day' | 'Month' | 'Year'; // Type for period, restricting it to these three values
+  setPeriod: (newPeriod: 'Day' | 'Month' | 'Year') => void; // Function to set the period
+  data: { revenue: number; orders: number; day?: string; month?: string; year?: string }[]; // Structure of data array
+}
 
+const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({ period, setPeriod, data }) => {
+    if (!data) {
+    return <div>Loading...</div>; // Or any fallback UI
+  }
 
-const RevenueStatistics = ({ period, setPeriod, data }) => {
   // Helper function to calculate total revenue
- const getTotalRevenue = () => {
+  const getTotalRevenue = () => {
     return data.reduce((total, entry) => total + entry.revenue, 0).toFixed(2);
   };
 
@@ -28,10 +37,10 @@ const RevenueStatistics = ({ period, setPeriod, data }) => {
     }
   };
 
- const totalRevenue = getTotalRevenue();
+  const totalRevenue = getTotalRevenue();
 
   // Assuming you pass the percentage change from the parent component.
-  const revenueChange = 10.05; // Placeholder for revenue change percentage, replace with actual dynamic value if available
+  const revenueChange = 10.05; // Placeholder for revenue change percentage
   const lastWeekRevenue = data.length > 1 ? data[data.length - 2].revenue : 0; 
   const currentWeekRevenue = data.length > 1 ? data[data.length - 1].revenue : 0;
   const weeklyIncrease = (currentWeekRevenue - lastWeekRevenue).toFixed(2); // Calculate weekly increase dynamically
@@ -45,7 +54,7 @@ const RevenueStatistics = ({ period, setPeriod, data }) => {
           <h2 className="body-bold-small">Revenue Statistics</h2>
 
           {/* Displaying the total revenue */}
-        <p className="body-bold-large sm:body-bold-medium">
+          <p className="body-bold-large sm:body-bold-medium"> 
             £{totalRevenue}{' '}
             <span className={`ml-1 px-2 py-[2px] forms-bold rounded-full ${isIncrease ? 'text-[#00C700] bg-[rgba(165,255,187,.60)]' : 'text-[#FF0000] bg-[rgba(255,187,187,.60)]'}`}>
               {isIncrease ? '↑' : '↓'} {Math.abs(revenueChange)}%

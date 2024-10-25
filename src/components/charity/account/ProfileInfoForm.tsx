@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { EditIcon,SaveIcon } from "@/icons";
 import { Input } from "@/components/elements";
-import { Label } from "recharts";
+
 
 const ProfileInfoForm = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -12,7 +12,7 @@ const ProfileInfoForm = () => {
   });
 
   const handleEditClick = () => setIsEditing(!isEditing);
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCharityInfo({ ...charityInfo, [e.target.name]: e.target.value });
   };
 

@@ -1,18 +1,22 @@
 import React from 'react';
-import CategoryProductSlider from '../common/product-slider/ProductCategorySlider';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
 import ProductCategoryCardV1 from '../common/cards/product/ProductCategoryCardV1';
 
 interface HomewareTopCategoryProductsProps {
   secClassName?: string;
-
 }
+
 const homewareCategories = [
-  { imageSrc: '/images/products/homeware-cat-img1.png', imageAlt: 'Cutlery', categoryTitle: 'Cutlery' },
-  { imageSrc: '/images/products/homeware-cat-img2.png', imageAlt: 'Bedding', categoryTitle: 'Bedding' },
-  { imageSrc: '/images/products/homeware-cat-img3.png', imageAlt: 'Crockery', categoryTitle: 'Crockery' },
-  { imageSrc: '/images/products/homeware-cat-img4.png', imageAlt: 'Decor', categoryTitle: 'Decor' },
-  { imageSrc: '/images/products/homeware-cat-img5.png', imageAlt: 'Curtains', categoryTitle: 'Curtains' },
+  { productImageSrc: '/images/products/homeware-cat-img1.png', productImageAlt: 'Cutlery', productTitle: 'Cutlery' },
+  { productImageSrc: '/images/products/homeware-cat-img2.png', productImageAlt: 'Bedding', productTitle: 'Bedding' },
+  { productImageSrc: '/images/products/homeware-cat-img3.png', productImageAlt: 'Crockery', productTitle: 'Crockery' },
+  { productImageSrc: '/images/products/homeware-cat-img4.png', productImageAlt: 'Decor', productTitle: 'Decor' },
+  { productImageSrc: '/images/products/homeware-cat-img5.png', productImageAlt: 'Curtains', productTitle: 'Curtains' },
 ];
+
 const HomewareTopCategoryProducts: React.FC<HomewareTopCategoryProductsProps> = ({ secClassName }) => {
   return (
     <section className={`product-section ${secClassName || ''} bg-mono-0 pt-20 pb-[70px]`}>
@@ -27,25 +31,34 @@ const HomewareTopCategoryProducts: React.FC<HomewareTopCategoryProductsProps> = 
           <div className="product-title-box-right-cont sm:hidden pt-2"></div>
         </div>
       </div>
-        <div className="custom-container md:!pr-0">
+      <div className="custom-container md:!pr-0">
         <div className="product-category-area sm:pr-8 sm:pl-4 overflow-hidden"> 
-             <div className="product-category-wrapper">
-                  <CategoryProductSlider
-                     sliderId="homeware" // Unique ID for the slider
-                     data={homewareCategories} // Pass the data for the slider
-                     Component={ProductCategoryCardV1} // Pass the card component to be used in each slide
-                     autoplayDelay={4000} // Optional customization
-                     slidesPerView={2} // Custom slidesPerView
-                      breakpoints={{
-                        640: { slidesPerView: 2, spaceBetween: 10 },  // Breakpoint for small screens
-                        768: { slidesPerView: 3, spaceBetween: 15 },  // Breakpoint for medium screens
-                        1024: { slidesPerView: 5, spaceBetween: 19 }, // Breakpoint for larger screens
-                      }}
-                     spaceBetween={20} // Custom space between slides
+          <div className="product-category-wrapper">
+            <Swiper
+              spaceBetween={20}
+              slidesPerView={2}
+              navigation
+              modules={[Navigation, Autoplay]}
+              autoplay={{ delay: 4000, disableOnInteraction: false }}
+              breakpoints={{
+                640: { slidesPerView: 2, spaceBetween: 10 },  // Breakpoint for small screens
+                768: { slidesPerView: 3, spaceBetween: 15 },  // Breakpoint for medium screens
+                1024: { slidesPerView: 5, spaceBetween: 19 }, // Breakpoint for larger screens
+              }}
+            >
+              {homewareCategories.map((category, index) => (
+                <SwiperSlide key={index}>
+                  <ProductCategoryCardV1
+                    productImageSrc={category.productImageSrc}
+                    productImageAlt={category.productImageAlt}
+                    productTitle={category.productTitle}
                   />
-             </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </div>
-        </div>
+      </div>
     </section>
   );
 };

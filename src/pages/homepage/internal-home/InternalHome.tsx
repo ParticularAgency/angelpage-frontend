@@ -19,7 +19,7 @@ const InternalHome = () => {
       <HomewareTopCategoryProducts />
       <JewelleryProductCtaSec />
       <ElectronicsTopCategoryProducts />
-      <BagsTopCategoryProducts isLoggedIn={true} />
+      <BagsTopCategoryProducts isLoggedIn={true}  />
       <IntHomeCtaSec />
       <GiftFeaturedCategoryProducts  isLoggedIn={true} />
       <LatestBlogsSection />

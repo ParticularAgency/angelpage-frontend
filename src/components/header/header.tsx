@@ -23,6 +23,10 @@ const Header = () => {
 
   // Check if current pathname is in the array
   const shouldHideBottomNav = hideBottomNavPaths.includes(pathname || "");
+  
+  // Check if current page is '/product/post-product'
+  const isPostProductPage = pathname === '/product/post-product';
+  const isCheckoutPage = pathname === '/checkout';
   const toggleLogin = () => {
     setIsLoggedIn(prevState => !prevState);
   };
@@ -31,7 +35,7 @@ const Header = () => {
     <button className="empty:hidden" onClick={toggleLogin}>
         {isLoggedIn ? '' : ''}
       </button>
-      <header className='header-section'>
+      <header className={`${isPostProductPage || isCheckoutPage ? ("bg-mono-100") : "" } header-section`}>
         <div className="header-top-cont">
           <div className="custom-container">
             <div className="header-top-wrapper py-4 grid grid-cols-12 sm:grid-cols-6 gap-6">
@@ -41,10 +45,12 @@ const Header = () => {
                 ) : ""}
                 <MobileViewOffcanvas />
                 <div className="site-brand-logo">
-                  <Link href="/"><Image src="/images/brand-logo-black.svg" alt="company brand logo" width={112} height={34} /></Link>
+                  <Link href="/"><Image src={`${isPostProductPage || isCheckoutPage ? ("/images/brand-logo-white.svg") : ("/images/brand-logo-black.svg")}`} alt="company brand logo" width={112} height={34} /></Link>
                 </div>
               </div>
-              <div className={`header-right-cont sm:col-span-2 flex items-center gap-4 justify-end col-span-5 ${isLoggedIn ? "md:col-span-10" : ""}`}>  
+              <div className={`header-right-cont sm:col-span-2 flex items-center gap-4 justify-end col-span-5 ${isLoggedIn ? "md:col-span-10" : ""}`}>
+                {!isPostProductPage && !isCheckoutPage &&(
+                <>
                 <GlobalSearch />
                 {isLoggedIn ? (
                 <div className="post-product-btn sm:hidden">
@@ -62,12 +68,23 @@ const Header = () => {
                 </>
                  ) : ""}
                 <MiniCart />
+                
+                </>
+                )}
+                {isCheckoutPage && (
+                 <>
+                 <div className="checkout-header-right-cont flex items-center gap-4">
+                 <Image src="/images/icons/shield-one.svg" alt="shield done icons image" width={16} height={18} />
+                  <p className="body-bold-small !text-mono-0">Secure checkout</p>
+                 </div>
+                 </>
+                )}
               </div>
             </div>
           </div>
         </div>
-        {/* Conditionally render BottomNavMegamenu based on the pathname */}
-        {!shouldHideBottomNav && (
+       
+        {!shouldHideBottomNav && !isPostProductPage && !isCheckoutPage && (
           <div className="header-bottom-cont pt-[19px] pb-[22px] sm:hidden">
             <BottomNavMegamenu />
           </div>

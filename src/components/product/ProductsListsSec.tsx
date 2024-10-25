@@ -6,44 +6,51 @@ import ProductList from "@/components/product/ProductList";
 import Pagination from "@/components/elements/Pagination";
 // import SearchBar from "@/components/elements/search/SearchBar";
 import { productData } from "@/libs/productData";
-import { ArrowDownIcon, CloseIcon, FilterIcon } from "@/icons";
+import {CloseIcon, FilterIcon } from "@/icons";
 
+interface Filters {
+  category: string[];         
+  subCategory: string[];      
+  productBrand: string[];     
+  productCondition: string[]; 
+}
 
 const ProductsListsSec = () => {
   const [products] = useState(productData); // Original product data
   const [filteredProducts, setFilteredProducts] = useState(productData);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [filters, setFilters] = useState({
-    category: [],
-    subCategory: [],
-    productBrand: [],
-    productCondition: [],
-  });
-  const [sort, setSort] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+const [filters, setFilters] = useState<Filters>({
+  category: [],
+  subCategory: [],
+  productBrand: [],
+  productCondition: [],
+});
+const [sort, setSort] = useState<string>("");
+  // const [searchQuery, setSearchQuery] = useState("");
 
   const productsPerPage = 12; 
 
   useEffect(() => { 
-    filterAndSortProducts(filters, sort, searchQuery);
+    filterAndSortProducts(filters, sort);
     setTotalPages(Math.ceil(filteredProducts.length / productsPerPage));
     setCurrentPage(1); // Reset to first page on filter change
   }, [filters, sort,  products]);
 
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-  };
+const handleFilterChange = (newFilters: Filters) => {
+  setFilters(newFilters);
+};
 
-  const handleSortChange = (newSort) => {
-    setSort(newSort);
-  };
+const handleSortChange = (newSort: string) => {
+  setSort(newSort);
+};
+
 
   // const handleSearch = (query) => {
   //   setSearchQuery(query);
   // };
 
-const removeFilter = (filterType, value) => {
+const removeFilter = (filterType: keyof Filters, value: string) => {
   setFilters((prevFilters) => ({
     ...prevFilters,
     [filterType]: prevFilters[filterType].filter((item) => item !== value),
@@ -51,60 +58,48 @@ const removeFilter = (filterType, value) => {
 };
 
 
-  const filterAndSortProducts = (filters, sort, query) => {
+
+ const filterAndSortProducts = (filters: Filters, sort: string) => {
     let updatedProducts = [...products];
 
     // Filter logic
     if (filters.category.length > 0) {
       updatedProducts = updatedProducts.filter((product) =>
-        filters.category.includes(product.category)
+        filters.category.includes(product.category || '' || '')
       );
     }
     if (filters.subCategory.length > 0) {
       updatedProducts = updatedProducts.filter((product) =>
-        filters.subCategory.includes(product.subcategory)
+        filters.subCategory.includes(product.subcategory || '')
       );
     }
     if (filters.productBrand.length > 0) {
       updatedProducts = updatedProducts.filter((product) =>
-        filters.productBrand.includes(product.productBrand)
+        filters.productBrand.includes(product.productBrand || '')
       );
     }
     if (filters.productCondition.length > 0) {
       updatedProducts = updatedProducts.filter((product) =>
-        filters.productCondition.includes(product.productCondition)
+        filters.productCondition.includes(product.productCondition || '')
       );
     }
 
-    // // Search logic
-    // if (query) {
-    //   updatedProducts = updatedProducts.filter(
-    //     (product) =>
-    //       product.productTitle.toLowerCase().includes(query.toLowerCase()) ||
-    //       product.category.toLowerCase().includes(query.toLowerCase()) ||
-    //       product.subcategory.toLowerCase().includes(query.toLowerCase()) ||
-    //       product.productBrand.toLowerCase().includes(query.toLowerCase()) ||
-    //       product.productCondition.toLowerCase().includes(query.toLowerCase()) ||
-    //       product.location.toLowerCase().includes(query.toLowerCase())
-    //   );
-    // }
-
     // Sort logic
-    if (sort === "price-asc") {
-      updatedProducts.sort((a, b) => parseFloat(a.productPrice) - parseFloat(b.productPrice));
-    } else if (sort === "price-desc") {
-      updatedProducts.sort((a, b) => parseFloat(b.productPrice) - parseFloat(a.productPrice));
-    } else if (sort === "name-asc") {
-      updatedProducts.sort((a, b) => a.productTitle.localeCompare(b.productTitle));
-    } else if (sort === "name-desc") {
-      updatedProducts.sort((a, b) => b.productTitle.localeCompare(a.productTitle));
-    }
+if (sort === "price-asc") {
+  updatedProducts.sort((a, b) => parseFloat(a.productPrice || "0") - parseFloat(b.productPrice || "0"));
+} else if (sort === "price-desc") {
+  updatedProducts.sort((a, b) => parseFloat(b.productPrice || "0") - parseFloat(a.productPrice || "0"));
+} else if (sort === "name-asc") {
+  updatedProducts.sort((a, b) => (a.productTitle || "").localeCompare(b.productTitle || ""));
+} else if (sort === "name-desc") {
+  updatedProducts.sort((a, b) => (b.productTitle || "").localeCompare(a.productTitle || ""));
+}
+
 
     setFilteredProducts(updatedProducts);
     setTotalPages(Math.ceil(updatedProducts.length / productsPerPage));
   };
-
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
@@ -144,21 +139,24 @@ const removeFilter = (filterType, value) => {
                   </div>
 
                   <div className="cart-add-product-item-wrapper pt-4">
-                     <div className="product-selected-category-lists  flex flex-wrap items-center gap-2">
-                    {Object.keys(filters).map((filterType) => 
-                      filters[filterType].map((filterValue, index) => (
-                        <span key={index} className="selected-filter whitespace-nowrap flex items-center gap-0 h-8 bg-[#F4E8F9] caption text-primary-color-100 px-[8px] py-[4px] rounded-[16px]">
-                          {filterValue}
-                          <button
-                            className="remove-filter p-[5px]"
-                            onClick={() => removeFilter(filterType, filterValue)}
-                          >
-                            x
-                          </button>
-                        </span>
-                      ))
-                    )}
-                 </div>
+<div className="product-selected-category-lists flex flex-wrap items-center gap-2">
+  {Object.keys(filters).map((filterType) => {
+    const key = filterType as keyof Filters; // Assert the type here
+    return filters[key].map((filterValue, index) => (
+      <span key={index} className="selected-filter whitespace-nowrap flex items-center gap-0 h-8 bg-[#F4E8F9] caption text-primary-color-100 px-[8px] py-[4px] rounded-[16px]">
+        {filterValue}
+        <button
+          className="remove-filter p-[5px]"
+          onClick={() => removeFilter(key, filterValue)}
+        >
+          x
+        </button>
+      </span>
+    ));
+  })}
+</div>
+
+
 
                   </div>
                 </div>
@@ -167,30 +165,40 @@ const removeFilter = (filterType, value) => {
               <div className="offcanvas-main px-6 min-h-full mt-4 pb-8"> 
                 <div className="cart-canvas-area min-h-full">
                     <FilterSidebar
-               availableProducts={products}
-               selectedFilters={filters} // Pass the current selected filters
-               onFilterChange={handleFilterChange}
-             />
+  availableProducts={products.map(product => ({
+    ...product,
+      productBrand: product.productBrand || "Unknown Brand",
+    productTitle: product.productTitle || "Untitled Product",
+    productCondition: product.productCondition || "Unknown Condition",
+    subcategory: product.subcategory || "Uncategorized",
+    category: product.category || "Uncategorized",// Default category
+  }))}
+  selectedFilters={filters}
+  onFilterChange={handleFilterChange}
+/>
                 </div>
               </div>
             </div>
           </div>
                     </div>
-                   <div className="product-selected-category-lists md:hidden flex flex-wrap items-center gap-2">
-                    {Object.keys(filters).map((filterType) => 
-                      filters[filterType].map((filterValue, index) => (
-                        <span key={index} className="selected-filter whitespace-nowrap flex items-center gap-0 h-8 bg-[#F4E8F9] caption text-primary-color-100 px-[8px] py-[4px] rounded-[16px]">
-                          {filterValue}
-                          <button
-                            className="remove-filter p-[5px]"
-                            onClick={() => removeFilter(filterType, filterValue)}
-                          >
-                            x
-                          </button>
-                        </span>
-                      ))
-                    )}
-                 </div>
+<div className="product-selected-category-lists flex flex-wrap items-center gap-2">
+  {Object.keys(filters).map((filterType) => {
+    const key = filterType as keyof Filters; // Assert the type here
+    return filters[key].map((filterValue, index) => (
+      <span key={index} className="selected-filter whitespace-nowrap flex items-center gap-0 h-8 bg-[#F4E8F9] caption text-primary-color-100 px-[8px] py-[4px] rounded-[16px]">
+        {filterValue}
+        <button
+          className="remove-filter p-[5px]"
+          onClick={() => removeFilter(key, filterValue)}
+        >
+          x
+        </button>
+      </span>
+    ));
+  })}
+</div>
+
+
             </div>
             <Sorting onSortChange={handleSortChange} />
           </div>
@@ -198,10 +206,17 @@ const removeFilter = (filterType, value) => {
           <div className="products-lists-main-cont flex items-start md:flex-col gap-6">
             <div className="products-list-main-left-cont h-[100vh] sticky md:relative md:h-auto top-9 max-w-[220px] md:max-w-[160px] w-full md:hidden">  
               <FilterSidebar
-               availableProducts={products}
-               selectedFilters={filters} // Pass the current selected filters
-               onFilterChange={handleFilterChange}
-             />
+  availableProducts={products.map(product => ({
+    ...product,
+      productBrand: product.productBrand || "Unknown Brand",
+    productTitle: product.productTitle || "Untitled Product",
+    productCondition: product.productCondition || "Unknown Condition",
+    subcategory: product.subcategory || "Uncategorized",
+    category: product.category || "Uncategorized",// Default category
+  }))}
+  selectedFilters={filters}
+  onFilterChange={handleFilterChange}
+/>
             </div>
             <div className="products-list-main-right-cont">
               <ProductList isLoggedIn={true} products={currentProducts} />

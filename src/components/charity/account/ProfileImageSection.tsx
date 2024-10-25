@@ -7,16 +7,19 @@ const ProfileImageSection = () => {
   const [image, setImage] = useState("/images/icons/elisp-profile-default-img.svg");
 
   const handleEditClick = () => setIsEditing(!isEditing);
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImage(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (files && files[0]) {  // Check if files is not null and has at least one file
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target && e.target.result) {
+        setImage(e.target.result as string); // Assuming profile image is a string URL
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+};
 
   return (
     <div className="profile-img-section pt-[23px] pb-8">

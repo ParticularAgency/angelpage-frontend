@@ -7,4 +7,4 @@ import Select from '@/components/elements/input-fields/select';
 import Select2 from '@/components/elements/select/select';
 
 
-export { Button, Checkbox,Input,RadioButton,Textarea, Select,select2 };
+export { Button, Checkbox,Input,RadioButton,Textarea, Select, Select2 };

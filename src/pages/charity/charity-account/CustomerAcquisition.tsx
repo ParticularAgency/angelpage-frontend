@@ -3,8 +3,14 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 
+// Define the interface for session data
+interface SessionData {
+  day: string;
+  sessions: number;
+}
+
 // Example data
-const data = [
+const data: SessionData[] = [
   { day: 'Day 1', sessions: 10 },
   { day: 'Day 2', sessions: 12 },
   { day: 'Day 3', sessions: 15 },
@@ -15,17 +21,17 @@ const data = [
 ];
 
 // Helper function to calculate the total sessions
-const getTotalSessions = (data) => {
+const getTotalSessions = (data: SessionData[]): number => {
   return data.reduce((total, entry) => total + entry.sessions, 0);
 };
 
 // Example function to calculate the bounce rate (placeholder logic)
-const calculateBounceRate = () => {
+const calculateBounceRate = (): string => {
   // For demo purposes, returning a static value
   return '40.5%'; 
 };
 
-const CustomerAcquisition = () => {
+const CustomerAcquisition: React.FC = () => {
   const totalSessions = getTotalSessions(data);
   const totalUsers = data.length; // Assuming each day represents unique users (this can vary)
   const bounceRate = calculateBounceRate(); // Placeholder for bounce rate logic

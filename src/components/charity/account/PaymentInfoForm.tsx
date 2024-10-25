@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { EditIcon, SaveIcon, DeleteIcon } from "@/icons"; // Assuming your icons are correctly imported
+import { EditIcon, SaveIcon } from "@/icons"; // Assuming your icons are correctly imported
 import { Button, Input } from "@/components/elements";
 
 const PaymentInfoForm = () => {
   const [isAdding, setIsAdding] = useState(false); // for adding new payment
-  const [editingIndex, setEditingIndex] = useState(null); // for editing existing methods
+  const [editingIndex, setEditingIndex] = useState<number | null>(null); // for editing existing methods
   const [useShippingAsBilling, setUseShippingAsBilling] = useState(false); // Checkbox state
 
   // Dummy shipping address to be used for the checkbox feature
@@ -55,7 +55,7 @@ const PaymentInfoForm = () => {
     setEditingIndex(null); // When adding a new payment, we aren't editing
   };
 
-  const handleEditClick = (index) => {
+  const handleEditClick = (index: number) => {
     setNewPayment(paymentMethods[index]);
     setEditingIndex(index);
     setIsAdding(true); // Reuse the same form for editing
@@ -85,7 +85,7 @@ const PaymentInfoForm = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name in newPayment.billingAddress) {
       setNewPayment({
@@ -97,7 +97,7 @@ const PaymentInfoForm = () => {
     }
   };
 
-  const handleCheckboxChange = (e) => {
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUseShippingAsBilling(e.target.checked);
     if (e.target.checked) {
       setNewPayment({

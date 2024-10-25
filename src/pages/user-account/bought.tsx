@@ -64,13 +64,12 @@ const boughtItems = [
 ];
 
 // Function to calculate charity proceeds and administration fees
-const calculateFees = (priceString) => {
+const calculateFees = (priceString: string) => {
   const price = parseFloat(priceString.replace('£', '')); // Parse the price from string to number
   const charityProceeds = (price * 0.9).toFixed(2); // 90% goes to charity
   const adminFee = (price * 0.1).toFixed(2); // 10% is administration fee
   return { charityProceeds, adminFee };
 };
-
 const BoughtItems = () => {
   const [selectedItem, setSelectedItem] = useState(boughtItems[0]); // Default to item 1 (Hollister)
 

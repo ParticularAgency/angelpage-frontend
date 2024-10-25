@@ -1,17 +1,23 @@
+"use client"
 import React, { useState } from 'react';
 import ProductCard from '@/components/common/cards/product/postProductCard'; // Adjust the path as needed
+import { Product } from '@/types/productTypes';
 
-const UsersProductListingArea = ({ products }) => {
-  const [selectedDeliveryTime, setSelectedDeliveryTime] = useState(''); // State to track selected delivery time
+interface UsersProductListingAreaProps {
+  products: Product[];  // Now uses the same `Product` type
+}
+const UsersProductListingArea: React.FC<UsersProductListingAreaProps> = ({ products = [] }) => {
+
+  const [selectedDeliveryTime, setSelectedDeliveryTime] = useState<string>(''); // State to track selected delivery time
 
   // Function to filter products based on the selected delivery time range
-  const filterByDeliveryTime = (products) => {
+  const filterByDeliveryTime = (products: Product[]) => {
     if (!selectedDeliveryTime) return products; // No filtering if no delivery time is selected
 
     const [minTime, maxTime] = selectedDeliveryTime.split('-').map(time => parseInt(time.trim(), 10));
 
     return products.filter(product => {
-      const deliveryTime = product.averageDeliveryTime; // Assuming products have an `averageDeliveryTime` property in days
+      const deliveryTime = product.averageDeliveryTime ?? 0; // Assuming products have an `averageDeliveryTime` property in days, defaulting to 0 if undefined
       return deliveryTime >= minTime && deliveryTime <= maxTime;
     });
   };
@@ -48,18 +54,18 @@ const UsersProductListingArea = ({ products }) => {
               draftProducts.map((product) => (
                 <ProductCard
                   key={product.id}
-                  productId={product.id}
+                  productId={product.id.toString()}
                   charityImageSrc={product.charityImageSrc}
-                  charityImageAlt={product.charityImageAlt}
+                charityImageAlt={product.charityImageAlt ?? ""}
                   productImageSrc={product.productImageSrc}
-                  productImageAlt={product.productImageAlt}
+                  productImageAlt={product.productImageAlt ?? ""}
                   productBrand={product.productBrand}
                   productTitle={product.productTitle}
                   productSize={product.productSize}
                   productPrice={product.productPrice}
                   location={product.location}
                   status={product.status}
-                  averageDeliveryTime={product.averageDeliveryTime} // Include delivery time data
+                  averageDeliveryTime={product.averageDeliveryTime ?? 0} 
                   onFavoriteClick={() => console.log('Favorited')}
                   onDeleteConfirm={handleDeleteConfirm}
                   isLoggedIn={true}
@@ -79,18 +85,18 @@ const UsersProductListingArea = ({ products }) => {
               activeProducts.map((product) => (
                 <ProductCard
                   key={product.id}
-                  productId={product.id}
+                  productId={product.id.toString()}
                   charityImageSrc={product.charityImageSrc}
-                  charityImageAlt={product.charityImageAlt}
+                charityImageAlt={product.charityImageAlt ?? ""}
                   productImageSrc={product.productImageSrc}
-                  productImageAlt={product.productImageAlt}
+                  productImageAlt={product.productImageAlt ?? ""}
                   productBrand={product.productBrand}
                   productTitle={product.productTitle}
                   productSize={product.productSize}
                   productPrice={product.productPrice}
                   location={product.location}
                   status={product.status}
-                  averageDeliveryTime={product.averageDeliveryTime} // Include delivery time data
+                  averageDeliveryTime={product.averageDeliveryTime ?? 0} 
                   onFavoriteClick={() => console.log('Favorited')}
                   onDeleteConfirm={handleDeleteConfirm}
                   isLoggedIn={true}
@@ -110,18 +116,18 @@ const UsersProductListingArea = ({ products }) => {
               removedProducts.map((product) => (
                 <ProductCard
                   key={product.id}
-                  productId={product.id}
+                  productId={product.id.toString()}
                   charityImageSrc={product.charityImageSrc}
-                  charityImageAlt={product.charityImageAlt}
+                charityImageAlt={product.charityImageAlt ?? ""}
                   productImageSrc={product.productImageSrc}
-                  productImageAlt={product.productImageAlt}
+                  productImageAlt={product.productImageAlt ?? ""}
                   productBrand={product.productBrand}
                   productTitle={product.productTitle}
                   productSize={product.productSize}
                   productPrice={product.productPrice}
                   location={product.location}
                   status={product.status}
-                  averageDeliveryTime={product.averageDeliveryTime} // Include delivery time data
+                  averageDeliveryTime={product.averageDeliveryTime ?? 0} 
                   onFavoriteClick={() => console.log('Favorited')}
                   onDeleteConfirm={handleDeleteConfirm}
                   isLoggedIn={true}

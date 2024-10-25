@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 
+interface Option {
+    value: string;
+    label: string;
+}
+
 interface SelectProps {
     label?: string;
     name: string;
     id: string;
-    options: Array<string>;
+    options: Array<Option | string>;  // Allows both objects and strings
     required?: boolean;
     disabled?: boolean;
     status?: 'default' | 'error' | 'success' | 'focus';
@@ -66,9 +71,22 @@ const Select: React.FC<SelectProps> = ({
                 onFocus={handleFocus}
                 onBlur={handleBlur}
             >
-                {options.map((option, index) => (
-                    <option key={index} value={option.toLowerCase()}>{option}</option>
-                ))}
+                {options.map((option, index) => {
+                    // Check if the option is an object (with value and label keys)
+                    if (typeof option === 'object' && 'value' in option && 'label' in option) {
+                        return (
+                            <option key={index} value={option.value}>
+                                {option.label}
+                            </option>
+                        );
+                    }
+                    // If it's a string, just use the string value for both value and label
+                    return (
+                        <option key={index} value={option.toLowerCase()}>
+                            {option}
+                        </option>
+                    );
+                })}
             </select>
             {status === 'error' && errorMessage && (
                 <p className="error-message text-body-caption text-error">{errorMessage}</p>

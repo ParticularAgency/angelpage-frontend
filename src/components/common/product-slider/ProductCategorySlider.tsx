@@ -2,22 +2,24 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
-import 'swiper/css/navigation'; // Import Swiper styles
+import 'swiper/css/navigation';
+
 interface Product {
-  id: string,
-  charityImageSrc: string,
-	charityImageAlt: string,
-	productImageSrc: string,
-	productImageAlt: string,
-	productBrand: string,
-	productTitle: string,
-	productSize: string,
-	productPrice: string,
-	location: string,
-	category: string,
-  subcategory: string, 
-	productCondition: string,
+  id: string; // Unique identifier for each product
+  charityImageSrc: string;
+  charityImageAlt?: string;
+  productImageSrc: string;
+  productImageAlt?: string;
+  productBrand?: string;
+  productTitle?: string;
+  productSize?: string;
+  productPrice?: string;
+  location?: string;
+  category?: string;
+  subcategory: string;
+  productCondition: string;
 }
+
 interface CategoryProductSliderProps {
   sliderId: string; // Add sliderId as a prop for unique className
   data: Product[]; // Data for the slider items (generalized to any array)
@@ -31,7 +33,7 @@ interface CategoryProductSliderProps {
 const CategoryProductSlider: React.FC<CategoryProductSliderProps> = ({
   sliderId,
   data,
-  Component, // Component to be used in each SwiperSlide
+  Component, 
   autoplayDelay = 5000,
   slidesPerView = 2,
   breakpoints,
@@ -64,9 +66,9 @@ const CategoryProductSlider: React.FC<CategoryProductSliderProps> = ({
           },
         }}
       >
-        {/* Dynamically render slides using the passed Component */}
-        {data.map((item, index) => (
-          <SwiperSlide key={index}>
+
+        {data.map((item) => (
+          <SwiperSlide key={item.id}> {/* Use unique id as key */}
             <Component {...item} />
           </SwiperSlide>
         ))}
