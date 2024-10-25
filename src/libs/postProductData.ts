@@ -1,4 +1,6 @@
-export const productData = [
+import { Product } from "@/types/productTypes";
+
+export const productData: Product[] = [
 	{
 		id: 1,
 		charityImageSrc: "/images/icons/charity-img.png",
@@ -15,6 +17,7 @@ export const productData = [
 		productCondition: "New",
 		status: "Active", // Status can be 'Draft', 'Active', or 'Removed'
 		stock: 10, // Number of items available
+		averageDeliveryTime: 5, // Average delivery time in days
 	},
 	{
 		id: 2,
@@ -32,6 +35,7 @@ export const productData = [
 		productCondition: "Very Good Condition",
 		status: "Draft", // Draft status indicates the product is not publicly available yet
 		stock: 5, // Current stock of the product
+		averageDeliveryTime: 7, // Average delivery time in days
 	},
 	{
 		id: 3,
@@ -49,6 +53,7 @@ export const productData = [
 		productCondition: "Good Condition",
 		status: "Active",
 		stock: 15,
+		averageDeliveryTime: 4, // Average delivery time in days
 	},
 	{
 		id: 4,
@@ -66,7 +71,9 @@ export const productData = [
 		productCondition: "Fair Condition",
 		status: "Removed", // This product has been removed, possibly due to zero stock
 		stock: 0, // Out of stock
+		averageDeliveryTime: 10, // Average delivery time in days
 	},
+	// Add more products here with all required fields filled in
 	{
 		id: 5,
 		charityImageSrc: "/images/icons/charity-img.png",
@@ -83,6 +90,7 @@ export const productData = [
 		productCondition: "New",
 		status: "Active",
 		stock: 7,
+		averageDeliveryTime: 5, // Average delivery time in days
 	},
 	{
 		id: 6,
@@ -100,6 +108,7 @@ export const productData = [
 		productCondition: "Very Good Condition",
 		status: "Draft",
 		stock: 8,
+		averageDeliveryTime: 7, // Average delivery time in days
 	},
 	{
 		id: 7,
@@ -117,6 +126,7 @@ export const productData = [
 		productCondition: "Good Condition",
 		status: "Active",
 		stock: 20,
+		averageDeliveryTime: 4, // Average delivery time in days
 	},
 	{
 		id: 8,
@@ -134,6 +144,7 @@ export const productData = [
 		productCondition: "Fair Condition",
 		status: "Removed",
 		stock: 0,
+		averageDeliveryTime: 10, // Average delivery time in days
 	},
 	{
 		id: 9,
@@ -151,6 +162,7 @@ export const productData = [
 		productCondition: "New",
 		status: "Active",
 		stock: 4,
+		averageDeliveryTime: 5, // Average delivery time in days
 	},
 	{
 		id: 10,
@@ -168,6 +180,7 @@ export const productData = [
 		productCondition: "Very Good Condition",
 		status: "Draft",
 		stock: 10,
+		averageDeliveryTime: 7, // Average delivery time in days
 	},
 	{
 		id: 11,
@@ -185,6 +198,7 @@ export const productData = [
 		productCondition: "Good Condition",
 		status: "Active",
 		stock: 15,
+		averageDeliveryTime: 4, // Average delivery time in days
 	},
 	{
 		id: 12,
@@ -202,6 +216,7 @@ export const productData = [
 		productCondition: "Good Condition",
 		status: "Removed",
 		stock: 0,
+		averageDeliveryTime: 10, // Average delivery time in days
 	},
 	{
 		id: 13,
@@ -219,5 +234,6 @@ export const productData = [
 		productCondition: "Fair Condition",
 		status: "Active",
 		stock: 5,
+		averageDeliveryTime: 6, // Average delivery time in days
 	},
 ];

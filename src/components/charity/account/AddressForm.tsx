@@ -13,7 +13,7 @@ const AddressForm = () => {
   });
 
   const handleEditClick = () => setIsEditing(!isEditing);
-  const handleChange = (e) => {
+ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAddress({ ...address, [e.target.name]: e.target.value });
   };
 

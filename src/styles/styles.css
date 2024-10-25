@@ -577,6 +577,7 @@ select#sort-select option {
     border-bottom: 1px solid #E6E3E8;
 }
 
+
 .payment-section .btn-states-box,
 .address-section .btn-states-box {
     border: 1px solid #E6E3E7;
@@ -677,6 +678,7 @@ p.account-info-item.editing-view {
     background: #F1F1F8;
 }
 
+.sorting select,
 .sold-item-sort-box select,
 .delivery-time-filter select {
     border: 1px solid #0D0113;
@@ -705,4 +707,12 @@ p.account-info-item.editing-view {
         grid-template-columns: 120px 1fr;
     }
 
+}
+
+.basket-product-item-head {
+    border-bottom: 1px solid #E6E3E7;
+}
+
+.summary-foot {
+    border-top: 1px solid #E6E3E7;
 }

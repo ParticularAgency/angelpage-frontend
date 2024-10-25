@@ -46,7 +46,7 @@ const Contact = () => {
                     <div className="w-full mt-[19px]">
                         <Input label='Message' name='message' placeholder='Type message here' id='message' className='flex-col' />
                     </div>
-                    <Button type='submit' variant='tertiary' className='mt-[27px]'>Send</Button>
+                    <Button type='submit' variant='primary' className='mt-[27px]'>Send</Button>
                 </form>
             </div>
         </div>

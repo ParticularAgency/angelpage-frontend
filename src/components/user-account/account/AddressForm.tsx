@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Button, Input, Select } from "@/components/elements";
-import { EditIcon, SaveIcon, DeleteIcon } from "@/icons";
+import { EditIcon, SaveIcon } from "@/icons";
 
-const AddressForm = () => {
+const AddressForm: React.FC = () => {
   // Managing multiple addresses
   const [addresses, setAddresses] = useState([
     {
@@ -20,7 +20,7 @@ const AddressForm = () => {
   // Function to handle adding a new address
   const handleAddNewAddress = () => {
     const newAddress = {
-      id: addresses.length + 1,
+      id: addresses.length + 1, // Ensure unique ID, consider using a library for unique IDs
       type: "Shipping from",
       name: "",
       address: "",
@@ -33,7 +33,7 @@ const AddressForm = () => {
   };
 
   // Function to handle edit/save toggle
-  const handleEditClick = (id) => {
+  const handleEditClick = (id: number) => {
     setAddresses(
       addresses.map((address) =>
         address.id === id ? { ...address, isEditing: !address.isEditing } : address
@@ -42,7 +42,10 @@ const AddressForm = () => {
   };
 
   // Function to handle input changes
-  const handleChange = (id, e) => {
+  const handleChange = (
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setAddresses(
       addresses.map((address) =>
         address.id === id ? { ...address, [e.target.name]: e.target.value } : address
@@ -51,7 +54,7 @@ const AddressForm = () => {
   };
 
   // Function to handle deleting an address
-  const handleDelete = (id) => {
+  const handleDelete = (id: number) => {
     setAddresses(addresses.filter((address) => address.id !== id));
   };
 
@@ -74,8 +77,8 @@ const AddressForm = () => {
         <div key={address.id} className="address-item mb-6 border rounded-lg">
           {/* Edit/Save Button */}
           <div className="flex justify-between items-center btn-states-box">
-             {!address.isEditing ? (
-            <p className="body-small">{address.type}</p>
+            {!address.isEditing ? (
+              <p className="body-small">{address.type}</p>
             ) : (
               <p className="body-small"></p>
             )}
@@ -94,6 +97,7 @@ const AddressForm = () => {
               )}
             </button>
           </div>
+
           {/* Address Details or Form */}
           <div className={`address-details ${!address.isEditing ? "" : "flex flex-col gap-2"}`}>
             {!address.isEditing ? (
@@ -107,6 +111,7 @@ const AddressForm = () => {
             ) : (
               <>
                 <Select
+                  id={`address-type-${address.id}`} // Added id prop for Select
                   label="Address type"
                   name="type"
                   value={address.type}
@@ -157,15 +162,15 @@ const AddressForm = () => {
                   onChange={(e) => handleChange(address.id, e)}
                   className="flex-col w-full max-w-[386px]"
                 />
-          <div className="flex justify-start mt-2">
-            <Button
-              variant="accend-link"
-              className="flex items-center gap-2 !text-primary-color-100 !underline"
-              onClick={() => handleDelete(address.id)} 
-            >
-              Delete address
-            </Button>
-          </div>
+                <div className="flex justify-start mt-2">
+                  <Button
+                    variant="accend-link"
+                    className="flex items-center gap-2 !text-primary-color-100 !underline"
+                    onClick={() => handleDelete(address.id)}
+                  >
+                    Delete address
+                  </Button>
+                </div>
               </>
             )}
           </div>

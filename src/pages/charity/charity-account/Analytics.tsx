@@ -3,8 +3,27 @@ import BusinessOverview from './BusinessOverview';
 import RevenueStatistics from './RevenueStatistics';
 import CustomerAcquisition from './CustomerAcquisition';
 
+// Define separate interfaces for the data entries
+interface DailyDataEntry {
+  day: string;
+  orders: number;
+  revenue: number;
+}
+
+interface MonthlyDataEntry {
+  month: string;
+  orders: number;
+  revenue: number;
+}
+
+interface YearlyDataEntry {
+  year: string;
+  orders: number;
+  revenue: number;
+}
+
 // Sample data for different periods
-const dailyData = [
+const dailyData: DailyDataEntry[] = [
   { day: 'Mon', orders: 90, revenue: 100 },
   { day: 'Tue', orders: 65, revenue: 150 },
   { day: 'Wed', orders: 80, revenue: 200 },
@@ -14,7 +33,7 @@ const dailyData = [
   { day: 'Sun', orders: 140, revenue: 400 },
 ];
 
-const monthlyData = [
+const monthlyData: MonthlyDataEntry[] = [
   { month: 'Jan', orders: 100, revenue: 1000 },
   { month: 'Feb', orders: 150, revenue: 1500 },
   { month: 'Mar', orders: 200, revenue: 2000 },
@@ -29,7 +48,7 @@ const monthlyData = [
   { month: 'Dec', orders: 650, revenue: 6500 },
 ];
 
-const yearlyData = [
+const yearlyData: YearlyDataEntry[] = [
   { year: '2014', orders: 5010, revenue: 2029.92 },
   { year: '2015', orders: 5010, revenue: 2029.92 },
   { year: '2016', orders: 5010, revenue: 2029.92 },
@@ -42,8 +61,9 @@ const yearlyData = [
   { year: '2023', orders: 7000, revenue: 9000 },
 ];
 
-const AnalyticsPage = () => {
-  const [period, setPeriod] = useState('Year');
+const AnalyticsPage: React.FC = () => {
+  // Specify the type for period state
+  const [period, setPeriod] = useState<'Day' | 'Month' | 'Year'>('Year');
 
   // Function to get data based on the selected period
   const getData = () => {
@@ -59,12 +79,12 @@ const AnalyticsPage = () => {
   };
 
   // Calculate total revenue for the selected period
-  const calculateTotalRevenue = (data) => {
-    return data.reduce((total, entry) => total + entry.revenue, 0).toFixed(2);
+  const calculateTotalRevenue = (data: { revenue: number }[]) => {
+    return data.reduce((total, entry) => total + entry.revenue, 0);
   };
 
   // Calculate total number of orders for the selected period
-  const calculateTotalOrders = (data) => {
+  const calculateTotalOrders = (data: { orders: number }[]) => {
     return data.reduce((total, entry) => total + entry.orders, 0);
   };
 

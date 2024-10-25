@@ -4,17 +4,18 @@ import { EditIcon,SaveIcon } from "@/icons";
 
 const ProfileImageSection = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [image, setImage] = useState("/images/icons/elisp-profile-default-img.svg");
+  const [image, setProfileImage] = useState("/images/icons/elisp-profile-default-img.svg");
 
   const handleEditClick = () => setIsEditing(!isEditing);
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files; // Get the FileList from the input
+    if (files && files.length > 0) { // Check if files is not null and has at least one file
+      const file = files[0];
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setImage(e.target.result);
+      reader.onload = (event) => {
+        setProfileImage(event.target?.result as string); // Set the profile image state
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // Read the file as a data URL
     }
   };
 

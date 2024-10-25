@@ -4,7 +4,7 @@ import { Button, Input } from "@/components/elements";
 
 const PaymentInfoForm = () => {
   const [isAdding, setIsAdding] = useState(false); // For adding a new payment method
-  const [editingIndex, setEditingIndex] = useState(null); // For editing existing methods
+  const [editingIndex, setEditingIndex] = useState<number | null>(null); // For editing existing methods
   const [useShippingAsBilling, setUseShippingAsBilling] = useState(false); // Checkbox state
 
   // Dummy shipping address to be used for the checkbox feature
@@ -55,7 +55,7 @@ const PaymentInfoForm = () => {
     setEditingIndex(null); // When adding a new payment, we aren't editing
   };
 
-  const handleEditClick = (index) => {
+  const handleEditClick = (index: number) => { // Explicitly typed index as a number
     setNewPayment(paymentMethods[index]);
     setEditingIndex(index);
     setIsAdding(true); // Reuse the same form for editing
@@ -85,7 +85,7 @@ const PaymentInfoForm = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name in newPayment.billingAddress) {
       setNewPayment({
@@ -97,7 +97,7 @@ const PaymentInfoForm = () => {
     }
   };
 
-  const handleCheckboxChange = (e) => {
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUseShippingAsBilling(e.target.checked);
     if (e.target.checked) {
       setNewPayment({

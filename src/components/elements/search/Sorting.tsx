@@ -10,7 +10,7 @@ const Sorting: React.FC<SortingProps> = ({ onSortChange }) => {
       <label htmlFor="sort-select" className="body-small whitespace-nowrap">Sort by:</label> 
       <select
         id="sort-select"
-        className="select select-error bg-transparent border-0 focus:border-0 focus:outline-0 w-full max-w-[160px] pr-8 !pl-2"
+        className="select select-error bg-transparent focus:outline-0 w-full max-w-[160px] pr-8 !pl-2"
         onChange={(e) => onSortChange(e.target.value)} 
         defaultValue="" // Set default to empty to show placeholder
       >

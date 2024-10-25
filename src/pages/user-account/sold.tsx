@@ -54,15 +54,14 @@ const soldItemsMock = [
 ];
 
 // Fee Calculation Function
-const calculateFees = (productPrice) => {
+const calculateFees = (productPrice: string): { adminFee: string; saleProceeds: string } => {
   const productPriceNumber = parseFloat(productPrice.replace('£', ''));
   const adminFee = (productPriceNumber * 0.1).toFixed(2); // 10% fee
-  const saleProceeds = (productPriceNumber - adminFee).toFixed(2);
-  return {
-    adminFee: `£${adminFee}`,
-    saleProceeds: `£${saleProceeds}`
-  };
+  const saleProceeds = (productPriceNumber - parseFloat(adminFee)).toFixed(2); // Ensure adminFee is parsed to float for calculation
+
+  return { adminFee, saleProceeds };
 };
+
 
 const SoldItemsPage = () => {
   const [soldItems, setSoldItems] = useState(soldItemsMock);
@@ -72,7 +71,7 @@ const SoldItemsPage = () => {
   const [trackingError, setTrackingError] = useState('');
 
   // Sorting Logic
-  const handleSortChange = (sortBy) => {
+  const handleSortChange = (sortBy: string) => {
     let sortedItems = [...soldItems];
     if (sortBy === 'Awaiting shipping') {
       sortedItems = sortedItems.filter(item => !item.stages.shipped);
@@ -105,7 +104,7 @@ const SoldItemsPage = () => {
     });
   };
 
-  const handleTrackingChange = (e) => {
+  const handleTrackingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputTrackingNumber(e.target.value);
   };
 

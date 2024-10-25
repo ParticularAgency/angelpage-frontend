@@ -8,10 +8,11 @@ const AdminInfoForm = () => {
     email: "admin@salvationarmy.org",
     username: "adminuser1",
     password: "********",
+    newPassword: "",
   });
 
   const handleEditClick = () => setIsEditing(!isEditing);
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAdminInfo({ ...adminInfo, [e.target.name]: e.target.value });
   };
 

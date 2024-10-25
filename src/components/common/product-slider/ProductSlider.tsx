@@ -1,78 +1,49 @@
+// src/components/common/product-slider/ProductSlider.tsx
+
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
-import 'swiper/css/navigation'; // Import Swiper styles
-interface Product {
-  id: string,
-  charityImageSrc: string,
-	charityImageAlt: string,
-	productImageSrc: string,
-	productImageAlt: string,
-	productBrand: string,
-	productTitle: string,
-	productSize: string,
-	productPrice: string,
-	location: string,
-	category: string,
-  subcategory: string, 
-	productCondition: string,
-}
+import 'swiper/css/navigation';
+import { Product } from '@/types/productTypes';
+
 interface CategoryProductSliderProps {
-  sliderId: string; // Add sliderId as a prop for unique className
-  data: Product[]; // Data for the slider items (generalized to any array)
-  Component: React.FC<Product>; // A component that will be rendered inside the slider
-  autoplayDelay?: number; // Optional autoplay delay
-  slidesPerView?: number; // Default slidesPerView
-  breakpoints?: { [breakpoint: number]: { slidesPerView: number; spaceBetween: number } }; // Custom breakpoints for the slider
-  spaceBetween?: number; // Optional space between slides
+  sliderId: string;
+  data: Product[];
+  Component: React.FC<Product>;
+  isLoggedIn?: boolean; // Add isLoggedIn prop
+  autoplayDelay?: number;
+  slidesPerView?: number;
+  breakpoints?: { [breakpoint: number]: { slidesPerView: number; spaceBetween: number } };
+  spaceBetween?: number;
 }
 
-const CategoryProductSlider: React.FC<CategoryProductSliderProps> = ({
+const ProductSlider: React.FC<CategoryProductSliderProps> = ({
   sliderId,
   data,
-  Component, // Component to be used in each SwiperSlide
+  Component,
+  isLoggedIn, // Destructure isLoggedIn prop
   autoplayDelay = 5000,
   slidesPerView = 2,
   breakpoints,
   spaceBetween = 10,
-}) => {
-  return (
-    <div className="product-slides-area">
-      <Swiper
-        spaceBetween={spaceBetween}
-        slidesPerView={slidesPerView}
-        navigation={true}
-        modules={[Navigation, Autoplay]}
-        autoplay={{
-          delay: autoplayDelay,
-          disableOnInteraction: false,
-        }}
-        className={`product-slides-area slider-${sliderId}`}
-        breakpoints={breakpoints || {
-          640: {
-            slidesPerView: 2,
-            spaceBetween: 10,
-          },
-          768: {
-            slidesPerView: 3,
-            spaceBetween: 15,
-          },
-          1024: {
-            slidesPerView: 5,
-            spaceBetween: 19,
-          },
-        }}
-      >
-        {/* Dynamically render slides using the passed Component */}
-        {data.map((item, index) => (
-          <SwiperSlide key={index}>
-            <Component {...item} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </div>
-  );
-};
+}) => (
+  <div className={`product-slides-area slider-${sliderId}`}>
+    <Swiper
+      spaceBetween={spaceBetween}
+      slidesPerView={slidesPerView}
+      navigation
+      modules={[Navigation, Autoplay]}
+      autoplay={{ delay: autoplayDelay, disableOnInteraction: false }}
+      breakpoints={breakpoints}
+    >
+      {data.map((item, index) => (
+        <SwiperSlide key={index}>
+          <Component {...item} isLoggedIn={isLoggedIn} /> {/* Pass isLoggedIn down to the component */}
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  </div>
+);
 
-export default CategoryProductSlider;
+export default ProductSlider;
