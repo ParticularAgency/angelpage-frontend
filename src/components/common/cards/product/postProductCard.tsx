@@ -36,7 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onDeleteConfirm,
   isLoggedIn = false,
   status,
-  averageDeliveryTime,
+  // averageDeliveryTime,
 }) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 

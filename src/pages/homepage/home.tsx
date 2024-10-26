@@ -3,7 +3,7 @@ import React,{useState} from 'react'
 import HomeLanding from './home-landing/HomeLanding';
 import InternalHome from './internal-home/InternalHome';
 const HomePage = () => {
-      const [isLoggedIn, setIsLoggedIn] = useState(true);
+      const [isLoggedIn, setIsLoggedIn] = useState(false);
        const toggleLogin = () => {
     setIsLoggedIn(prevState => !prevState);
   };

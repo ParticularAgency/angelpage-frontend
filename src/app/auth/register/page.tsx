@@ -61,7 +61,7 @@ const Register = () => {
                     {activeTab === 'charity' && (
                         <form >
                              <div className="w-full md:w-full my-2">
-                                    <Input label='User name' name='userName' placeholder='@angelpage' id='userName' className='flex-col' />
+                                    <Input label='Charity name' name='charityName' placeholder='@angelpage' id='charityName' className='flex-col' />
                             </div>
                             <div className="flex space-x-5 md:flex-col md:space-x-0 md:space-y-2">
                                 <div className="w-1/2 md:w-full">

@@ -10,7 +10,7 @@ interface GiftFeaturedCategoryProductsProps {
   isLoggedIn: boolean;
 }
 
-const GiftFeaturedCategoryProducts: React.FC<GiftFeaturedCategoryProductsProps> = ({ secClassName }) => {
+const GiftFeaturedCategoryProducts: React.FC<GiftFeaturedCategoryProductsProps> = ({ secClassName , isLoggedIn}) => {
   const productData = [
     {
       id: 1,
@@ -23,6 +23,8 @@ const GiftFeaturedCategoryProducts: React.FC<GiftFeaturedCategoryProductsProps> 
       productSize: "12 UK",
       productPrice: "£11.50",
       location: "London",
+      onFavoriteClick: () => handleFavoriteClick(0),
+      isLoggedIn,
     },
     {
       id: 2,
@@ -35,6 +37,8 @@ const GiftFeaturedCategoryProducts: React.FC<GiftFeaturedCategoryProductsProps> 
       productSize: "10 UK",
       productPrice: "£40.00",
       location: "London",
+      onFavoriteClick: () => handleFavoriteClick(0),
+      isLoggedIn,
     },
     {
       id: 3,
@@ -47,6 +51,8 @@ const GiftFeaturedCategoryProducts: React.FC<GiftFeaturedCategoryProductsProps> 
       productSize: "N/A",
       productPrice: "£3.00",
       location: "London",
+      onFavoriteClick: () => handleFavoriteClick(0),
+      isLoggedIn,
     },
     {
       id: 4,
@@ -59,6 +65,8 @@ const GiftFeaturedCategoryProducts: React.FC<GiftFeaturedCategoryProductsProps> 
       productSize: "100x100",
       productPrice: "£15.00",
       location: "London",
+      onFavoriteClick: () => handleFavoriteClick(0),
+      isLoggedIn,
     },
   ];
 

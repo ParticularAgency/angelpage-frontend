@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { FavoriteOutlineIcon, LocationIcon } from '@/icons';
 import { Button } from '@/components/elements';
 import {Product} from '@/types/productTypes'
+import Link from 'next/link';
 
 
 
@@ -38,6 +39,7 @@ const ProductCard: React.FC<Product> = ({
     </div>
 
     {/* Product Image */}
+    <Link href="/product/1">
     <div className="product-body-cont px-8 w-full flex justify-center items-center">
       <Image
         className="max-w-[116px] h-[110px] w-full object-cover"
@@ -47,15 +49,20 @@ const ProductCard: React.FC<Product> = ({
         height={170}
       />
     </div>
+    </Link>
 
     {/* Product Information */}
     <div className="product-info-box">
       <div className="product-info">
         <div className="prod-title-box flex gap-1 justify-between items-start">
+          <Link href="/product/1">
           <h6 className="product-brand-title eyebrow-medium">{productBrand ?? ""}</h6>
+          </Link>
           <p className="product-price body-bold-small">{productPrice ?? ""}</p>
         </div>
+        <Link href="/product/1">
         <p className="product-title text-mono-60 caption-bold">{productTitle ?? ""}</p>
+        </Link>
         <div className="product-size eyebrow-small mt-3">{productSize ?? ""}</div>
       </div>
 

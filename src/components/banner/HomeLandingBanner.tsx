@@ -7,6 +7,7 @@ import "swiper/css"; // Core styles
 import "swiper/css/effect-fade"; // Fade effect styles
 import { EffectFade, Autoplay } from "swiper/modules"; // Import necessary modules
 import { Swiper as SwiperType } from 'swiper'; // Import Swiper type
+import Link from 'next/link';
 
 const HomeLandingBanner = () => { 
   const slides = [
@@ -58,9 +59,11 @@ const HomeLandingBanner = () => {
                       <h1 className="banner-title mb-[26px] sm:mb-2 font-primary font-normal text-mono-0 text-[32px] sm:max-w-[313px] sm:text-[20px] sm:leading-[135%] leading-[155%] tracking-[.32px] max-w-[534px] w-full">
                         {slide.title}
                       </h1>
+                      <Link href="/auth/register">
                       <Button variant='secondary' className='!text-mono-0 !border-mono-0 hover:!text-mono-100' onClick={() => console.log('Should not click')}>
                         Start giving
                       </Button>
+                      </Link>
                     </div>
                     {/* Custom Indicators */}
                     <div className="slides-indicator gap-[2px] flex justify-start mt-4">
