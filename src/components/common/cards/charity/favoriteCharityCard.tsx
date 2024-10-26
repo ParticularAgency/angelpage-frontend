@@ -11,7 +11,9 @@ interface FavoriteCharityCardProps {
   };
 }
 
-const FavoriteCharityCard: React.FC<FavoriteCharityCardProps> = ({ charity }) => {
+const FavoriteCharityCard: React.FC<FavoriteCharityCardProps> = ({
+  charity,
+}) => {
   return (
     <div className="max-w-[358px] w-full sm:w-full overflow-hidden relative col-span-3 md:col-span-6 sm:col-span-full">
       <div className="relative w-full h-48">
@@ -23,7 +25,10 @@ const FavoriteCharityCard: React.FC<FavoriteCharityCardProps> = ({ charity }) =>
         </Link>
 
         {/* Charity Image */}
-        <Link href={`/charity/find-a-charity/${charity.id}`} className="block w-full h-full">
+        <Link
+          href={`/charity/find-a-charity/${charity.id}`}
+          className="block w-full h-full"
+        >
           <Image
             src={charity.image}
             alt={charity.id}
@@ -36,8 +41,9 @@ const FavoriteCharityCard: React.FC<FavoriteCharityCardProps> = ({ charity }) =>
 
       {/* Charity Details */}
       <div>
-        <p className="eyebrow-small mt-6 text-primary-color-100">{charity.listingPrtoduct}</p>
-        
+        <p className="eyebrow-small mt-6 text-primary-color-100">
+          {charity.listingPrtoduct}
+        </p>
       </div>
     </div>
   );

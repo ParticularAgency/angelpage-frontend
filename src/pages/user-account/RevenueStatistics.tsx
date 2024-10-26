@@ -1,21 +1,25 @@
 import React from 'react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Define an interface for the props
 interface RevenueStatisticsProps {
   period: 'Day' | 'Month' | 'Year'; // Type for period, restricting it to these three values
   setPeriod: (newPeriod: 'Day' | 'Month' | 'Year') => void; // Function to set the period
-  data: { revenue: number; orders: number; day?: string; month?: string; year?: string }[]; // Structure of data array
+  data: {
+    revenue: number;
+    orders: number;
+    day?: string;
+    month?: string;
+    year?: string;
+  }[]; // Structure of data array
 }
 
-const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({ period, setPeriod, data }) => {
-    if (!data) {
+const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
+  period,
+  setPeriod,
+  data,
+}) => {
+  if (!data) {
     return <div>Loading...</div>; // Or any fallback UI
   }
 
@@ -41,8 +45,9 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({ period, setPeriod
 
   // Assuming you pass the percentage change from the parent component.
   const revenueChange = 10.05; // Placeholder for revenue change percentage
-  const lastWeekRevenue = data.length > 1 ? data[data.length - 2].revenue : 0; 
-  const currentWeekRevenue = data.length > 1 ? data[data.length - 1].revenue : 0;
+  const lastWeekRevenue = data.length > 1 ? data[data.length - 2].revenue : 0;
+  const currentWeekRevenue =
+    data.length > 1 ? data[data.length - 1].revenue : 0;
   const weeklyIncrease = (currentWeekRevenue - lastWeekRevenue).toFixed(2); // Calculate weekly increase dynamically
 
   const isIncrease = revenueChange >= 0;
@@ -54,9 +59,11 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({ period, setPeriod
           <h2 className="body-bold-small">Revenue Statistics</h2>
 
           {/* Displaying the total revenue */}
-          <p className="body-bold-large sm:body-bold-medium"> 
+          <p className="body-bold-large sm:body-bold-medium">
             £{totalRevenue}{' '}
-            <span className={`ml-1 px-2 py-[2px] forms-bold rounded-full ${isIncrease ? 'text-[#00C700] bg-[rgba(165,255,187,.60)]' : 'text-[#FF0000] bg-[rgba(255,187,187,.60)]'}`}>
+            <span
+              className={`ml-1 px-2 py-[2px] forms-bold rounded-full ${isIncrease ? 'text-[#00C700] bg-[rgba(165,255,187,.60)]' : 'text-[#FF0000] bg-[rgba(255,187,187,.60)]'}`}
+            >
               {isIncrease ? '↑' : '↓'} {Math.abs(revenueChange)}%
             </span>
           </p>
@@ -93,7 +100,7 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({ period, setPeriod
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
           <XAxis dataKey={getXAxisKey()} />
-          <Tooltip formatter={(value) => `£${value.toLocaleString()}`} />
+          <Tooltip formatter={value => `£${value.toLocaleString()}`} />
           <Bar dataKey="orders" stackId="a" fill="#6A0398" />
           <Bar dataKey="revenue" stackId="a" fill="#C9C8CA" />
         </BarChart>

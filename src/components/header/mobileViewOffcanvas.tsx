@@ -21,7 +21,7 @@ const MobileViewOffcanvas = () => {
                         <Link href="/"><Image src="/images/brand-logo-black.svg" alt="company brand logo" width={112} height={34} /></Link>
                       </div>
                          <label htmlFor="my-drawer-mobile-menu" aria-label="close sidebar" className="close-btn w-8 h-8 flex items-center justify-center cursor-pointer"><CloseIcon /></label>
-                    </div>
+                    </div> 
                    <div className="offcanvas-main min-h-full">
                       <GlobalSearchSecondary />
                        <div className="menu-canvas-area min-h-full">

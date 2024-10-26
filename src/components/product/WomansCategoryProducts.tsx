@@ -11,89 +11,92 @@ interface WomansCategoryProductsProps {
   isLoggedIn: boolean;
 }
 
-const WomansCategoryProducts: React.FC<WomansCategoryProductsProps> = ({ secClassName, isLoggedIn }) => {
- const productData: Product[] = [
+const WomansCategoryProducts: React.FC<WomansCategoryProductsProps> = ({
+  secClassName,
+  isLoggedIn,
+}) => {
+  const productData: Product[] = [
     {
       id: 1,
-      charityImageSrc: "/images/icons/charity-img.png",
-      charityImageAlt: "The Salvation Army Logo",
-      productImageSrc: "/images/products/product1.png",
-      productImageAlt: "Hollister Crew Neck Jumper",
-      productBrand: "Hollister",
-      productTitle: "Crew Neck Jumper",
-      productSize: "12 UK",
-      productPrice: "£11.50",
-      location: "London",
+      charityImageSrc: '/images/icons/charity-img.png',
+      charityImageAlt: 'The Salvation Army Logo',
+      productImageSrc: '/images/products/product1.png',
+      productImageAlt: 'Hollister Crew Neck Jumper',
+      productBrand: 'Hollister',
+      productTitle: 'Crew Neck Jumper',
+      productSize: '12 UK',
+      productPrice: '£11.50',
+      location: 'London',
       onFavoriteClick: () => handleFavoriteClick(0), // Assigning the function to handle favorite clicks
       isLoggedIn, // Passing the isLoggedIn prop
     },
     {
       id: 2,
-      charityImageSrc: "/images/icons/charity-img2.png",
-      charityImageAlt: "RSPCA Logo",
-      productImageSrc: "/images/products/product2.png",
-      productImageAlt: "Jordan Dunks",
-      productBrand: "Jordan",
-      productTitle: "Jordan Dunks",
-      productSize: "10 UK",
-      productPrice: "£40.00",
-      location: "London",
+      charityImageSrc: '/images/icons/charity-img2.png',
+      charityImageAlt: 'RSPCA Logo',
+      productImageSrc: '/images/products/product2.png',
+      productImageAlt: 'Jordan Dunks',
+      productBrand: 'Jordan',
+      productTitle: 'Jordan Dunks',
+      productSize: '10 UK',
+      productPrice: '£40.00',
+      location: 'London',
       onFavoriteClick: () => handleFavoriteClick(1),
       isLoggedIn,
     },
     {
       id: 3,
-      charityImageSrc: "/images/icons/charity-img3.png",
-      charityImageAlt: "WaterAid Logo",
-      productImageSrc: "/images/products/product3.png",
-      productImageAlt: "Addison Ross Fine Bone China Mug",
-      productBrand: "Addison Ross",
-      productTitle: "Fine Bone China Mug",
-      productSize: "N/A",
-      productPrice: "£3.00",
-      location: "London",
+      charityImageSrc: '/images/icons/charity-img3.png',
+      charityImageAlt: 'WaterAid Logo',
+      productImageSrc: '/images/products/product3.png',
+      productImageAlt: 'Addison Ross Fine Bone China Mug',
+      productBrand: 'Addison Ross',
+      productTitle: 'Fine Bone China Mug',
+      productSize: 'N/A',
+      productPrice: '£3.00',
+      location: 'London',
       onFavoriteClick: () => handleFavoriteClick(2),
       isLoggedIn,
     },
     {
       id: 4,
-      charityImageSrc: "/images/icons/charity-img4.png",
-      charityImageAlt: "Decor Logo",
-      productImageSrc: "/images/products/product4.png",
-      productImageAlt: "Balineum Flora Wall Mirror",
-      productBrand: "Balineum",
-      productTitle: "Flora Wall Mirror",
-      productSize: "100x100",
-      productPrice: "£15.00",
-      location: "London",
+      charityImageSrc: '/images/icons/charity-img4.png',
+      charityImageAlt: 'Decor Logo',
+      productImageSrc: '/images/products/product4.png',
+      productImageAlt: 'Balineum Flora Wall Mirror',
+      productBrand: 'Balineum',
+      productTitle: 'Flora Wall Mirror',
+      productSize: '100x100',
+      productPrice: '£15.00',
+      location: 'London',
       onFavoriteClick: () => handleFavoriteClick(3),
       isLoggedIn,
     },
     {
       id: 5,
-      charityImageSrc: "/images/icons/charity-img4.png",
-      charityImageAlt: "Decor Logo",
-      productImageSrc: "/images/products/product4.png",
-      productImageAlt: "Balineum Flora Wall Mirror",
-      productBrand: "Balineum",
-      productTitle: "Flora Wall Mirror",
-      productSize: "100x100",
-      productPrice: "£15.00",
-      location: "London",
+      charityImageSrc: '/images/icons/charity-img4.png',
+      charityImageAlt: 'Decor Logo',
+      productImageSrc: '/images/products/product4.png',
+      productImageAlt: 'Balineum Flora Wall Mirror',
+      productBrand: 'Balineum',
+      productTitle: 'Flora Wall Mirror',
+      productSize: '100x100',
+      productPrice: '£15.00',
+      location: 'London',
       onFavoriteClick: () => handleFavoriteClick(4),
       isLoggedIn,
     },
     {
       id: 6,
-      charityImageSrc: "/images/icons/charity-img4.png",
-      charityImageAlt: "Decor Logo",
-      productImageSrc: "/images/products/product4.png",
-      productImageAlt: "Balineum Flora Wall Mirror",
-      productBrand: "Balineum",
-      productTitle: "Flora Wall Mirror",
-      productSize: "100x100",
-      productPrice: "£15.00",
-      location: "London",
+      charityImageSrc: '/images/icons/charity-img4.png',
+      charityImageAlt: 'Decor Logo',
+      productImageSrc: '/images/products/product4.png',
+      productImageAlt: 'Balineum Flora Wall Mirror',
+      productBrand: 'Balineum',
+      productTitle: 'Flora Wall Mirror',
+      productSize: '100x100',
+      productPrice: '£15.00',
+      location: 'London',
       onFavoriteClick: () => handleFavoriteClick(5),
       isLoggedIn,
     },
@@ -105,7 +108,9 @@ const WomansCategoryProducts: React.FC<WomansCategoryProductsProps> = ({ secClas
   };
 
   return (
-    <section className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-[75px] pb-[83px] sm:pt-16'}`}>
+    <section
+      className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-[75px] pb-[83px] sm:pt-16'}`}
+    >
       <div className="custom-container">
         <div className="product-sec-title-box mb-10 flex items-start justify-between gap-4">
           <div className="product-title-box-left-cont">
@@ -126,8 +131,8 @@ const WomansCategoryProducts: React.FC<WomansCategoryProductsProps> = ({ secClas
             modules={[Navigation, Autoplay]}
             autoplay={{ delay: 3500, disableOnInteraction: false }}
             breakpoints={{
-              640: { slidesPerView: 2, spaceBetween: 10 },  // Breakpoint for small screens
-              768: { slidesPerView: 3, spaceBetween: 15 },  // Breakpoint for medium screens
+              640: { slidesPerView: 2, spaceBetween: 10 }, // Breakpoint for small screens
+              768: { slidesPerView: 3, spaceBetween: 15 }, // Breakpoint for medium screens
               1024: { slidesPerView: 5, spaceBetween: 19 }, // Breakpoint for larger screens
             }}
           >

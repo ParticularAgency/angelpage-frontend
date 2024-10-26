@@ -6,7 +6,7 @@ const NotificationAlert = () => {
   const [activeTab, setActiveTab] = useState('messages'); // Default tab
 
   const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev);
+    setIsDropdownOpen(prev => !prev);
   };
 
   const handleTabChange = (tab: 'messages' | 'notifications') => {
@@ -56,4 +56,3 @@ const NotificationAlert = () => {
 };
 
 export default NotificationAlert;
-

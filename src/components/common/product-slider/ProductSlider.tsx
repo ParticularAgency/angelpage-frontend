@@ -14,7 +14,9 @@ interface CategoryProductSliderProps {
   isLoggedIn?: boolean; // Add isLoggedIn prop
   autoplayDelay?: number;
   slidesPerView?: number;
-  breakpoints?: { [breakpoint: number]: { slidesPerView: number; spaceBetween: number } };
+  breakpoints?: {
+    [breakpoint: number]: { slidesPerView: number; spaceBetween: number };
+  };
   spaceBetween?: number;
 }
 
@@ -39,7 +41,8 @@ const ProductSlider: React.FC<CategoryProductSliderProps> = ({
     >
       {data.map((item, index) => (
         <SwiperSlide key={index}>
-          <Component {...item} isLoggedIn={isLoggedIn} /> {/* Pass isLoggedIn down to the component */}
+          <Component {...item} isLoggedIn={isLoggedIn} />{' '}
+          {/* Pass isLoggedIn down to the component */}
         </SwiperSlide>
       ))}
     </Swiper>

@@ -50,12 +50,17 @@ const Checkbox: React.FC<CheckboxProps> = ({
           }}
         />
         {checked && (
-          <div className='absolute top-0 left-0 w-4 h-4 bg-primary-color-100'>
-               <Image src="/images/check-mark.svg" alt='checkmark icon' width={16} height={16} />
+          <div className="absolute top-0 left-0 w-4 h-4 bg-primary-color-100">
+            <Image
+              src="/images/check-mark.svg"
+              alt="checkmark icon"
+              width={16}
+              height={16}
+            />
           </div>
         )}
         {label && (
-          <span  className='text-body-caption font-normal font-secondary text-left leading-[150%] text-mono-100 ml-2'>
+          <span className="text-body-caption font-normal font-secondary text-left leading-[150%] text-mono-100 ml-2">
             {label}
           </span>
         )}

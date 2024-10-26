@@ -1,18 +1,18 @@
-import React, { useState } from "react";
-import { Button, Input, Select } from "@/components/elements";
-import { EditIcon, SaveIcon } from "@/icons";
+import React, { useState } from 'react';
+import { Button, Input, Select } from '@/components/elements';
+import { EditIcon, SaveIcon } from '@/icons';
 
 const AddressForm: React.FC = () => {
   // Managing multiple addresses
   const [addresses, setAddresses] = useState([
     {
       id: 1, // Unique ID for each address
-      type: "Shipping from",
-      name: "Wilson Ndasi",
-      address: "836 Zamlak Crescent",
-      city: "Thorperland",
-      country: "United Kingdom",
-      postcode: "W2 6FT",
+      type: 'Shipping from',
+      name: 'Wilson Ndasi',
+      address: '836 Zamlak Crescent',
+      city: 'Thorperland',
+      country: 'United Kingdom',
+      postcode: 'W2 6FT',
       isEditing: false, // Manage editing state per address
     },
   ]);
@@ -21,12 +21,12 @@ const AddressForm: React.FC = () => {
   const handleAddNewAddress = () => {
     const newAddress = {
       id: addresses.length + 1, // Ensure unique ID, consider using a library for unique IDs
-      type: "Shipping from",
-      name: "",
-      address: "",
-      city: "",
-      country: "",
-      postcode: "",
+      type: 'Shipping from',
+      name: '',
+      address: '',
+      city: '',
+      country: '',
+      postcode: '',
       isEditing: true,
     };
     setAddresses([...addresses, newAddress]); // Add new blank address
@@ -35,8 +35,10 @@ const AddressForm: React.FC = () => {
   // Function to handle edit/save toggle
   const handleEditClick = (id: number) => {
     setAddresses(
-      addresses.map((address) =>
-        address.id === id ? { ...address, isEditing: !address.isEditing } : address
+      addresses.map(address =>
+        address.id === id
+          ? { ...address, isEditing: !address.isEditing }
+          : address
       )
     );
   };
@@ -47,15 +49,17 @@ const AddressForm: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setAddresses(
-      addresses.map((address) =>
-        address.id === id ? { ...address, [e.target.name]: e.target.value } : address
+      addresses.map(address =>
+        address.id === id
+          ? { ...address, [e.target.name]: e.target.value }
+          : address
       )
     );
   };
 
   // Function to handle deleting an address
   const handleDelete = (id: number) => {
-    setAddresses(addresses.filter((address) => address.id !== id));
+    setAddresses(addresses.filter(address => address.id !== id));
   };
 
   return (
@@ -73,7 +77,7 @@ const AddressForm: React.FC = () => {
       </div>
 
       {/* Address Forms */}
-      {addresses.map((address) => (
+      {addresses.map(address => (
         <div key={address.id} className="address-item mb-6 border rounded-lg">
           {/* Edit/Save Button */}
           <div className="flex justify-between items-center btn-states-box">
@@ -99,7 +103,9 @@ const AddressForm: React.FC = () => {
           </div>
 
           {/* Address Details or Form */}
-          <div className={`address-details ${!address.isEditing ? "" : "flex flex-col gap-2"}`}>
+          <div
+            className={`address-details ${!address.isEditing ? '' : 'flex flex-col gap-2'}`}
+          >
             {!address.isEditing ? (
               <>
                 <p className="body-small">{address.name}</p>
@@ -115,10 +121,10 @@ const AddressForm: React.FC = () => {
                   label="Address type"
                   name="type"
                   value={address.type}
-                  onChange={(e) => handleChange(address.id, e)}
+                  onChange={e => handleChange(address.id, e)}
                   options={[
-                    { label: "Shipping from", value: "Shipping from" },
-                    { label: "Shipping to", value: "Shipping to" },
+                    { label: 'Shipping from', value: 'Shipping from' },
+                    { label: 'Shipping to', value: 'Shipping to' },
                   ]}
                   className="flex-col w-full max-w-[386px]"
                 />
@@ -127,7 +133,7 @@ const AddressForm: React.FC = () => {
                   type="text"
                   name="name"
                   value={address.name}
-                  onChange={(e) => handleChange(address.id, e)}
+                  onChange={e => handleChange(address.id, e)}
                   className="flex-col w-full max-w-[386px]"
                 />
                 <Input
@@ -135,7 +141,7 @@ const AddressForm: React.FC = () => {
                   type="text"
                   name="address"
                   value={address.address}
-                  onChange={(e) => handleChange(address.id, e)}
+                  onChange={e => handleChange(address.id, e)}
                   className="flex-col w-full max-w-[386px]"
                 />
                 <Input
@@ -143,7 +149,7 @@ const AddressForm: React.FC = () => {
                   type="text"
                   name="city"
                   value={address.city}
-                  onChange={(e) => handleChange(address.id, e)}
+                  onChange={e => handleChange(address.id, e)}
                   className="flex-col w-full max-w-[386px]"
                 />
                 <Input
@@ -151,7 +157,7 @@ const AddressForm: React.FC = () => {
                   type="text"
                   name="country"
                   value={address.country}
-                  onChange={(e) => handleChange(address.id, e)}
+                  onChange={e => handleChange(address.id, e)}
                   className="flex-col w-full max-w-[386px]"
                 />
                 <Input
@@ -159,7 +165,7 @@ const AddressForm: React.FC = () => {
                   type="text"
                   name="postcode"
                   value={address.postcode}
-                  onChange={(e) => handleChange(address.id, e)}
+                  onChange={e => handleChange(address.id, e)}
                   className="flex-col w-full max-w-[386px]"
                 />
                 <div className="flex justify-start mt-2">

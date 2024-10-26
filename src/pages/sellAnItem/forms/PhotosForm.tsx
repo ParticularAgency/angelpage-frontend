@@ -64,7 +64,8 @@ const PhotosForm: React.FC<FormProps> = ({ setActiveTab }) => {
         {/* Header text */}
         <div>
           <span className="text-body-small text-[#474648]">
-            Take photos from multiple angles to show all the details (including any flaws).
+            Take photos from multiple angles to show all the details (including
+            any flaws).
           </span>
         </div>
 
@@ -73,8 +74,15 @@ const PhotosForm: React.FC<FormProps> = ({ setActiveTab }) => {
           className="border-2 border-dashed border-[#C9C8CA] p-6 text-center cursor-pointer mt-[27px] mb-4"
           onClick={handleBrowseClick}
         >
-          <p className="text-body-caption text-[#474648]">You can add up to 10 photos</p>
-          <Button variant='accend-link' className='flex items-center underline !text-primary-color-100'>Browse</Button>
+          <p className="text-body-caption text-[#474648]">
+            You can add up to 10 photos
+          </p>
+          <Button
+            variant="accend-link"
+            className="flex items-center underline !text-primary-color-100"
+          >
+            Browse
+          </Button>
           {/* Hidden file input */}
           <input
             type="file"
@@ -106,15 +114,26 @@ const PhotosForm: React.FC<FormProps> = ({ setActiveTab }) => {
         <div className="bg-[#F1F1F7] pt-2 pl-3 pb-6 pr-[30px]">
           <p className="text-body-small text-[#474648]">
             <span className="text-primary-color-100 text-body-caption font-medium mb-2 flex gap-[10px]">
-              <Image src="/images/icons/camera.svg" alt="Camera Icon" width={12} height={12} /> Photo tip
+              <Image
+                src="/images/icons/camera.svg"
+                alt="Camera Icon"
+                width={12}
+                height={12}
+              />{' '}
+              Photo tip
             </span>
-            For your main photo, lay the item flat by itself on a plain, contrasting colour so we can easily remove the background.
+            For your main photo, lay the item flat by itself on a plain,
+            contrasting colour so we can easily remove the background.
           </p>
         </div>
 
         {/* Action buttons */}
         <div className="flex justify-between items-center mt-[54px]">
-          <Button variant='accend-link' className='flex items-center !text-primary-color-100' onClick={() => setActiveTab('details')}>
+          <Button
+            variant="accend-link"
+            className="flex items-center !text-primary-color-100"
+            onClick={() => setActiveTab('details')}
+          >
             <Image
               width={16}
               height={16}
@@ -124,8 +143,20 @@ const PhotosForm: React.FC<FormProps> = ({ setActiveTab }) => {
             Back
           </Button>
           <div className="flex sm:flex-col space-x-4">
-            <Button variant='accend-link' className='flex items-center underline !text-primary-color-100' onClick={() => console.log('Should not click')}>Save as draft</Button>
-            <Button type='submit' variant='primary' onClick={() => setActiveTab('price')}>Continue</Button>
+            <Button
+              variant="accend-link"
+              className="flex items-center underline !text-primary-color-100"
+              onClick={() => console.log('Should not click')}
+            >
+              Save as draft
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              onClick={() => setActiveTab('price')}
+            >
+              Continue
+            </Button>
           </div>
         </div>
       </div>
@@ -142,7 +173,13 @@ interface DraggableImageProps {
   onDropToFeatured: (id: number) => void;
 }
 
-const DraggableImage: React.FC<DraggableImageProps> = ({ image, index, onDelete, moveImage, onDropToFeatured }) => {
+const DraggableImage: React.FC<DraggableImageProps> = ({
+  image,
+  index,
+  onDelete,
+  moveImage,
+  onDropToFeatured,
+}) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const [, drop] = useDrop({
@@ -166,9 +203,17 @@ const DraggableImage: React.FC<DraggableImageProps> = ({ image, index, onDelete,
 
   return (
     <div ref={ref} className="relative border p-2 text-center">
-      <p className="text-[11px] text-mono-80">{image.isFeatured ? 'Featured image' : 'Gallery image'}</p>
+      <p className="text-[11px] text-mono-80">
+        {image.isFeatured ? 'Featured image' : 'Gallery image'}
+      </p>
       <div className="relative my-2">
-        <Image src={image.src} alt="Uploaded photo" width={82} height={82} className="w-[82px] h-[82px] object-cover" />
+        <Image
+          src={image.src}
+          alt="Uploaded photo"
+          width={82}
+          height={82}
+          className="w-[82px] h-[82px] object-cover"
+        />
         <Image
           src="/images/icons/delete.svg"
           alt="Delete Icon"

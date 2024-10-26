@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const UserIcon: React.FC = () => {
   return (
@@ -26,4 +26,3 @@ const UserIcon: React.FC = () => {
 };
 
 export default UserIcon;
-

@@ -1,5 +1,5 @@
 export interface Category {
-	imageSrc: string;
-	imageAlt: string;
-	categoryTitle: string;
+  imageSrc: string;
+  imageAlt: string;
+  categoryTitle: string;
 }

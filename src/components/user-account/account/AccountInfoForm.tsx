@@ -14,7 +14,7 @@ const AccountInfoForm: React.FC = () => {
     password: '',
     newPassword: '', // Initialize newPassword
   });
-  
+
   const [isEditing, setIsEditing] = useState(false);
 
   const handleEditClick = () => setIsEditing(!isEditing);

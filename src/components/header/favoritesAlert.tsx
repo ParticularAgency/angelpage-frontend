@@ -18,4 +18,3 @@ const FavoritesAlert = ({ favoriteCount = 0 }) => {
 };
 
 export default FavoritesAlert;
-

@@ -7,7 +7,10 @@ interface SearchBarProps {
   filteredProducts: number;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch,filteredProducts }) => {
+const SearchBar: React.FC<SearchBarProps> = ({
+  onSearch,
+  filteredProducts,
+}) => {
   const [query, setQuery] = useState('');
 
   // Watch for query changes and call onSearch when the query changes
@@ -22,12 +25,20 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch,filteredProducts }) => {
       <input
         type="text"
         value={query}
-        className="py-[11px] px-2 pl-10  rounded-[24px] bg-[#F4E8F9] forms !text-primary-color-100 placeholder:!text-primary-color-100" 
-        onChange={(e) => setQuery(e.target.value)} // Update query state on input change
+        className="py-[11px] px-2 pl-10  rounded-[24px] bg-[#F4E8F9] forms !text-primary-color-100 placeholder:!text-primary-color-100"
+        onChange={e => setQuery(e.target.value)} // Update query state on input change
         placeholder={`Search all ${filteredProducts} items`}
       />
-      <button onClick={() => onSearch(query)}><Image src="/images/Search-primary.svg" className="absolute top-0 left-4 bottom-0 my-auto" alt='search icon' width={13} height={13} /></button>
-    </div> 
+      <button onClick={() => onSearch(query)}>
+        <Image
+          src="/images/Search-primary.svg"
+          className="absolute top-0 left-4 bottom-0 my-auto"
+          alt="search icon"
+          width={13}
+          height={13}
+        />
+      </button>
+    </div>
   );
 };
 

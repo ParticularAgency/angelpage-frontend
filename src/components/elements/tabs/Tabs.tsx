@@ -1,11 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const TabsComponent = () => {
-  return (
-    <div className="tabs-components-wrapper">
-      
-    </div>
-  )
-}
+  return <div className="tabs-components-wrapper"></div>;
+};
 
-export default TabsComponent
+export default TabsComponent;

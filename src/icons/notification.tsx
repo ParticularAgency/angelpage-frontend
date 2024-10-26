@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const NotificationIcon: React.FC = () => {
   return (
@@ -24,4 +24,3 @@ const NotificationIcon: React.FC = () => {
 };
 
 export default NotificationIcon;
-

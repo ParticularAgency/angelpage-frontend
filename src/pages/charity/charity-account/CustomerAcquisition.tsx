@@ -1,6 +1,11 @@
 import React from 'react';
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
 } from 'recharts';
 
 // Define the interface for session data
@@ -28,7 +33,7 @@ const getTotalSessions = (data: SessionData[]): number => {
 // Example function to calculate the bounce rate (placeholder logic)
 const calculateBounceRate = (): string => {
   // For demo purposes, returning a static value
-  return '40.5%'; 
+  return '40.5%';
 };
 
 const CustomerAcquisition: React.FC = () => {
@@ -39,7 +44,7 @@ const CustomerAcquisition: React.FC = () => {
   return (
     <div className="bg-white rounded-lg">
       <h3 className="body-bold-small mb-8">Customer Acquisition</h3>
-      
+
       {/* Statistics Section */}
       <div className="grid grid-cols-3 gap-6 text-center mb-6">
         <div>
@@ -61,7 +66,7 @@ const CustomerAcquisition: React.FC = () => {
         <LineChart data={data}>
           <XAxis dataKey="day" />
           <YAxis />
-          <Tooltip formatter={(value) => `Sessions: ${value}`} />
+          <Tooltip formatter={value => `Sessions: ${value}`} />
           <Line
             type="monotone"
             dataKey="sessions"

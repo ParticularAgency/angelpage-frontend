@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface SelectProps {
   label: string;
@@ -9,7 +9,14 @@ interface SelectProps {
   className?: string;
 }
 
-const Select: React.FC<SelectProps> = ({ label, name, value, onChange, options, className }) => {
+const Select: React.FC<SelectProps> = ({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  className,
+}) => {
   return (
     <div className={`select-field ${className}`}>
       <label
@@ -25,7 +32,7 @@ const Select: React.FC<SelectProps> = ({ label, name, value, onChange, options, 
         onChange={onChange}
         className="select-input"
       >
-        {options.map((option) => (
+        {options.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
