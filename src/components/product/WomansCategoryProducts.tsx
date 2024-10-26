@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { Button } from '../elements';
+// import { Button } from '../elements';
 import { Product } from '@/types/productTypes';
 interface WomansCategoryProductsProps {
   secClassName?: string;

@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 import { Button } from '../elements'
+import Link from 'next/link'
 
 const HowItWorkSection = () => {
   return (
@@ -13,7 +14,9 @@ const HowItWorkSection = () => {
                    <p className="eyebrow-small text-mono-0 mb-2">How it works</p>
                    <h4 className="h4 card-title max-w-[220px] w-full mb-4 text-mono-0 font-primary">Where sellers are Donors</h4>
                    <p className="body-small mb-4 text-mono-0 max-w-[290px]">Upload your pre-loved items straight to your chosen Charity storefront, ready for others to purchase.</p>
+                   <Link href="/how-it-work">
                    <Button variant='accend-link' className='!text-mono-0 inline-block w-auto max-w-max underline !px-0'>Learn more</Button>
+                   </Link>
                 </div>
            </div>
            <div className="how-it-works-card-area flex items-start gap-[3px] col-span-6 sm:col-span-full">

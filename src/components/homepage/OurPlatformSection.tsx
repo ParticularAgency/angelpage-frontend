@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '../elements'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const OurPlatformSection = () => {
   return (
@@ -10,7 +11,9 @@ const OurPlatformSection = () => {
             <div className="our-platform-left-cont col-span-4 sm:col-span-full">
                 <h2 className="our-platform-sec-title h2 mb-4">Our Platform</h2>
                 <p className="body-regular mb-[38px]">Explore our platform and discover how you can make a difference:</p>
+                <Link href="/auth/register">
                 <Button variant='primary' >Become a donor</Button>
+                </Link>
             </div>
             <div className="our-platform-highlight-category-cont grid grid-cols-12 gap-5 md:gap-4 sm:gap-3 sm:grid-cols-6 col-span-8 sm:col-span-full ml-[31px] laptop-x:ml-0">
                <div className="category-overly-card-item overflow-hidden relative col-span-6 sm:col-span-full">

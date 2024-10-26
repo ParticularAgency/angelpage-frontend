@@ -6,6 +6,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import ProductCard from '../common/cards/product/productCard'; // Ensure the path is correct
 import { Product } from '@/types/productTypes';
+import Link from 'next/link';
 interface TopCategoryProductsProps {
   secClassName?: string;
   isLoggedIn: boolean;
@@ -116,9 +117,11 @@ const TopCategoryProducts: React.FC<TopCategoryProductsProps> = ({ secClassName,
             </p>
           </div>
           <div className="product-title-box-right-cont sm:hidden pt-2">
+            <Link href="/product">
             <Button variant="primary" onClick={() => console.log('View all clicked')}>
               View all
             </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -143,9 +146,11 @@ const TopCategoryProducts: React.FC<TopCategoryProductsProps> = ({ secClassName,
             ))}
           </Swiper>
           <div className="product-btn-box hidden sm:flex justify-center pt-8">
+            <Link href="/product">
             <Button variant="primary" onClick={() => console.log('View all clicked')}>
               View all
             </Button>
+            </Link>
           </div>
         </div>
       </div>

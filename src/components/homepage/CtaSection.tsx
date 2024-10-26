@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '../elements'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const CtaSection = () => {
   return (
@@ -25,12 +26,16 @@ const CtaSection = () => {
                         Our mission is to revolutionise charitable giving by seamlessly integrating it into everyday transactions. At AngelPage, every purchase and sale can contribute to the greater good.
                     </p>
                     <div className="cta-sec-btn-box flex mt-10 items-center gap-[7px]">
+                    <Link href="/auth/register">
                         <Button variant='primary'>
-                            Start Selling for free
+                            Start selling for free
                         </Button>
+                      </Link>
+                      <Link href="/product">
                           <Button variant='accend-link' className='!underline'>
-                            Start Selling for free
+                           Browse items
                         </Button>
+                        </Link>
                     </div>
                  </div>
             </div>

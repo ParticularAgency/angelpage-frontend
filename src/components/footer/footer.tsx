@@ -26,16 +26,16 @@ const Footer = () => {
             <div className="col-span-3 md:col-span-2 sm:col-span-6 sm:order-2">
               <ul className="quick-link-lists flex flex-col gap-6 sm:gap-0">
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">about us</Link></li>
-                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">HOW IT WORKS</Link></li>
-                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/find-a-charity">Find a charity</Link></li>
+                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/how-it-works">HOW IT WORKS</Link></li>
+                {/* <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/find-a-charity">Find a charity</Link></li> */}
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/blog">blog</Link></li>
-                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">PRODUCTs</Link></li>
+                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/product">PRODUCTs</Link></li>
               </ul>
             </div>
             <div className="col-span-2 md:col-span-3 sm:col-span-6 sm:order-3">
               <ul className="quick-link-lists quick-link-area-two flex flex-col gap-6 sm:gap-0">
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">FAQS</Link></li>
-                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">CONTACT US</Link></li>
+                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/contact">CONTACT US</Link></li>
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">PRIVACY POLICY</Link></li>
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/">TERMS OF USE</Link></li>
               </ul>
