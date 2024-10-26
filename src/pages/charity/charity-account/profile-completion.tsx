@@ -1,11 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const ProfileCompletion = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  return <div></div>;
+};
 
-export default ProfileCompletion
+export default ProfileCompletion;

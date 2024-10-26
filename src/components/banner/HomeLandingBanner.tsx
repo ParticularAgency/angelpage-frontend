@@ -50,7 +50,7 @@ const HomeLandingBanner = () => {
             }}
             onSwiper={setSwiperInstance} // Capture swiper instance
           > 
-            {slides.map((slide, index) => (
+            {slides.map((slide, index) => ( 
               <SwiperSlide key={index}>
                 <div className="banner-slider-items relative w-full grid grid-cols-12 sm:grid-col-6 sm:flex sm:flex-col-reverse gap-0"> 
                   <div className="banner-slider-left-cont bg-mono-100 max-w-[650px] w-full ml-auto col-span-5 sm:col-span-full pt-[51px] pr-[33px] pb-[52px] pl-10 sm:px-4 sm:py-[33px] relative transition-opacity duration-500 ease-in-out">

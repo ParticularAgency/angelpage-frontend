@@ -1,5 +1,5 @@
 {
-  "compilerOptions": {
+	"compilerOptions": {
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"allowJs": true,
 		"skipLibCheck": true,
@@ -29,6 +29,12 @@
 			"@utils/*": ["./src/utils/*"]
 		}
 	},
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/utils/realtimeMessaging.js"],
-  "exclude": ["node_modules"]
+	"include": [
+		"next-env.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		".next/types/**/*.ts",
+		"src/utils/realtimeMessaging.js"
+	],
+	"exclude": ["node_modules"]
 }

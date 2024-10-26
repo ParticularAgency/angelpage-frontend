@@ -120,7 +120,11 @@ const AnalyticsPage: React.FC = () => {
       <div className="grid grid-cols-12 sm:grid-cols-6 gap-8 mx-auto mt-8">
         <div className="col-span-6 h-full">
           {/* Pass data and period state to RevenueStatistics */}
-          <RevenueStatistics period={period} setPeriod={setPeriod} data={data} />
+          <RevenueStatistics
+            period={period}
+            setPeriod={setPeriod}
+            data={data}
+          />
         </div>
         <div className="col-span-6 h-full">
           <CustomerAcquisition />

@@ -3,7 +3,7 @@ import ProductCard from '@/components/common/cards/product/productCard'; // Ensu
 import { Product } from '@/types/productTypes';
 
 interface ProductListProps {
-  products: Product[];  // Now uses the same `Product` type
+  products: Product[]; // Now uses the same `Product` type
   isLoggedIn: boolean; // Ensure this prop is required
 }
 
@@ -17,21 +17,23 @@ const ProductList: React.FC<ProductListProps> = ({ products, isLoggedIn }) => {
   return (
     <div className="product-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {products.length > 0 ? (
-        products.map((product) => (
+        products.map(product => (
           <ProductCard
-           key={product.id} 
-           id={product.id}
-            charityImageSrc={product.charityImageSrc ?? ""}
-            charityImageAlt={product.charityImageAlt ?? ""}
-            productImageSrc={product.productImageSrc ?? ""}
-            productImageAlt={product.productImageAlt ?? ""}
-            productBrand={product.productBrand ?? ""}
-            productTitle={product.productTitle ?? ""}
-            productSize={product.productSize ?? ""}
-            productPrice={product.productPrice ?? ""}
-            onFavoriteClick={() => handleFavoriteClick(product.productTitle ?? "")}
-            location={product.location ?? ""}
-            isLoggedIn={isLoggedIn ?? ""} // Pass down the isLoggedIn status
+            key={product.id}
+            id={product.id}
+            charityImageSrc={product.charityImageSrc ?? ''}
+            charityImageAlt={product.charityImageAlt ?? ''}
+            productImageSrc={product.productImageSrc ?? ''}
+            productImageAlt={product.productImageAlt ?? ''}
+            productBrand={product.productBrand ?? ''}
+            productTitle={product.productTitle ?? ''}
+            productSize={product.productSize ?? ''}
+            productPrice={product.productPrice ?? ''}
+            onFavoriteClick={() =>
+              handleFavoriteClick(product.productTitle ?? '')
+            }
+            location={product.location ?? ''}
+            isLoggedIn={isLoggedIn ?? ''} // Pass down the isLoggedIn status
           />
         ))
       ) : (

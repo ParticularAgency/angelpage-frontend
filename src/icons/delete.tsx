@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface DeleteIconProps {
   width?: number;
@@ -9,7 +9,7 @@ interface DeleteIconProps {
 const DeleteIcon: React.FC<DeleteIconProps> = ({
   width = 14,
   height = 14,
-  color = "#611192",
+  color = '#611192',
 }) => {
   return (
     <svg
@@ -45,5 +45,3 @@ const DeleteIcon: React.FC<DeleteIconProps> = ({
 };
 
 export default DeleteIcon;
-
-

@@ -1,12 +1,12 @@
-import SellAnItem from "@/pages/sellAnItem/sellAnItem";
-import React from "react";
+import SellAnItem from '@/pages/sellAnItem/sellAnItem';
+import React from 'react';
 
 const SellAnItemPage: React.FC = () => {
-    return (
-        <>
-            <SellAnItem />
-        </>
-    );
+  return (
+    <>
+      <SellAnItem />
+    </>
+  );
 };
 
 export default SellAnItemPage;

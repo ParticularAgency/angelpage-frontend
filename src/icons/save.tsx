@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const SaveIcon: React.FC = () => {
   return (
@@ -21,5 +21,3 @@ const SaveIcon: React.FC = () => {
 };
 
 export default SaveIcon;
-
-

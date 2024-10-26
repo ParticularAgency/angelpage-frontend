@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { EditIcon, SaveIcon, DeleteIcon } from "@/icons"; // Assuming your icons are correctly imported
-import { Button, Input } from "@/components/elements";
+import React, { useState } from 'react';
+import { EditIcon, SaveIcon, DeleteIcon } from '@/icons'; // Assuming your icons are correctly imported
+import { Button, Input } from '@/components/elements';
 
 const PaymentInfoForm = () => {
   const [isAdding, setIsAdding] = useState(false); // For adding a new payment method
@@ -9,53 +9,54 @@ const PaymentInfoForm = () => {
 
   // Dummy shipping address to be used for the checkbox feature
   const shippingAddress = {
-    name: "Wilson Ndasi",
-    addressLine1: "836 Zamlak Crescent",
-    city: "Thompsonland",
-    postalCode: "W2 6FT",
+    name: 'Wilson Ndasi',
+    addressLine1: '836 Zamlak Crescent',
+    city: 'Thompsonland',
+    postalCode: 'W2 6FT',
   };
 
   const [newPayment, setNewPayment] = useState({
-    nameAccountHolder: "",
-    accountNumber: "",
-    expiryDate: "",
-    cvvNumber: "",
+    nameAccountHolder: '',
+    accountNumber: '',
+    expiryDate: '',
+    cvvNumber: '',
     billingAddress: {
-      name: "",
-      addressLine1: "",
-      city: "",
-      postalCode: "",
+      name: '',
+      addressLine1: '',
+      city: '',
+      postalCode: '',
     },
   });
 
   const [paymentMethods, setPaymentMethods] = useState([
     {
-      nameAccountHolder: "Visa - 5016",
-      accountNumber: "",
-      expiryDate: "",
-      cvvNumber: "",
+      nameAccountHolder: 'Visa - 5016',
+      accountNumber: '',
+      expiryDate: '',
+      cvvNumber: '',
       billingAddress: shippingAddress,
     },
   ]);
 
   const handleAddNewClick = () => {
     setNewPayment({
-      nameAccountHolder: "",
-      accountNumber: "",
-      expiryDate: "",
-      cvvNumber: "",
+      nameAccountHolder: '',
+      accountNumber: '',
+      expiryDate: '',
+      cvvNumber: '',
       billingAddress: {
-        name: "",
-        addressLine1: "",
-        city: "",
-        postalCode: "",
+        name: '',
+        addressLine1: '',
+        city: '',
+        postalCode: '',
       },
     });
     setIsAdding(true);
     setEditingIndex(null); // When adding a new payment, we aren't editing
   };
 
-  const handleEditClick = (index: number) => { // Explicitly typed index as a number
+  const handleEditClick = (index: number) => {
+    // Explicitly typed index as a number
     setNewPayment(paymentMethods[index]);
     setEditingIndex(index);
     setIsAdding(true); // Reuse the same form for editing
@@ -64,7 +65,9 @@ const PaymentInfoForm = () => {
   const handleSave = () => {
     const finalPayment = {
       ...newPayment,
-      billingAddress: useShippingAsBilling ? shippingAddress : newPayment.billingAddress, // Apply shipping address if checkbox is checked
+      billingAddress: useShippingAsBilling
+        ? shippingAddress
+        : newPayment.billingAddress, // Apply shipping address if checkbox is checked
     };
 
     if (editingIndex !== null) {
@@ -79,7 +82,9 @@ const PaymentInfoForm = () => {
 
   const handleDelete = () => {
     if (editingIndex !== null) {
-      const updatedMethods = paymentMethods.filter((_, index) => index !== editingIndex);
+      const updatedMethods = paymentMethods.filter(
+        (_, index) => index !== editingIndex
+      );
       setPaymentMethods(updatedMethods);
       setIsAdding(false); // Hide form after deletion
     }
@@ -111,7 +116,11 @@ const PaymentInfoForm = () => {
     <div className="payment-section pt-6 pb-8">
       <div className="title-line-area-section flex pb-[13px] justify-between items-center gap-3 w-full !border-0">
         <p className="body-bold-regular">Payment method</p>
-        <Button variant="accend-link" className="underline !text-primary-color-100" onClick={handleAddNewClick}>
+        <Button
+          variant="accend-link"
+          className="underline !text-primary-color-100"
+          onClick={handleAddNewClick}
+        >
           Add new payment method
         </Button>
       </div>
@@ -119,7 +128,11 @@ const PaymentInfoForm = () => {
       {isAdding && (
         <div className="my-6 adding-payment-methods-area">
           <div className="flex justify-end space-x-4 mt-4 payment-methods-head">
-            <Button variant="accend-link" className="!text-primary-color-100" onClick={handleSave}>
+            <Button
+              variant="accend-link"
+              className="!text-primary-color-100"
+              onClick={handleSave}
+            >
               Save <SaveIcon />
             </Button>
           </div>
@@ -142,23 +155,23 @@ const PaymentInfoForm = () => {
             />
             <div className="date-and-csv flex items-center gap-6 sm:fex-col px-3">
               <Input
-              label="Expiry date"
-              type="text"
-              name="expiryDate"
-              value={newPayment.expiryDate}
-              onChange={handleChange}
-              className="w-full forms max-w-[120px] sm:max-w-full py-2 !px-0 border rounded-md flex-col"
-            />
-            <Input
-              label="CVV"
-              type="text"
-              name="cvvNumber"
-              value={newPayment.cvvNumber}
-              onChange={handleChange}
-              className="w-full forms max-w-[80px] sm:max-w-full py-2 !px-0 border rounded-md flex-col"
-            />
+                label="Expiry date"
+                type="text"
+                name="expiryDate"
+                value={newPayment.expiryDate}
+                onChange={handleChange}
+                className="w-full forms max-w-[120px] sm:max-w-full py-2 !px-0 border rounded-md flex-col"
+              />
+              <Input
+                label="CVV"
+                type="text"
+                name="cvvNumber"
+                value={newPayment.cvvNumber}
+                onChange={handleChange}
+                className="w-full forms max-w-[80px] sm:max-w-full py-2 !px-0 border rounded-md flex-col"
+              />
             </div>
-             <div className="p-4">
+            <div className="p-4">
               <label className="flex items-center space-x-2">
                 <Input
                   type="checkbox"
@@ -187,7 +200,7 @@ const PaymentInfoForm = () => {
               disabled={useShippingAsBilling} // Disable when checkbox is checked
               className="w-full flex-col max-w-[386px] px-3 py-2 border rounded-md"
             />
-            
+
             <div className="flex flex-col">
               <div className="w-full">
                 <Input
@@ -212,7 +225,6 @@ const PaymentInfoForm = () => {
                 />
               </div>
             </div>
-           
 
             {/* Delete Button for editing mode */}
             {editingIndex !== null && (

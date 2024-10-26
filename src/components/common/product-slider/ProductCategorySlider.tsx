@@ -26,14 +26,16 @@ interface CategoryProductSliderProps {
   Component: React.FC<Product>; // A component that will be rendered inside the slider
   autoplayDelay?: number; // Optional autoplay delay
   slidesPerView?: number; // Default slidesPerView
-  breakpoints?: { [breakpoint: number]: { slidesPerView: number; spaceBetween: number } }; // Custom breakpoints for the slider
+  breakpoints?: {
+    [breakpoint: number]: { slidesPerView: number; spaceBetween: number };
+  }; // Custom breakpoints for the slider
   spaceBetween?: number; // Optional space between slides
 }
 
 const CategoryProductSlider: React.FC<CategoryProductSliderProps> = ({
   sliderId,
   data,
-  Component, 
+  Component,
   autoplayDelay = 5000,
   slidesPerView = 2,
   breakpoints,
@@ -51,24 +53,27 @@ const CategoryProductSlider: React.FC<CategoryProductSliderProps> = ({
           disableOnInteraction: false,
         }}
         className={`product-slides-area slider-${sliderId}`}
-        breakpoints={breakpoints || {
-          640: {
-            slidesPerView: 2,
-            spaceBetween: 10,
-          },
-          768: {
-            slidesPerView: 3,
-            spaceBetween: 15,
-          },
-          1024: {
-            slidesPerView: 5,
-            spaceBetween: 19,
-          },
-        }}
+        breakpoints={
+          breakpoints || {
+            640: {
+              slidesPerView: 2,
+              spaceBetween: 10,
+            },
+            768: {
+              slidesPerView: 3,
+              spaceBetween: 15,
+            },
+            1024: {
+              slidesPerView: 5,
+              spaceBetween: 19,
+            },
+          }
+        }
       >
-
-        {data.map((item) => (
-          <SwiperSlide key={item.id}> {/* Use unique id as key */}
+        {data.map(item => (
+          <SwiperSlide key={item.id}>
+            {' '}
+            {/* Use unique id as key */}
             <Component {...item} />
           </SwiperSlide>
         ))}

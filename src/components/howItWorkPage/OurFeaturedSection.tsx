@@ -1,11 +1,11 @@
-import React from 'react'
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 
 const OurFeaturedSection = () => {
   return (
- <section className="w-full bg-white px-20 laptop-m:px-12 lg:px-8 md:px-6 sm:px-4 pt-[146px] pb-[150px] lg:py-16 sm:py-10">
-        <div className="custom-container-fluid">
-            <div className="mb-12">
+    <section className="w-full bg-white px-20 laptop-m:px-12 lg:px-8 md:px-6 sm:px-4 pt-[146px] pb-[150px] lg:py-16 sm:py-10">
+      <div className="custom-container-fluid">
+        <div className="mb-12">
           <h2 className="text-[24px] mb-3 font-normal text-[#1B264F]">
             What makes us different?
           </h2>
@@ -111,9 +111,9 @@ const OurFeaturedSection = () => {
             </p>
           </div>
         </div>
-        </div>
-      </section>
-  )
-}
+      </div>
+    </section>
+  );
+};
 
-export default OurFeaturedSection
+export default OurFeaturedSection;

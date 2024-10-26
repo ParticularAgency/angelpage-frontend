@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 
 interface InputProps {
-  type?: 'text' | 'email' | 'password' | 'number' | 'date' | 'checkbox' | 'radio' | 'file'; // Add more types as needed
+  type?:
+    | 'text'
+    | 'email'
+    | 'password'
+    | 'number'
+    | 'date'
+    | 'checkbox'
+    | 'radio'
+    | 'file'; // Add more types as needed
   placeholder?: string;
   value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -31,7 +39,7 @@ const Input: React.FC<InputProps> = ({
   className = '',
   status = 'default', // Default to 'default' status
   errorMessage,
-  inputClasses
+  inputClasses,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -79,11 +87,9 @@ const Input: React.FC<InputProps> = ({
         required={required}
         disabled={disabled}
         checked={checked}
-
         className={`${inputClasses}input-field h-10 py-[11px] px-[8px] w-full text-body-caption font-normal leading-[150%] font-secondary text-mono-60 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100 ${
           disabled ? 'opacity-50 cursor-not-allowed' : ''
         }`}
-
         style={{
           border: `1px solid ${getStatusBorderColor()}`, // Apply the border color based on status and if the field is filled
         }}

@@ -1,12 +1,12 @@
-import CharityAccountMain from '@/pages/charity/charity-account/CharityAccount'
-import React from 'react'
+import CharityAccountMain from '@/pages/charity/charity-account/CharityAccount';
+import React from 'react';
 
 const CharityAccountPage = () => {
   return (
     <div className="charity-account-page-wrapper-main">
-        <CharityAccountMain />
+      <CharityAccountMain />
     </div>
-  )
-}
+  );
+};
 
-export default CharityAccountPage
+export default CharityAccountPage;

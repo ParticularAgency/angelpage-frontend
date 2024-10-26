@@ -10,61 +10,63 @@ interface GiftFeaturedCategoryProductsProps {
   isLoggedIn: boolean;
 }
 
-const GiftFeaturedCategoryProducts: React.FC<GiftFeaturedCategoryProductsProps> = ({ secClassName , isLoggedIn}) => {
+const GiftFeaturedCategoryProducts: React.FC<
+  GiftFeaturedCategoryProductsProps
+> = ({ secClassName, isLoggedIn }) => {
   const productData = [
     {
       id: 1,
-      charityImageSrc: "/images/icons/charity-img.png",
-      charityImageAlt: "The Salvation Army Logo",
-      productImageSrc: "/images/products/product1.png",
-      productImageAlt: "Hollister Crew Neck Jumper",
-      productBrand: "Hollister",
-      productTitle: "Crew Neck Jumper",
-      productSize: "12 UK",
-      productPrice: "£11.50",
-      location: "London",
+      charityImageSrc: '/images/icons/charity-img.png',
+      charityImageAlt: 'The Salvation Army Logo',
+      productImageSrc: '/images/products/product1.png',
+      productImageAlt: 'Hollister Crew Neck Jumper',
+      productBrand: 'Hollister',
+      productTitle: 'Crew Neck Jumper',
+      productSize: '12 UK',
+      productPrice: '£11.50',
+      location: 'London',
       onFavoriteClick: () => handleFavoriteClick(0),
       isLoggedIn,
     },
     {
       id: 2,
-      charityImageSrc: "/images/icons/charity-img2.png",
-      charityImageAlt: "RSPCA Logo",
-      productImageSrc: "/images/products/product2.png",
-      productImageAlt: "Jordan Dunks",
-      productBrand: "Jordan",
-      productTitle: "Jordan Dunks",
-      productSize: "10 UK",
-      productPrice: "£40.00",
-      location: "London",
+      charityImageSrc: '/images/icons/charity-img2.png',
+      charityImageAlt: 'RSPCA Logo',
+      productImageSrc: '/images/products/product2.png',
+      productImageAlt: 'Jordan Dunks',
+      productBrand: 'Jordan',
+      productTitle: 'Jordan Dunks',
+      productSize: '10 UK',
+      productPrice: '£40.00',
+      location: 'London',
       onFavoriteClick: () => handleFavoriteClick(0),
       isLoggedIn,
     },
     {
       id: 3,
-      charityImageSrc: "/images/icons/charity-img3.png",
-      charityImageAlt: "WaterAid Logo",
-      productImageSrc: "/images/products/product3.png",
-      productImageAlt: "Addison Ross Fine Bone China Mug",
-      productBrand: "Addison Ross",
-      productTitle: "Fine Bone China Mug",
-      productSize: "N/A",
-      productPrice: "£3.00",
-      location: "London",
+      charityImageSrc: '/images/icons/charity-img3.png',
+      charityImageAlt: 'WaterAid Logo',
+      productImageSrc: '/images/products/product3.png',
+      productImageAlt: 'Addison Ross Fine Bone China Mug',
+      productBrand: 'Addison Ross',
+      productTitle: 'Fine Bone China Mug',
+      productSize: 'N/A',
+      productPrice: '£3.00',
+      location: 'London',
       onFavoriteClick: () => handleFavoriteClick(0),
       isLoggedIn,
     },
     {
       id: 4,
-      charityImageSrc: "/images/icons/charity-img4.png",
-      charityImageAlt: "Decor Logo",
-      productImageSrc: "/images/products/product4.png",
-      productImageAlt: "Balineum Flora Wall Mirror",
-      productBrand: "Balineum",
-      productTitle: "Flora Wall Mirror",
-      productSize: "100x100",
-      productPrice: "£15.00",
-      location: "London",
+      charityImageSrc: '/images/icons/charity-img4.png',
+      charityImageAlt: 'Decor Logo',
+      productImageSrc: '/images/products/product4.png',
+      productImageAlt: 'Balineum Flora Wall Mirror',
+      productBrand: 'Balineum',
+      productTitle: 'Flora Wall Mirror',
+      productSize: '100x100',
+      productPrice: '£15.00',
+      location: 'London',
       onFavoriteClick: () => handleFavoriteClick(0),
       isLoggedIn,
     },
@@ -75,7 +77,9 @@ const GiftFeaturedCategoryProducts: React.FC<GiftFeaturedCategoryProductsProps> 
   };
 
   return (
-    <section className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-20 pb-[25px]'}`}>
+    <section
+      className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-20 pb-[25px]'}`}
+    >
       <div className="custom-container">
         <div className="product-sec-title-box mb-10 flex sm:flex-col items-start justify-between gap-4">
           <div className="product-title-box-left-cont">

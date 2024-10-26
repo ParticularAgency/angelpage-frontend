@@ -1,13 +1,13 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import FilterSidebar from "@/components/elements/search/FilterSidebar";
-import Sorting from "@/components/elements/search/Sorting";
-import ProductList from "@/components/product/ProductList";
-import Pagination from "@/components/elements/Pagination";
-import SearchBar from "@/components/elements/search/SearchBar";
-import { productData } from "@/libs/productData";
-import { Product } from "@/types/productTypes"; // Ensure this path is correct
-import { CloseIcon, FilterIcon } from "@/icons";
+'use client';
+import React, { useState, useEffect } from 'react';
+import FilterSidebar from '@/components/elements/search/FilterSidebar';
+import Sorting from '@/components/elements/search/Sorting';
+import ProductList from '@/components/product/ProductList';
+import Pagination from '@/components/elements/Pagination';
+import SearchBar from '@/components/elements/search/SearchBar';
+import { productData } from '@/libs/productData';
+import { Product } from '@/types/productTypes'; // Ensure this path is correct
+import { CloseIcon, FilterIcon } from '@/icons';
 
 // Define the type for filters
 interface Filters {
@@ -19,7 +19,8 @@ interface Filters {
 
 const CharityStoreListing: React.FC = () => {
   const [products] = useState<Product[]>(productData); // Initial product data
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(productData);
+  const [filteredProducts, setFilteredProducts] =
+    useState<Product[]>(productData);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState<Filters>({
@@ -28,8 +29,8 @@ const CharityStoreListing: React.FC = () => {
     productBrand: [],
     productCondition: [],
   });
-  const [sort, setSort] = useState<string>("");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sort, setSort] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const productsPerPage = 12;
 
@@ -52,56 +53,83 @@ const CharityStoreListing: React.FC = () => {
   };
 
   const removeFilter = (filterType: keyof Filters, value: string) => {
-    setFilters((prevFilters) => ({
+    setFilters(prevFilters => ({
       ...prevFilters,
-      [filterType]: prevFilters[filterType].filter((item) => item !== value),
+      [filterType]: prevFilters[filterType].filter(item => item !== value),
     }));
   };
 
-  const filterAndSortProducts = (filters: Filters, sort: string, query: string) => {
+  const filterAndSortProducts = (
+    filters: Filters,
+    sort: string,
+    query: string
+  ) => {
     let updatedProducts = [...products];
 
     // Filter logic
     if (filters.category.length > 0) {
-      updatedProducts = updatedProducts.filter((product) =>
-        product.category !== undefined && filters.category.includes(product.category)
+      updatedProducts = updatedProducts.filter(
+        product =>
+          product.category !== undefined &&
+          filters.category.includes(product.category)
       );
     }
     if (filters.subCategory.length > 0) {
-      updatedProducts = updatedProducts.filter((product) =>
-        product.subcategory !== undefined && filters.subCategory.includes(product.subcategory)
+      updatedProducts = updatedProducts.filter(
+        product =>
+          product.subcategory !== undefined &&
+          filters.subCategory.includes(product.subcategory)
       );
     }
     if (filters.productBrand.length > 0) {
-      updatedProducts = updatedProducts.filter((product) =>
-        product.productBrand !== undefined && filters.productBrand.includes(product.productBrand)
+      updatedProducts = updatedProducts.filter(
+        product =>
+          product.productBrand !== undefined &&
+          filters.productBrand.includes(product.productBrand)
       );
     }
     if (filters.productCondition.length > 0) {
-      updatedProducts = updatedProducts.filter((product) =>
-        product.productCondition !== undefined && filters.productCondition.includes(product.productCondition)
+      updatedProducts = updatedProducts.filter(
+        product =>
+          product.productCondition !== undefined &&
+          filters.productCondition.includes(product.productCondition)
       );
     }
 
     // Search logic
     if (query) {
-      updatedProducts = updatedProducts.filter((product) =>
-        (product.productTitle && product.productTitle.toLowerCase().includes(query.toLowerCase())) ||
-        (product.category && product.category.toLowerCase().includes(query.toLowerCase())) ||
-        (product.subcategory && product.subcategory.toLowerCase().includes(query.toLowerCase())) ||
-        (product.productBrand && product.productBrand.toLowerCase().includes(query.toLowerCase()))
+      updatedProducts = updatedProducts.filter(
+        product =>
+          (product.productTitle &&
+            product.productTitle.toLowerCase().includes(query.toLowerCase())) ||
+          (product.category &&
+            product.category.toLowerCase().includes(query.toLowerCase())) ||
+          (product.subcategory &&
+            product.subcategory.toLowerCase().includes(query.toLowerCase())) ||
+          (product.productBrand &&
+            product.productBrand.toLowerCase().includes(query.toLowerCase()))
       );
     }
 
     // Sorting logic
-    if (sort === "price-asc") {
-      updatedProducts.sort((a, b) => parseFloat(a.productPrice || "0") - parseFloat(b.productPrice || "0"));
-    } else if (sort === "price-desc") {
-      updatedProducts.sort((a, b) => parseFloat(b.productPrice || "0") - parseFloat(a.productPrice || "0"));
-    } else if (sort === "name-asc") {
-      updatedProducts.sort((a, b) => (a.productTitle || "").localeCompare(b.productTitle || ""));
-    } else if (sort === "name-desc") {
-      updatedProducts.sort((a, b) => (b.productTitle || "").localeCompare(a.productTitle || ""));
+    if (sort === 'price-asc') {
+      updatedProducts.sort(
+        (a, b) =>
+          parseFloat(a.productPrice || '0') - parseFloat(b.productPrice || '0')
+      );
+    } else if (sort === 'price-desc') {
+      updatedProducts.sort(
+        (a, b) =>
+          parseFloat(b.productPrice || '0') - parseFloat(a.productPrice || '0')
+      );
+    } else if (sort === 'name-asc') {
+      updatedProducts.sort((a, b) =>
+        (a.productTitle || '').localeCompare(b.productTitle || '')
+      );
+    } else if (sort === 'name-desc') {
+      updatedProducts.sort((a, b) =>
+        (b.productTitle || '').localeCompare(a.productTitle || '')
+      );
     }
 
     setFilteredProducts(updatedProducts);
@@ -113,7 +141,10 @@ const CharityStoreListing: React.FC = () => {
   };
 
   const startIndex = (currentPage - 1) * productsPerPage;
-  const currentProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
+  const currentProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + productsPerPage
+  );
 
   return (
     <section className="products-lists-section pt-[31px] pb-[54px] md:pb-9 sm:pt-5 sm:pb-8 bg-[#F1F1F7]">
@@ -123,12 +154,12 @@ const CharityStoreListing: React.FC = () => {
             <div className="products-list-main-left-cont h-[100vh] sticky md:relative md:h-auto top-9 max-w-[220px] md:max-w-[160px] w-full md:hidden">
               <FilterSidebar
                 availableProducts={products.map(product => ({
-    ...product,
-    category: product.category || '', // Ensuring category is defined
-    subcategory: product.subcategory || '', // Similarly for other properties
-    productBrand: product.productBrand || '',
-    productCondition: product.productCondition || '',
-  }))}
+                  ...product,
+                  category: product.category || '', // Ensuring category is defined
+                  subcategory: product.subcategory || '', // Similarly for other properties
+                  productBrand: product.productBrand || '',
+                  productCondition: product.productCondition || '',
+                }))}
                 selectedFilters={filters}
                 onFilterChange={handleFilterChange}
               />
@@ -138,7 +169,11 @@ const CharityStoreListing: React.FC = () => {
                 <div className="filter-area-box md:w-full flex items-center gap-8">
                   <div className="filter-search-with-searchbar flex items-center md:justify-between gap-4">
                     <div className="filter-sidebar-search hidden md:block">
-                      <input id="my-drawer-filter" type="checkbox" className="drawer-toggle" />
+                      <input
+                        id="my-drawer-filter"
+                        type="checkbox"
+                        className="drawer-toggle"
+                      />
                       <div className="drawer-content">
                         <label
                           htmlFor="my-drawer-filter"
@@ -175,22 +210,26 @@ const CharityStoreListing: React.FC = () => {
                               </div>
                               <div className="cart-add-product-item-wrapper pt-4">
                                 <div className="product-selected-category-lists flex flex-wrap items-center gap-2">
-                                  {Object.keys(filters).map((filterType) => {
+                                  {Object.keys(filters).map(filterType => {
                                     const key = filterType as keyof Filters;
-                                    return filters[key].map((filterValue, index) => (
-                                      <span
-                                        key={index}
-                                        className="selected-filter whitespace-nowrap flex items-center gap-0 h-8 bg-[#F4E8F9] caption text-primary-color-100 px-[8px] py-[4px] rounded-[16px]"
-                                      >
-                                        {filterValue}
-                                        <button
-                                          className="remove-filter p-[5px]"
-                                          onClick={() => removeFilter(key, filterValue)}
+                                    return filters[key].map(
+                                      (filterValue, index) => (
+                                        <span
+                                          key={index}
+                                          className="selected-filter whitespace-nowrap flex items-center gap-0 h-8 bg-[#F4E8F9] caption text-primary-color-100 px-[8px] py-[4px] rounded-[16px]"
                                         >
-                                          x
-                                        </button>
-                                      </span>
-                                    ));
+                                          {filterValue}
+                                          <button
+                                            className="remove-filter p-[5px]"
+                                            onClick={() =>
+                                              removeFilter(key, filterValue)
+                                            }
+                                          >
+                                            x
+                                          </button>
+                                        </span>
+                                      )
+                                    );
                                   })}
                                 </div>
                               </div>
@@ -200,12 +239,13 @@ const CharityStoreListing: React.FC = () => {
                             <div className="cart-canvas-area min-h-full">
                               <FilterSidebar
                                 availableProducts={products.map(product => ({
-    ...product,
-    category: product.category || '', // Ensuring category is defined
-    subcategory: product.subcategory || '', // Similarly for other properties
-    productBrand: product.productBrand || '',
-    productCondition: product.productCondition || '',
-  }))}
+                                  ...product,
+                                  category: product.category || '', // Ensuring category is defined
+                                  subcategory: product.subcategory || '', // Similarly for other properties
+                                  productBrand: product.productBrand || '',
+                                  productCondition:
+                                    product.productCondition || '',
+                                }))}
                                 selectedFilters={filters}
                                 onFilterChange={handleFilterChange}
                               />
@@ -214,11 +254,14 @@ const CharityStoreListing: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <SearchBar filteredProducts={filteredProducts.length} onSearch={handleSearch} />
+                    <SearchBar
+                      filteredProducts={filteredProducts.length}
+                      onSearch={handleSearch}
+                    />
                   </div>
                   <div className="product-selected-category-lists flex flex-wrap items-center gap-2">
-                    {Object.keys(filters).map((filterType) => {
-                      const key = filterType as keyof Filters; 
+                    {Object.keys(filters).map(filterType => {
+                      const key = filterType as keyof Filters;
                       return filters[key].map((filterValue, index) => (
                         <span
                           key={index}
@@ -240,18 +283,29 @@ const CharityStoreListing: React.FC = () => {
               </div>
 
               <ProductList products={currentProducts} isLoggedIn={true} />
-                  <div className="product-lists-footer mt-[38px] md:mt-6 flex md:flex-row-reverse md:justify-between sm:flex-col sm:mt-4 items-center"> 
-           <div className="pagination-wrapper ml-auto mr-auto md:mx-0">  
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-            </div>
-            <div className="showing-current-product">
-              <span className="caption pr-3 md:pr-1">Showing</span> <span className="caption">{startIndex + 1} to {Math.min(startIndex + productsPerPage, filteredProducts.length)} of</span> <span className="caption-bold">{filteredProducts.length} products</span>
-            </div>
-          </div>
+              <div className="product-lists-footer mt-[38px] md:mt-6 flex md:flex-row-reverse md:justify-between sm:flex-col sm:mt-4 items-center">
+                <div className="pagination-wrapper ml-auto mr-auto md:mx-0">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+                <div className="showing-current-product">
+                  <span className="caption pr-3 md:pr-1">Showing</span>{' '}
+                  <span className="caption">
+                    {startIndex + 1} to{' '}
+                    {Math.min(
+                      startIndex + productsPerPage,
+                      filteredProducts.length
+                    )}{' '}
+                    of
+                  </span>{' '}
+                  <span className="caption-bold">
+                    {filteredProducts.length} products
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

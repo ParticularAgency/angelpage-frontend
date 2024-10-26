@@ -378,6 +378,7 @@
       margin-right: auto;
       width: 100%;
     }
+
     @media screen and (max-width:991px) {
       .custom-container {
         padding-left: 18px;

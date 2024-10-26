@@ -40,7 +40,7 @@ const Textarea: React.FC<TextareaProps> = ({
       case 'error':
         return '#D10C3B';
       case 'success':
-        return '#1FC430'; 
+        return '#1FC430';
       default:
         return '#C9C8CA';
     }
@@ -57,7 +57,14 @@ const Textarea: React.FC<TextareaProps> = ({
 
   return (
     <div className="textarea-wrapper">
-      {label && <label htmlFor={name} className="block font-secondary  text-body-form font-normal leading-[150%] text-mono-100 mb-2">{label}</label>} 
+      {label && (
+        <label
+          htmlFor={name}
+          className="block font-secondary  text-body-form font-normal leading-[150%] text-mono-100 mb-2"
+        >
+          {label}
+        </label>
+      )}
       <textarea
         id={name}
         name={name}
@@ -83,4 +90,3 @@ const Textarea: React.FC<TextareaProps> = ({
 };
 
 export default Textarea;
-

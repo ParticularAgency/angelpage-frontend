@@ -24,9 +24,24 @@ const Pagination: React.FC<PaginationProps> = ({
       if (currentPage <= 3) {
         pageNumbers.push(1, 2, 3, 4, '...', totalPages);
       } else if (currentPage >= totalPages - 2) {
-        pageNumbers.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+        pageNumbers.push(
+          1,
+          '...',
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages
+        );
       } else {
-        pageNumbers.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+        pageNumbers.push(
+          1,
+          '...',
+          currentPage - 1,
+          currentPage,
+          currentPage + 1,
+          '...',
+          totalPages
+        );
       }
     }
 
@@ -47,15 +62,15 @@ const Pagination: React.FC<PaginationProps> = ({
 
       <div className="pagiantion-item flex items-center gap-2">
         {pageNumbers.map((page, index) => (
-        <button
-          key={index}
-          className={`${page === currentPage ? 'active' : ''} body-small`}
-          onClick={() => typeof page === 'number' && onPageChange(page)}
-          disabled={page === '...'}
-        >
-          {page}
-        </button>
-      ))}
+          <button
+            key={index}
+            className={`${page === currentPage ? 'active' : ''} body-small`}
+            onClick={() => typeof page === 'number' && onPageChange(page)}
+            disabled={page === '...'}
+          >
+            {page}
+          </button>
+        ))}
       </div>
 
       <button
