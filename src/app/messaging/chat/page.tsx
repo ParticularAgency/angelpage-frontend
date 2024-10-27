@@ -1,6 +1,6 @@
 import React from 'react'
 
-const chatBox = () => {
+const ChatMassagePage = () => {
   return (
     <div>
       
@@ -8,4 +8,5 @@ const chatBox = () => {
   )
 }
 
-export default chatBox
+export default ChatMassagePage
+

@@ -716,3 +716,51 @@ p.account-info-item.editing-view {
 .summary-foot {
     border-top: 1px solid #E6E3E7;
 }
+
+.shipping-and-payment-information .payment-info-wrapper,
+.shipping-and-payment-information .address-info-wrapper {
+    border-top: 1px solid #0B0112;
+}
+
+.selecting-checkbox-item {
+    --tw-bg-opacity: 1;
+    background-color: transparent !important;
+    background-image: none;
+    animation: radiomark var(--animation-input, 0.2s) ease-out;
+    box-shadow: none !important;
+    border: 1px solid #6A0398;
+
+}
+
+.selecting-checkbox-item:checked {
+    border: 4px solid #6A0398;
+    background-color: #fff;
+}
+
+.selecting-checkbox-item:focus,
+.selecting-checkbox-item:focus-visible,
+.selecting-checkbox-item:focus-within {
+    border-radius: 999px !important;
+    -webkit-border-radius: 999px !important;
+    -moz-border-radius: 999px !important;
+    -ms-border-radius: 999px !important;
+    -o-border-radius: 999px !important;
+}
+
+.payment-wrapper-box-head,
+.address-cont-wrapper-box-area,
+.address-wrapper-box-head {
+    border: 1px solid #E6E3E7;
+}
+
+@media screen and (min-width:768px) {
+    .basket-page-right-cont {
+        position: sticky;
+        top: 100px;
+        height: 100vh;
+    }
+}
+
+@media screen and (max-width:767px){ 
+    .checkout-header-right-cont p{display: none;}
+}
