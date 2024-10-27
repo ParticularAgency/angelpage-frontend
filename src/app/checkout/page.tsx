@@ -1,6 +1,6 @@
 'use client';
-import BasketPage from '@/pages/checkout/checkout';
 import React from 'react';
+import BasketPage from '@/pages/checkout/checkout';
 
 const CheckoutPage = () => {
   return (

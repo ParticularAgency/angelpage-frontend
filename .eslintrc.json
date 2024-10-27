@@ -1,10 +1,8 @@
 {
 	"extends": [
 		"next/core-web-vitals",
-		"next/typescript",
-		"plugin:prettier/recommended"
+		"next/typescript"
 	],
-	"plugins": ["prettier"],
 	"rules": {
 		"react/no-unescaped-entities": "off",
 		"@next/next/no-page-custom-font": "off"

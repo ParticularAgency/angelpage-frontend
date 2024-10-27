@@ -48,8 +48,9 @@ const Header = () => {
                     className={`header-left-cont col-span-7 sm:col-span-4 flex items-center gap-4 ${isLoggedIn ? 'md:col-span-2' : ''}`}
                   >
                     {!isTempLogin && <TopNavList />}
-                    <MobileViewOffcanvas />
-                    <div className="site-brand-logo mr-auto">
+                    {!isCheckoutPage && <MobileViewOffcanvas />}
+
+                    <div className="site-brand-logo mr-auto sm:mr-[-4px]">
                       <Link href="/">
                         <Image
                           src={`${isPostProductPage || isCheckoutPage ? '/images/brand-logo-white.svg' : '/images/brand-logo-black.svg'}`}
@@ -119,8 +120,8 @@ const Header = () => {
                     {!(isCheckoutPage || isLoggedIn || isPostProductPage) && (
                       <TopNavList />
                     )}
-                    <MobileViewOffcanvas />
-                    <div className="site-brand-logo mr-auto">
+                    {!isCheckoutPage && <MobileViewOffcanvas />}
+                    <div className="site-brand-logo mr-auto sm:mr-[-4px]">
                       <Link href="/">
                         <Image
                           src={`${isPostProductPage || isCheckoutPage ? '/images/brand-logo-white.svg' : '/images/brand-logo-black.svg'}`}
