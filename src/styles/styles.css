@@ -761,6 +761,37 @@ p.account-info-item.editing-view {
     }
 }
 
-@media screen and (max-width:767px){ 
-    .checkout-header-right-cont p{display: none;}
+@media screen and (max-width:767px) {
+    .checkout-header-right-cont p {
+        display: none;
+    }
+}
+
+.basket-page-right-cont .basket-page-right-cont-wrapper {
+    height: auto;
+    transition: height 350ms ease 0s;
+    -webkit-transition: height 350ms ease 0s;
+    -moz-transition: height 350ms ease 0s;
+    -ms-transition: height 350ms ease 0s;
+    -o-transition: height 350ms ease 0s;
+}
+
+.order-item-list-box p.colaps-title.collapsed-open .arrow-down {
+    transition: all 450ms ease 0s;
+    transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -webkit-transition: all 450ms ease 0s;
+    -moz-transition: all 450ms ease 0s;
+    -ms-transition: all 450ms ease 0s;
+    -o-transition: all 450ms ease 0s;
+}
+
+.basket-page-right-cont .order-item-list-box .product-list {
+        max-height: 305px;
+        overflow: hidden;
+        height: 100%;
+        overflow-y: scroll;
 }
