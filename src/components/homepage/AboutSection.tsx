@@ -10,7 +10,7 @@ const AboutSection = () => {
             <h3 className="h3 about-sec-title max-w-[540px]  mb-5">
               Where Sellers are Donors and Buyers are Givers
             </h3>
-            <p className="about-sec-desc">
+            <p className="about-sec-desc body-regular">
               Angelpage aims to revolutionise charitable giving through an
               innovative online marketplace. The platform integrates e-commerce
               with charitable donations, allowing users to buy, or donate

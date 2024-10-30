@@ -1,3 +1,4 @@
+import { Button } from '@/components/elements';
 import { ArrowDownIcon } from '@/icons';
 import React, { useState } from 'react';
 
@@ -7,7 +8,7 @@ interface Product {
   price: number;
 }
 
-const BasketArea = () => {
+const BasketArea = ({ onPay }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   // Sample data for products
@@ -107,10 +108,10 @@ const BasketArea = () => {
         </div>
 
         {/* Pay Now Button */}
-        <div className="pay px-6">
-          <button className="mt-6 w-full bg-black text-white py-2">
+        <div className="pay px-6 mt-3">
+          <Button className="w-full" variant="primary" onClick={onPay}>
             Pay now
-          </button>
+          </Button>
         </div>
       </div>
     </div>

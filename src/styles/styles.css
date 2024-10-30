@@ -280,13 +280,6 @@ nav.header-bottom-navbar.navbar-megamenu-area {
 
 .about-sec-info-cont .about-sec-desc {
     color: #182652;
-    color: color(display-p3 0.1059 0.149 0.3098);
-    font-kerning: none;
-    font-family: "Helvetica Neue";
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 300;
-    line-height: 150%;
     letter-spacing: 0.8px;
 }
 
@@ -776,6 +769,19 @@ p.account-info-item.editing-view {
     -o-transition: height 350ms ease 0s;
 }
 
+.order-item-list-box p.colaps-title.collapsed .arrow-down {
+    transition: all 450ms ease 0s;
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -webkit-transition: all 450ms ease 0s;
+    -moz-transition: all 450ms ease 0s;
+    -ms-transition: all 450ms ease 0s;
+    -o-transition: all 450ms ease 0s;
+}
+
 .order-item-list-box p.colaps-title.collapsed-open .arrow-down {
     transition: all 450ms ease 0s;
     transform: rotate(180deg);
@@ -790,8 +796,35 @@ p.account-info-item.editing-view {
 }
 
 .basket-page-right-cont .order-item-list-box .product-list {
-        max-height: 305px;
-        overflow: hidden;
-        height: 100%;
-        overflow-y: scroll;
+    max-height: 305px;
+    overflow: hidden;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.loading-animation {
+    fill-opacity: 0;
+    /* Start with hidden fill */
+    animation: fillUnfill 2s infinite;
+}
+
+.loading-animation.delay {
+    animation-delay: 1s;
+    /* Offset the third path to alternate with the second */
+}
+
+@keyframes fillUnfill {
+
+    0%,
+    50% {
+        fill-opacity: 1;
+    }
+
+    /* Fill for half the animation */
+    50%,
+    100% {
+        fill-opacity: 0;
+    }
+
+    /* Unfill for the rest */
 }
