@@ -60,7 +60,7 @@ const CharityDetailsPage: React.FC = () => {
       </header>
       <div className="container pt-[67px] grid grid-cols-3 sm:grid-cols-1 gap-12">
         {/* Main Content */}
-        <article className="col-span-2">
+        <article className="col-span-2 sm:order-2">
           <p className="mb-8 text-lg text-[#000000]">
             {blog.description} {/* Use dynamic content */}
           </p>
@@ -77,7 +77,7 @@ const CharityDetailsPage: React.FC = () => {
         </article>
 
         {/* Author Info */}
-        <aside className="col-span-1 flex flex-col items-center lg:items-start text-[14px]">
+        <aside className="col-span-1 flex flex-col items-center lg:items-start text-[14px] sm:order-1">
           <div>
             <p className="text-[#000]">Author</p>
             <div className="flex mt-3 gap-4">

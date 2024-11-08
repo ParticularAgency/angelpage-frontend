@@ -2,6 +2,7 @@ import { CartIcon, CloseIcon, MinusIcon, PlusIcon } from '@/icons';
 import React, { useState } from 'react';
 import { Button } from '../elements';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const MiniCart = () => {
   // State to hold the quantity of products in the cart
@@ -38,7 +39,7 @@ const MiniCart = () => {
               aria-label="close sidebar"
               className="drawer-overlay"
             ></label>
-            <div className="menu offcanvas-main-wrapper bg-mono-0 text-base-content min-h-full max-w-[430px] w-full p-0">
+            <div className="menu offcanvas-main-wrapper bg-mono-0 text-base-content min-h-full max-w-[439px] w-full p-0">
               <div className="offcanvas-head mini-cart-header-and-main-wrea min-h-full">
                 <div className="minicart-header px-6">
                   <div className="cart-head-top border-b pt-8 pb-5 flex justify-between items-center border-b-mono-60">
@@ -62,7 +63,7 @@ const MiniCart = () => {
 
                   <div className="cart-add-product-item-wrapper">
                     <div className="cart-add-product-item flex items-center gap-5 py-5">
-                      <div className="minicart-product-img">
+                      <div className="minicart-product-img max-w-[116px] sm:max-w-[80px] w-full">
                         <Image
                           src="/images/products/product1.png"
                           width={116}
@@ -70,13 +71,17 @@ const MiniCart = () => {
                           alt="product small image"
                         />
                       </div>
-                      <div className="minicart-product-info">
-                        <h5 className="body-medium">Hollister</h5>
-                        <p className="body-small">Crew Neck Jumper</p>
-                        <p className="body-small flex items-center gap-1">
+                      <div className="minicart-product-info w-full">
+                        <h5 className="body-medium sm:!text-[16px]">
+                          Hollister
+                        </h5>
+                        <p className="body-small text-mono-100">
+                          Crew Neck Jumper
+                        </p>
+                        <p className="body-small text-mono-100 flex items-center gap-1">
                           Charity: <span>The Salvation Army</span>
                         </p>
-                        <div className="minicart-states mt-[23px] flex items-center justify-between">
+                        <div className="minicart-states mt-[23px] flex items-center justify-between gap-2">
                           <div className="minicart-states-group flex items-center gap-3">
                             <div className="product-inc-dsc-states relative p-[6px] max-w-[90px] w-full h-[26px] border border-mono-100 flex items-center justify-between">
                               <button
@@ -100,11 +105,16 @@ const MiniCart = () => {
                                 <PlusIcon />
                               </button>
                             </div>
-                            <p className="product-current-price caption-bold">
+                            <p className="product-current-price caption">
                               Price: <br /> <span>£24.99</span>
                             </p>
                           </div>
-                          <Button variant="accend-link">Remove</Button>
+                          <Button
+                            variant="accend-link"
+                            className="!underline !px-0"
+                          >
+                            Remove
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -114,7 +124,7 @@ const MiniCart = () => {
 
               <div className="offcanvas-main footer-mini-cart-area min-h-full mt-auto">
                 <div className="cart-canvas-area min-h-full">
-                  <div className="cart-footer-area px-6 pt-[46px] pb-12">
+                  <div className="cart-footer-area px-6 pt-[46px] pb-12 sm:py-7">
                     <div className="totat-price flex items-center justify-between">
                       <p className="body-bold-small">Total</p>
                       <p className="body-small">
@@ -124,13 +134,15 @@ const MiniCart = () => {
                     <p className="info-text forms-bold mt-[9px]">
                       Tax and shipping are calculated at checkout
                     </p>
-                    <Button
-                      variant="primary"
-                      className="max-w-full w-full rounded-[50px] mt-4"
-                      onClick={() => console.log('Should not click')}
-                    >
-                      Checkout
-                    </Button>
+                    <Link href="/checkout" className='block'>
+                      <Button
+                        variant="primary"
+                        className="max-w-full w-full rounded-[50px] mt-4 !h-12 !body-bold-small !text-mono-0"
+                        onClick={() => console.log('Should not click')}
+                      >
+                        Checkout
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>

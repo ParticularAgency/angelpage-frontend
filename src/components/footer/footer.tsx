@@ -10,21 +10,15 @@ import Link from 'next/link';
 import { Button, Input } from '../elements';
 
 const Footer = () => {
-  const [inputValue, setInputValue] = useState('');
-  const [inputStatus, setInputStatus] = useState<
-    'default' | 'error' | 'focus' | 'success'
-  >('default');
+  const [email, setEmail] = useState('');
 
-  const handleInputChange = (value: string) => {
-    setInputValue(value);
-    if (value.length === 0) {
-      setInputStatus('error');
-    } else if (value.length > 3) {
-      setInputStatus('success');
-    } else {
-      setInputStatus('default');
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Logic to handle form submission
+    console.log({ email });
+    // You could also add a call to an API here
   };
+
   return (
     <footer className="footer-section pt-[120px] pb-20 md:pt-20 sm:pb-[127px] sm:pt-[54px] bg-mono-0">
       <div className="custom-container">
@@ -97,24 +91,26 @@ const Footer = () => {
                   our newsletter to receive updates on our impact, exclusive
                   offers, and tips on how to make the most of your transactions.
                 </p>
-                <form action="get" className="subscription-form mt-8 w-full">
+                <form
+                  className="subscription-form mt-8 w-full"
+                  onSubmit={handleSubmit}
+                >
                   <div className="form-group-item flex sm:flex-wrap sm:gap-4 items-start gap-2 w-full">
                     <Input
                       type="email"
                       placeholder="Enter email"
-                      value={inputValue}
-                      onChange={e => handleInputChange(e.target.value)}
                       label=""
-                      status={inputStatus}
+                      name="email"
+                      value={email}
+                      id="email"
                       className="flex-col w-full"
-                      errorMessage={
-                        inputStatus === 'error' ? 'Input cannot be empty' : ''
-                      }
+                      onChange={e => setEmail(e.target.value)}
+                      errorMessage="Input cannot be empty"
                     />
                     <Button
                       variant="primary"
                       className="max-w-[149px] w-full sm:max-w-full"
-                      onClick={() => console.log('Should not click')}
+                     type='submit'
                     >
                       Subscribe
                     </Button>

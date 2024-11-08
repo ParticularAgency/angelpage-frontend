@@ -46,7 +46,7 @@ const CategoryProductSlider: React.FC<CategoryProductSliderProps> = ({
       <Swiper
         spaceBetween={spaceBetween}
         slidesPerView={slidesPerView}
-        navigation={true}
+        navigation={false}
         modules={[Navigation, Autoplay]}
         autoplay={{
           delay: autoplayDelay,

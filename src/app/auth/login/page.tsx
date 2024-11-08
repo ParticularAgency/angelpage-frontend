@@ -69,7 +69,7 @@ const Login = () => {
               </div>
               <div className="text-right">
                 <a href="#" className="text-sm text-primary-color-100">
-                  Forgot password
+                  Forgot Password?
                 </a>
               </div>
               <Button type="submit" variant="tertiary" className="w-full my-6">

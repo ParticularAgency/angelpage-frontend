@@ -3,7 +3,7 @@ import React from 'react';
 
 interface CheckboxProps {
   label?: string;
-  name: string;
+  name?: string;
   checked: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   status?: 'default' | 'error' | 'success'; // Border color based on status
@@ -43,14 +43,14 @@ const Checkbox: React.FC<CheckboxProps> = ({
           checked={checked}
           onChange={onChange}
           disabled={disabled}
-          className={`checkbox-input w-4 h-4 rounded-[4px] inline-block relative ${disabled ? 'not-allowed' : 'cursor-pointer'} bg-[${checked ? getStatusBorderColor() : 'transparent'}]`}
+          className={`checkbox-input w-4 h-4 rounded-[4px] !focus:rounded-[4px] !focus-within:rounded-[4px] !focus-visible:rounded-[4px] !outline-none !shadow-none inline-block relative ${disabled ? 'not-allowed' : 'cursor-pointer'} bg-[${checked ? getStatusBorderColor() : 'transparent'}]`}
           style={{
             appearance: 'none',
             border: `1px solid ${getStatusBorderColor()}`,
           }}
         />
         {checked && (
-          <div className="absolute top-0 left-0 w-4 h-4 bg-primary-color-100">
+          <div className="absolute !rounded-[4px] top-0 left-0 w-4 h-4 bg-primary-color-100">
             <Image
               src="/images/check-mark.svg"
               alt="checkmark icon"

@@ -8,7 +8,7 @@ interface TextareaProps {
   placeholder?: string;
   rows?: number;
   cols?: number;
-  status?: 'default' | 'error' | 'success' | 'focus'; // Added focus status
+  status?: 'default' | 'error' | 'success'; // Added focus status
   disabled?: boolean;
   maxLength?: number;
 }
@@ -16,7 +16,7 @@ interface TextareaProps {
 const Textarea: React.FC<TextareaProps> = ({
   label,
   name,
-  value,
+  value = ' ',
   onChange,
   placeholder = 'Enter text...',
   rows = 4,
@@ -28,21 +28,24 @@ const Textarea: React.FC<TextareaProps> = ({
   const [isFocused, setIsFocused] = useState(false);
 
   const getStatusBorderColor = () => {
+    // 1. If the input is focused, return the focus color
     if (isFocused) {
-      return '#0B0112';
+      return '#0B0112'; // Focus color
     }
 
-    if (value) {
-      return '#0B0112';
+    // 2. If the input has a value (not just spaces), return the filled color
+    if (typeof value === 'string' && value.trim() !== '') {
+      return '#0B0112'; // Change border color to black if field is filled
     }
 
+    // 3. Return color based on status
     switch (status) {
       case 'error':
-        return '#D10C3B';
+        return '#D10C3B'; // Red for error
       case 'success':
-        return '#1FC430';
+        return '#1FC430'; // Green for success
       default:
-        return '#C9C8CA';
+        return '#C9C8CA'; // Default gray color
     }
   };
 
@@ -77,7 +80,7 @@ const Textarea: React.FC<TextareaProps> = ({
         disabled={disabled}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        className={`textarea-field py-[11px] px-[8px] w-full text-body-caption font=normal leading-[150%] font-secondary text-mono-60 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`textarea-field  ${status} py-[11px] px-[8px] w-full text-body-caption font=normal leading-[150%] font-secondary text-mono-60 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         style={{
           border: `1px solid ${getStatusBorderColor()}`,
           resize: 'vertical',

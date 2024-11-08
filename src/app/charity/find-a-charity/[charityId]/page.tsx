@@ -1,6 +1,6 @@
 import { charityData } from '@/libs/charities'; // Import charity data
 import Image from 'next/image'; // Import Next.js Image component
-import Link from 'next/link'; // Import Next.js Link component
+import Link from 'next/link'; // Corrected import path for Link component
 
 // Define types for charity contact and charity data
 interface CharityContact {
@@ -11,6 +11,7 @@ interface CharityContact {
 interface Charity {
   id: string; // Unique identifier for the charity
   name: string; // Name of the charity
+  charityNumber: string;
   description: string; // Description of the charity
   image?: string; // Image URL of the charity
   contact: CharityContact; // Contact information for the charity
@@ -21,6 +22,7 @@ interface Params {
   charityId: string; // The ID of the charity from the URL
 }
 
+// Page component
 const CharityDetailsPage = ({ params }: { params: Params }) => {
   const { charityId } = params;
 
@@ -67,8 +69,8 @@ const CharityDetailsPage = ({ params }: { params: Params }) => {
         {/* Right Text Section */}
         <div className="w-2/3 md:w-full md:p-6 pl-[50px] pt-[121px] pb-[145px]">
           <h3 className="text-[#0B0112] capitalize">{charity.name}</h3>
-          <p className="text-[10px] text-[#611192] font-semibold">
-            CHARITY NUMBER: {charity.contact?.phone || 'N/A'}
+          <p className="text-[10px] text-[#611192] font-semibold"> 
+            CHARITY NUMBER: {charity.charityNumber || 'N/A'}
           </p>
           <p className="mt-4 text-[#0B0112] font-normal text-[14px] w-[651px] sm:w-full">
             {charity.description}
@@ -92,13 +94,18 @@ const CharityDetailsPage = ({ params }: { params: Params }) => {
                 width={16}
                 height={16}
               />
-              <a
-                href={charity.contact?.website}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {charity.contact?.website || 'N/A'}
-              </a>
+              {charity.contact?.website ? (
+                <a
+                  href={charity.contact.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#000]"
+                >
+                  {charity.contact.website}
+                </a>
+              ) : (
+                <span className="text-[#000]">N/A</span>
+              )}
             </div>
           </div>
 

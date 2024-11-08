@@ -29,7 +29,7 @@ const OurPlatformSection = () => {
                 />
               </div>
               <div className="category-card-info-box z-50  absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
-                <p className="highlight-category-title body-small text-mono-0">
+                <p className="highlight-category-title body-small text-mono-0 !font-bold">
                   Clothing and Accessories{' '}
                 </p>
                 <p className="highlight-category-desc mt-1 body-small text-mono-0">
@@ -49,7 +49,7 @@ const OurPlatformSection = () => {
                 />
               </div>
               <div className="category-card-info-box z-50  absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
-                <p className="highlight-category-title body-small text-mono-0">
+                <p className="highlight-category-title body-small text-mono-0 !font-bold">
                   Electronics
                 </p>
                 <p className="highlight-category-desc mt-1 body-small text-mono-0">
@@ -69,7 +69,7 @@ const OurPlatformSection = () => {
                 />
               </div>
               <div className="category-card-info-box z-50  absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
-                <p className="highlight-category-title body-small text-mono-0">
+                <p className="highlight-category-title body-small text-mono-0 !font-bold">
                   Homeware
                 </p>
                 <p className="highlight-category-desc mt-1 body-small text-mono-0">
@@ -89,7 +89,7 @@ const OurPlatformSection = () => {
                 />
               </div>
               <div className="category-card-info-box z-50  absolute p-4 bottom-0 left-0 w-full h-full flex flex-col justify-end items-start">
-                <p className="highlight-category-title body-small text-mono-0">
+                <p className="highlight-category-title body-small text-mono-0 !font-bold">
                   Excess Stock
                 </p>
                 <p className="highlight-category-desc mt-1 body-small text-mono-0">

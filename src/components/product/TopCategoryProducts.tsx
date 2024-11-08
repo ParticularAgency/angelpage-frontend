@@ -143,9 +143,9 @@ const TopCategoryProducts: React.FC<TopCategoryProductsProps> = ({
             modules={[Navigation, Autoplay]}
             autoplay={{ delay: 3000, disableOnInteraction: false }}
             breakpoints={{
-              640: { slidesPerView: 2, spaceBetween: 10 }, // Breakpoint for small screens
-              768: { slidesPerView: 3, spaceBetween: 15 }, // Breakpoint for medium screens
-              1024: { slidesPerView: 5, spaceBetween: 19 }, // Breakpoint for larger screens
+              640: { slidesPerView: 2, spaceBetween: 10 },
+              768: { slidesPerView: 3, spaceBetween: 15 },
+              1024: { slidesPerView: 5, spaceBetween: 19 },
             }}
           >
             {productData.map((item, index) => (

@@ -63,7 +63,7 @@ const CheckoutProductIttem = () => {
                   </p>
                 </div>
               </div>
-              <div className="added-product-item-right-cont">
+              <div className="added-product-item-right-cont text-right">
                 <p className="body-bold-medium text-mono-100">£60.00</p>
                 <button
                   className="caption mt-2 text-primary-color-100 !underline"
@@ -125,7 +125,7 @@ const CheckoutProductIttem = () => {
                   </p>
                 </div>
               </div>
-              <div className="added-product-item-right-cont">
+              <div className="added-product-item-right-cont text-right">
                 <p className="body-bold-medium text-mono-100">£60.00</p>
                 <button
                   className="caption mt-2 text-primary-color-100 !underline"

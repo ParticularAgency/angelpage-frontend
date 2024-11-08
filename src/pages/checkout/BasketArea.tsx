@@ -7,8 +7,11 @@ interface Product {
   brand: string;
   price: number;
 }
+interface BasketAreaProps {
+  onPay: () => void; // Define onPay as a function with no parameters and no return type
+}
 
-const BasketArea = ({ onPay }) => {
+const BasketArea: React.FC<BasketAreaProps> = ({ onPay }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   // Sample data for products
@@ -59,16 +62,16 @@ const BasketArea = ({ onPay }) => {
                     <p className="eyebrow-medium">{product.brand}</p>
                     <p className="caption-bold text-mono-80">{product.name}</p>
                     <div className="flex justify-between caption-bold pl-[21px]">
-                      <p className="caption-bold text-mono-80">Price</p>
-                      <p className="caption-bold text-mono-80 mt-1">
+                      <p className="caption text-mono-80">Price</p>
+                      <p className="caption text-mono-100 mt-1">
                         £{product.price.toFixed(2)}
                       </p>
                     </div>
                     <div className="flex justify-between caption-bold pl-[21px]">
-                      <p className="caption-bold text-mono-80">
+                      <p className="caption text-mono-80">
                         Charity profit (90%)
                       </p>
-                      <p className="caption-bold text-mono-80 mt-1">
+                      <p className="caption text-mono-100 mt-1">
                         £{productCharityProfit.toFixed(2)}
                       </p>
                     </div>
@@ -90,21 +93,21 @@ const BasketArea = ({ onPay }) => {
         {/* Summary Footer */}
         <div className="summary-foot border-t pt-6 px-6">
           <div className="flex justify-between mb-2">
-            <p className="caption-bold text-mono-80">Angelpage admin fee</p>
-            <p className="caption-bold text-mono-80">£{adminFee.toFixed(2)}</p>
+            <p className="caption text-mono-80">Angelpage admin fee</p>
+            <p className="caption text-mono-100">£{adminFee.toFixed(2)}</p>
           </div>
           <div className="flex justify-between mb-2">
-            <p className="caption-bold text-mono-80">Charity profit (90%)</p>
-            <p className="caption-bold text-mono-80">
-              £{charityProfit.toFixed(2)}
-            </p>
+            <p className="caption text-mono-80">Charity profit (90%)</p>
+            <p className="caption text-mono-100">£{charityProfit.toFixed(2)}</p>
           </div>
         </div>
 
         {/* Total Amount */}
         <div className="flex justify-between font-bold px-6 border-t pt-4 mt-4">
           <p className="body-bold-medium product-total-price">Total</p>
-          <p className="body-bold-medium">£{totalAmount.toFixed(2)}</p>
+          <p className="body-bold-medium text-mono-100">
+            £{totalAmount.toFixed(2)}
+          </p>
         </div>
 
         {/* Pay Now Button */}

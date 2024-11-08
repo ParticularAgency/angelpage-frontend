@@ -2,7 +2,7 @@ import React from 'react';
 
 const CartIcon: React.FC = () => {
   return (
-    <svg width="14" height="15" viewBox="0 0 14 15" fill="none">
+    <svg width="24" height="24" viewBox="0 0 14 15" fill="none">
       <path
         d="M9.51527 6.20344V4.18211C9.51527 2.79277 8.38927 1.66677 7.0006 1.66677C5.61127 1.66077 4.47994 2.78144 4.47394 4.17077V4.18211V6.20344"
         stroke="#131313"

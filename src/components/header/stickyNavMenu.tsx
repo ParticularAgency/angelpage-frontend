@@ -1,14 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FavoriteIcon, NotificationIcon, UserIcon } from '@/icons';
-const StickyNavMenu = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const toggleLogin = () => {
-    setIsLoggedIn(prevState => !prevState);
+import { motion } from 'framer-motion';
+import { 
+  FavoriteIcon, 
+  // NotificationIcon,
+   UserIcon } from '@/icons';
+// import NotificationAlert from './notificationAlert';
+import NotificationButton from './NotificationButton';
+interface StickyNavbar {
+  toggleDropdown: () => void; // Function to toggle the dropdown
+}
+const StickyNavMenu: React.FC<StickyNavbar> = ({ toggleDropdown }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const toggleLogin = () => {
+      setIsLoggedIn(prevState => !prevState);
+    };
+    const [showNavbar, setShowNavbar] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+  const handleScroll = () => {
+    if (typeof window !== 'undefined') {
+      if (window.scrollY > lastScrollY) {
+        // Scrolling down
+        setShowNavbar(false);
+      } else {
+        // Scrolling up
+        setShowNavbar(true);
+      }
+      setLastScrollY(window.scrollY); // Update scroll position
+    }
   };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
   return (
-    <div className="sticky-mobilenav-elements hidden sm:block z-[999] h-[87px]   px-4 pt-[13px] pb-3 fixed bottom-0 w-full bg-mono-0">
+    <motion.div
+      className="sticky-mobilenav-elements hidden sm:block z-[999] h-[87px]   px-4 pt-[13px] pb-3 fixed bottom-0 w-full bg-mono-0"
+      initial={{ y: 100 }} // Initial position (out of view)
+      animate={{ y: showNavbar ? 0 : 100 }} // If scrolling down, hide the navbar; otherwise show it
+      transition={{ type: 'spring', stiffness: 200, damping: 30 }} // Smooth transition
+    >
       <ul className="sticky-mobilenav-items flex items-end justify-between gap-4">
         {!isLoggedIn ? (
           <>
@@ -87,17 +124,14 @@ const StickyNavMenu = () => {
         {isLoggedIn ? (
           <>
             <li className="sticky-mobilenav-list">
-              <Link
-                href="/"
-                className="text-center flex items-center justify-center flex-col gap-[13px]"
-              >
+              <div className="text-center flex items-center justify-center flex-col gap-[13px]">
                 <div className="icons-box">
-                  <NotificationIcon />
+                  <NotificationButton toggleDropdown={toggleDropdown} />
                 </div>
                 <p className="link-title font-secondary font-normal text-center text-mono-100 text-body-small xxs:text-[13px] leading-[150%]">
                   Notification
                 </p>
-              </Link>
+              </div>
             </li>
             <li className="sticky-mobilenav-list">
               <Link
@@ -149,7 +183,7 @@ const StickyNavMenu = () => {
         )}
       </ul>
       <button onClick={toggleLogin}>{isLoggedIn ? '' : ''}</button>
-    </div>
+    </motion.div>
   );
 };
 

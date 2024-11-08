@@ -2,9 +2,9 @@ import React from 'react';
 
 const UserIcon: React.FC = () => {
   return (
-    <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+    <svg width="24" height="24" viewBox="0 0 13 16" fill="none">
       <path
-        fillRule="evenodd"
+        fillRule="evenodd" 
         clipRule="evenodd"
         d="M5.98985 9.23071C3.41144 9.23071 1.20953 9.62055 1.20953 11.1818C1.20953 12.7431 3.39747 13.1469 5.98985 13.1469C8.56826 13.1469 10.7695 12.7564 10.7695 11.1958C10.7695 9.63516 8.58223 9.23071 5.98985 9.23071Z"
         stroke="#131313"

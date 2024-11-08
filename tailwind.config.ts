@@ -73,7 +73,7 @@ const config: Config = {
 				"mono-40": "#C9C8CA",
 				"mono-0": "#FFFFFF",
 				"mono-60": "#AAA7AB",
-				error: "#D10C3B",
+				error: "#E50035",
 				success: "#1FC430",
 				"secondary-color-100": "#1B264F",
 				"secondary-color-50": "#F0F3FE",

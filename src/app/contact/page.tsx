@@ -1,7 +1,23 @@
 'use client';
+import React, { useState } from 'react';
 import { Button, Input } from '@/components/elements';
 
 const Contact = () => {
+  // State variables for each input field
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [message, setMessage] = useState('');
+
+  // Form submission handler
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Logic to handle form submission
+    console.log({ firstName, lastName, email, phone, message });
+    // You could also add a call to an API here
+  };
+
   return (
     <div className="flex custom-container gap-[139px] md:gap-5 md:flex-col pt-[73px] pb-[49px] md:pb-20">
       {/* Left Section */}
@@ -26,16 +42,18 @@ const Contact = () => {
       </div>
 
       {/* Right Section */}
-      <div className="w-1/2 md:w-full flex ">
-        <form className="w-full">
+      <div className="w-1/2 md:w-full flex">
+        <form className="w-full" onSubmit={handleSubmit}>
           <div className="flex space-x-6 md:flex-col md:space-x-0 md:space-y-[13px] xl:mt-[13px]">
             <div className="w-1/2 md:w-full">
               <Input
                 label="First name"
                 name="firstName"
+                value={firstName}
                 placeholder="Jane"
                 id="firstName"
                 className="flex-col"
+                onChange={e => setFirstName(e.target.value)}
               />
             </div>
 
@@ -43,9 +61,11 @@ const Contact = () => {
               <Input
                 label="Last name"
                 name="lastName"
+                value={lastName}
                 placeholder="Doe"
                 id="lastName"
                 className="flex-col"
+                onChange={e => setLastName(e.target.value)}
               />
             </div>
           </div>
@@ -54,10 +74,12 @@ const Contact = () => {
               <Input
                 label="Email address"
                 name="email"
+                value={email}
                 placeholder="janed@angelpage.org"
                 type="email"
                 id="email"
                 className="flex-col"
+                onChange={e => setEmail(e.target.value)}
               />
             </div>
 
@@ -65,9 +87,11 @@ const Contact = () => {
               <Input
                 label="Phone number"
                 name="phone"
+                value={phone}
                 placeholder="00000000000"
                 id="phone"
                 className="flex-col"
+                onChange={e => setPhone(e.target.value)}
               />
             </div>
           </div>
@@ -75,9 +99,11 @@ const Contact = () => {
             <Input
               label="Message"
               name="message"
+              value={message}
               placeholder="Type message here"
               id="message"
               className="flex-col"
+              onChange={e => setMessage(e.target.value)}
             />
           </div>
           <Button type="submit" variant="primary" className="mt-[27px]">
