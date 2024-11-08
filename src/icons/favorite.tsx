@@ -2,7 +2,7 @@ import React from 'react';
 
 const FavoriteIcon: React.FC = () => {
   return (
-    <svg width="16" height="14" viewBox="0 0 16 14" fill="none">
+    <svg width="24" height="24" viewBox="0 0 16 14" fill="none">
       <path
         fillRule="evenodd"
         clipRule="evenodd"

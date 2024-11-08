@@ -1,3 +1,97 @@
+input[type="checkbox"],
+input[type="radio"] {
+    background: #ffffff !important;
+}
+
+
+input[type="checkbox"]:focus,
+input[type="radio"]:focus {
+    box-shadow: none !important;
+    outline: 0 !important;
+    border-radius: 4px !important;
+    -webkit-border-radius: 4px !important;
+    -moz-border-radius: 4px !important;
+    -ms-border-radius: 4px !important;
+    -o-border-radius: 4px !important;
+}
+
+/* CSS Reset for select elements */
+textarea,
+select {
+    appearance: none;
+    /* Removes default browser styling */
+    -webkit-appearance: none;
+    /* Removes default browser styling on Safari */
+    -moz-appearance: none;
+    /* Removes default browser styling on Firefox */
+    border-radius: 0 !important;
+}
+
+/* Focus styles */
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+    border-radius: 0 !important;
+    /* Keep border-radius zero on focus */
+    outline: none;
+    /* Remove any default outline */
+    border: 1px solid #0D0113;
+}
+
+textarea:focus,
+textarea:focus-visible,
+textarea:focus-within,
+textarea,
+select,
+select:focus,
+select:focus-visible,
+select:focus-within {
+    border-radius: 0px !important;
+    -webkit-border-radius: 0px !important;
+    -moz-border-radius: 0px !important;
+    -ms-border-radius: 0px !important;
+    -o-border-radius: 0px !important;
+}
+
+
+/* Autofill styles */
+input[type="checkbox"]:-webkit-autofill,
+input[type="radio"]:-webkit-autofill,
+select:-webkit-autofill,
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #F6F8FA inset;
+    box-shadow: 0 0 0px 1000px #F6F8FA inset;
+    -webkit-text-fill-color: #0B0112;
+}
+
+select:valid,
+textarea:valid {
+    border: 1px solid #0D0113;
+}
+
+select:valid,
+textarea:valid,
+input:valid {
+    color: #0B0112;
+}
+
+
+input[type="checkbox"]::placeholder,
+input[type="radio"]::placeholder,
+select::placeholder,
+input::placeholder {
+    color: #AAA7AB;
+}
+
+/* Autofill styles on focus */
+input[type="checkbox"]:-webkit-autofill:focus,
+input[type="radio"]:-webkit-autofill:focus,
+select:-webkit-autofill:focus,
+input:-webkit-autofill:focus {
+    border: 1px solid #0B0112;
+}
+
 .btn-styles {
     display: inline-flex;
     height: 40px;
@@ -89,6 +183,13 @@ input {
     width: 100%;
     height: 197px;
     min-height: 197px;
+}
+
+@media screen and (max-width:767px) {
+    .offcanvas-main.footer-mini-cart-area {
+        height: 160px;
+        min-height: 160px;
+    }
 }
 
 .offcanvas-head.mini-cart-header-and.main-wrea {
@@ -241,13 +342,8 @@ nav.header-bottom-navbar.navbar-megamenu-area {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 4px;
     background: #fff;
     box-shadow: 0 0px 3px 0px rgba(0, 0, 0, .3);
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 4px;
-    -ms-border-radius: 4px;
-    -o-border-radius: 4px;
 }
 
 .product-slides-area .swiper .swiper-button-prev:after,
@@ -258,7 +354,7 @@ nav.header-bottom-navbar.navbar-megamenu-area {
 }
 
 .product-slides-area .swiper .swiper-button-next {
-    right: -18px;
+    right: -15px;
 }
 
 .product-slides-area .swiper .swiper-button-prev {
@@ -278,15 +374,12 @@ nav.header-bottom-navbar.navbar-megamenu-area {
     background: linear-gradient(91deg, #F4E8F9 -0.38%, #F4E8F9 99.19%);
 }
 
+button:empty {
+    display: none !important;
+}
+
 .about-sec-info-cont .about-sec-desc {
     color: #182652;
-    color: color(display-p3 0.1059 0.149 0.3098);
-    font-kerning: none;
-    font-family: "Helvetica Neue";
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 300;
-    line-height: 150%;
     letter-spacing: 0.8px;
 }
 
@@ -502,10 +595,16 @@ nav.header-bottom-navbar.navbar-megamenu-area {
 }
 
 /* product page section style start here */
-.product-listing-list-area,
-.products-list-main-right-cont .product-list {
+.product-listing-list-area {
     display: grid;
     grid-template-columns: repeat(5, minmax(216px, 1fr));
+    column-gap: 19px;
+    row-gap: 24px;
+}
+
+.products-list-main-right-cont .product-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(216px, 1fr));
     column-gap: 19px;
     row-gap: 24px;
 }
@@ -516,6 +615,38 @@ nav.header-bottom-navbar.navbar-megamenu-area {
 
 select#sort-select option {
     border-bottom: 1px solid var(--Mono-40, #E7E3E8);
+}
+
+.product-category-card-item .product-category-img-box {
+    transition: all 650ms ease 0ms;
+    -webkit-transition: all 650ms ease 0ms;
+    -moz-transition: all 650ms ease 0ms;
+    -ms-transition: all 650ms ease 0ms;
+    -o-transition: all 650ms ease 0ms;
+}
+
+.product-category-card-item .product-category-img-box .product-btn {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 650ms ease 0ms;
+}
+
+.product-category-card-item .product-category-img-box:hover .product-btn {
+    background: rgba(0, 0, 0, 0.10);
+    background: color(display-p3 0 0 0 / 0.10);
+    transition: all 650ms ease 0ms;
+    -webkit-transition: all 650ms ease 0ms;
+    -moz-transition: all 650ms ease 0ms;
+    -ms-transition: all 650ms ease 0ms;
+    -o-transition: all 650ms ease 0ms;
+}
+
+.product-category-card-item .product-category-img-box:hover .product-btn {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: painted;
+    transition: all 650ms ease 0ms;
 }
 
 @media screen and (max-width:1199px) {
@@ -776,6 +907,19 @@ p.account-info-item.editing-view {
     -o-transition: height 350ms ease 0s;
 }
 
+.order-item-list-box p.colaps-title.collapsed .arrow-down {
+    transition: all 450ms ease 0s;
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -webkit-transition: all 450ms ease 0s;
+    -moz-transition: all 450ms ease 0s;
+    -ms-transition: all 450ms ease 0s;
+    -o-transition: all 450ms ease 0s;
+}
+
 .order-item-list-box p.colaps-title.collapsed-open .arrow-down {
     transition: all 450ms ease 0s;
     transform: rotate(180deg);
@@ -790,8 +934,209 @@ p.account-info-item.editing-view {
 }
 
 .basket-page-right-cont .order-item-list-box .product-list {
-        max-height: 305px;
+    max-height: 305px;
+    overflow: hidden;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.loading-animation {
+    fill-opacity: 0;
+    /* Start with hidden fill */
+    animation: fillUnfill 2s infinite;
+}
+
+.loading-animation.delay {
+    animation-delay: 1s;
+    /* Offset the third path to alternate with the second */
+}
+
+@keyframes fillUnfill {
+
+    0%,
+    50% {
+        fill-opacity: 1;
+    }
+
+    /* Fill for half the animation */
+    50%,
+    100% {
+        fill-opacity: 0;
+    }
+}
+
+header.header-section {
+    position: relative;
+    z-index: 9999;
+}
+
+.price-input-box .input-wrapper input {
+    color: var(--Mono-100, color(display-p3 0.0445 0.0046 0.069));
+    font-kerning: none;
+    font-family: "Poppins";
+    font-size: 14px !important;
+    font-style: normal;
+    font-weight: 500 !important;
+}
+
+button.steps-completed {
+    color: #0D0113;
+}
+
+/* Override the toast container */
+.Toastify__toast-container {
+    width: auto !important;
+    min-width: 280px;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.Toastify__toast-container>* {
+    font-size: 14px;
+    color: #0B0112;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    line-height: 135%;
+}
+
+/* Customize the error toast */
+.Toastify__toast--error {
+    background: #F1F1F7;
+    color: #E50035;
+    border: 1px solid transparent;
+}
+
+/* Customize the success toast */
+.Toastify__toast--success {
+    background: #F1F1F7;
+    color: #1FC430;
+    border: 1px solid transparent;
+}
+
+/* Customize the progress bar */
+.Toastify__progress-bar--error {
+    background-color: #E50035;
+}
+
+.Toastify__progress-bar--success {
+    background-color: #1FC430;
+}
+
+.alert-dropdown-screen.notification-main-wrapper {
+    background: #FFF;
+    background: color(display-p3 1 1 1);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 4px 4px 0px color(display-p3 0 0 0 / 0.25);
+}
+
+.alert-dropdown-screen.notification-main-wrapper .tab-content {
+    display: block;
+}
+
+.notification-main-tab-header .tab-button {
+    border-bottom: 1px solid #AAA7AB;
+    transition: all 650ms ease 0ms;
+    -webkit-transition: all 650ms ease 0ms;
+    -moz-transition: all 650ms ease 0ms;
+    -ms-transition: all 650ms ease 0ms;
+    -o-transition: all 650ms ease 0ms;
+}
+
+.notification-main-tab-header .tab-button.active {
+    border-bottom: 1px solid #0D0113;
+    transition: all 650ms ease 0ms;
+    -webkit-transition: all 650ms ease 0ms;
+    -moz-transition: all 650ms ease 0ms;
+    -ms-transition: all 650ms ease 0ms;
+    -o-transition: all 650ms ease 0ms;
+}
+
+.notification-msg-list-item:not(:last-child),
+.notification-alert-list-item:not(:last-child) {
+    border-bottom: 1px solid #C9C8CA;
+}
+
+.notification-alert-area-content,
+.notification-massage-area-content {
+    max-height: 431px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+@media screen and (max-width:767px) {
+
+    .notification-alert-area-content,
+    .notification-massage-area-content {
+        max-height: calc(100vh - 274px);
         overflow: hidden;
-        height: 100%;
         overflow-y: scroll;
+        /* background-color: #f1f1f7; */
+    }
+}
+
+.swiper-slider-view .swiper.swiper-fade {
+    border-radius: 0px !important;
+    box-shadow: none !important;
+    -webkit-border-radius: 0px !important;
+    -moz-border-radius: 0px !important;
+    -ms-border-radius: 0px !important;
+    -o-border-radius: 0px !important;
+}
+
+.swiper-product-slide-tab-item.mt-2 .swiper.swiper-initialized.swiper-thumbs {
+    border-radius: 0 !important;
+}
+
+.swiper-product-slide-tab-item .swiper.swiper-initialized.swiper-thumbs .swiper-button-next::after,
+.swiper-product-slide-tab-item .swiper.swiper-initialized.swiper-thumbs .swiper-button-prev::after {
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    color: #0D0113;
+}
+
+.swiper-product-slide-tab-item .swiper.swiper-initialized.swiper-thumbs .swiper-button-next,
+.swiper-product-slide-tab-item .swiper.swiper-initialized.swiper-thumbs .swiper-button-prev {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    background: #fff;
+    top: 35px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.swiper-product-slide-tab-item .swiper.swiper-initialized.swiper-thumbs .swiper-button-prev {
+    left: 0;
+}
+
+.swiper-product-slide-tab-item .swiper.swiper-initialized.swiper-thumbs .swiper-button-next {
+    right: 0;
+}
+
+.product-singlepage-left-cont .slide-view-item {
+    position: relative;
+}
+
+.swiper-slider-view {
+    overflow: visible;
+    /* Make sure zoomed lens can appear outside the swiper */
+    position: relative;
+    /* Keeps the positioning context for inner elements */
+}
+
+/* Apply overflow: visible to the swiper component */
+.thumbs {
+    overflow: visible !important;
+}
+
+.swiper-product-slider-area {
+    overflow: visible !important;
+}
+
+.slide-view-item {
+    position: relative;
+}
+
+.zoom-lens-wrapper {
+    position: relative;
+    /* Ensure the lens can render outside the image */
 }

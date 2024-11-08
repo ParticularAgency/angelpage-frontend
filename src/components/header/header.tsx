@@ -8,11 +8,12 @@ import { UserIcon } from '@/icons';
 import TopNavList from './topNavList';
 import MobileViewOffcanvas from './mobileViewOffcanvas';
 import MiniCart from '../cart/miniCart';
-import NotificationAlert from './notificationAlert';
 import FavoritesAlert from './favoritesAlert';
 import GlobalSearch from '../elements/search/globalSearch';
 import BottomNavMegamenu from './bottomNavMegamenu';
 import StickyNavMenu from './stickyNavMenu';
+import NotificationButton from './NotificationButton';
+import NotificationDropdown from './NotificationDropdown';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,6 +32,11 @@ const Header = () => {
   const toggleLogin = () => {
     setIsLoggedIn(prevState => !prevState);
   };
+   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
   return (
     <>
       <button className="empty:hidden" onClick={toggleLogin}>
@@ -39,9 +45,9 @@ const Header = () => {
       {isTempLogin ? (
         <>
           <header
-            className={`${isPostProductPage || isCheckoutPage ? 'bg-mono-100' : ''} header-section`}
+            className={`${isPostProductPage || isCheckoutPage ? 'bg-mono-100' : ''} header-section relative z-[9999]`}
           >
-            <div className="header-top-cont">
+            <div className="header-top-cont relative">
               <div className="custom-container">
                 <div className="header-top-wrapper py-4 grid grid-cols-12 sm:grid-cols-6 gap-6">
                   <div
@@ -69,12 +75,14 @@ const Header = () => {
                         <GlobalSearch />
                         {isTempLogin && (
                           <div className="post-product-btn sm:hidden">
-                            <Button
-                              variant="primary"
-                              className="w-full block max-w-[105px]"
-                            >
-                              Sell an item
-                            </Button>
+                            <Link href="/product/post-product/">
+                              <Button
+                                variant="primary"
+                                className="w-full block max-w-[105px]"
+                              >
+                                Sell an item
+                              </Button>
+                            </Link>
                           </div>
                         )}
                         <div className="user-account flex items-center sm:hidden">
@@ -88,7 +96,18 @@ const Header = () => {
                           <>
                             <FavoritesAlert />
 
-                            <NotificationAlert />
+                            <div className="notification-dropdown-area relative sm:static">
+                              <NotificationButton
+                                notificationBtnClass="sm:!hidden"
+                                toggleDropdown={toggleDropdown}
+                              />
+                              {isDropdownOpen && (
+                                <NotificationDropdown
+                                  isDropdownOpen={isDropdownOpen}
+                                  toggleDropdown={toggleDropdown}
+                                />
+                              )}
+                            </div>
                           </>
                         )}
                         <MiniCart />
@@ -111,7 +130,7 @@ const Header = () => {
           <header
             className={`${isPostProductPage || isCheckoutPage ? 'bg-mono-100' : ''} header-section`}
           >
-            <div className="header-top-cont">
+            <div className="header-top-cont relative">
               <div className="custom-container">
                 <div className="header-top-wrapper py-4 grid grid-cols-12 sm:grid-cols-6 gap-6">
                   <div
@@ -161,7 +180,18 @@ const Header = () => {
                           <>
                             <FavoritesAlert />
 
-                            <NotificationAlert />
+                            <div className="notification-dropdown-area relative sm:static">
+                              <NotificationButton
+                                notificationBtnClass="sm:!hidden"
+                                toggleDropdown={toggleDropdown}
+                              />
+                              {isDropdownOpen && (
+                                <NotificationDropdown
+                                  isDropdownOpen={isDropdownOpen}
+                                  toggleDropdown={toggleDropdown}
+                                />
+                              )}
+                            </div>
                           </>
                         ) : (
                           ''
@@ -198,7 +228,7 @@ const Header = () => {
         </>
       )}
 
-      <StickyNavMenu />
+      <StickyNavMenu toggleDropdown={toggleDropdown} />
     </>
   );
 };

@@ -7,8 +7,18 @@ const ProfileImageSection = () => {
   const [image, setProfileImage] = useState(
     '/images/icons/elisp-profile-default-img.svg'
   );
+  const [newImage, setNewImage] = useState<string | ArrayBuffer | null>(null);
 
-  const handleEditClick = () => setIsEditing(!isEditing);
+ const handleEditClick = () => {
+   if (isEditing) {
+     // When saving, set the profile image to the new image if it exists and is a string
+     if (typeof newImage === 'string') {
+       setProfileImage(newImage);
+       setNewImage(null); // Reset newImage state after saving
+     }
+   }
+   setIsEditing(!isEditing); // Toggle editing state
+ };
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files; // Get the FileList from the input
     if (files && files.length > 0) {
@@ -44,17 +54,26 @@ const ProfileImageSection = () => {
         </div>
       </div>
       <div className="image-display">
-        {!isEditing ? (
-          <Image
-            src={image}
-            alt="Profile"
-            className="w-10 h-10 object-cover rounded-full object-center"
-            width={40}
-            height={40}
+        <Image
+          src={newImage ? (newImage as string) : image} // Show new image if it exists, otherwise show the current image
+          alt="Profile"
+          className="w-10 h-10 object-cover rounded-full object-center"
+          width={40}
+          height={40}
+        />
+        {isEditing && (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="mt-8" // Optional: add margin for spacing
           />
-        ) : (
-          <input type="file" accept="image/*" onChange={handleImageChange} />
         )}
+        {image === '/images/icons/elisp-profile-default-img.svg' &&
+          !newImage &&
+          !isEditing && (
+            <p className="mt-6 body-small text-mono-100">No image uploaded</p>
+          )}
       </div>
     </div>
   );

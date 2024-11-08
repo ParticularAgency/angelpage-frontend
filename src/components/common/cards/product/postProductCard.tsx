@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { DeleteIcon, FavoriteOutlineIcon, LocationIcon } from '@/icons';
 import { Button } from '@/components/elements';
 
+
 interface ProductCardProps {
   productId: string;
   charityImageSrc: string;
@@ -39,6 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // averageDeliveryTime,
 }) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const handleDeleteClick = () => {
     setIsConfirmOpen(true);
@@ -52,7 +54,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
     onDeleteConfirm(productId);
     setIsConfirmOpen(false);
   };
-
+  const handleFavoriteClick = () => {
+    setIsFavorite(!isFavorite);
+    onFavoriteClick();
+    
+  }; 
   return (
     <div
       className={`product-card-item bg-mono-0 max-w-[289px] w-full px-[15px] py-4 flex flex-col gap-[33px] border ${status === 'Removed' ? 'opacity-80' : ''}`}
@@ -67,15 +73,21 @@ const ProductCard: React.FC<ProductCardProps> = ({
             height={46}
           />
         </div>
-        <div className="favorite-btn cursor-pointer" onClick={onFavoriteClick}>
-          <FavoriteOutlineIcon />
+        <div
+          className="favorite-btn cursor-pointer"
+          onClick={handleFavoriteClick}
+        >
+          <FavoriteOutlineIcon
+            fillColor={isFavorite ? '#611192' : 'none'}
+            strokeColor={isFavorite ? '#611192' : '#131313'}
+          />
         </div>
       </div>
 
       <div className="product-body-cont">
-        <div className="product-image-modal px-8 w-full flex justify-center items-center">
+        <div className="product-image-modal px-8 sm:px-1 w-full flex justify-center items-center">
           <Image
-            className="max-w-[116px] h-[110px] w-full object-cover sm:h-auto"
+            className="max-w-[116px] h-[110px] w-full object-cover sm:object-contain sm:h-auto"
             src={productImageSrc ?? ''}
             alt={productImageAlt ?? ''}
             width={180}
@@ -138,7 +150,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 variant="primary"
                 className="product-states-btn sm:w-full block max-w-full"
               >
-                Add to Basket
+                Edit listing
               </Button>
               <Button
                 variant="accend-link"
@@ -155,7 +167,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       {isConfirmOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+          <div className="bg-white p-6 shadow-lg max-w-sm w-full mx-4">
             <h3 className="h6 font-primary">Are you sure?</h3>
             <p className="text-body-small mt-2">
               This action cannot be undone.

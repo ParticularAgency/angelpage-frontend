@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '../elements';
+import Link from 'next/link';
 
 const HomePageMainBanner = () => {
   return (
@@ -13,13 +14,18 @@ const HomePageMainBanner = () => {
             <p className="body-small text-mono-0">
               Add items to any Charity storefront to become a donor
             </p>
-            <Button
-              variant="secondary"
-              className="!border-mono-0 !text-mono-0 mt-[37px]"
-              onClick={() => console.log('button is click')}
+            <Link
+              href="/product/post-product"
+              className="block"
             >
-              Start selling
-            </Button>
+              <Button
+                variant="secondary"
+                className="!border-mono-0 !text-mono-0 mt-[37px]"
+                onClick={() => console.log('button is click')}
+              >
+                Start selling
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

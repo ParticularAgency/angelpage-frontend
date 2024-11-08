@@ -13,7 +13,7 @@ const FindCharity: React.FC = () => {
           <br className="sm:hidden" /> and the impact of your contributions.
         </p>
       </div>
-      <div className="bg-[#F9F9F9] pt-[75px] pb-[71px] mb-[112px]">
+      <div className="bg-[#F9F9F9] pt-[75px] pb-[71px]">
         <div className="custom-container">
           <BlogList blogData={blogData} />
         </div>

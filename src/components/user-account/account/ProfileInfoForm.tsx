@@ -17,7 +17,7 @@ const ProfileInfoForm = () => {
 
   return (
     <div className="personal-info-section pt-[23px] pb-8">
-      <div className="title-line-area-section flex mb-[31px] pb-[13px] justify-between items-center gap-3 w-full">
+      <div className="title-line-area-section flex mb-[18px] pb-[13px] justify-between items-center gap-3 w-full">
         <p className="body-bold-regular">Personal info</p>
         <div className="btn-states-box">
           <button
@@ -62,7 +62,7 @@ const ProfileInfoForm = () => {
           </>
         ) : (
           <>
-            <p className="personal-info-item body-small h-full">
+            <div className="personal-info-item body-small h-full">
               <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
                 First name
               </span>{' '}
@@ -74,8 +74,8 @@ const ProfileInfoForm = () => {
                 placeholder="charity name"
                 className="max-w-[257px] w-full h-10 body-small"
               />
-            </p>
-            <p className="personal-info-item body-small h-full">
+            </div>
+            <div className="personal-info-item body-small h-full">
               <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
                 Last name
               </span>
@@ -87,8 +87,8 @@ const ProfileInfoForm = () => {
                 placeholder="charity number"
                 className="max-w-[257px] w-full h-10 body-small"
               />
-            </p>
-            <p className="personal-info-item body-small h-full">
+            </div>
+            <div className="personal-info-item body-small h-full">
               <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
                 Date of birth
               </span>
@@ -100,7 +100,7 @@ const ProfileInfoForm = () => {
                 placeholder="charity id"
                 className="max-w-[257px] w-full h-10 body-small"
               />
-            </p>
+            </div>
           </>
         )}
       </div>

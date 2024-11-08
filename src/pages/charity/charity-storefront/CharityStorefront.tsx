@@ -5,9 +5,16 @@ import { FavoriteOutlineIcon } from '@/icons';
 import AboutInfoComponent from './about';
 import CharityStoreListing from './listing';
 
+
 const CharityStorefront: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
-
+  const [isFavorite, setIsFavorite] = useState(false);
+  const handleFavoriteClick = () => {
+    setIsFavorite(!isFavorite);
+    // if (onFavoriteClick) {
+    //   onFavoriteClick();
+    // }
+  };
   return (
     <div className="charity-storefront-main-page-wrapper">
       <StoreFrontBanner />
@@ -24,7 +31,7 @@ const CharityStorefront: React.FC = () => {
                         ? 'bg-[#FCF2FF] text-primary-color-100'
                         : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
                     }`}
-                    onClick={() => setActiveTab(0)} // Set active tab to "Shop"
+                    onClick={() => setActiveTab(0)}
                   >
                     Shop
                   </li>
@@ -34,14 +41,20 @@ const CharityStorefront: React.FC = () => {
                         ? 'bg-[#FCF2FF] text-primary-color-100'
                         : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
                     }`}
-                    onClick={() => setActiveTab(1)} // Set active tab to "About"
+                    onClick={() => setActiveTab(1)}
                   >
                     About
                   </li>
                 </ul>
                 {activeTab === 1 && (
-                  <div className="favorite-btn-item cursor-pointer p-3">
-                    <FavoriteOutlineIcon />
+                  <div
+                    className="favorite-btn-item cursor-pointer p-3"
+                    onClick={handleFavoriteClick}
+                  >
+                    <FavoriteOutlineIcon
+                      fillColor={isFavorite ? '#611192' : 'none'}
+                      strokeColor={isFavorite ? '#611192' : '#131313'}
+                    />
                   </div>
                 )}
               </div>

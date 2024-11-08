@@ -78,7 +78,7 @@ const GiftFeaturedCategoryProducts: React.FC<
 
   return (
     <section
-      className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-20 pb-[25px]'}`}
+      className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-8 pb-[25px]'}`} 
     >
       <div className="custom-container">
         <div className="product-sec-title-box mb-10 flex sm:flex-col items-start justify-between gap-4">

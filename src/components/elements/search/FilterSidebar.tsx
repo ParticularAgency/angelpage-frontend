@@ -1,5 +1,6 @@
 import { ArrowDownIcon } from '@/icons';
 import React from 'react';
+import Checkbox from '../input-fields/checkbox';
 interface Product {
   category: string;
   subcategory: string;
@@ -105,9 +106,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           onClick={() => toggleSection('categories')}
           style={{ cursor: 'pointer' }}
         >
-          <h4 className="filter-sidebar-title eyebrow-small flex items-center  gap-1 justify-start w-full px-2 py-[13px]">
+          <h4 className="filter-sidebar-title pr-8 relative eyebrow-small flex items-center  gap-1 justify-start pl-2 py-[13px]">
             Categories{' '}
-            <span className="text-primary-color-100">
+            <span className="text-primary-color-100 absolute right-2">
               {totalSelectedCategories > 0
                 ? `(${totalSelectedCategories})`
                 : ''}
@@ -124,9 +125,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             {categories.map(category => (
               <li key={category.category}>
                 <label className="flex items-center gap-2 caption">
-                  <input
-                    type="checkbox"
-                    className="!bg-[#fff]"
+                  {/* <input /> */}
+                  <Checkbox
                     checked={selectedFilters.category.includes(
                       category.category
                     )}
@@ -149,9 +149,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           onClick={() => toggleSection('subcategories')}
           style={{ cursor: 'pointer' }}
         >
-          <h4 className="filter-sidebar-title eyebrow-small flex items-center  gap-1 justify-start w-full px-2 py-[13px]">
+          <h4 className="filter-sidebar-title pr-8 relative eyebrow-small flex items-center  gap-1 justify-start pl-2 py-[13px]">
             Subcategories{' '}
-            <span className="text-primary-color-100">
+            <span className="text-primary-color-100 absolute right-2">
               {totalSelectedSubcategories > 0
                 ? `(${totalSelectedSubcategories})`
                 : ''}
@@ -171,9 +171,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   {category.subCategories.map(subCategory => (
                     <li key={subCategory}>
                       <label className="flex items-center gap-2 caption">
-                        <input
-                          type="checkbox"
-                          className="!bg-[#fff]"
+                        {/* <input type="checkbox" className="!bg-[#fff]" /> */}
+                        <Checkbox
                           checked={selectedFilters.subCategory.includes(
                             subCategory
                           )}
@@ -199,9 +198,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           onClick={() => toggleSection('brand')}
           style={{ cursor: 'pointer' }}
         >
-          <h4 className="filter-sidebar-title eyebrow-small flex items-center  gap-1 justify-start w-full px-2 py-[13px]">
+          <h4 className="filter-sidebar-title pr-8 relative eyebrow-small flex items-center  gap-1 justify-start pl-2 py-[13px]">
             Brand{' '}
-            <span className="text-primary-color-100">
+            <span className="text-primary-color-100 absolute right-2">
               {totalSelectedBrands > 0 ? `(${totalSelectedBrands})` : ''}
             </span>
           </h4>
@@ -216,9 +215,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             {brands.map(brand => (
               <li key={brand}>
                 <label className="flex items-center gap-2 caption">
-                  <input
-                    type="checkbox"
-                    className="!bg-[#fff]"
+                  {/* <input type="checkbox" className="!bg-[#fff]" /> */}
+                  <Checkbox
                     checked={selectedFilters.productBrand.includes(brand)}
                     onChange={() => handleFilterChange('productBrand', brand)}
                   />
@@ -237,9 +235,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           onClick={() => toggleSection('condition')}
           style={{ cursor: 'pointer' }}
         >
-          <h4 className="filter-sidebar-title eyebrow-small flex items-center  gap-1 justify-start w-full px-2 py-[13px]">
+          <h4 className="filter-sidebar-title pr-8 relative eyebrow-small flex items-center  gap-1 justify-start pl-2 py-[13px]">
             Condition{' '}
-            <span className="text-primary-color-100">
+            <span className="text-primary-color-100 absolute right-2">
               {totalSelectedConditions > 0
                 ? `(${totalSelectedConditions})`
                 : ''}

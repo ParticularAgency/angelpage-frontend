@@ -21,6 +21,7 @@ const HomeLanding = () => {
       <AboutSection />
       <AngelPageInfoSection />
       <OurPlatformSection />
+      
     </div>
   );
 };

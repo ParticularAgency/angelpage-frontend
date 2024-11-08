@@ -26,7 +26,7 @@ const BagsCategoryProducts: React.FC<BagsCategoryProductsProps> = ({
 
   return (
     <section
-      className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-[13px] pb-10'}`}
+      className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-8 pb-[70px]'}`} 
     >
       <div className="custom-container">
         <div className="product-sec-title-box mb-10 flex sm:flex-col items-start justify-between gap-4">

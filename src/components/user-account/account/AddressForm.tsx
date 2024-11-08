@@ -17,10 +17,14 @@ const AddressForm: React.FC = () => {
     },
   ]);
 
+  // State for delete confirmation
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState<number | null>(null);
+
   // Function to handle adding a new address
   const handleAddNewAddress = () => {
     const newAddress = {
-      id: addresses.length + 1, // Ensure unique ID, consider using a library for unique IDs
+      id: addresses.length + 1, // Ensure unique ID
       type: 'Shipping from',
       name: '',
       address: '',
@@ -57,13 +61,29 @@ const AddressForm: React.FC = () => {
     );
   };
 
+  // Function to handle opening the delete confirmation modal
+  const handleDeleteConfirmation = (id: number) => {
+    setAddressToDelete(id);
+    setIsConfirmOpen(true);
+  };
+
   // Function to handle deleting an address
-  const handleDelete = (id: number) => {
-    setAddresses(addresses.filter(address => address.id !== id));
+  const handleDelete = () => {
+    if (addressToDelete !== null) {
+      setAddresses(addresses.filter(address => address.id !== addressToDelete));
+      setAddressToDelete(null); // Reset after deletion
+    }
+    setIsConfirmOpen(false); // Close confirmation modal
+  };
+
+  // Function to handle canceling delete action
+  const handleCancel = () => {
+    setIsConfirmOpen(false); // Close confirmation modal
+    setAddressToDelete(null); // Reset address to delete
   };
 
   return (
-    <div className="address-section pt-[23px] pb-8">
+    <div className="address-section pt-[23px] pb-0">
       {/* Title and Add New Address */}
       <div className="title-line-area-section flex pb-[13px] justify-between items-center gap-3 w-full !border-0">
         <p className="body-bold-regular">Addresses</p>
@@ -172,7 +192,7 @@ const AddressForm: React.FC = () => {
                   <Button
                     variant="accend-link"
                     className="flex items-center gap-2 !text-primary-color-100 !underline"
-                    onClick={() => handleDelete(address.id)}
+                    onClick={() => handleDeleteConfirmation(address.id)} // Trigger delete confirmation
                   >
                     Delete address
                   </Button>
@@ -182,6 +202,26 @@ const AddressForm: React.FC = () => {
           </div>
         </div>
       ))}
+
+      {/* Delete Confirmation Modal */}
+      {isConfirmOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white p-6 shadow-lg max-w-sm w-full mx-4">
+            <h3 className="h6 font-primary">Are you sure?</h3>
+            <p className="text-body-small mt-2">
+              This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-4 mt-6">
+              <Button variant="secondary" onClick={handleCancel}>
+                No
+              </Button>
+              <Button variant="primary" onClick={handleDelete}>
+                Yes, delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { EditIcon, SaveIcon, DeleteIcon } from '@/icons'; // Assuming your icons are correctly imported
-import { Button, Input } from '@/components/elements';
+import { Button, Checkbox, Input } from '@/components/elements';
 
 const PaymentInfoForm = () => {
-  const [isAdding, setIsAdding] = useState(false); // For adding a new payment method
-  const [editingIndex, setEditingIndex] = useState<number | null>(null); // For editing existing methods
-  const [useShippingAsBilling, setUseShippingAsBilling] = useState(false); // Checkbox state
+  const [isAdding, setIsAdding] = useState(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [useShippingAsBilling, setUseShippingAsBilling] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   // Dummy shipping address to be used for the checkbox feature
   const shippingAddress = {
@@ -52,11 +53,10 @@ const PaymentInfoForm = () => {
       },
     });
     setIsAdding(true);
-    setEditingIndex(null); // When adding a new payment, we aren't editing
+    setEditingIndex(null); // Reset editing index when adding new
   };
 
   const handleEditClick = (index: number) => {
-    // Explicitly typed index as a number
     setNewPayment(paymentMethods[index]);
     setEditingIndex(index);
     setIsAdding(true); // Reuse the same form for editing
@@ -67,7 +67,7 @@ const PaymentInfoForm = () => {
       ...newPayment,
       billingAddress: useShippingAsBilling
         ? shippingAddress
-        : newPayment.billingAddress, // Apply shipping address if checkbox is checked
+        : newPayment.billingAddress, // Use shipping address if checked
     };
 
     if (editingIndex !== null) {
@@ -88,6 +88,16 @@ const PaymentInfoForm = () => {
       setPaymentMethods(updatedMethods);
       setIsAdding(false); // Hide form after deletion
     }
+    setIsConfirmOpen(false); // Close confirmation modal
+  };
+
+  const handleDeleteConfirmation = (index: number) => {
+    setEditingIndex(index); // Set the current index for deletion
+    setIsConfirmOpen(true); // Open confirmation modal
+  };
+
+  const handleCancel = () => {
+    setIsConfirmOpen(false); // Close confirmation modal
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,7 +123,7 @@ const PaymentInfoForm = () => {
   };
 
   return (
-    <div className="payment-section pt-6 pb-8">
+    <div className="payment-section pt-6 pb-0">
       <div className="title-line-area-section flex pb-[13px] justify-between items-center gap-3 w-full !border-0">
         <p className="body-bold-regular">Payment method</p>
         <Button
@@ -153,7 +163,7 @@ const PaymentInfoForm = () => {
               onChange={handleChange}
               className="w-full max-w-[386px] sm:max-w-full px-3 forms py-2 border rounded-md flex-col"
             />
-            <div className="date-and-csv flex items-center gap-6 sm:fex-col px-3">
+            <div className="date-and-csv flex items-center gap-6 sm:flex-col px-3">
               <Input
                 label="Expiry date"
                 type="text"
@@ -172,15 +182,12 @@ const PaymentInfoForm = () => {
               />
             </div>
             <div className="p-4">
-              <label className="flex items-center space-x-2">
-                <Input
-                  type="checkbox"
-                  checked={useShippingAsBilling}
-                  onChange={handleCheckboxChange}
-                  className="!bg-transparent"
-                />
-                <span>Billing address the same as shipping address</span>
-              </label>
+              <Checkbox
+                name="billingCheckbox"
+                checked={useShippingAsBilling}
+                onChange={handleCheckboxChange}
+                label="Billing address the same as shipping address"
+              />
             </div>
             <Input
               label="Billing Name"
@@ -231,7 +238,7 @@ const PaymentInfoForm = () => {
               <div className="pb-4">
                 <Button
                   variant="accend-link"
-                  onClick={handleDelete}
+                  onClick={() => handleDeleteConfirmation(editingIndex)}
                   className="flex items-center body-small !underline !text-primary-color-100"
                 >
                   Delete card details <DeleteIcon />
@@ -242,9 +249,9 @@ const PaymentInfoForm = () => {
         </div>
       )}
 
-      <div className="">
+      <div>
         {paymentMethods.map((method, index) => (
-          <div key={index} className="">
+          <div key={index} className="mb-8">
             <div className="btn-states-box flex justify-end items-center">
               <button
                 onClick={() => handleEditClick(index)}
@@ -255,18 +262,35 @@ const PaymentInfoForm = () => {
             </div>
 
             <div className="payment-details">
-              <div>
-                <p className="body-bold-small">{method.nameAccountHolder}</p>
-                <p className="body-bold-small">{method.accountNumber}</p>
-                <p className="body-bold-small">{method.expiryDate}</p>
-                <p className="body-bold-small">{method.cvvNumber}</p>
-                <p className="text-gray-500">Billing address</p>
-              </div>
+              <p className="body-bold-small">{method.nameAccountHolder}</p>
+              {/* <p className="body-bold-small">{method.accountNumber}</p>
+              <p className="body-bold-small">{method.expiryDate}</p>
+              <p className="body-bold-small">{method.cvvNumber}</p> */}
+              <p className="text-gray-500">Billing address</p>
               <p className="body-small">{method.billingAddress.name}</p>
               <p className="body-small">{method.billingAddress.addressLine1}</p>
               <p className="body-small">{method.billingAddress.city}</p>
               <p className="body-small">{method.billingAddress.postalCode}</p>
             </div>
+
+            {isConfirmOpen && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div className="bg-white p-6 shadow-lg max-w-sm w-full mx-4">
+                  <h3 className="h6 font-primary">Are you sure?</h3>
+                  <p className="text-body-small mt-2">
+                    This action cannot be undone.
+                  </p>
+                  <div className="flex justify-end gap-4 mt-6">
+                    <Button variant="secondary" onClick={handleCancel}>
+                      No
+                    </Button>
+                    <Button variant="primary" onClick={handleDelete}>
+                      Yes, delete
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>

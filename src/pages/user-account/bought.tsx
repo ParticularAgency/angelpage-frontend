@@ -252,7 +252,7 @@ const BoughtItems = () => {
               </div>
               {/* Sale Proceeds and Admin Fee */}
               {selectedItem.stages.saleProceeding && (
-                <div className="mt-1 pl-8">
+                <div className="mt-4 pl-8">
                   {(() => {
                     const { adminFee } = calculateFees(
                       selectedItem.productPrice

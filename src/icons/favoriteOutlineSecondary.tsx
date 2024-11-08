@@ -1,13 +1,18 @@
 import React from 'react';
+interface FavoriteOutlineIconProps {
+  fillColor?: string; // Optional prop for the fill color
+}
 
-const FavoriteOutlineSecondaryIcon: React.FC = () => {
+const FavoriteOutlineSecondaryIcon: React.FC<FavoriteOutlineIconProps> = ({
+  fillColor = 'none',
+}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="14"
+      width="24"
+      height="24"
       viewBox="0 0 16 14"
-      fill="none"
+      fill={fillColor}
     >
       <path
         fillRule="evenodd"

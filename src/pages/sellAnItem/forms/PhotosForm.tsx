@@ -1,12 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
 import { Button } from '@/components/elements';
 import Image from 'next/image';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import ToastNotification, {
+  ToastService,
+} from '@/components/elements/notifications/ToastService';
+type ActiveTab = 'details' | 'photos' | 'price';
 
 interface FormProps {
-  setActiveTab: (tabName: string) => void;
+  setActiveTab: (tabName: ActiveTab) => void;
+  onSubmit: (formData: { images: UploadedImage[] }) => void; // Submit only images
+  onUpdateImages: (newImages: UploadedImage[]) => void; // Required
+  images: UploadedImage[]; // Required
+  onBack: () => void;
+  formData?: { price: string; charityProfit: string }; // Optional, but not used in submission
 }
 
 interface UploadedImage {
@@ -15,29 +24,45 @@ interface UploadedImage {
   isFeatured: boolean;
 }
 
-const PhotosForm: React.FC<FormProps> = ({ setActiveTab }) => {
-  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+const PhotosForm: React.FC<FormProps> = ({
+  setActiveTab,
+  onSubmit,
+  onUpdateImages,
+  images = [], // Default to an empty array if images is undefined
+  onBack,
+}) => {
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>(images);
+  const [error, setError] = useState<string>(''); // State for error message
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  useEffect(() => {
+    setUploadedImages(images || []); // Ensure it always sets to an array
+  }, [images]);
+
   const handleBrowseClick = () => {
-    fileInputRef.current?.click(); // Triggers the file input when the browse button or upload box is clicked
+    fileInputRef.current?.click();
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      const newImages = Array.from(files).map((file: File, index: number) => ({
-        id: Date.now() + index, // Unique id for each image
-        src: URL.createObjectURL(file), // Create a local URL for preview
-        isFeatured: uploadedImages.length === 0 && index === 0, // Mark the first image as featured if none exist
+      const newImages = Array.from(files).map((file, index) => ({
+        id: Date.now() + index,
+        src: URL.createObjectURL(file),
+        isFeatured: uploadedImages.length === 0 && index === 0,
       }));
 
-      setUploadedImages(prev => [...prev, ...newImages].slice(0, 10)); // Limit to 10 images max
+      const updatedImages = [...uploadedImages, ...newImages].slice(0, 10);
+      setUploadedImages(updatedImages);
+      onUpdateImages(updatedImages);
+      setError(''); // Clear error message if images are added
     }
   };
 
   const handleDeleteImage = (imageId: number) => {
-    setUploadedImages(uploadedImages.filter(image => image.id !== imageId));
+    const updatedImages = uploadedImages.filter(image => image.id !== imageId);
+    setUploadedImages(updatedImages);
+    onUpdateImages(updatedImages);
   };
 
   const moveImage = (dragIndex: number, hoverIndex: number) => {
@@ -46,125 +71,134 @@ const PhotosForm: React.FC<FormProps> = ({ setActiveTab }) => {
     updatedImages.splice(dragIndex, 1);
     updatedImages.splice(hoverIndex, 0, draggedImage);
     setUploadedImages(updatedImages);
+    onUpdateImages(updatedImages);
   };
 
   const handleDropToFeatured = (imageId: number) => {
-    setUploadedImages(
-      uploadedImages.map(image =>
-        image.id === imageId
-          ? { ...image, isFeatured: true }
-          : { ...image, isFeatured: false }
-      )
+    const updatedImages = uploadedImages.map(image =>
+      image.id === imageId
+        ? { ...image, isFeatured: true }
+        : { ...image, isFeatured: false }
     );
+    setUploadedImages(updatedImages);
+    onUpdateImages(updatedImages);
+  };
+
+  const handleSubmit = () => {
+    if (uploadedImages.length === 0) {
+      ToastService.error('Please upload at least one image.'); 
+      setError('Please upload at least one image.');
+      return; // Prevent submission
+    }
+    // Submit only the images to the parent
+    onSubmit({ images: uploadedImages });
+    setActiveTab('price'); // Move to the price tab
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="flex flex-col w-full">
-        {/* Header text */}
-        <div>
-          <span className="text-body-small text-[#474648]">
-            Take photos from multiple angles to show all the details (including
-            any flaws).
-          </span>
-        </div>
-
-        {/* Photo upload section */}
-        <div
-          className="border-2 border-dashed border-[#C9C8CA] p-6 text-center cursor-pointer mt-[27px] mb-4"
-          onClick={handleBrowseClick}
-        >
-          <p className="text-body-caption text-[#474648]">
-            You can add up to 10 photos
-          </p>
-          <Button
-            variant="accend-link"
-            className="flex items-center underline !text-primary-color-100"
-          >
-            Browse
-          </Button>
-          {/* Hidden file input */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            multiple
-            className="hidden"
-          />
-        </div>
-
-        {/* Uploaded photo previews */}
-        <div className="w-full mb-[19px]">
-          <div className="flex gap-4 flex-wrap">
-            {uploadedImages.map((image, index) => (
-              <DraggableImage
-                key={image.id}
-                image={image}
-                index={index}
-                onDelete={handleDeleteImage}
-                moveImage={moveImage}
-                onDropToFeatured={handleDropToFeatured}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Photo tip section */}
-        <div className="bg-[#F1F1F7] pt-2 pl-3 pb-6 pr-[30px]">
-          <p className="text-body-small text-[#474648]">
-            <span className="text-primary-color-100 text-body-caption font-medium mb-2 flex gap-[10px]">
-              <Image
-                src="/images/icons/camera.svg"
-                alt="Camera Icon"
-                width={12}
-                height={12}
-              />{' '}
-              Photo tip
+    <>
+      <DndProvider backend={HTML5Backend}>
+        <div className="flex flex-col w-full">
+          <div>
+            <p className="mb-2 body-bold-regular">Photos</p>
+            <span className="body-small text-[#474648]">
+              Take photos from multiple angles to show all the details
+              (including any flaws).
             </span>
-            For your main photo, lay the item flat by itself on a plain,
-            contrasting colour so we can easily remove the background.
-          </p>
-        </div>
-
-        {/* Action buttons */}
-        <div className="flex justify-between items-center mt-[54px]">
-          <Button
-            variant="accend-link"
-            className="flex items-center !text-primary-color-100"
-            onClick={() => setActiveTab('details')}
+          </div>
+          <div
+            className="border-2 border-dashed border-[#C9C8CA] p-6 text-center cursor-pointer mt-[27px] mb-4"
+            onClick={handleBrowseClick}
           >
-            <Image
-              width={16}
-              height={16}
-              src="/images/icons/arr-left.svg"
-              alt="Left Arrow Icon"
-            />
-            Back
-          </Button>
-          <div className="flex sm:flex-col space-x-4">
+            <p className="text-body-caption text-[#474648]">
+              You can add up to 10 photos
+            </p>
             <Button
               variant="accend-link"
               className="flex items-center underline !text-primary-color-100"
-              onClick={() => console.log('Should not click')}
             >
-              Save as draft
+              Browse
             </Button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              multiple
+              className="hidden"
+            />
+          </div>
+          {error && (
+            <p className="text-error text-body-small mb-2 mt-0">{error}</p>
+          )}{' '}
+          {/* Display error message */}
+          <div className="w-full mb-[19px]">
+            {uploadedImages.length > 0 ? (
+              <div className="flex gap-4 flex-wrap">
+                {uploadedImages.map((image, index) => (
+                  <DraggableImage
+                    key={image.id}
+                    image={image}
+                    index={index}
+                    onDelete={handleDeleteImage}
+                    moveImage={moveImage}
+                    onDropToFeatured={handleDropToFeatured}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p>No images uploaded.</p>
+            )}
+          </div>
+          <div className="bg-[#F1F1F7] pt-2 pl-3 pb-6 pr-[30px]">
+            <p className="text-body-small text-[#474648]">
+              <span className="text-primary-color-100 text-body-caption font-medium mb-2 flex gap-[10px]">
+                <Image
+                  src="/images/icons/camera.svg"
+                  alt="Camera Icon"
+                  width={12}
+                  height={12}
+                />{' '}
+                Photo tip
+              </span>
+              For your main photo, lay the item flat by itself on a plain,
+              contrasting color so we can easily remove the background.
+            </p>
+          </div>
+          <div className="flex justify-between items-center mt-[54px]">
             <Button
-              type="submit"
-              variant="primary"
-              onClick={() => setActiveTab('price')}
+              variant="accend-link"
+              className="flex items-center !text-primary-color-100"
+              onClick={onBack}
             >
-              Continue
+              <Image
+                width={16}
+                height={16}
+                src="/images/icons/arr-left.svg"
+                alt="Left Arrow Icon"
+              />
+              Back
             </Button>
+            <div className="flex sm:flex-col space-x-4">
+              <Button
+                variant="accend-link"
+                className="flex items-center underline !text-primary-color-100"
+                onClick={() => ToastService.success('Save as draft')}
+              >
+                Save as draft
+              </Button>
+              <Button type="button" variant="primary" onClick={handleSubmit}>
+                Continue
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </DndProvider>
+      </DndProvider>
+      <ToastNotification />
+    </>
   );
 };
 
-// DraggableImage Component
 interface DraggableImageProps {
   image: UploadedImage;
   index: number;
@@ -186,7 +220,6 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
     accept: 'image',
     hover(item: { index: number }) {
       if (!ref.current) return;
-
       if (item.index !== index) {
         moveImage(item.index, index);
         item.index = index;
@@ -223,13 +256,12 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
           onClick={() => onDelete(image.id)}
         />
       </div>
-
       <Image
         src="/images/icons/drag.svg"
         alt="Drag Icon"
         width={25}
         height={14}
-        onClick={() => !image.isFeatured && onDropToFeatured(image.id)} // Drag to make featured
+        onClick={() => !image.isFeatured && onDropToFeatured(image.id)}
         className="cursor-pointer"
       />
     </div>

@@ -4,10 +4,10 @@ import Image from 'next/image';
 
 const IntHomeCtaSec = () => {
   return (
-    <section className="inthome-cta=section bg-mono-100">
+    <section className="inthome-cta=section ">
       <div className="custom-container-full laptop-x:px-6 !pr-0 sm:!px-0">
-        <div className="inthome-cta-wrapper grid grid-cols-12 gap-0 sm:grid-cols-6">
-          <div className="inthome-cta-cont-box px-4 col-span-5 sm:col-span-full py-[50px] pr-[60px] md:py-8">
+        <div className="inthome-cta-wrapper  grid grid-cols-12 gap-1 sm:grid-cols-6">
+          <div className="inthome-cta-cont-box bg-mono-100 px-4 col-span-5 sm:col-span-full py-[50px] pr-[60px] md:py-8">
             <div className="inthome-cta-cont max-w-[410px] w-full ml-auto">
               <h2 className="h3 cta-title text-mono-0  max-w-[348px] w-full">
                 Out with Old, in with the New

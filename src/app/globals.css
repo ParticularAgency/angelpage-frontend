@@ -15,7 +15,7 @@
       --mono-40: #E6E3E7;
       --mono-0: #FFFFFF;
       --mono-60: #AAA7AB;
-      --error: #D10C3B;
+      --error: #E50035;
       --success: #1FC430;
       --secondary-color-100: #1B264F;
       --primary-color-100: #611192;
@@ -340,6 +340,7 @@
       text-transform: uppercase;
     }
 
+
     @media screen and (max-width:767px) {
       .caption-bold {
         font-size: 11px;
@@ -465,6 +466,19 @@
 
       .quick-link-lists.quick-link-area-two .quick-list-item:nth-child(1) {
         border-top: 1px solid var(--mono-40);
+      }
+
+      .eyebrow-medium {
+        font-size: 11px;
+      }
+
+      h6.product-brand-title.eyebrow-medium {
+        height: 30px;
+        margin-bottom: 4px;
+      }
+
+      p.product-title.caption-bold {
+        height: 33px;
       }
     }
   }

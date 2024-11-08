@@ -21,6 +21,7 @@ import FavoriteOutlineSecondaryIcon from './favoriteOutlineSecondary';
 import SaveIcon from './save';
 import EditIcon from './edit';
 import DeleteIcon from './delete';
+import CheckmarkBlack from './checkmarkBlack';
 
 export {
   Checkmark,
@@ -46,4 +47,5 @@ export {
   SaveIcon,
   EditIcon,
   DeleteIcon,
+  CheckmarkBlack,
 };
