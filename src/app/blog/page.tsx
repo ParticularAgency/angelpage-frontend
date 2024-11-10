@@ -2,7 +2,7 @@ import BlogList from '@/components/common/cards/blog/blogCards';
 import { blogData } from '@/libs/blogs';
 import React from 'react';
 
-const FindCharity: React.FC = () => {
+const Blogs: React.FC = () => {
   return (
     <div>
       <div className="custom-container py-[74px]">
@@ -22,4 +22,4 @@ const FindCharity: React.FC = () => {
   );
 };
 
-export default FindCharity;
+export default Blogs;

@@ -9,7 +9,7 @@ interface Params {
   blogId: string; // Expect blogId to be a string
 }
 
-const CharityDetailsPage: React.FC = () => {
+const BlogDetailsPage: React.FC = () => {
   // Use 'unknown' to safely cast the params
   const params = useParams() as unknown; // Cast to unknown first
   const { blogId } = params as Params; // Then cast to Params
@@ -99,4 +99,4 @@ const CharityDetailsPage: React.FC = () => {
   );
 };
 
-export default CharityDetailsPage;
+export default BlogDetailsPage;
