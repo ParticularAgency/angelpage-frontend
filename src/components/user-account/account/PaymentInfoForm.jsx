@@ -5,50 +5,19 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
 // Define types for Address and PaymentMethod objects
-type Address = {
-  _id: string;
-  type: string;
-  name: string;
-  address: string;
-  city: string;
-  country: string;
-  postcode: string;
-};
-
-type PaymentMethod = {
-  _id?: string;
-  nameAccountHolder: string;
-  accountNumber: string;
-  expiryDate: string;
-  cvvNumber: string;
-  billingAddress: {
-    name: string;
-    address: string;
-    city: string;
-    country: string;
-    postalCode: string;
-  };
-};
-
-// Define type for session token
-interface SessionData {
-  token: string;
-}
-
-const PaymentInfoForm: React.FC = () => {
-  const { data: session, status } = useSession();
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [addresses, setAddresses] = useState<Address[]>([]);
+const PaymentInfoForm = () => {
+  const { data: session, status } = useSession() || {};
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [addresses, setAddresses] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingIndex, setEditingIndex] = useState(null);
   const [useShippingAsBilling, setUseShippingAsBilling] = useState(false);
-  const [selectedShippingAddressId, setSelectedShippingAddressId] = useState<
-    string | null
-  >(null);
+  const [selectedShippingAddressId, setSelectedShippingAddressId] =
+    useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [paymentToDelete, setPaymentToDelete] = useState<string | null>(null);
+  const [paymentToDelete, setPaymentToDelete] = useState(null);
 
-  const [newPayment, setNewPayment] = useState<PaymentMethod>({
+  const [newPayment, setNewPayment] = useState({
     nameAccountHolder: '',
     accountNumber: '',
     expiryDate: '',
@@ -65,15 +34,16 @@ const PaymentInfoForm: React.FC = () => {
   // Fetch payment methods and addresses on component mount
   useEffect(() => {
     const fetchUserData = async () => {
-      if (status === 'authenticated' && (session as SessionData)?.token) {
+      if (status === 'authenticated' && session?.token) {
         try {
-          const response = await axios.get<{
-            user: { payments: PaymentMethod[]; addresses: Address[] };
-          }>(`${process.env.NEXT_PUBLIC_API_URL}/charity/profile`, {
-            headers: {
-              Authorization: `Bearer ${(session as SessionData).token}`,
-            },
-          });
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${session.token}`,
+              },
+            }
+          );
           setPaymentMethods(response.data.user?.payments || []);
           setAddresses(response.data.user?.addresses || []);
         } catch (error) {
@@ -104,7 +74,7 @@ const PaymentInfoForm: React.FC = () => {
     setSelectedShippingAddressId(null);
   };
 
-  const handleEditClick = (index: number) => {
+  const handleEditClick = index => {
     setNewPayment(paymentMethods[index]);
     setEditingIndex(index);
     setIsAdding(true);
@@ -146,11 +116,11 @@ const PaymentInfoForm: React.FC = () => {
         const paymentId = paymentMethods[editingIndex]._id;
         if (paymentId) {
           await axios.put(
-            `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/payments/${paymentId}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/users/profile/payments/${paymentId}`,
             payment,
             {
               headers: {
-                Authorization: `Bearer ${(session as SessionData)?.token}`,
+                Authorization: `Bearer ${session.token}`,
               },
             }
           );
@@ -162,12 +132,12 @@ const PaymentInfoForm: React.FC = () => {
         }
       } else {
         // Add new payment method
-        const response = await axios.post<{ payments: PaymentMethod[] }>(
-          `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/payments`,
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/profile/payments`,
           payment,
           {
             headers: {
-              Authorization: `Bearer ${(session as SessionData)?.token}`,
+              Authorization: `Bearer ${session.token}`,
             },
           }
         );
@@ -199,10 +169,10 @@ const PaymentInfoForm: React.FC = () => {
     if (paymentToDelete) {
       try {
         await axios.delete(
-          `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/payments/${paymentToDelete}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/users/profile/payments/${paymentToDelete}`,
           {
             headers: {
-              Authorization: `Bearer ${(session as SessionData)?.token}`,
+              Authorization: `Bearer ${session.token}`,
             },
           }
         );
@@ -217,7 +187,7 @@ const PaymentInfoForm: React.FC = () => {
     }
   };
 
-  const handleDeleteConfirmation = (id: string) => {
+  const handleDeleteConfirmation = id => {
     setPaymentToDelete(id);
     setIsConfirmOpen(true);
   };
@@ -227,7 +197,7 @@ const PaymentInfoForm: React.FC = () => {
     setPaymentToDelete(null);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     if (name in newPayment.billingAddress) {
       setNewPayment({
@@ -246,9 +216,7 @@ const PaymentInfoForm: React.FC = () => {
     }
   };
 
-  const handleShippingAddressSelect = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleShippingAddressSelect = e => {
     setSelectedShippingAddressId(e.target.value);
   };
 
@@ -321,13 +289,13 @@ const PaymentInfoForm: React.FC = () => {
             </div>
             {useShippingAsBilling ? (
               <Select
-                id="userShippingAddressSelect" // Unique ID for this select input
-                name="shippingAddress" // Name property for form identification
+                id="userShippingAddressSelect"
+                name="shippingAddress"
                 label="Select Shipping Address"
                 value={selectedShippingAddressId || ''}
                 onChange={handleShippingAddressSelect}
                 options={[
-                  { label: 'Select an address', value: '' }, // Blank option at the start
+                  { label: 'Select an address', value: '' },
                   ...addresses.map(address => ({
                     label: `${address.name}, ${address.address}, ${address.city}, ${address.country}, ${address.postcode}`,
                     value: address._id,
@@ -399,13 +367,23 @@ const PaymentInfoForm: React.FC = () => {
               **** **** **** {method.accountNumber.slice(-4)}
             </p>
             <p className="forms-bold text-mono-80 mb-2">Billing address</p>
-            <p className="body-small text-mono-100">{method.billingAddress.name}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.address}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.city}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.country}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.postalCode}</p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.name || ''}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.address || ''}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.city || ''}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.country || ''}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.postalCode || ''}
+            </p>
             <button
-              onClick={() => handleDeleteConfirmation(method._id as string)}
+              onClick={() => handleDeleteConfirmation(method._id)}
               className="flex items-center body-small mt-4 gap-1 text-primary-color-100"
             >
               Delete card details
@@ -421,13 +399,9 @@ const PaymentInfoForm: React.FC = () => {
             <p className="text-body-small mt-2">
               This action cannot be undone.
             </p>
-            <div className="flex justify-end gap-4 mt-6">
-              <Button variant="secondary" onClick={handleCancel}>
-                No
-              </Button>
-              <Button variant="primary" onClick={handleDelete}>
-                Yes, delete
-              </Button>
+            <div className="mt-4 flex justify-between">
+              <Button onClick={handleCancel}>Cancel</Button>
+              <Button onClick={handleDelete}>Delete</Button>
             </div>
           </div>
         </div>

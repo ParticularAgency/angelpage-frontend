@@ -28,7 +28,7 @@ const RelatedCategoryProducts: React.FC<RelatedCategoryProductsProps> = ({
       productSize: '12 UK',
       productPrice: '£11.50',
       location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(0),
+      // onFavoriteClick: () => handleFavoriteClick(0),
       isLoggedIn,
     },
     {
@@ -42,7 +42,7 @@ const RelatedCategoryProducts: React.FC<RelatedCategoryProductsProps> = ({
       productSize: '10 UK',
       productPrice: '£40.00',
       location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(1),
+      // onFavoriteClick: () => handleFavoriteClick(1),
       isLoggedIn,
     },
     {
@@ -56,7 +56,7 @@ const RelatedCategoryProducts: React.FC<RelatedCategoryProductsProps> = ({
       productSize: 'N/A',
       productPrice: '£3.00',
       location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(2),
+      // onFavoriteClick: () => handleFavoriteClick(2),
       isLoggedIn,
     },
     {
@@ -70,7 +70,7 @@ const RelatedCategoryProducts: React.FC<RelatedCategoryProductsProps> = ({
       productSize: '100x100',
       productPrice: '£15.00',
       location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(3),
+      // onFavoriteClick: () => handleFavoriteClick(3),
       isLoggedIn,
     },
     {
@@ -84,7 +84,7 @@ const RelatedCategoryProducts: React.FC<RelatedCategoryProductsProps> = ({
       productSize: '100x100',
       productPrice: '£15.00',
       location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(4),
+      // onFavoriteClick: () => handleFavoriteClick(4),
       isLoggedIn,
     },
     {
@@ -98,15 +98,15 @@ const RelatedCategoryProducts: React.FC<RelatedCategoryProductsProps> = ({
       productSize: '100x100',
       productPrice: '£15.00',
       location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(5),
+      // onFavoriteClick: () => handleFavoriteClick(5),
       isLoggedIn,
     },
   ];
 
-  const handleFavoriteClick = (index: number) => {
-    console.log(`Favorite clicked on product ${index}`);
-    // Additional logic for handling favorites can be added here
-  };
+  // const handleFavoriteClick = (index: number) => {
+  //   console.log(`Favorite clicked on product ${index}`);
+  //   // Additional logic for handling favorites can be added here
+  // };
 
   return (
     <section

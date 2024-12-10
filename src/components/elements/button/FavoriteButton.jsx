@@ -1,23 +1,12 @@
-'use client';
 import React, { useState, useEffect } from 'react';
 import { FavoriteOutlineIcon } from '@/icons';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
-interface FavoriteButtonProps {
-  itemId: string;
-  type: 'product' | 'charity';
-  initialStatus?: boolean;
-}
-
-const FavoriteButton: React.FC<FavoriteButtonProps> = ({
-  itemId,
-  type,
-  initialStatus = false,
-}) => {
+const FavoriteButton = ({ itemId, type, initialStatus = false }) => {
   const [isFavorite, setIsFavorite] = useState(initialStatus);
   const [loading, setLoading] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
 
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
@@ -38,17 +27,22 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
         setIsFavorite(
           type === 'product'
             ? favoriteProducts.some(
-                (item: { _id: string }) => item._id === itemId
+                (item) => item._id === itemId
               )
             : favoriteCharities.some(
-                (item: { _id: string }) => item._id === itemId
+                (item) => item._id === itemId
               )
         );
       } catch (error) {
-        console.error(
-          'Error fetching favorite status:',
-          error.response?.data || error.message
-        );
+        // Check if the error is an AxiosError
+        if (axios.isAxiosError(error)) {
+          console.error(
+            'Error fetching favorite status:',
+            error.response?.data || error.message
+          );
+        } else {
+          console.error('An unexpected error occurred:', error);
+        }
       }
     };
 
@@ -64,7 +58,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
     setLoading(true);
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/favorites/toggle  `,
+        `${process.env.NEXT_PUBLIC_API_URL}/favorites/toggle`,
         { id: itemId, type },
         {
           headers: {
@@ -75,10 +69,15 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
 
       setIsFavorite(!isFavorite);
     } catch (error) {
-      console.error(
-        'Error toggling favorite:',
-        error.response?.data || error.message
-      );
+      // Check if the error is an AxiosError
+      if (axios.isAxiosError(error)) {
+        console.error(
+          'Error toggling favorite:',
+          error.response?.data || error.message
+        );
+      } else {
+        console.error('An unexpected error occurred:', error);
+      }
       alert('Failed to update favorite status.');
     } finally {
       setLoading(false);

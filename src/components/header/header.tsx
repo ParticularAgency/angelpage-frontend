@@ -17,7 +17,7 @@ import NotificationDropdown from './NotificationDropdown';
 import { useSession} from 'next-auth/react';
 
 const Header = () => {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
 
   // Log session details for debugging
   console.log('Session:', session);

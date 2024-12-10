@@ -3,7 +3,7 @@ import React from 'react';
 import { charityData } from '@/libs/charities'; // Assuming charityData is an array
 import FavoriteCharityCard from '@/components/common/cards/charity/favoriteCharityCard';
 
-const FavoriteCharityListing = () => {
+const FavoriteCharityListing = ({}) => {
   return (
     <section className="products-lists-section pt-[56px] pb-[54px] md:pb-9 sm:pt-10 sm:pb-12 bg-[#F1F1F7]">
       <div className="custom-container">

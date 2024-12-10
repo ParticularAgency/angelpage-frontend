@@ -7,10 +7,10 @@ import { Button } from '@/components/elements';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
 
 interface ProductCardProps {
-  id: string;
-  charityImageSrc?: string;
+  id: number;
+  charityImageSrc?: string | null | undefined;
   charityImageAlt?: string;
-  productImageSrc?: string;
+  productImageSrc?: string | null | undefined;
   productImageAlt?: string;
   productBrand?: string;
   productTitle?: string;

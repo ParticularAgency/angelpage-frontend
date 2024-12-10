@@ -4,34 +4,40 @@ import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ToastNotification, {
-  ToastService,
-} from '@/components/elements/notifications/ToastService';
+import ToastNotification, { ToastService } from '@/components/elements/notifications/ToastService';
+
+type SignInResult = {
+  error?: string;
+  user?: {
+    id: string;
+    role: 'USER' | 'CHARITY' | 'ADMIN';
+  };
+};
 
 const Login = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession() ;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeRole, setActiveRole] = useState('USER'); // State to manage selected role
+  const [activeRole, setActiveRole] = useState('USER');
   const router = useRouter();
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
 
-    const result = await signIn('credentials', {
+    // Sign in request
+    const result = (await signIn('credentials', {
       redirect: false,
       email,
       password,
       role: activeRole,
-    });
+    })) as SignInResult;
 
     if (result?.error) {
       let errorMessage = result.error;
-
       if (result.error === 'CredentialsSignin') {
         errorMessage = 'Invalid email or password. Please try again.';
       }
@@ -41,31 +47,27 @@ const Login = () => {
       return;
     }
 
+    // Check if user is in result
     const userRole = result?.user?.role || session?.user?.role;
     const userId = result?.user?.id || session?.user?.id;
 
-
-     if (userRole && userId) {
-       if (userRole === activeRole) {
-         ToastService.success('Login successful! Redirecting...');
-         setTimeout(() => {
-           if (userRole === 'USER') {
-             router.push(`/`);
-           } else if (userRole === 'CHARITY') {
-             router.push(`/`);
-           }
-           setIsSubmitting(false);
-         }, 2000);
-       } else {
-         setError(
-           `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
-         );
-         ToastService.error(
-           `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
-         );
-         setIsSubmitting(false);
-       }
-     }
+    if (userRole && userId) {
+      if (userRole === activeRole) {
+        ToastService.success('Login successful! Redirecting...');
+        setTimeout(() => {
+          if (userRole === 'USER') {
+            router.push(`/`);
+          } else if (userRole === 'CHARITY') {
+            router.push(`/`);
+          }
+          setIsSubmitting(false);
+        }, 2000);
+      } else {
+        setError(`Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`);
+        ToastService.error(`Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`);
+        setIsSubmitting(false);
+      }
+    }
   };
 
   useEffect(() => {

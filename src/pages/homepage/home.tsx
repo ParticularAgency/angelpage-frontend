@@ -4,7 +4,7 @@ import HomeLanding from './home-landing/HomeLanding';
 import InternalHome from './internal-home/InternalHome';
 import { useSession, signOut } from 'next-auth/react';
 const HomePage = () => {
-   const { data: session } = useSession();
+   const { data: session } = useSession() || {};
   return (
     <>
       {session ? (

@@ -4,19 +4,32 @@ import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/elements';
 
-// Define a custom type for NextAuth session with custom fields
+// Define a custom type for the session with custom fields
 interface CustomSession {
   user: {
     id: string;
     role: 'USER' | 'CHARITY' | 'ADMIN'; // Specify allowed roles
   };
-  token: string; // Adjust to match session structure
+  token: string; // Add token to match session structure
 }
 
+// Define the type for the API error response
+interface ApiErrorResponse {
+  response?: {
+    data: {
+      message: string;
+    };
+  };
+}
+interface DeleteAccountResponse {
+  message: string;
+}
+
+// DeleteAccount component
 const DeleteAccount: React.FC = () => {
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const router = useRouter();
 
   // Log the entire session object to debug its structure
@@ -24,7 +37,7 @@ const DeleteAccount: React.FC = () => {
     console.log('Session data:', session);
   }, [session]);
 
-  // Type guard to verify if session data has custom properties and role is "USER"
+  // Type guard to verify if session data matches CustomSession structure
   const isUserSession = (session: unknown): session is CustomSession => {
     const isUser =
       typeof session === 'object' &&
@@ -32,11 +45,11 @@ const DeleteAccount: React.FC = () => {
       'user' in session &&
       typeof (session as CustomSession).user.id === 'string' &&
       (session as CustomSession).user.role === 'CHARITY' &&
-      'token' in session; // Adjust to check for `token` instead of `accessToken`
+      'token' in session;
 
     if (!isUser) {
       console.error(
-        'Session does not have expected structure or role:',
+        'Session does not have the expected structure or role:',
         session
       );
     }
@@ -49,34 +62,38 @@ const DeleteAccount: React.FC = () => {
     setIsConfirmOpen(true);
   };
 
-  const handleDeleteAccount = async () => {
-    if (!session || !isUserSession(session)) {
-      setMessage('You need to be logged in as a user to delete your account.');
-      return;
-    }
+  // Handle account deletion
+const handleDeleteAccount = async () => {
+  if (!session || !isUserSession(session)) {
+    setMessage('You need to be logged in as a user to delete your account.');
+    return;
+  }
 
-    try {
-      const response = await deleteAccount(
-        session.user.id,
-        session.user.role,
-        session.token
-      );
+  try {
+    const response = await deleteAccount(
+      session.user.id,
+      session.user.role,
+      session.token
+    ) as DeleteAccountResponse; // Cast the response to DeleteAccountResponse
 
-      setMessage(response.message || 'Account deleted successfully.');
-      await signOut();
-      router.push('/');
-    } catch (error: any) {
-      if (error.response) {
-        console.error('Server responded with:', error.response.data);
-        setMessage(error.response.data.message || 'Error deleting account');
-      } else {
-        console.error('Unexpected error:', error);
-        setMessage('An unexpected error occurred. Please try again later.');
-      }
-    } finally {
-      setIsConfirmOpen(false);
+    setMessage(response.message || 'Account deleted successfully.');
+    await signOut();
+    router.push('/');
+  } catch (error) {
+    const apiError = error as ApiErrorResponse;
+
+    if (apiError.response?.data?.message) {
+      console.error('Server responded with:', apiError.response.data);
+      setMessage(apiError.response.data.message);
+    } else {
+      console.error('Unexpected error:', error);
+      setMessage('An unexpected error occurred. Please try again later.');
     }
-  };
+  } finally {
+    setIsConfirmOpen(false);
+  }
+};
+
 
   // Function to cancel and close the modal
   const handleCancel = () => {

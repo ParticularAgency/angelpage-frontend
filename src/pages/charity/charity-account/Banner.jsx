@@ -8,33 +8,25 @@ import { useRouter } from 'next/navigation';
 import { Button, ProgressBar } from '@/components/elements';
 import ToastNotification, {
   ToastService,
-} from '@/components/elements/notifications/ToastService'; 
+} from '@/components/elements/notifications/ToastService';
 
-// Define the structure of the expected API response
-interface UserProfileResponse {
-  user: {
-    charityBannerImage: string;
-  };
-}
-
-// interface UserData {
-//   charityBannerImage?: string; 
-// }
 const BannerSection = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [progress, setProgress] = useState<number>(0);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [image, setImage] = useState<string>(
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [userData, setUserData] = useState(null);
+  const [image, setImage] = useState(
     '/images/charity-storefront/charity-banner-img1.png'
   );
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState(null);
+
   // Log session details for debugging
   console.log('Session:', session);
   console.log('Session Status:', status);
+
   useEffect(() => {
     const fetchData = async () => {
       if (status === 'authenticated' && session?.token) {
@@ -58,7 +50,7 @@ const BannerSection = () => {
     fetchData();
   }, [session, status]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = e => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
@@ -76,7 +68,7 @@ const BannerSection = () => {
     formData.append('charityBannerImage', file);
 
     try {
-      const response = await axios.put<UserProfileResponse>(
+      const response = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/charity/profile`,
         formData,
         {
@@ -129,10 +121,11 @@ const BannerSection = () => {
   if (!profileData) {
     return <p>Failed to load profile data.</p>;
   }
+
   return (
     <section className="charity-account-banner-section bg-mono-100 sm:bg-transparent sm:mt-2">
       <div className="custom-container-full laptop-m:pl-6 sm:px-3">
-        {!profileData.verified || !profileData.profileCompleted && (
+        {(!profileData.verified || !profileData.profileCompleted) && (
           <div className="profile-status-area bg-mono-0 pb-2">
             <div className="custom-container">
               {!profileData.verified && (
@@ -161,7 +154,7 @@ const BannerSection = () => {
                     Complete your profile to 100%.
                   </p>
                   <p className="w-full py-0 mb-3 mt-0 body-small text-center">
-                    Pleas select account tab and complete your profile
+                    Please select account tab and complete your profile
                   </p>
                   <ProgressBar
                     progress={progress}
@@ -188,7 +181,7 @@ const BannerSection = () => {
               )}
               <h1 className="h3 charity-account-banner-tittle !text-mono-0">
                 {userData ? (
-                  userData.charityName || 'Pleas add your charity name'
+                  userData.charityName || 'Please add your charity name'
                 ) : (
                   <span className="skeleton bg-mono-40 h-2 w-20"></span>
                 )}
@@ -227,7 +220,7 @@ const BannerSection = () => {
                   variant="primary"
                   className="change-storefront-img relative"
                 >
-                  {isEditing ? 'Confirmed save' : 'Change storefront image'}
+                  {isEditing ? 'Confirm save' : 'Change storefront image'}
                 </Button>
               </div>
               <Image

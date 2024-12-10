@@ -1,55 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { EditIcon, SaveIcon } from '@/icons';
-import { fetchCharityData } from '@utils/api';
-import { useSession } from 'next-auth/react';
 import { Input } from '@/components/elements';
-// import axios from 'axios';
-// import { Button, Input } from '@/components/elements';
+import { fetchUserData } from '@utils/api';
+import { useSession } from 'next-auth/react';
+import axios from 'axios';
 
-// Define the shape of account info for clarity and type safety
-// interface AccountInfo {
-//   email: string;
-//   userName: string;
-//   currentPassword: string;
-//   newPassword: string;
-// }
-
-// Define expected response from fetchUserData
-// interface UserDataResponse {
-//   email?: string;
-//   userName?: string;
-// }
-
-// Extend the session type to include `token` if not already present
-declare module 'next-auth' {
-  interface Session {
-    token?: string;
-  }
-}
-interface ErrorWithResponse {
-  response?: {
-    data?: unknown;
-  };
-}
-const AdminInfoForm = () => {
+// AccountInfo form component
+const AccountInfoForm = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [adminInfo, setAdminInfo] = useState({
+  const [accountInfo, setAccountInfo] = useState({
     email: '',
     userName: '',
     currentPassword: '',
     newPassword: '',
   });
 
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
 
   // Fetch user data on mount if session is authenticated
   useEffect(() => {
     const fetchData = async () => {
       if (status === 'authenticated' && session?.token) {
         try {
-          const data = await fetchCharityData(session.token);
+          const data = await fetchUserData(session.token);
           if (data) {
-            setAdminInfo({
+            setAccountInfo({
               email: data.email || '',
               userName: data.userName || '',
               currentPassword: '',
@@ -69,12 +44,12 @@ const AdminInfoForm = () => {
   const handleSave = async () => {
     try {
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/charity/profile`,
+        `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
         {
-          email: adminInfo.email,
-          userName: adminInfo.userName,
-          currentPassword: adminInfo.currentPassword,
-          newPassword: adminInfo.newPassword,
+          email: accountInfo.email,
+          userName: accountInfo.userName,
+          currentPassword: accountInfo.currentPassword,
+          newPassword: accountInfo.newPassword,
         },
         {
           headers: {
@@ -86,7 +61,7 @@ const AdminInfoForm = () => {
 
       if (response.status === 200) {
         console.log('Account info updated successfully');
-        setAdminInfo(prev => ({
+        setAccountInfo(prev => ({
           ...prev,
           currentPassword: '',
           newPassword: '',
@@ -95,24 +70,21 @@ const AdminInfoForm = () => {
       } else {
         console.error('Failed to update account info:', response.data);
       }
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('Error updating account info:', error);
 
-      // Check if the error matches the structure of ErrorWithResponse
-      if (error instanceof Error && (error as ErrorWithResponse).response) {
-        console.error(
-          'Response data:',
-          (error as ErrorWithResponse).response?.data
-        );
+      // Handle error response
+      if (error.response) {
+        console.error('Response data:', error.response.data);
       } else {
         console.error('An unknown error occurred');
       }
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    setAdminInfo({ ...adminInfo, [name]: value });
+    setAccountInfo({ ...accountInfo, [name]: value });
   };
 
   const handleEditClick = () => {
@@ -124,9 +96,9 @@ const AdminInfoForm = () => {
   };
 
   return (
-    <div className="admin-info-section pt-[23px] pb-8">
-      <div className="title-line-area-section flex mb-[31px] pb-[13px] justify-between items-center gap-3 w-full">
-        <p className="body-bold-regular">Admin Info</p>
+    <div className="personal-info-section pt-[23px] pb-8">
+      <div className="title-line-area-section flex mb-[18px] pb-[13px] justify-between items-center gap-3 w-full">
+        <p className="body-bold-regular">Account info</p>
         <div className="btn-states-box">
           <button
             onClick={handleEditClick}
@@ -145,116 +117,87 @@ const AdminInfoForm = () => {
         </div>
       </div>
       <div
-        className={`admin-info-details flex flex-col items-start ${!isEditing ? 'gap-8' : 'gap-3'}`}
+        className={`personal-info-details flex flex-col ${!isEditing ? 'gap-8' : 'gap-3'}`}
       >
         {!isEditing ? (
           <>
-            <p className="admin-info-item w-full body-small">
+            <p className="personal-info-item body-small">
               <span className="inline-block whitespace-nowrap text-right">
                 Email
               </span>{' '}
               <span className="inline-block">
-                {adminInfo ? (
-                  adminInfo.email
-                ) : (
-                  <div className="skeleton bg-mono-40 h-3 w-20"></div>
-                )}
+                {accountInfo ? accountInfo.email : 'Loading...'}
               </span>
             </p>
-            <p className="admin-info-item w-full body-small">
+            <p className="personal-info-item body-small">
               <span className="inline-block whitespace-nowrap text-right">
                 Username
               </span>{' '}
               <span className="inline-block">
-                {adminInfo ? (
-                  adminInfo.userName
-                ) : (
-                  <div className="skeleton bg-mono-40 h-3 w-20"></div>
-                )}
+                {accountInfo ? accountInfo.userName : 'Loading...'}
               </span>
             </p>
-            <p className="admin-info-item w-full body-small">
+            <p className="personal-info-item body-small">
               <span className="inline-block whitespace-nowrap text-right">
                 Password
               </span>{' '}
               <span className="inline-block">********</span>
             </p>
-            {/* <Button
-              variant="accend-link"
-              className="underline !text-primary-color-100"
-            >
-              Forgot password
-            </Button> */}
           </>
         ) : (
           <>
-            <p
-              className={`admin-info-item w-full body-small ${isEditing ? 'editing-view' : ''}`}
-            >
-              <span className="whitespace-nowrap text-right  flex items-center justify-end">
+            <div className="personal-info-item body-small h-full">
+              <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
                 Email
-              </span>
+              </span>{' '}
               <Input
                 type="text"
                 name="email"
-                value={adminInfo.email}
+                value={accountInfo.email}
                 onChange={handleChange}
                 placeholder="Email"
                 className="max-w-[257px] w-full h-10 body-small"
               />
-            </p>
-            <p
-              className={`admin-info-item w-full body-small ${isEditing ? 'editing-view' : ''}`}
-            >
-              <span className="whitespace-nowrap text-right  flex items-center justify-end">
+            </div>
+            <div className="personal-info-item body-small h-full">
+              <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
                 Username
               </span>
               <Input
-                disabled={true}
                 type="text"
                 name="userName"
-                value={adminInfo.userName}
+                value={accountInfo.userName}
                 onChange={handleChange}
                 placeholder="Username"
                 className="max-w-[257px] w-full h-10 body-small"
               />
-            </p>
-            <p
-              className={`admin-info-item w-full body-small ${isEditing ? 'editing-view' : ''}`}
-            >
-              <span className="whitespace-nowrap text-right  flex items-center justify-end">
+            </div>
+            <div className="personal-info-item body-small h-full">
+              <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
                 Current Password
               </span>
               <Input
                 type="password"
                 name="currentPassword"
-                value={adminInfo.currentPassword}
+                value={accountInfo.currentPassword}
                 onChange={handleChange}
                 placeholder="Current Password"
                 className="max-w-[257px] w-full h-10 body-small"
               />
-            </p>
-            <p
-              className={`admin-info-item w-full body-small ${isEditing ? 'editing-view' : ''}`}
-            >
-              <span className="whitespace-nowrap text-right  flex items-center justify-end">
+            </div>
+            <div className="personal-info-item body-small h-full">
+              <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
                 New Password
               </span>
               <Input
                 type="password"
                 name="newPassword"
-                value={adminInfo.newPassword}
+                value={accountInfo.newPassword}
                 onChange={handleChange}
                 placeholder="New Password"
                 className="max-w-[257px] w-full h-10 body-small"
               />
-            </p>
-            {/* <Button
-              variant="accend-link"
-              className="underline !text-primary-color-100"
-            >
-              Forgot password
-            </Button> */}
+            </div>
           </>
         )}
       </div>
@@ -262,4 +205,4 @@ const AdminInfoForm = () => {
   );
 };
 
-export default AdminInfoForm;
+export default AccountInfoForm;

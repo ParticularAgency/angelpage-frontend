@@ -2,11 +2,13 @@
 import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ToastNotification, {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
 const Register = () => {
+    const router = useRouter();
   const [activeTab, setActiveTab] = useState<'individual' | 'charity'>(
     'individual'
   );
@@ -20,7 +22,7 @@ const Register = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prevData => ({
       ...prevData,
@@ -28,49 +30,51 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    setError('');
-    setIsSubmitting(true);
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setError('');
+  setIsSubmitting(true);
 
-    const endpoint = `${process.env.NEXT_PUBLIC_API_URL || ''}/auth/register`;
-    const userRole = activeTab === 'individual' ? 'USER' : 'CHARITY';
+  const endpoint = `${process.env.NEXT_PUBLIC_API_URL || ''}/auth/register`;
+  const userRole = activeTab === 'individual' ? 'USER' : 'CHARITY';
 
-    const payload = {
-      ...formData,
-      role: userRole,
-      ...(activeTab === 'charity' && { userName: formData.userName }),
-    };
-
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        // throw new Error(errorData.message || 'Registration failed');
-       ToastService.error(errorData.message || 'Registration failed');
-      }
-
-      const responseData = await response.json();
-      // console.log('Registration successful:', responseData);
-      ToastService.success(
-        'Registration successful! Redirecting to login...',
-        responseData
-      );
-      setTimeout(() => {
-        window.location.href = '/auth/login';
-      }, 2000);
-    } catch (err) {
-       ToastService.error(err.message);
-      setError(err.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+  const payload = {
+    ...formData,
+    role: userRole,
+    ...(activeTab === 'charity' && { userName: formData.userName }),
   };
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      ToastService.error(errorData.message || 'Registration failed');
+      return;
+    }
+
+    // const responseData = await response.json();
+    ToastService.success('Registration successful! Redirecting to login...');
+    setTimeout(() => {
+      setIsSubmitting(false);
+      router.push('/auth/login');
+    }, 2000);
+  } catch (err) {
+    if (err instanceof Error) {
+      ToastService.error(err.message);
+      setError(err.message);
+    } else {
+      ToastService.error('An unexpected error occurred');
+      setError('An unexpected error occurred');
+    }
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="flex md:flex-col gap-[143px] lg:gap-14 md:gap-0">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { EditIcon, SaveIcon } from '@/icons';
-import { Input, Textarea} from '@/components/elements';
+import { Input, Textarea } from '@/components/elements';
 import { fetchAdminInfo } from '@utils/api';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
@@ -13,7 +13,7 @@ const ProfileInfoForm = () => {
     charityID: '',
     description: '',
   });
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
 
   // Fetch user data on mount if session is authenticated
   useEffect(() => {
@@ -36,14 +36,16 @@ const ProfileInfoForm = () => {
   }, [session, status]);
 
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setCharityInfo({ ...charityInfo, [name]: value });
   };
-    const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setCharityInfo({ ...charityInfo, [name]: value });
-    };
+
+  const handleTextChange = e => {
+    const { name, value } = e.target;
+    setCharityInfo({ ...charityInfo, [name]: value });
+  };
+
   const handleSave = async () => {
     console.log('Saving user data:', charityInfo); // Log the data to be sent
 
@@ -65,7 +67,7 @@ const ProfileInfoForm = () => {
       );
 
       if (response.status === 200) {
-        console.log(' charity info updated successfully');
+        console.log('charity info updated successfully');
         setIsEditing(false);
       } else {
         console.error('Failed to update charity info:', response.data);
@@ -190,14 +192,14 @@ const ProfileInfoForm = () => {
             </p>
             <p className="charity-info-item body-small h-full">
               <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
-                Charity number
+                Charity ID
               </span>
               <Input
                 type="text"
                 name="charityID"
                 value={charityInfo.charityID}
                 onChange={handleChange}
-                placeholder="charity id"
+                placeholder="charity ID"
                 className="max-w-[257px] w-full h-10 body-small"
               />
             </p>
@@ -205,7 +207,6 @@ const ProfileInfoForm = () => {
               <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
                 Charity description
               </span>
-
               <Textarea
                 name="description"
                 value={charityInfo.description}

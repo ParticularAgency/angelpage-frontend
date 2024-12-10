@@ -2,14 +2,30 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { resetPassword } from '@/utils/api'; // Import the API utility function for resetting the password
+import { resetPassword } from '@/utils/api'; // Ensure this API function returns the expected response
 import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import ToastNotification, {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
-const ResetPassword: React.FC = () => {
+// Define the response type for the resetPassword function
+interface ResetPasswordResponse {
+  message?: string; // Optional because it may not always exist
+  success?: boolean;
+}
+
+// Define a specific error type
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message?: string;
+}
+
+const ResetPassword = () => {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState<string>('');
@@ -18,7 +34,7 @@ const ResetPassword: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Extract the token from the URL query parameters
+  // Extract the token from URL query parameters
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -31,7 +47,7 @@ const ResetPassword: React.FC = () => {
     }
   }, []);
 
-  // Handle the password reset submission
+  // Handle password reset submission
   const handleResetPassword = async () => {
     if (!token) {
       setError('Invalid or missing reset token.');
@@ -48,17 +64,24 @@ const ResetPassword: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await resetPassword(token, newPassword);
+      const response: ResetPasswordResponse = await resetPassword(
+        token,
+        newPassword
+      );
+
       const successMessage =
         response.message || 'Password reset successful. You can now log in.';
       setMessage(successMessage);
       ToastService.success(successMessage);
       setNewPassword('');
       setConfirmPassword('');
-      router.push('/auth/login'); // Redirect to login page after successful reset
-    } catch (error) {
+      router.push('/auth/login'); // Redirect to login page
+    } catch (error: unknown) {
+      // Safely handle unknown type for error
+      const apiError = error as ApiError;
       const errorMessage =
-        error.response?.data?.message ||
+        apiError.response?.data?.message ||
+        apiError.message ||
         'Error resetting password. Please try again.';
       setError(errorMessage);
       ToastService.error(errorMessage);

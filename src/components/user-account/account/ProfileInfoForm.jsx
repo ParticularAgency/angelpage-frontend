@@ -13,7 +13,7 @@ const ProfileInfoForm = () => {
     dateBirth: '',
   });
 
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
 
   // Fetch user data on mount if session is authenticated
   useEffect(() => {
@@ -35,7 +35,7 @@ const ProfileInfoForm = () => {
   }, [session, status]);
 
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setPersonalInfo({ ...personalInfo, [name]: value });
   };
@@ -67,7 +67,7 @@ const ProfileInfoForm = () => {
       }
     } catch (error) {
       console.error('Error updating user info:', error);
-        console.error('Response data:', error); // Log the server's response
+      console.error('Response data:', error.response?.data); // Log the server's response
     }
   };
 
@@ -140,7 +140,7 @@ const ProfileInfoForm = () => {
               <Input
                 type="text"
                 name="firstName"
-                value={personalInfo.firstName}
+                value={personalInfo.firstName || ''}
                 onChange={handleChange}
                 placeholder="First name"
                 className="max-w-[257px] w-full h-10 body-small"
@@ -153,7 +153,7 @@ const ProfileInfoForm = () => {
               <Input
                 type="text"
                 name="lastName"
-                value={personalInfo.lastName}
+                value={personalInfo.lastName || ''}
                 onChange={handleChange}
                 placeholder="Last name"
                 className="max-w-[257px] w-full h-10 body-small"
@@ -166,7 +166,7 @@ const ProfileInfoForm = () => {
               <Input
                 type="date"
                 name="dateBirth"
-                value={personalInfo.dateBirth}
+                value={personalInfo.dateBirth || ''}
                 onChange={handleChange}
                 placeholder="Date of birth"
                 className="max-w-[257px] w-full h-10 body-small"

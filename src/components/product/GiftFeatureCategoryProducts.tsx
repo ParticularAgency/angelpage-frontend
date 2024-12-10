@@ -25,7 +25,7 @@ const GiftFeaturedCategoryProducts: React.FC<
       productSize: '12 UK',
       productPrice: '£11.50',
       location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(0),
+      // onFavoriteClick: () => handleFavoriteClick(0),
       isLoggedIn,
     },
     {
@@ -39,7 +39,7 @@ const GiftFeaturedCategoryProducts: React.FC<
       productSize: '10 UK',
       productPrice: '£40.00',
       location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(0),
+      // onFavoriteClick: () => handleFavoriteClick(0),
       isLoggedIn,
     },
     {
@@ -53,7 +53,7 @@ const GiftFeaturedCategoryProducts: React.FC<
       productSize: 'N/A',
       productPrice: '£3.00',
       location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(0),
+      // onFavoriteClick: () => handleFavoriteClick(0),
       isLoggedIn,
     },
     {
@@ -67,14 +67,14 @@ const GiftFeaturedCategoryProducts: React.FC<
       productSize: '100x100',
       productPrice: '£15.00',
       location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(0),
+      // onFavoriteClick: () => handleFavoriteClick(0),
       isLoggedIn,
     },
   ];
 
-  const handleFavoriteClick = (index: number) => {
-    console.log(`Favorite clicked on product ${index}`);
-  };
+  // const handleFavoriteClick = (index: number) => {
+  //   console.log(`Favorite clicked on product ${index}`);
+  // };
 
   return (
     <section
@@ -106,7 +106,7 @@ const GiftFeaturedCategoryProducts: React.FC<
               <SwiperSlide key={index}>
                 <ProductCard
                   {...item}
-                  onFavoriteClick={() => handleFavoriteClick(index)} // Pass the click handler to ProductCard
+                  // onFavoriteClick={() => handleFavoriteClick(index)} // Pass the click handler to ProductCard
                 />
               </SwiperSlide>
             ))}

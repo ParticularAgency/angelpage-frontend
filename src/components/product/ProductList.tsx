@@ -9,10 +9,10 @@ interface ProductListProps {
 
 const ProductList: React.FC<ProductListProps> = ({ products, isLoggedIn }) => {
   // Function to handle when a product is favorited
-  const handleFavoriteClick = (productTitle: string) => {
-    console.log(`${productTitle} added to favorites`);
-    // Additional logic for handling favorites can go here (e.g., API calls)
-  };
+  // const handleFavoriteClick = (productTitle: string) => {
+  //   console.log(`${productTitle} added to favorites`);
+  //   // Additional logic for handling favorites can go here (e.g., API calls)
+  // };
 
   return (
     <div className="product-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -29,9 +29,9 @@ const ProductList: React.FC<ProductListProps> = ({ products, isLoggedIn }) => {
             productTitle={product.productTitle ?? ''}
             productSize={product.productSize ?? ''}
             productPrice={product.productPrice ?? ''}
-            onFavoriteClick={() =>
-              handleFavoriteClick(product.productTitle ?? '')
-            }
+            // onFavoriteClick={() =>
+            //   handleFavoriteClick(product.productTitle ?? '')
+            // }
             location={product.location ?? ''}
             isLoggedIn={isLoggedIn ?? ''} // Pass down the isLoggedIn status
           />

@@ -6,25 +6,14 @@ import axios from 'axios';
 import { EditIcon, SaveIcon } from '@/icons';
 import { fetchCharityData } from '@utils/api';
 
-// Define the structure of the expected API response
-interface UserProfileResponse {
-  user: {
-    profileImage: string;
-  };
-}
-
-interface UserData {
-  profileImage?: string;
-}
-
-const ProfileImageSection: React.FC = () => {
-  const { data: session, status } = useSession();
+const ProfileImageSection = () => {
+  const { data: session, status } = useSession() || {};
   const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [image, setImage] = useState<string>(
+  const [userData, setUserData] = useState(null);
+  const [image, setImage] = useState(
     '/images/icons/elisp-profile-default-img.svg'
   );
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,7 +37,7 @@ const ProfileImageSection: React.FC = () => {
     fetchData();
   }, [session, status]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = e => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
@@ -66,7 +55,7 @@ const ProfileImageSection: React.FC = () => {
     formData.append('profileImage', file);
 
     try {
-      const response = await axios.put<UserProfileResponse>(
+      const response = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/charity/profile`,
         formData,
         {
@@ -77,7 +66,6 @@ const ProfileImageSection: React.FC = () => {
         }
       );
 
-      // Update the displayed image with the new profile image URL
       setImage(response.data.user.profileImage);
       setIsEditing(false);
     } catch (error) {

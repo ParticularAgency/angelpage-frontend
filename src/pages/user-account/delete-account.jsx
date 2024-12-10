@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { deleteAccount } from '@/utils/api'; // Import the API function
+import { deleteAccount } from '@/utils/api';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/elements';
 
-// Define a custom type for NextAuth session with custom fields
-interface CustomSession {
-  user: {
-    id: string;
-    role: 'USER' | 'CHARITY' | 'ADMIN'; // Specify allowed roles
-  };
-  token: string; // Adjust to match session structure
-}
-
-const DeleteAccount: React.FC = () => {
-  const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
-  const { data: session } = useSession();
+const DeleteAccount = () => {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const { data: session } = useSession() || {};
   const router = useRouter();
 
   // Log the entire session object to debug its structure
@@ -24,59 +15,43 @@ const DeleteAccount: React.FC = () => {
     console.log('Session data:', session);
   }, [session]);
 
-  // Type guard to verify if session data has custom properties and role is "USER"
-  const isUserSession = (session: unknown): session is CustomSession => {
-    const isUser =
-      typeof session === 'object' &&
-      session !== null &&
-      'user' in session &&
-      typeof (session as CustomSession).user.id === 'string' &&
-      (session as CustomSession).user.role === 'USER' &&
-      'token' in session; // Adjust to check for `token` instead of `accessToken`
-
-    if (!isUser) {
-      console.error(
-        'Session does not have expected structure or role:',
-        session
-      );
-    }
-
-    return isUser;
-  };
-
   // Function to open confirmation modal
   const openConfirmation = () => {
     setIsConfirmOpen(true);
   };
 
-const handleDeleteAccount = async () => {
-  if (!session || !isUserSession(session)) {
-    setMessage('You need to be logged in as a user to delete your account.');
-    return;
-  }
-
-  try {
-    const response = await deleteAccount(
-      session.user.id,
-      session.user.role,
-      session.token
-    );
-
-    setMessage(response.message || 'Account deleted successfully.');
-    await signOut();
-    router.push('/');
-  } catch (error: any) {
-    if (error.response) {
-      console.error('Server responded with:', error.response.data);
-      setMessage(error.response.data.message || 'Error deleting account');
-    } else {
-      console.error('Unexpected error:', error);
-      setMessage('An unexpected error occurred. Please try again later.');
+  // Function to delete the user account
+  const handleDeleteAccount = async () => {
+    if (!session || !session.user || session.user.role !== 'USER') {
+      setMessage('You need to be logged in as a user to delete your account.');
+      return;
     }
-  } finally {
-    setIsConfirmOpen(false);
-  }
-};
+
+    try {
+      const response = await deleteAccount(
+        session.user.id,
+        session.user.role,
+        session.token
+      );
+
+      setMessage(response.message || 'Account deleted successfully.');
+      await signOut();
+      router.push('/');
+    } catch (error) {
+      if (error.response && error.response.data) {
+        console.error('Server responded with:', error.response.data);
+        setMessage(error.response.data.message || 'Error deleting account');
+      } else if (error instanceof Error) {
+        console.error('Unexpected error:', error.message);
+        setMessage(error.message || 'An unexpected error occurred.');
+      } else {
+        console.error('Unexpected error:', error);
+        setMessage('An unexpected error occurred. Please try again later.');
+      }
+    } finally {
+      setIsConfirmOpen(false);
+    }
+  };
 
   // Function to cancel and close the modal
   const handleCancel = () => {

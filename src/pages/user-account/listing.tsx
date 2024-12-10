@@ -79,9 +79,9 @@ const UsersProductListingArea: React.FC<UsersProductListingAreaProps> = ({
                 <ProductCard
                   key={product.id}
                   productId={product.id.toString()}
-                  charityImageSrc={product.charityImageSrc}
+                  charityImageSrc={product.charityImageSrc ?? '/path/to/default-image.png'}
                   charityImageAlt={product.charityImageAlt ?? ''}
-                  productImageSrc={product.productImageSrc}
+                  productImageSrc={product.productImageSrc ?? '/path/to/default-image.png'}
                   productImageAlt={product.productImageAlt ?? ''}
                   productBrand={product.productBrand}
                   productTitle={product.productTitle}
@@ -112,9 +112,9 @@ const UsersProductListingArea: React.FC<UsersProductListingAreaProps> = ({
                 <ProductCard
                   key={product.id}
                   productId={product.id.toString()}
-                  charityImageSrc={product.charityImageSrc}
+                  charityImageSrc={product.charityImageSrc ?? '/path/to/default-image.png'}
                   charityImageAlt={product.charityImageAlt ?? ''}
-                  productImageSrc={product.productImageSrc}
+                  productImageSrc={product.productImageSrc ?? '/path/to/default-image.png'}
                   productImageAlt={product.productImageAlt ?? ''}
                   productBrand={product.productBrand}
                   productTitle={product.productTitle}
@@ -145,9 +145,9 @@ const UsersProductListingArea: React.FC<UsersProductListingAreaProps> = ({
                 <ProductCard
                   key={product.id}
                   productId={product.id.toString()}
-                  charityImageSrc={product.charityImageSrc}
+                  charityImageSrc={product.charityImageSrc ?? '/path/to/default-image.png'}
                   charityImageAlt={product.charityImageAlt ?? ''}
-                  productImageSrc={product.productImageSrc}
+                  productImageSrc={product.productImageSrc ?? '/path/to/default-image.png'}
                   productImageAlt={product.productImageAlt ?? ''}
                   productBrand={product.productBrand}
                   productTitle={product.productTitle}

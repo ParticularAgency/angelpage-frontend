@@ -4,44 +4,23 @@ import Sorting from '@/components/elements/search/Sorting';
 import ProductList from '@/components/product/ProductList';
 import Pagination from '@/components/elements/Pagination';
 import SearchBar from '@/components/elements/search/SearchBar';
-import { Product } from '@/types/productTypes'; // Importing the correct Product type
 
-type SortOptions = '' | 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc';
-
-type Filters = {
-  category: string[];
-  subCategory: string[];
-  productBrand: string[];
-  productCondition: string[];
-};
-
-interface FavoriteProductListingProps {
-  products: Product[];
-}
-
-const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
-  products,
-}) => {
+const FavoriteProductListing = ({ products = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [sort, setSort] = useState<SortOptions>('');
+  const [sort, setSort] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
   const productsPerPage = 10;
 
-  const [filters] = useState<Filters>({
+  const [filters] = useState({
     category: [],
     subCategory: [],
     productBrand: [],
     productCondition: [],
   });
 
-  const filterAndSortProducts = (
-    products: Product[],
-    filters: Filters,
-    sort: SortOptions,
-    query: string
-  ) => {
-    let updatedProducts = [...products];
+  const filterAndSortProducts = (products, filters, sort, query) => {
+    let updatedProducts = Array.isArray(products) ? [...products] : [];
 
     // Filtering logic
     if (filters.category.length > 0) {
@@ -111,12 +90,10 @@ const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
     return updatedProducts;
   };
 
-  // Apply filtering, sorting, and searching using useMemo for performance
   const filteredProducts = useMemo(() => {
     return filterAndSortProducts(products, filters, sort, searchQuery);
   }, [filters, sort, searchQuery, products]);
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
   const currentProducts = filteredProducts.slice(
@@ -124,18 +101,17 @@ const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
     startIndex + productsPerPage
   );
 
-  const handleSortChange = (newSort: string) => {
-    const validSort: SortOptions = newSort as SortOptions; // Cast to SortOptions
-    setSort(validSort);
-    setCurrentPage(1); // Reset to first page on sort change
+  const handleSortChange = newSort => {
+    setSort(newSort);
+    setCurrentPage(1);
   };
 
-  const handleSearch = (query: string) => {
+  const handleSearch = query => {
     setSearchQuery(query);
     setCurrentPage(1);
   };
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = page => {
     setCurrentPage(page);
   };
 

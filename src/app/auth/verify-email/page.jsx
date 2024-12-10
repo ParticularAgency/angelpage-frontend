@@ -8,13 +8,13 @@ import ToastNotification, {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
-const VerifyEmail: React.FC = () => {
+const VerifyEmail = () => {
   const router = useRouter();
-  const [verificationCode, setVerificationCode] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [resending, setResending] = useState<boolean>(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
 
   // Function to handle email verification
   const handleVerify = async () => {

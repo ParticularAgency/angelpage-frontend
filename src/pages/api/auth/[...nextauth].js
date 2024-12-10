@@ -40,13 +40,16 @@ export default NextAuth({
       if (user) {
         token.id = user._id;
         token.role = user.role;
-        token.jwt = user.token; // Attach the JWT token to the session token
+        token.jwt = user.token; 
+        token.accessToken = user.accessToken || ''; 
       }
       return token;
     },
     async session({ session, token }) {
+      session.token = token;
       session.user = { ...session.user, id: token.id, role: token.role };
-      session.token = token.jwt; // Attach the JWT token to the session for API requests
+      session.token = token.jwt;
+      session.accessToken = token.accessToken;
       return session;
     },
   },

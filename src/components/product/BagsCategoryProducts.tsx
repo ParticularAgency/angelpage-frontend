@@ -13,15 +13,15 @@ const BagsCategoryProducts: React.FC<BagsCategoryProductsProps> = ({
   secClassName,
   isLoggedIn,
 }) => {
-  const handleFavoriteClick = (index: number) => {
-    console.log(`Favorite clicked on product ${index}`);
-  };
+  // const handleFavoriteClick = (index: number) => {
+  //   console.log(`Favorite clicked on product ${index}`);
+  // };
 
   // Transforming product data to ensure correct types
-  const productCardsData: Product[] = productData.map((product, index) => ({
+  const productCardsData: Product[] = productData.map((product) => ({
     ...product,
     id: product.id, // Keep id as a number
-    onFavoriteClick: () => handleFavoriteClick(index), // Add the required onFavoriteClick function
+    // onFavoriteClick: () => handleFavoriteClick(index), // Add the required onFavoriteClick function
   }));
 
   return (

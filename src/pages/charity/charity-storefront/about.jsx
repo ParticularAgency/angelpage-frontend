@@ -1,23 +1,6 @@
 import React from 'react';
 
-interface AboutInfoComponentProps {
-  charityData: {
-    charityName?: string;
-    charityNumber?: string;
-    charityID?: string;
-    description?: string;
-    addresses?: Array<{
-      address?: string;
-      city?: string;
-      country?: string;
-      postcode?: string;
-    }>;
-  };
-}
-
-const AboutInfoComponent: React.FC<AboutInfoComponentProps> = ({
-  charityData,
-}) => {
+const AboutInfoComponent = ({ charityData = {} }) => {
   const {
     charityName = 'Charity Name Not Available',
     charityNumber = 'N/A',

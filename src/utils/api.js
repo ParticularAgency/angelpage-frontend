@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-
 // ===================
 // Verification Email API Endpoint
 // ===================
@@ -13,13 +12,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
  * @param {string} verificationCode - The verification code sent to the user's email.
  * @returns {Object} - The response data from the verification request.
  */
-export const verifyEmail = async ({
-  email,
-  verificationCode,
-}: {
-  email: string;
-  verificationCode: string;
-}) => {
+export const verifyEmail = async ({ email, verificationCode }) => {
   try {
     const response = await axios.post(`${API_URL}/auth/verify-email`, {
       email,
@@ -28,22 +21,22 @@ export const verifyEmail = async ({
     console.log('Email verification successful:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error verifying email:', error.response || error);
-    throw error.response?.data || error;
+    if (error instanceof axios.AxiosError) {
+      console.error('Error verifying email:', error.response || error);
+      throw error.response?.data || error;
+    }
+    console.error('Unexpected error:', error);
+    throw error;
   }
 };
+
 /**
  * Resends a new verification email to the user.
  * @param {string} email - The user's email address.
+ * @param {string} verificationCode - The verification code sent to the user's email.
  * @returns {Object} - The response data from the resend request.
  */
-export const resendVerificationEmail = async ({
-  email,
-  verificationCode,
-}: {
-  email: string;
-  verificationCode: string;
-}) => {
+export const resendVerificationEmail = async ({ email, verificationCode }) => {
   try {
     const response = await axios.post(`${API_URL}/auth/resend-verify-email`, {
       email,
@@ -52,31 +45,55 @@ export const resendVerificationEmail = async ({
     console.log('Email verification successful:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error verifying email:', error.response || error);
-    throw error.response?.data || error;
+    if (error instanceof axios.AxiosError) {
+      console.error('Error verifying email:', error.response || error);
+      throw error.response?.data || error;
+    }
+    console.error('Unexpected error:', error);
+    throw error;
   }
 };
-export const fetchUserProfileData = async (email: string) => {
+
+/**
+ * Fetch user profile data.
+ * @param {string} email - The user's email.
+ * @returns {Object} - The user profile data.
+ */
+export const fetchUserProfileData = async (email) => {
   try {
     const response = await axios.get(`${API_URL}/auth/profile/${email}`);
     console.log('API Response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching user profile data:', error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error fetching user profile data:', error);
+      return null;
+    }
+    console.error('Unexpected error:', error);
     return null;
   }
 };
 
-export const fetchCharityProfileData = async (email: string) => {
+/**
+ * Fetch charity profile data.
+ * @param {string} email - The user's email.
+ * @returns {Object} - The charity profile data.
+ */
+export const fetchCharityProfileData = async (email) => {
   try {
     const response = await axios.get(`${API_URL}/auth/charity-profile/${email}`);
     console.log('API Response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching user profile data:', error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error fetching charity profile data:', error);
+      return null;
+    }
+    console.error('Unexpected error:', error);
     return null;
   }
 };
+
 // ===================
 // User Data API Endpoints
 // ===================
@@ -85,9 +102,9 @@ export const fetchCharityProfileData = async (email: string) => {
  * Updates the user's profile data.
  * @param {FormData} profileData - The data to update the user's profile with.
  * @param {string} token - The JWT token for authorization.
- * @returns {Object} The response data from the profile update.
+ * @returns {Object} - The response data from the profile update.
  */
-export const saveProfile = async (profileData: FormData, token: string) => {
+export const saveProfile = async (profileData, token) => {
   try {
     const response = await axios.put(`${API_URL}/users/profile`, profileData, {
       headers: { Authorization: `Bearer ${token}` },
@@ -95,7 +112,11 @@ export const saveProfile = async (profileData: FormData, token: string) => {
     console.log('Profile updated:', response.data);
     return response.data.user;
   } catch (error) {
-    console.error('Error updating profile:', error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error updating profile:', error);
+      throw error;
+    }
+    console.error('Unexpected error:', error);
     throw error;
   }
 };
@@ -105,7 +126,7 @@ export const saveProfile = async (profileData: FormData, token: string) => {
  * @param {string} token - The JWT token for authorization.
  * @returns {Object | null} - The user data or null if an error occurs.
  */
-export const fetchUserData = async (token: string) => {
+export const fetchUserData = async (token) => {
   try {
     const response = await axios.get(`${API_URL}/users/profile`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -113,41 +134,48 @@ export const fetchUserData = async (token: string) => {
     console.log('API Response:', response.data);
     return response.data.user;
   } catch (error) {
-    console.error('Error fetching user data:', error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error fetching user data:', error);
+      return null;
+    }
+    console.error('Unexpected error:', error);
     return null;
   }
 };
+
 // ===================
 // Charity Data API Endpoints
 // ===================
+
 /**
- * Updates the user's profile data.
- * @param {FormData} profileData - The data to update the user's profile with.
+ * Updates the charity profile data.
+ * @param {FormData} profileData - The data to update the charity profile with.
  * @param {string} token - The JWT token for authorization.
- * @returns {Object} The response data from the profile update.
+ * @returns {Object} - The response data from the profile update.
  */
-export const saveCharityProfile = async (profileData: FormData, token: string) => {
+export const saveCharityProfile = async (profileData, token) => {
   try {
-    const response = await axios.put(
-      `${API_URL}/charity/profile`,
-      profileData,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const response = await axios.put(`${API_URL}/charity/profile`, profileData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     console.log('Profile updated:', response.data);
     return response.data.user;
   } catch (error) {
-    console.error('Error updating profile:', error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error updating profile:', error);
+      throw error;
+    }
+    console.error('Unexpected error:', error);
     throw error;
   }
 };
+
 /**
  * Fetch charity profile data.
  * @param {string} token - The JWT token for authorization.
  * @returns {Object | null} - The user data or null if an error occurs.
  */
-export const fetchCharityData = async (token: string) => {
+export const fetchCharityData = async (token) => {
   try {
     const response = await axios.get(`${API_URL}/charity/profile`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -155,39 +183,44 @@ export const fetchCharityData = async (token: string) => {
     console.log('API Response:', response.data);
     return response.data.user;
   } catch (error) {
-    console.error('Error fetching user data:', error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error fetching charity data:', error);
+      return null;
+    }
+    console.error('Unexpected error:', error);
     return null;
   }
 };
 
 /**
- * Updates the user's profile data.
- * @param {FormData} profileData - The data to update the user's profile with.
+ * Updates the admin info.
+ * @param {FormData} profileData - The data to update the admin profile with.
  * @param {string} token - The JWT token for authorization.
- * @returns {Object} The response data from the profile update.
+ * @returns {Object} - The response data from the profile update.
  */
-export const saveAdminInfo = async (profileData: FormData, token: string) => {
+export const saveAdminInfo = async (profileData, token) => {
   try {
-    const response = await axios.put(
-      `${API_URL}/charity/adminInfo`,
-      profileData,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    console.log('Profile updated:', response.data);
+    const response = await axios.put(`${API_URL}/charity/adminInfo`, profileData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log('Admin info updated:', response.data);
     return response.data.user;
   } catch (error) {
-    console.error('Error updating profile:', error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error updating admin info:', error);
+      throw error;
+    }
+    console.error('Unexpected error:', error);
     throw error;
   }
 };
+
 /**
- * Fetch charity profile data.
+ * Fetch admin info.
  * @param {string} token - The JWT token for authorization.
- * @returns {Object | null} - The user data or null if an error occurs.
+ * @returns {Object | null} - The admin data or null if an error occurs.
  */
-export const fetchAdminInfo = async (token: string) => {
+export const fetchAdminInfo = async (token) => {
   try {
     const response = await axios.get(`${API_URL}/charity/profile`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -195,23 +228,32 @@ export const fetchAdminInfo = async (token: string) => {
     console.log('API Response:', response.data);
     return response.data.user;
   } catch (error) {
-    console.error('Error fetching user data:', error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error fetching admin info:', error);
+      return null;
+    }
+    console.error('Unexpected error:', error);
     return null;
   }
 };
+
 /**
  * Fetches admin data.
  * @param {string} token - The JWT token for authorization.
- * @returns {Object} The admin dashboard data.
+ * @returns {Object} - The admin dashboard data.
  */
-export const fetchAdminData = async (token: string) => {
+export const fetchAdminData = async (token) => {
   try {
     const response = await axios.get(`${API_URL}/admin/dashboard`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching admin data:', error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error fetching admin data:', error);
+      throw error;
+    }
+    console.error('Unexpected error:', error);
     throw error;
   }
 };
@@ -226,16 +268,20 @@ export const fetchAdminData = async (token: string) => {
  * @param {string} role - The user's role to specify (e.g., "USER", "CHARITY", "ADMIN").
  * @returns {Object} - The response data from the password reset request.
  */
-export const requestPasswordReset = async (email: string, role: string) => {
+export const requestPasswordReset = async (email, role) => {
   try {
     const response = await axios.post(`${API_URL}/auth/request-password-reset`, {
       email,
-      role,  // Pass the role along with the email
+      role, // Pass the role along with the email
     });
     console.log('Password reset email sent:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error requesting password reset:', error.response || error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error requesting password reset:', error.response || error);
+      throw error;
+    }
+    console.error('Unexpected error:', error);
     throw error;
   }
 };
@@ -247,7 +293,7 @@ export const requestPasswordReset = async (email: string, role: string) => {
  * @returns {Object} - The response data from the password reset.
  * @throws Will throw an error if the request fails.
  */
-export const resetPassword = async (token: string, newPassword: string) => {
+export const resetPassword = async (token, newPassword) => {
   try {
     const response = await axios.post(`${API_URL}/auth/reset-password`, {
       token,
@@ -255,8 +301,12 @@ export const resetPassword = async (token: string, newPassword: string) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error resetting password:', error);
-    throw error.response?.data || error;
+    if (error instanceof axios.AxiosError) {
+      console.error('Error resetting password:', error);
+      throw error.response?.data || error;
+    }
+    console.error('Unexpected error:', error);
+    throw error;
   }
 };
 
@@ -267,7 +317,7 @@ export const resetPassword = async (token: string, newPassword: string) => {
  * @param {string} token - The JWT token for authorization.
  * @returns {Object} - The response data from the account deletion.
  */
-export const deleteAccount = async (userId: string, role: string, token: string) => {
+export const deleteAccount = async (userId, role, token) => {
   try {
     const response = await axios.delete(`${API_URL}/auth/delete-account`, {
       data: { userId, role },
@@ -275,7 +325,11 @@ export const deleteAccount = async (userId: string, role: string, token: string)
     });
     return response.data;
   } catch (error) {
-    console.error('Error deleting account:', error);
+    if (error instanceof axios.AxiosError) {
+      console.error('Error deleting account:', error);
+      throw error;
+    }
+    console.error('Unexpected error:', error);
     throw error;
   }
 };

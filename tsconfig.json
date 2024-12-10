@@ -59,7 +59,7 @@
     ".next/types/**/*.ts",
     "src/utils/realtimeMessaging.js",
      "src/types/next-auth.d.ts"
-, "next.config.mjs", "src/components/product/ProductSingleSec.jsx"  ],
+, "next.config.mjs", "src/components/product/ProductSingleSec.jsx", "src/utils/api.js", "src/components/charity/account/AdminInfoForm.jsx", "src/components/charity/account/ProfileImageSection.jsx", "src/components/charity/account/ProfileInfoForm.jsx", "src/components/user-account/account/AccountInfoForm.jsx", "src/components/user-account/account/AddressForm.jsx", "src/components/user-account/account/PaymentInfoForm.jsx", "src/components/user-account/account/ProfileImageSection.jsx", "src/components/user-account/account/ProfileInfoForm.jsx", "src/components/charity/account/AddressForm.jsx", "src/components/charity/account/PaymentInfoForm.jsx", "src/pages/charity/charity-account/Banner.jsx", "src/pages/charity/charity-storefront/CharityStorefront.jsx", "src/pages/user-account/Banner.jsx", "src/utils/ProtectedRoute.js", "src/pages/user-account/UsersAccount.tsx", "src/pages/favorite-page/FavoriteProducts.jsx", "src/pages/charity/charity-storefront/about.jsx", "src/pages/charity/charity-storefront/banner.jsx", "src/pages/charity/charity-storefront/listing.tsx"  ],
   "exclude": [
     "node_modules"
   ]

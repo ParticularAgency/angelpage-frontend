@@ -1,8 +1,8 @@
 export interface Product {
   id: number;
-  charityImageSrc: string;
+  charityImageSrc: string | null | undefined;
   charityImageAlt?: string;
-  productImageSrc: string;
+  productImageSrc: string | null | undefined;
   productImageAlt?: string;
   productBrand?: string;
   productTitle?: string;
@@ -16,7 +16,6 @@ export interface Product {
   stock?: number;
   averageDeliveryTime?: number;
   isLoggedIn?: boolean;
-  onFavoriteClick?: () => void;
   onDeleteConfirm?: (productId: number) => void; // Adjusted for ID type consistency
   isFavorite?: boolean;
 }
