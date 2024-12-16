@@ -4,23 +4,17 @@ import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ToastNotification, { ToastService } from '@/components/elements/notifications/ToastService';
-
-type SignInResult = {
-  error?: string;
-  user?: {
-    id: string;
-    role: 'USER' | 'CHARITY' | 'ADMIN';
-  };
-};
+import ToastNotification, {
+  ToastService,
+} from '@/components/elements/notifications/ToastService';
 
 const Login = () => {
-  const { data: session } = useSession() ;
+  const { data: session } = useSession();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeRole, setActiveRole] = useState('USER');
+  const [activeRole, setActiveRole] = useState('USER'); // State to manage selected role
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -28,16 +22,16 @@ const Login = () => {
     setError('');
     setIsSubmitting(true);
 
-    // Sign in request
-    const result = (await signIn('credentials', {
+    const result = await signIn('credentials', {
       redirect: false,
       email,
       password,
       role: activeRole,
-    })) as SignInResult;
+    });
 
     if (result?.error) {
       let errorMessage = result.error;
+
       if (result.error === 'CredentialsSignin') {
         errorMessage = 'Invalid email or password. Please try again.';
       }
@@ -47,9 +41,12 @@ const Login = () => {
       return;
     }
 
-    // Check if user is in result
-    const userRole = result?.user?.role || session?.user?.role;
-    const userId = result?.user?.id || session?.user?.id;
+    // Wait for session to update
+    const updatedSession = await fetch('/api/auth/session').then(res =>
+      res.json()
+    );
+    const userRole = updatedSession?.user?.role;
+    const userId = updatedSession?.user?.id;
 
     if (userRole && userId) {
       if (userRole === activeRole) {
@@ -63,8 +60,12 @@ const Login = () => {
           setIsSubmitting(false);
         }, 2000);
       } else {
-        setError(`Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`);
-        ToastService.error(`Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`);
+        setError(
+          `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
+        );
+        ToastService.error(
+          `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
+        );
         setIsSubmitting(false);
       }
     }
@@ -73,13 +74,12 @@ const Login = () => {
   useEffect(() => {
     if (session?.user?.role && session?.user?.id) {
       const userRole = session.user.role;
-      const userId = session.user.id;
       ToastService.success('Login successful! Redirecting to account...');
       setTimeout(() => {
         if (userRole === 'USER') {
-          router.push(`/user/account/${userId}`);
+          router.push(`/`);
         } else if (userRole === 'CHARITY') {
-          router.push(`/charity/account/${userId}`);
+          router.push(`/`);
         }
       }, 2000);
     }
@@ -108,13 +108,21 @@ const Login = () => {
 
           <div className="flex space-x-2 justify-center mb-[54px]">
             <button
-              className={`p-2 text-body-small rounded-3xl ${activeRole === 'USER' ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold' : 'bg-transparent text-mono-100'}`}
+              className={`p-2 text-body-small rounded-3xl ${
+                activeRole === 'USER'
+                  ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold'
+                  : 'bg-transparent text-mono-100'
+              }`}
               onClick={() => setActiveRole('USER')}
             >
               Individual
             </button>
             <button
-              className={`text-body-small p-2 rounded-3xl ${activeRole === 'CHARITY' ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold' : 'bg-transparent text-mono-100'}`}
+              className={`text-body-small p-2 rounded-3xl ${
+                activeRole === 'CHARITY'
+                  ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold'
+                  : 'bg-transparent text-mono-100'
+              }`}
               onClick={() => setActiveRole('CHARITY')}
             >
               Charity/Brand

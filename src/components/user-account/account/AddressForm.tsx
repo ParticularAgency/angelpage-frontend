@@ -5,22 +5,48 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
 // Define the shape of an address for type safety
-const AddressForm = () => {
+interface Address {
+  _id?: string;
+  tempId?: number;
+  type: 'Shipping from' | 'Shipping to';
+  name: string;
+  address: string;
+  city: string;
+  country: string;
+  postcode: string;
+  isEditing: boolean;
+}
+interface AddressAPIResponse {
+  addresses: Address[];
+}
+// Define the structure of the user profile response
+interface UserProfileResponse {
+  user?: {
+    addresses: Address[];
+  };
+}
+
+// Define the expected structure of session data
+interface SessionData {
+  token: string;
+}
+
+const AddressForm: React.FC = () => {
   const { data: session, status } = useSession() || {};
-  const [addresses, setAddresses] = useState([]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [addressToDelete, setAddressToDelete] = useState(null);
+  const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
 
   // Fetch existing addresses on component mount
   useEffect(() => {
     const fetchAddresses = async () => {
-      if (status === 'authenticated' && session?.token) {
+      if (status === 'authenticated' && (session as SessionData)?.token) {
         try {
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/charity/profile`,
+          const response = await axios.get<UserProfileResponse>(
+            `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
             {
               headers: {
-                Authorization: `Bearer ${session.token}`,
+                Authorization: `Bearer ${(session as SessionData).token}`,
               },
             }
           );
@@ -34,7 +60,7 @@ const AddressForm = () => {
   }, [session, status]);
 
   const handleAddNewAddress = () => {
-    const newAddress = {
+    const newAddress: Address = {
       tempId: Date.now(),
       type: 'Shipping from',
       name: '',
@@ -47,7 +73,7 @@ const AddressForm = () => {
     setAddresses([...addresses, newAddress]);
   };
 
-  const handleEditClick = id => {
+  const handleEditClick = (id: string | number) => {
     setAddresses(
       addresses.map(address =>
         address._id === id || address.tempId === id
@@ -57,7 +83,10 @@ const AddressForm = () => {
     );
   };
 
-  const handleChange = (id, e) => {
+  const handleChange = (
+    id: string | number,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setAddresses(
       addresses.map(address =>
@@ -68,7 +97,7 @@ const AddressForm = () => {
     );
   };
 
-  const handleDeleteConfirmation = id => {
+  const handleDeleteConfirmation = (id: string) => {
     setAddressToDelete(id);
     setIsConfirmOpen(true);
   };
@@ -77,10 +106,10 @@ const AddressForm = () => {
     if (addressToDelete) {
       try {
         await axios.delete(
-          `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/addresses/${addressToDelete}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/users/profile/addresses/${addressToDelete}`,
           {
             headers: {
-              Authorization: `Bearer ${session?.token}`,
+              Authorization: `Bearer ${(session as SessionData)?.token}`,
             },
           }
         );
@@ -95,71 +124,63 @@ const AddressForm = () => {
     setAddressToDelete(null);
   };
 
-  const handleSave = async id => {
-    const address = addresses.find(
-      addr => addr._id === id || addr.tempId === id
-    );
+ const handleSave = async (id: string | number) => {
+   const address = addresses.find(
+     addr => addr._id === id || addr.tempId === id
+   );
 
-    if (address) {
-      try {
-        if (address._id) {
-          // Update existing address
-          await axios.put(
-            `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/addresses/${address._id}`,
-            address,
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token}`,
-              },
-            }
-          );
-          setAddresses(
-            addresses.map(addr =>
-              addr._id === id ? { ...addr, isEditing: false } : addr
-            )
-          );
-        } else {
-          // Add new address
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/addresses`,
-            address,
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token}`,
-              },
-            }
-          );
+   if (address) {
+     try {
+       if (address._id) {
+         // Update existing address
+         await axios.put(
+           `${process.env.NEXT_PUBLIC_API_URL}/users/profile/addresses/${address._id}`,
+           address,
+           {
+             headers: {
+               Authorization: `Bearer ${(session as SessionData)?.token}`,
+             },
+           }
+         );
+         setAddresses(
+           addresses.map(addr =>
+             addr._id === id ? { ...addr, isEditing: false } : addr
+           )
+         );
+       } else {
+         // Add new address
+         const response = await axios.post<AddressAPIResponse>(
+           `${process.env.NEXT_PUBLIC_API_URL}/users/profile/addresses`,
+           address,
+           {
+             headers: {
+               Authorization: `Bearer ${(session as SessionData)?.token}`,
+             },
+           }
+         );
 
-          // Handle wrapped response structure
-          if (response.data.addresses) {
-            const newAddressData = response.data.addresses.slice(-1)[0];
-            if (newAddressData && newAddressData._id) {
-              // Replace the temporary address with the new one from backend
-              setAddresses(
-                addresses.map(addr =>
-                  addr.tempId === id
-                    ? { ...newAddressData, isEditing: false }
-                    : addr
-                )
-              );
-            } else {
-              console.error(
-                'Unexpected address data in response:',
-                response.data
-              );
-            }
-          } else {
-            console.error('Unexpected response structure:', response.data);
-          }
-        }
-      } catch (error) {
-        console.error(
-          'Error saving address: ',
-          error.response?.data || error.message
-        );
-      }
-    }
-  };
+         // Check if addresses are returned in the response
+         if (response.data.addresses) {
+           // Update state with the full array of addresses returned from the server
+           setAddresses(
+             response.data.addresses.map(addr => ({
+               ...addr,
+               isEditing: false,
+             }))
+           );
+         } else {
+           console.error('Unexpected response structure:', response.data);
+         }
+       }
+     } catch (error) {
+       console.error(
+         'Error saving address:',
+         (error as { response?: { data?: unknown } }).response?.data ||
+           (error as Error).message
+       );
+     }
+   }
+ };
 
   return (
     <div className="address-section pt-[23px] pb-0">

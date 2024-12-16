@@ -28,7 +28,7 @@ const UsersProductListingArea: React.FC<UsersProductListingAreaProps> = ({
     products.filter(product => product.status === 'Draft')
   );
   const activeProducts = filterByDeliveryTime(
-    products.filter(product => product.status === 'Active')
+    products.filter(product => product.status === 'LIVE')
   );
   const removedProducts = filterByDeliveryTime(
     products.filter(product => product.status === 'Removed')
@@ -79,19 +79,20 @@ const UsersProductListingArea: React.FC<UsersProductListingAreaProps> = ({
                 <ProductCard
                   key={product.id}
                   productId={product.id.toString()}
-                  charityImageSrc={product.charityImageSrc ?? '/path/to/default-image.png'}
+                  charityImageSrc={product.charity?.profileImage}
                   charityImageAlt={product.charityImageAlt ?? ''}
-                  productImageSrc={product.productImageSrc ?? '/path/to/default-image.png'}
+                  productImageSrc={product.images[0].url}
                   productImageAlt={product.productImageAlt ?? ''}
-                  productBrand={product.productBrand}
-                  productTitle={product.productTitle}
-                  productSize={product.productSize}
-                  productPrice={product.productPrice}
+                  productBrand={product.brand}
+                  productTitle={product.name}
+                  productSize={product.size}
+                  productPrice={product.price}
                   location={product.location}
-                  status={product.status}
-                  averageDeliveryTime={product.averageDeliveryTime ?? 0}
-                  onFavoriteClick={() => console.log('Favorited')}
-                  onDeleteConfirm={handleDeleteConfirm}
+                  status={product.status === 'LIVE' ? 'Active' : product.status}
+                  averageDeliveryTime={product.averageDeliveryTime ?? 0} // Default to 0 if undefined
+                  onDeleteConfirm={() =>
+                    handleDeleteConfirm(product.id.toString())
+                  }
                   isLoggedIn={true}
                 />
               ))
@@ -112,19 +113,20 @@ const UsersProductListingArea: React.FC<UsersProductListingAreaProps> = ({
                 <ProductCard
                   key={product.id}
                   productId={product.id.toString()}
-                  charityImageSrc={product.charityImageSrc ?? '/path/to/default-image.png'}
+                  charityImageSrc={product.charity?.profileImage}
                   charityImageAlt={product.charityImageAlt ?? ''}
-                  productImageSrc={product.productImageSrc ?? '/path/to/default-image.png'}
+                  productImageSrc={product.images[0].url}
                   productImageAlt={product.productImageAlt ?? ''}
-                  productBrand={product.productBrand}
-                  productTitle={product.productTitle}
-                  productSize={product.productSize}
-                  productPrice={product.productPrice}
+                  productBrand={product.brand}
+                  productTitle={product.name}
+                  productSize={product.size}
+                  productPrice={product.price}
                   location={product.location}
-                  status={product.status}
-                  averageDeliveryTime={product.averageDeliveryTime ?? 0}
-                  onFavoriteClick={() => console.log('Favorited')}
-                  onDeleteConfirm={handleDeleteConfirm}
+                  status={product.status === 'LIVE' ? 'Active' : product.status}
+                  averageDeliveryTime={product.averageDeliveryTime ?? 0} // Default to 0 if undefined
+                  onDeleteConfirm={() =>
+                    handleDeleteConfirm(product.id.toString())
+                  }
                   isLoggedIn={true}
                 />
               ))
@@ -145,19 +147,20 @@ const UsersProductListingArea: React.FC<UsersProductListingAreaProps> = ({
                 <ProductCard
                   key={product.id}
                   productId={product.id.toString()}
-                  charityImageSrc={product.charityImageSrc ?? '/path/to/default-image.png'}
+                  charityImageSrc={product.charity?.profileImage}
                   charityImageAlt={product.charityImageAlt ?? ''}
-                  productImageSrc={product.productImageSrc ?? '/path/to/default-image.png'}
+                  productImageSrc={product.images[0].url}
                   productImageAlt={product.productImageAlt ?? ''}
-                  productBrand={product.productBrand}
-                  productTitle={product.productTitle}
-                  productSize={product.productSize}
-                  productPrice={product.productPrice}
+                  productBrand={product.brand}
+                  productTitle={product.name}
+                  productSize={product.size}
+                  productPrice={product.price}
                   location={product.location}
-                  status={product.status}
-                  averageDeliveryTime={product.averageDeliveryTime ?? 0}
-                  onFavoriteClick={() => console.log('Favorited')}
-                  onDeleteConfirm={handleDeleteConfirm}
+                  status={product.status === 'LIVE' ? 'Active' : product.status}
+                  averageDeliveryTime={product.averageDeliveryTime ?? 0} // Default to 0 if undefined
+                  onDeleteConfirm={() =>
+                    handleDeleteConfirm(product.id.toString())
+                  }
                   isLoggedIn={true}
                 />
               ))

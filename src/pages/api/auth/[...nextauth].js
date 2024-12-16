@@ -8,13 +8,20 @@ export default NextAuth({
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
+        email: {
+          label: 'Email',
+          type: 'email',
+          placeholder: 'example@example.com',
+        },
         password: { label: 'Password', type: 'password' },
         role: { label: 'Role', type: 'text' },
       },
       async authorize(credentials) {
+        if (!credentials) {
+          throw new Error('No credentials provided');
+        }
         try {
-          const res = await axios.post(
+          const response = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
             {
               email: credentials.email,
@@ -23,33 +30,33 @@ export default NextAuth({
             }
           );
 
-          if (res.data) {
-            const { user, token } = res.data;
-            return { ...user, token };
+          const user = response.data;
+
+          if (user) {
+            return user;
+          } else {
+            throw new Error('Invalid credentials');
           }
-          return null;
         } catch (error) {
-          console.error('Login error:', error);
-          return null;
+          console.error('Error during login:', error);
+          throw new Error('Login failed');
         }
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user._id;
         token.role = user.role;
-        token.jwt = user.token; 
-        token.accessToken = user.accessToken || ''; 
+        token.jwt = user.token; // Attach the JWT token to the session token
       }
       return token;
     },
     async session({ session, token }) {
-      session.token = token;
       session.user = { ...session.user, id: token.id, role: token.role };
-      session.token = token.jwt;
-      session.accessToken = token.accessToken;
+      session.token = token.jwt; // Attach the JWT token to the session for API requests
       return session;
     },
   },

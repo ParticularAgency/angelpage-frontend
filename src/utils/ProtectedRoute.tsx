@@ -1,20 +1,18 @@
 'use client';
-
 import { useSession, signOut, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, ReactNode } from 'react';
 
-/**
- * ProtectedRoute Component
- * @param {Object} props
- * @param {ReactNode} props.children - The child components to render when authorized.
- * @param {string[]} props.allowedRoles - An array of roles that are authorized to access the route.
- */
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { data: session, status } = useSession() || {};
+interface ProtectedRouteProps {
+  children: ReactNode;
+  allowedRoles: string[];
+}
+
+const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
+  const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Function to refresh the session
+  // Function to refresh session
   const refreshSession = async () => {
     const refreshedSession = await getSession();
     if (!refreshedSession) {
@@ -25,19 +23,20 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   useEffect(() => {
     if (status === 'loading') return;
 
-    // Redirect to login if the user is not authenticated
+    // If the user is not authenticated, redirect to login
     if (status === 'unauthenticated') {
       router.push('/auth/login');
       return;
     }
 
-    // Redirect to 403 page if the user does not have an allowed role
-    if (session && !allowedRoles.includes(session.user.role)) {
+    // Ensure role is defined and check allowed roles
+    const userRole = session?.user?.role ?? ''; // Default to an empty string if role is undefined
+    if (!allowedRoles.includes(userRole)) {
       router.push('/403');
       return;
     }
 
-    // Refresh session 1 minute before expiration
+    // Set an interval to refresh the session 1 minute before it expires
     const intervalId = setInterval(() => {
       if (session?.expires) {
         const sessionExpiry = new Date(session.expires).getTime();
@@ -50,17 +49,18 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
       }
     }, 30 * 1000); // Check every 30 seconds
 
-    // Cleanup interval on component unmount
+    // Clean up interval on component unmount
     return () => clearInterval(intervalId);
   }, [status, session, router, allowedRoles]);
 
-  // Show loading state while the session is being determined
+  // Loading state
   if (status === 'loading') {
     return <p>Loading...</p>;
   }
 
-  // Render children if session is active and user has an allowed role
-  return session && allowedRoles.includes(session.user.role) ? children : null;
+  // Check if session is active and user has an allowed role
+  const userRole = session?.user?.role ?? ''; // Ensure role is a string
+  return allowedRoles.includes(userRole) ? <>{children}</> : null;
 };
 
 export default ProtectedRoute;

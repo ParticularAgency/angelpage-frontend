@@ -12,6 +12,7 @@ interface FormProps {
   onSubmit: (detailsData: DetailsData) => void;
   onFinish: () => void;
   onBack: () => void;
+  onSaveAsDraft: () => void; // Handler for Save as Draft
   formData?: { price: string; charityProfit: string };
 }
 
@@ -24,6 +25,7 @@ const PriceForm: React.FC<FormProps> = ({
   onSubmit,
   onFinish,
   onBack,
+  onSaveAsDraft,
   formData = { price: '', charityProfit: '' },
 }) => {
   const [price, setPrice] = useState<string>(formData.price);
@@ -32,13 +34,13 @@ const PriceForm: React.FC<FormProps> = ({
   );
   const [error, setError] = useState<string>(''); // State for error message
 
-  // Refs to store latest values
+  // Refs to store the latest values
   const priceRef = useRef(price);
   const charityProfitRef = useRef(charityProfit);
 
-  // Helper to calculate charity profit based on price
+  // Helper function to calculate charity profit based on the entered price
   const calculateCharityProfit = (priceValue: string) => {
-    const numericPrice = parseFloat(priceValue.slice(1));
+    const numericPrice = parseFloat(priceValue.replace(/[^\d.]/g, ''));
     if (!isNaN(numericPrice) && numericPrice > 0) {
       return `£${(numericPrice * 0.9).toFixed(2)}`;
     } else {
@@ -66,7 +68,7 @@ const PriceForm: React.FC<FormProps> = ({
       const updatedCharityProfit = calculateCharityProfit(newPrice);
       setCharityProfit(updatedCharityProfit);
       charityProfitRef.current = updatedCharityProfit;
-      setError(''); // Clear error message on valid input
+      setError(''); // Clear any error messages on valid input
     } else {
       const errorMessage = 'Invalid price format. Please enter a valid price.';
       setError(errorMessage);
@@ -74,16 +76,16 @@ const PriceForm: React.FC<FormProps> = ({
     }
   };
 
-  // Handle submit to ensure it uses latest values from refs
+  // Handle submit to ensure it uses the latest values from refs
   const handleSubmit = () => {
     const finalPrice = priceRef.current;
     const finalCharityProfit = charityProfitRef.current;
 
     // Validation: Check if the price is blank or invalid
-    const numericPrice = parseFloat(finalPrice.slice(1));
+    const numericPrice = parseFloat(finalPrice.replace(/[^\d.]/g, ''));
     if (finalPrice.trim() === '' || finalPrice === '£') {
       const errorMessage = 'Price is required. Please enter a price.';
-      setError('');
+      setError(errorMessage);
       ToastService.error(errorMessage); // Show toast notification
       return; // Stop submission
     }
@@ -92,14 +94,14 @@ const PriceForm: React.FC<FormProps> = ({
     if (numericPrice < 1) {
       const errorMessage =
         'Price must be at least £1. Please enter a valid price.';
-      setError('');
+      setError(errorMessage);
       ToastService.error(errorMessage); // Show toast notification
       return; // Stop submission
     }
 
-    // If no errors, submit latest values
+    // If no errors, submit the latest values
     onSubmit({ price: finalPrice, charityProfit: finalCharityProfit });
-    ToastService.success('Your product listed successfully!'); 
+    ToastService.success('Your product listed successfully!');
     onFinish(); // Call onFinish only after a successful submit
   };
 
@@ -124,7 +126,7 @@ const PriceForm: React.FC<FormProps> = ({
               value={price}
               onChange={handlePriceChange}
             />
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
           </div>
           <div className="w-1/2 md:w-full">
             <div className="flex flex-col">
@@ -189,7 +191,7 @@ const PriceForm: React.FC<FormProps> = ({
             <Button
               variant="accend-link"
               className="flex items-center underline !text-primary-color-100 !pr-0"
-              onClick={() => ToastService.success('Save as draft')}
+              onClick={onSaveAsDraft}
             >
               Save as draft
             </Button>
@@ -197,9 +199,7 @@ const PriceForm: React.FC<FormProps> = ({
               type="button"
               variant="primary"
               className={`flex items-center ${error ? 'opacity-50 cursor-not-allowed' : ''}`} // Disable button if there is an error
-              onClick={() => {
-                handleSubmit(); // Attempt to submit
-              }}
+              onClick={handleSubmit}
               disabled={!!error} // Disable button if there's an error
             >
               Finish

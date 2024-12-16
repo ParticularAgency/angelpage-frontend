@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button, ProgressBar } from '@/components/elements';
@@ -10,25 +9,34 @@ import ToastNotification, {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
+interface UserProfile {
+  verified: boolean;
+  profileCompleted: boolean;
+  firstName?: string;
+  userName?: string;
+  profileImage?: string;
+}
+
 const BannerSection = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
-  const [userData, setUserData] = useState(null);
+  const { data: session, status } = useSession() || {};
+  const [profileData, setProfileData] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [progress, setProgress] = useState<number>(0);
+  const [userData, setUserData] = useState<UserProfile | null>(null);
+
+  // Log session details for debugging
+  console.log('Session:', session);
+  console.log('Session Status:', status);
 
   useEffect(() => {
-    if (status === 'loading') return; // Wait until the session status is resolved
-
     const fetchData = async () => {
       if (status === 'authenticated' && session?.token) {
-        try {
-          const data = await fetchUserData(session.token);
-          setUserData(data || {}); // Default to an empty object if data is null
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-          ToastService.error('Failed to load user data.');
+        const data = await fetchUserData(session.token);
+        if (data) {
+          setUserData(data as UserProfile);
+        } else {
+          console.error('Failed to fetch user data');
         }
       }
     };
@@ -36,32 +44,19 @@ const BannerSection = () => {
     fetchData();
   }, [session, status]);
 
-  const isProfileResponse = data => {
-    return (
-      typeof data === 'object' &&
-      data !== null &&
-      typeof data.user === 'object' &&
-      typeof data.user.verified === 'boolean' &&
-      typeof data.user.profileCompleted === 'boolean' &&
-      typeof data.profileCompletionPercentage === 'number'
-    );
-  };
-
   useEffect(() => {
-    if (status === 'loading') return;
-
     const fetchProfile = async () => {
       if (status === 'authenticated' && session?.user?.email) {
         try {
           setLoading(true);
           const response = await fetchUserProfileData(session.user.email);
-          if (isProfileResponse(response)) {
-            const { user, profileCompletionPercentage } = response;
-            setProfileData(user || {});
-            setProgress(profileCompletionPercentage || 0);
-          } else {
-            ToastService.error('Invalid profile data structure.');
+          if (!response?.user) {
+            ToastService.error('Failed to load profile data.');
+            return;
           }
+          const { user, profileCompletionPercentage } = response;
+          setProfileData(user);
+          setProgress(profileCompletionPercentage || 0);
         } catch (error) {
           console.error('Error fetching profile data:', error);
           ToastService.error('Failed to load profile data.');
@@ -88,7 +83,7 @@ const BannerSection = () => {
     <section className="users-account-banner-section relative pt-0 pb-[50px] sm:pb-9">
       <div className="profile-status-area">
         <div className="custom-container">
-          {!profileData?.verified && (
+          {!profileData.verified && (
             <div className="email-verify-area py-2 text-center flex items-center justify-center gap-2">
               <p className="text-error body-small">
                 Your email is not verified. Please verify your email.
@@ -103,7 +98,8 @@ const BannerSection = () => {
             </div>
           )}
 
-          {profileData?.profileCompleted ? (
+          {/* Profile Completion Progress */}
+          {profileData.profileCompleted ? (
             <p className="text-success text-center pt-3 mb-2 body-small">
               Your profile is 100% complete!
             </p>
@@ -113,7 +109,7 @@ const BannerSection = () => {
                 Complete your profile to 100%.
               </p>
               <p className="w-full py-0 mb-3 mt-0 body-small text-center">
-                Please select the account tab and complete your profile.
+                Please select the account tab and complete your profile
               </p>
               <ProgressBar
                 progress={progress}
@@ -126,27 +122,31 @@ const BannerSection = () => {
       <div className="custom-container">
         <div className="users-account-banner-wrapper pt-10 flex items-center justify-between sm:flex-col sm:items-start sm:gap-8">
           <div className="users-account-left-cont flex items-center gap-4">
-            <Image
-              src={
-                userData?.profileImage ||
-                '/images/icons/elisp-profile-default-img.svg'
-              }
-              alt="user profile image"
-              className="rounded-full w-10 h-10 object-cover"
-              width={40}
-              height={40}
-            />
+            {userData ? (
+              <Image
+                src={
+                  userData.profileImage ||
+                  '/images/icons/elisp-profile-default-img.svg'
+                }
+                alt="user profile image"
+                className="rounded-full w-10 h-10 object-cover"
+                width={40}
+                height={40}
+              />
+            ) : (
+              <div className="skeleton bg-mono-40 h-10 w-10 shrink-0 rounded-full"></div>
+            )}
             <div className="users-info-cont">
               <h1 className="h5 font-primary user-profile-name whitespace-nowrap text-mono-100 mb-[2px]">
-                {userData?.firstName || 'User'}
+                {userData?.firstName || 'Unknown'}
               </h1>
               <p className="user-username body-small">
-                {userData?.userName || 'Anonymous'}
+                {userData?.userName || 'Unknown'}
               </p>
             </div>
           </div>
           <div className="users-account-right-cont flex flex-col items-end sm:items-start">
-            <Button variant="primary" className="body-small">
+            <Button variant="primary" className="body-small ">
               Turn on holiday mode
             </Button>
             <p className="forms text-mono-100 mt-2 md:max-w-[375px]">

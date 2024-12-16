@@ -4,65 +4,34 @@ import Sorting from '@/components/elements/search/Sorting';
 import ProductList from '@/components/product/ProductList';
 import Pagination from '@/components/elements/Pagination';
 import SearchBar from '@/components/elements/search/SearchBar';
+import { Product } from '@/types/productTypes';
 
-const FavoriteProductListing = ({ products = [] }) => {
+interface FavoriteProductListingProps {
+  products: Product[];
+}
+
+const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
+  products = [],
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sort, setSort] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
   const productsPerPage = 10;
 
-  const [filters] = useState({
-    category: [],
-    subCategory: [],
-    productBrand: [],
-    productCondition: [],
-  });
-
-  const filterAndSortProducts = (products, filters, sort, query) => {
-    let updatedProducts = Array.isArray(products) ? [...products] : [];
-
-    // Filtering logic
-    if (filters.category.length > 0) {
-      updatedProducts = updatedProducts.filter(
-        product =>
-          product.category && filters.category.includes(product.category)
-      );
-    }
-    if (filters.subCategory.length > 0) {
-      updatedProducts = updatedProducts.filter(
-        product =>
-          product.subcategory &&
-          filters.subCategory.includes(product.subcategory)
-      );
-    }
-    if (filters.productBrand.length > 0) {
-      updatedProducts = updatedProducts.filter(
-        product =>
-          product.productBrand &&
-          filters.productBrand.includes(product.productBrand)
-      );
-    }
-    if (filters.productCondition.length > 0) {
-      updatedProducts = updatedProducts.filter(
-        product =>
-          product.productCondition &&
-          filters.productCondition.includes(product.productCondition)
-      );
-    }
+  const filterAndSortProducts = (
+    products: Product[],
+    sort: string,
+    query: string
+  ) => {
+    let updatedProducts = [...products];
 
     // Search logic
     if (query) {
       updatedProducts = updatedProducts.filter(
         product =>
-          product.productTitle?.toLowerCase().includes(query.toLowerCase()) ||
-          product.category?.toLowerCase().includes(query.toLowerCase()) ||
-          product.subcategory?.toLowerCase().includes(query.toLowerCase()) ||
-          product.productBrand?.toLowerCase().includes(query.toLowerCase()) ||
-          product.productCondition
-            ?.toLowerCase()
-            .includes(query.toLowerCase()) ||
-          product.location?.toLowerCase().includes(query.toLowerCase())
+          product.name?.toLowerCase().includes(query.toLowerCase()) ||
+          product.category?.toLowerCase().includes(query.toLowerCase())
       );
     }
 
@@ -70,30 +39,32 @@ const FavoriteProductListing = ({ products = [] }) => {
     if (sort === 'price-asc') {
       updatedProducts.sort(
         (a, b) =>
-          parseFloat(a.productPrice || '0') - parseFloat(b.productPrice || '0')
+          parseFloat(a.price || '0') - parseFloat(b.price || '0')
       );
     } else if (sort === 'price-desc') {
       updatedProducts.sort(
         (a, b) =>
-          parseFloat(b.productPrice || '0') - parseFloat(a.productPrice || '0')
+          parseFloat(b.price || '0') - parseFloat(a.price || '0')
       );
     } else if (sort === 'name-asc') {
       updatedProducts.sort((a, b) =>
-        (a.productTitle || '').localeCompare(b.productTitle || '')
+        (a.name || '').localeCompare(b.name || '')
       );
     } else if (sort === 'name-desc') {
       updatedProducts.sort((a, b) =>
-        (b.productTitle || '').localeCompare(a.productTitle || '')
+        (b.name || '').localeCompare(a.name || '')
       );
     }
 
     return updatedProducts;
   };
 
+  // Apply filtering, sorting, and searching using useMemo for performance
   const filteredProducts = useMemo(() => {
-    return filterAndSortProducts(products, filters, sort, searchQuery);
-  }, [filters, sort, searchQuery, products]);
+    return filterAndSortProducts(products, sort, searchQuery);
+  }, [sort, searchQuery, products]);
 
+  // Pagination logic
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
   const currentProducts = filteredProducts.slice(
@@ -101,17 +72,17 @@ const FavoriteProductListing = ({ products = [] }) => {
     startIndex + productsPerPage
   );
 
-  const handleSortChange = newSort => {
+  const handleSortChange = (newSort: string) => {
     setSort(newSort);
     setCurrentPage(1);
   };
 
-  const handleSearch = query => {
+  const handleSearch = (query: string) => {
     setSearchQuery(query);
     setCurrentPage(1);
   };
 
-  const handlePageChange = page => {
+  const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 

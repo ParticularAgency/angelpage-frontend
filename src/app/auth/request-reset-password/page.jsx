@@ -1,4 +1,5 @@
-"use client";
+'use client';
+
 import React, { useState } from 'react';
 import { requestPasswordReset } from '@/utils/api';
 import { Button, Input } from '@/components/elements';
@@ -31,22 +32,19 @@ const RequestPasswordReset = () => {
     setMessage('');
 
     try {
-      const response = await requestPasswordReset(email, role); // Pass both email and role
+      const response = await requestPasswordReset(email, role);
       const successMessage =
-        response.message || 'Password reset email sent. Please check your inbox.';
+        response.message ||
+        'Password reset email sent. Please check your inbox.';
       setMessage(successMessage);
-      ToastService.success(successMessage); // Changed to success notification
+      ToastService.success(successMessage);
       setEmail('');
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message ||
+        error.response?.message ||
         'Error requesting password reset. Please try again.';
       setError(errorMessage);
       ToastService.error(errorMessage);
-      console.error(
-        'Error requesting password reset:',
-        error.response || error
-      );
     } finally {
       setLoading(false);
     }
@@ -78,21 +76,23 @@ const RequestPasswordReset = () => {
               <p className="success-message text-green-600">{message}</p>
             )}
             {error && <p className="error-message text-red-600">{error}</p>}
+
             <Input
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               className="w-full p-2 border rounded-md mb-4"
             />
+
             <div className="select-role-area px-2">
               <select
                 id="RestPassRoleSelect"
                 value={role}
-                onChange={(e) => setRole(e.target.value)}
+                onChange={e => setRole(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-mono-0"
               >
-                {roles.map((roleOption) => (
+                {roles.map(roleOption => (
                   <option key={roleOption.value} value={roleOption.value}>
                     {roleOption.label}
                   </option>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { DeleteIcon, FavoriteOutlineIcon, LocationIcon } from '@/icons';
+import { DeleteIcon,  LocationIcon } from '@/icons';
 import { Button } from '@/components/elements';
+import FavoriteButton from '@/components/elements/button/FavoriteButton';
 
 
 interface ProductCardProps {
@@ -15,7 +16,6 @@ interface ProductCardProps {
   productSize?: string;
   productPrice?: string;
   location?: string;
-  onFavoriteClick: () => void;
   onDeleteConfirm: (productId: string) => void;
   isLoggedIn?: boolean;
   status?: 'Draft' | 'Active' | 'Removed';
@@ -33,14 +33,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
   productSize = 'One Size',
   productPrice = 'N/A',
   location = 'No Location',
-  onFavoriteClick,
   onDeleteConfirm,
   isLoggedIn = false,
   status,
   // averageDeliveryTime,
 }) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
 
   const handleDeleteClick = () => {
     setIsConfirmOpen(true);
@@ -54,11 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     onDeleteConfirm(productId);
     setIsConfirmOpen(false);
   };
-  const handleFavoriteClick = () => {
-    setIsFavorite(!isFavorite);
-    onFavoriteClick();
-    
-  }; 
+
   return (
     <div
       className={`product-card-item bg-mono-0 max-w-[289px] w-full px-[15px] py-4 flex flex-col gap-[33px] border ${status === 'Removed' ? 'opacity-80' : ''}`}
@@ -73,14 +67,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
             height={46}
           />
         </div>
-        <div
-          className="favorite-btn cursor-pointer"
-          onClick={handleFavoriteClick}
-        >
-          <FavoriteOutlineIcon
-            fillColor={isFavorite ? '#611192' : 'none'}
-            strokeColor={isFavorite ? '#611192' : '#131313'}
-          />
+        <div className="favorite-btn cursor-pointer">
+          <FavoriteButton itemId={productId} type="Product" />
         </div>
       </div>
 

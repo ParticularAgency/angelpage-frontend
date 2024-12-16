@@ -1,0 +1,18 @@
+import React from 'react'
+import LoadingModal from '@/icons/loadingModal';
+
+const PreLoader = () => {
+  return (
+    <div className="loading-container fixed top-0 left-0 w-full h-full bg-mono-0 z-[999999]">
+      <div className="loading-content w-full h-full flex flex-col items-center justify-center gap-4">
+        <LoadingModal />
+        <p className="body-small text-mono-100">
+          {' '}
+          Loading... , please do not refresh this page.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default PreLoader

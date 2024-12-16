@@ -7,15 +7,18 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import ToastNotification, {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
-type ActiveTab = 'details' | 'photos' | 'price';
-
+interface UploadedImage {
+  id: number;
+  src: string;
+  file: File;
+  isFeatured: boolean;
+}
 interface FormProps {
-  setActiveTab: (tabName: ActiveTab) => void;
-  onSubmit: (formData: { images: UploadedImage[] }) => void; // Submit only images
-  onUpdateImages: (newImages: UploadedImage[]) => void; // Required
-  images: UploadedImage[]; // Required
+  setActiveTab: (tabName: 'details' | 'photos' | 'price') => void;
+  onSubmit: (images: UploadedImage[]) => void;
+  images: UploadedImage[];
+  onSaveAsDraft: () => void; // Handler for Save as Draft
   onBack: () => void;
-  formData?: { price: string; charityProfit: string }; // Optional, but not used in submission
 }
 
 interface UploadedImage {
@@ -27,52 +30,59 @@ interface UploadedImage {
 const PhotosForm: React.FC<FormProps> = ({
   setActiveTab,
   onSubmit,
-  onUpdateImages,
-  images = [], // Default to an empty array if images is undefined
+  onSaveAsDraft,
+  images = [],
   onBack,
 }) => {
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>(images);
-  const [error, setError] = useState<string>(''); // State for error message
+  const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    setUploadedImages(images || []); // Ensure it always sets to an array
+    setUploadedImages(images || []);
   }, [images]);
 
   const handleBrowseClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const newImages = Array.from(files).map((file, index) => ({
-        id: Date.now() + index,
-        src: URL.createObjectURL(file),
-        isFeatured: uploadedImages.length === 0 && index === 0,
-      }));
+const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const files = event.target.files;
 
-      const updatedImages = [...uploadedImages, ...newImages].slice(0, 10);
-      setUploadedImages(updatedImages);
-      onUpdateImages(updatedImages);
-      setError(''); // Clear error message if images are added
-    }
-  };
+  if (files) {
+    const newImages = Array.from(files).map(file => ({
+      id: Date.now() + Math.random(),
+      src: URL.createObjectURL(file),
+      file, // Save the file object for later backend upload
+      isFeatured: uploadedImages.length === 0,
+    }));
 
-  const handleDeleteImage = (imageId: number) => {
-    const updatedImages = uploadedImages.filter(image => image.id !== imageId);
+    const updatedImages = [...uploadedImages, ...newImages].slice(0, 10);
     setUploadedImages(updatedImages);
-    onUpdateImages(updatedImages);
-  };
+    onSubmit(updatedImages); // Pass updated images to parent component
+    setError('');
+  }
+};
+ const handleDeleteImage = (imageId: number) => {
+   const updatedImages = uploadedImages.filter(image => image.id !== imageId);
+   setUploadedImages(updatedImages);
 
-  const moveImage = (dragIndex: number, hoverIndex: number) => {
-    const draggedImage = uploadedImages[dragIndex];
-    const updatedImages = [...uploadedImages];
-    updatedImages.splice(dragIndex, 1);
-    updatedImages.splice(hoverIndex, 0, draggedImage);
-    setUploadedImages(updatedImages);
-    onUpdateImages(updatedImages);
-  };
+   if (
+     !updatedImages.some(image => image.isFeatured) &&
+     updatedImages.length > 0
+   ) {
+     updatedImages[0].isFeatured = true;
+     setUploadedImages([...updatedImages]);
+   }
+ };
+
+ const moveImage = (dragIndex: number, hoverIndex: number) => {
+   const draggedImage = uploadedImages[dragIndex];
+   const updatedImages = [...uploadedImages];
+   updatedImages.splice(dragIndex, 1);
+   updatedImages.splice(hoverIndex, 0, draggedImage);
+   setUploadedImages(updatedImages);
+ };
 
   const handleDropToFeatured = (imageId: number) => {
     const updatedImages = uploadedImages.map(image =>
@@ -81,19 +91,24 @@ const PhotosForm: React.FC<FormProps> = ({
         : { ...image, isFeatured: false }
     );
     setUploadedImages(updatedImages);
-    onUpdateImages(updatedImages);
+    ToastService.success('Updated featured image.');
   };
+ const handleSubmit = () => {
+   if (uploadedImages.length === 0) {
+     setError('Please upload at least one image.');
+     ToastService.error('Please upload at least one image.');
+     return;
+   }
 
-  const handleSubmit = () => {
-    if (uploadedImages.length === 0) {
-      ToastService.error('Please upload at least one image.'); 
-      setError('Please upload at least one image.');
-      return; // Prevent submission
-    }
-    // Submit only the images to the parent
-    onSubmit({ images: uploadedImages });
-    setActiveTab('price'); // Move to the price tab
-  };
+   // Ensure each uploaded image has the file object for backend processing
+   if (!uploadedImages.every(image => image.file)) {
+     ToastService.error('Some images are missing their file data.');
+     return;
+   }
+
+   onSubmit(uploadedImages);
+   setActiveTab('price');
+ };
 
   return (
     <>
@@ -130,8 +145,7 @@ const PhotosForm: React.FC<FormProps> = ({
           </div>
           {error && (
             <p className="text-error text-body-small mb-2 mt-0">{error}</p>
-          )}{' '}
-          {/* Display error message */}
+          )}
           <div className="w-full mb-[19px]">
             {uploadedImages.length > 0 ? (
               <div className="flex gap-4 flex-wrap">
@@ -158,7 +172,7 @@ const PhotosForm: React.FC<FormProps> = ({
                   alt="Camera Icon"
                   width={12}
                   height={12}
-                />{' '}
+                />
                 Photo tip
               </span>
               For your main photo, lay the item flat by itself on a plain,
@@ -183,7 +197,7 @@ const PhotosForm: React.FC<FormProps> = ({
               <Button
                 variant="accend-link"
                 className="flex items-center underline !text-primary-color-100"
-                onClick={() => ToastService.success('Save as draft')}
+                onClick={onSaveAsDraft}
               >
                 Save as draft
               </Button>
@@ -262,7 +276,7 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
         width={25}
         height={14}
         onClick={() => !image.isFeatured && onDropToFeatured(image.id)}
-        className="cursor-pointer"
+        className={`cursor-pointer ${image.isFeatured ? 'opacity-50' : ''}`}
       />
     </div>
   );

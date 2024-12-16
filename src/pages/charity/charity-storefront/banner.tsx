@@ -2,7 +2,17 @@
 import React from 'react';
 import Image from 'next/image';
 
-const StoreFrontBanner = ({
+interface CharityStore {
+  profileImage?: string;
+  charityName?: string;
+  charityBannerImage?: string;
+}
+
+interface StoreFrontBannerProps {
+  charityStore?: CharityStore;
+}
+
+const StoreFrontBanner: React.FC<StoreFrontBannerProps> = ({
   charityStore
 }) => {
   return (
@@ -26,7 +36,7 @@ const StoreFrontBanner = ({
               )}
               <h1 className="h3 storefront-banner-tittle !text-mono-0">
                 {charityStore ? (
-                  charityStore.charityName || ''
+                  charityStore.charityName
                 ) : (
                   <span className="skeleton bg-mono-40 h-2 w-20"></span>
                 )}

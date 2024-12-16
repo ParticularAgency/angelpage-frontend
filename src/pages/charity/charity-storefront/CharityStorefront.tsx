@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -8,25 +7,47 @@ import AboutInfoComponent from './about';
 import CharityStoreListing from './listing';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
 
-
-
-const CharityStorefront = ({ storefrontid }) => {
-  const { data: session, status } = useSession();
+interface CharityData {
+  charityName?: string;
+  charityNumber?: string;
+  charityID?: string;
+  description?: string;
+  storefrontId?: string;
+  addresses?: Array<{
+    address: string;
+    city: string;
+    country: string;
+    postcode: string;
+  }>;
+  profileImage?: string;
+  charityBannerImage?: string;
+}
+interface CharityStorefrontResponse {
+  charity: CharityData;
+}
+const CharityStorefront: React.FC<{ storefrontid: string }> = ({
+  storefrontid,
+}) => {
+  const { data: session, status } = useSession() || {};
   const [charityData, setCharityData] = useState<CharityData | null>(null);
   const [activeTab, setActiveTab] = useState<number>(0);
 
+  // Fetch charity data and favorite status on mount
   useEffect(() => {
     const fetchCharityData = async () => {
       if (status === 'authenticated' && session?.token) {
+        console.log('Fetching storefront with id:', storefrontid);
+
         try {
-          const response = await axios.get<{ charity: CharityData }>(
-            `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}`,
-            {
-              headers: {
-                Authorization: `Bearer ${session.token}`,
-              },
-            }
-          );
+           const response = await axios.get<CharityStorefrontResponse>(
+             `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}`,
+             {
+               headers: {
+                 Authorization: `Bearer ${session?.token}`,
+               },
+             }
+           );
+          console.log('Charity Data fetched successfully:', response.data);
           setCharityData(response.data.charity);
         } catch (error) {
           console.error('Error fetching charity data:', error);
@@ -50,6 +71,7 @@ const CharityStorefront = ({ storefrontid }) => {
             <div className="custom-container">
               <div className="storefront-tabs-btn-box pt-[51px] pb-[17px] flex justify-between items-center gap-6">
                 <ul className="tabs-btn-items flex items-center gap-6">
+                  {/* Tab buttons */}
                   <li
                     className={`tabs-btn-list body-small px-[11px] py-2 rounded-[24px] cursor-pointer ${
                       activeTab === 0
@@ -71,18 +93,21 @@ const CharityStorefront = ({ storefrontid }) => {
                     About
                   </li>
                 </ul>
-                {activeTab === 1 && (
+                {activeTab === 1 && charityData.storefrontId && (
                   <div className="favorite-btn-item cursor-pointer p-3">
-                    <FavoriteButton
-                      itemId={charityData.storefrontId || ''}
-                      type="charity"
-                    />
+                    {charityData.charityID && (
+                      <FavoriteButton
+                        itemId={charityData.charityID}
+                        type="Charity"
+                      />
+                    )}
                   </div>
                 )}
               </div>
             </div>
           </div>
 
+          {/* Tab content */}
           <div className="store-front-tabs-cont-area">
             <ul className="tabs-content-area">
               {activeTab === 0 && (

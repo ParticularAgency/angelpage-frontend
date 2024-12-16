@@ -1,24 +1,150 @@
-import { CartIcon, CloseIcon, MinusIcon, PlusIcon } from '@/icons';
-import React, { useState } from 'react';
-import { Button } from '../elements';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { CartIcon, CloseIcon, MinusIcon, PlusIcon } from '@/icons';
+import axios from 'axios';
+import { ToastService } from '../elements/notifications/ToastService';
+import { Button } from '@/components/elements';
+import { useSession } from 'next-auth/react';
 
-const MiniCart = () => {
-  // State to hold the quantity of products in the cart
-  const [productQuantity, setProductQuantity] = useState(1);
-
-  // Function to handle incrementing the product quantity
-  const incrementQuantity = () => {
-    setProductQuantity(prevQuantity => prevQuantity + 1);
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+interface CartResponse {
+  cart: {
+    items: CartItem[];
   };
+}
+interface Product {
+  _id: string;
+  name: string;
+  brand: string;
+  price: number;
+  images: { url: string }[];
+  selectedCharityName?: string;
+}
 
-  // Function to handle decrementing the product quantity, but not going below 1
-  const decrementQuantity = () => {
-    if (productQuantity > 1) {
-      setProductQuantity(prevQuantity => prevQuantity - 1);
+interface CartItem {
+  productId: Product;
+  quantity: number;
+}
+
+const MiniCart: React.FC = () => {
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+  const token = session?.token;
+
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // Fetch cart from backend
+  const fetchCart = async () => {
+    if (!userId || !token) return;
+
+    try {
+      setLoading(true);
+       const response = await axios.get<CartResponse>(
+         `${API_BASE_URL}/cart/${userId}`,
+         {
+           headers: {
+             Authorization: `Bearer ${token}`,
+           },
+         }
+       );
+      setCartItems(response.data.cart.items || []); // Sync cart items
+    } catch (error) {
+      
+      ToastService.error('Failed to load cart. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Update item quantity optimistically
+  const updateQuantity = (productId: string, quantityChange: number) => {
+    // Optimistic update for instant UI response
+    const updatedCart = cartItems.map(item =>
+      item.productId._id === productId
+        ? { ...item, quantity: Math.max(item.quantity + quantityChange, 0) } // Ensure quantity doesn't go below 0
+        : item
+    );
+    const filteredCart = updatedCart.filter(item => item.quantity > 0); // Remove items with quantity 0
+    setCartItems(filteredCart); // Immediate UI update
+
+    // Sync with backend in the background
+    syncQuantityWithBackend(productId, quantityChange);
+  };
+
+  // Sync quantity with backend
+  const syncQuantityWithBackend = async (
+    productId: string,
+    quantityChange: number
+  ) => {
+    try {
+      await axios.post(
+        `${API_BASE_URL}/cart/add-product-to-cart`,
+        { userId, productId, quantity: quantityChange },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (error) {
+      ToastService.error('Failed to update cart. Backend sync issue.');
+      // Re-fetch cart to resolve discrepancies
+      await fetchCart();
+    }
+  };
+
+  // Remove an item from the cart optimistically
+  const removeItem = (productId: string) => {
+    const updatedCart = cartItems.filter(
+      item => item.productId._id !== productId
+    );
+    setCartItems(updatedCart); // Optimistic removal
+
+    // Sync with backend
+    syncRemoveFromBackend(productId);
+  };
+
+  // Sync remove with backend
+  const syncRemoveFromBackend = async (productId: string) => {
+    try {
+      await axios.post(
+        `${API_BASE_URL}/cart/remove`,
+        { userId, productId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      ToastService.success('Product removed from cart successfully!');
+    } catch (error) {
+     
+      ToastService.error('Failed to remove product. Please try again.');
+      await fetchCart(); // Re-fetch cart on failure
+    }
+  };
+
+  // Calculate total price
+  const totalPrice = cartItems.reduce(
+    (acc, item) =>
+      acc + Number(item.productId?.price || 0) * Number(item.quantity || 0),
+    0
+  );
+
+  // Helper function for item price calculation
+  const getItemPrice = (item: CartItem) => {
+    const price = Number(item.productId?.price || 0);
+    const quantity = Number(item.quantity || 0);
+    return price * quantity;
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, [userId, token]);
 
   return (
     <div className="cart-box flex items-center">
@@ -30,15 +156,16 @@ const MiniCart = () => {
               htmlFor="my-drawer-4"
               className="drawer-button btn !bg-transparent !p-0 !border-none"
             >
+              {cartItems.length > 0 && (
+                <span className="absolute top-[3px] w-5 h-5  right-[-19px] bg-red-500 text-white text-[11px]  flex items-center justify-center rounded-full p-1">
+                  {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+                </span>
+              )}
               <CartIcon />
             </label>
           </div>
           <div className="drawer-side">
-            <label
-              htmlFor="my-drawer-4"
-              aria-label="close sidebar"
-              className="drawer-overlay"
-            ></label>
+            <label htmlFor="my-drawer-4" className="drawer-overlay"></label>
             <div className="menu offcanvas-main-wrapper bg-mono-0 text-base-content min-h-full max-w-[439px] w-full p-0">
               <div className="offcanvas-head mini-cart-header-and-main-wrea min-h-full">
                 <div className="minicart-header px-6">
@@ -55,70 +182,87 @@ const MiniCart = () => {
                 </div>
 
                 <div className="minicart-body-product-info px-6">
-                  <div className="empty-cart-message my-auto py-12 hidden">
-                    <p className="font-secondary font-medium text-body-caption text-center text-mono-100">
-                      Cart is empty
-                    </p>
-                  </div>
-
-                  <div className="cart-add-product-item-wrapper">
-                    <div className="cart-add-product-item flex items-center gap-5 py-5">
-                      <div className="minicart-product-img max-w-[116px] sm:max-w-[80px] w-full">
-                        <Image
-                          src="/images/products/product1.png"
-                          width={116}
-                          height={110}
-                          alt="product small image"
-                        />
-                      </div>
-                      <div className="minicart-product-info w-full">
-                        <h5 className="body-medium sm:!text-[16px]">
-                          Hollister
-                        </h5>
-                        <p className="body-small text-mono-100">
-                          Crew Neck Jumper
-                        </p>
-                        <p className="body-small text-mono-100 flex items-center gap-1">
-                          Charity: <span>The Salvation Army</span>
-                        </p>
-                        <div className="minicart-states mt-[23px] flex items-center justify-between gap-2">
-                          <div className="minicart-states-group flex items-center gap-3">
-                            <div className="product-inc-dsc-states relative p-[6px] max-w-[90px] w-full h-[26px] border border-mono-100 flex items-center justify-between">
-                              <button
-                                className="dsc-btn w-full max-w-[20px] absolute top-0 bottom-0 py-[3px] px-[4px] left-0"
-                                onClick={decrementQuantity}
-                              >
-                                <MinusIcon />
-                              </button>
-                              <input
-                                value={productQuantity}
-                                type="text"
-                                className="max-w-[90px] px-2 w-full text-center"
-                                name="productTotalNumber"
-                                id="productTotalNumber"
-                                readOnly
-                              />
-                              <button
-                                className="inc-btn absolute w-full max-w-[20px] top-0 bottom-0 py-[3px] px-[4px] right-0"
-                                onClick={incrementQuantity}
-                              >
-                                <PlusIcon />
-                              </button>
-                            </div>
-                            <p className="product-current-price caption">
-                              Price: <br /> <span>£24.99</span>
-                            </p>
+                  {loading ? (
+                    <p>Loading...</p>
+                  ) : cartItems.length === 0 ? (
+                    <div className="empty-cart-message my-auto py-12">
+                      <p className="font-secondary font-medium text-body-caption text-center text-mono-100">
+                        Your cart is empty.
+                      </p>
+                    </div>
+                  ) : (
+                    cartItems.map(item => (
+                      <div
+                        className="cart-add-product-item-wrapper"
+                        key={item.productId._id}
+                      >
+                        <div className="cart-add-product-item flex items-center gap-5 py-5">
+                          <div className="minicart-product-img max-w-[116px] sm:max-w-[80px] w-full">
+                            <Image
+                              src={
+                                item.productId.images?.[0]?.url ||
+                                '/placeholder.png'
+                              }
+                              width={116}
+                              height={110}
+                              alt="Product image"
+                              className="object-cover"
+                            />
                           </div>
-                          <Button
-                            variant="accend-link"
-                            className="!underline !px-0"
-                          >
-                            Remove
-                          </Button>
+                          <div className="minicart-product-info w-full">
+                            <h5 className="body-medium sm:!text-[16px]">
+                              {item.productId.brand}
+                            </h5>
+                            <p className="body-small text-mono-100">
+                              {item.productId.name}
+                            </p>
+                            <p className="body-small text-mono-100">
+                              Charity: {item.productId?.selectedCharityName}
+                            </p>
+                            <div className="minicart-states mt-[23px] flex items-center justify-between gap-2">
+                              <div className="minicart-states-group flex items-center gap-3">
+                                <div className="product-inc-dsc-states relative p-[6px] max-w-[90px] w-full h-[26px] border border-mono-100 flex items-center justify-between">
+                                  <button
+                                    className="dsc-btn w-full max-w-[20px] relative top-0 bottom-0 py-[3px] px-[4px] left-0"
+                                    onClick={() =>
+                                      updateQuantity(item.productId._id, -1)
+                                    }
+                                  >
+                                    <MinusIcon />
+                                  </button>
+                                  <input
+                                    value={item.quantity}
+                                    type="text"
+                                    className="max-w-[90px] px-2 w-full text-center"
+                                    readOnly
+                                  />
+                                  <button
+                                    className="inc-btn relative w-full max-w-[20px] top-0 bottom-0 py-[3px] px-[4px] right-0"
+                                    onClick={() =>
+                                      updateQuantity(item.productId._id, 1)
+                                    }
+                                  >
+                                    <PlusIcon />
+                                  </button>
+                                </div>
+                                <p className="product-current-price caption">
+                                  Price: <br />{' '}
+                                  <span>£{getItemPrice(item).toFixed(2)}</span>
+                                </p>
+                              </div>
+                              <Button
+                                variant="accend-link"
+                                className="!underline !px-0"
+                                onClick={() => removeItem(item.productId._id)}
+                              >
+                                Remove
+                              </Button>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -127,18 +271,15 @@ const MiniCart = () => {
                   <div className="cart-footer-area px-6 pt-[46px] pb-12 sm:py-7">
                     <div className="totat-price flex items-center justify-between">
                       <p className="body-bold-small">Total</p>
-                      <p className="body-small">
-                        £{(24.99 * productQuantity).toFixed(2)}
-                      </p>
+                      <p className="body-small">£{totalPrice.toFixed(2)}</p>
                     </div>
                     <p className="info-text forms-bold mt-[9px]">
-                      Tax and shipping are calculated at checkout
+                      Tax and shipping are calculated at checkout.
                     </p>
-                    <Link href="/checkout" className='block'>
+                    <Link href="/checkout" className="block">
                       <Button
                         variant="primary"
                         className="max-w-full w-full rounded-[50px] mt-4 !h-12 !body-bold-small !text-mono-0"
-                        onClick={() => console.log('Should not click')}
                       >
                         Checkout
                       </Button>

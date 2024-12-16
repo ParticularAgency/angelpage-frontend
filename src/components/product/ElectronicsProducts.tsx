@@ -13,30 +13,35 @@ const electronicsCategories = [
   {
     id: '1',
     imageSrc: '/images/products/electronics-cat-img1.png',
+    productCategory: '/product?category=electronics&subcategory=phones',
     imageAlt: 'Phone',
     categoryTitle: 'Phone',
   },
   {
     id: '2',
     imageSrc: '/images/products/electronics-cat-img2.png',
+    productCategory: '/product?category=electronics&subcategory=laptops',
     imageAlt: 'Laptop',
     categoryTitle: 'Laptop',
   },
   {
     id: '3',
     imageSrc: '/images/products/electronics-cat-img3.png',
+    productCategory: '/product?category=electronics&subcategory=headphone',
     imageAlt: 'Headphone',
     categoryTitle: 'Headphone',
   },
   {
     id: '4',
     imageSrc: '/images/products/electronics-cat-img4.png',
+    productCategory: '/product?category=electronics&subcategory=light',
     imageAlt: 'Light',
     categoryTitle: 'Light',
   },
   {
     id: '5',
     imageSrc: '/images/products/electronics-cat-img5.png',
+    productCategory: '/product?category=electronics&subcategory=monitor',
     imageAlt: 'Monitor',
     categoryTitle: 'Monitor',
   },
@@ -78,6 +83,7 @@ const ElectronicsTopCategoryProducts: React.FC<
               {electronicsCategories.map(item => (
                 <SwiperSlide key={item.id}>
                   <ProductCategoryCardV1
+                    productCategory={item.productCategory}
                     productImageSrc={item.imageSrc}
                     productImageAlt={item.imageAlt}
                     productTitle={item.categoryTitle}

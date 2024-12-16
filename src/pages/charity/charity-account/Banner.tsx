@@ -10,23 +10,35 @@ import ToastNotification, {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
+// Define the structure of the expected API response
+interface CharityUser {
+  charityName: string;
+  profileImage: string;
+  email: string;
+  verified: boolean;
+  profileCompleted: boolean;
+  charityBannerImage: string;
+}
+
+interface ProfileResponse {
+  user?: CharityUser; // Optional to prevent runtime errors
+  profileCompletionPercentage?: number; // Optional for type safety
+}
+
 const BannerSection = () => {
   const router = useRouter();
   const { data: session, status } = useSession() || {};
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
-  const [userData, setUserData] = useState(null);
-  const [image, setImage] = useState(
+  const [profileData, setProfileData] = useState<CharityUser | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [progress, setProgress] = useState<number>(0);
+  const [userData, setUserData] = useState<CharityUser | null>(null);
+  const [image, setImage] = useState<string>(
     '/images/charity-storefront/charity-banner-img1.png'
   );
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
 
-  // Log session details for debugging
-  console.log('Session:', session);
-  console.log('Session Status:', status);
-
+  // Fetch charity data
   useEffect(() => {
     const fetchData = async () => {
       if (status === 'authenticated' && session?.token) {
@@ -50,7 +62,8 @@ const BannerSection = () => {
     fetchData();
   }, [session, status]);
 
-  const handleImageChange = e => {
+  // Handle image file selection
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
@@ -58,6 +71,7 @@ const BannerSection = () => {
     }
   };
 
+  // Save the updated image
   const handleSave = async () => {
     if (!file) {
       alert('Please select an image to upload');
@@ -68,7 +82,7 @@ const BannerSection = () => {
     formData.append('charityBannerImage', file);
 
     try {
-      const response = await axios.put(
+      const response = await axios.put<ProfileResponse>(
         `${process.env.NEXT_PUBLIC_API_URL}/charity/profile`,
         formData,
         {
@@ -79,27 +93,31 @@ const BannerSection = () => {
         }
       );
 
-      // Update the displayed image with the new profile image URL
-      setImage(response.data.user.charityBannerImage);
-      setIsEditing(false);
+      if (response.data?.user?.charityBannerImage) {
+        setImage(response.data.user.charityBannerImage);
+        setIsEditing(false);
+      } else {
+        console.error('Invalid response structure:', response.data);
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
     }
   };
 
+  // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
       if (status === 'authenticated' && session?.user?.email) {
         try {
           setLoading(true);
           const response = await fetchCharityProfileData(session.user.email);
-          if (!response) {
+          if (!response?.user) {
             ToastService.error('Failed to load profile data.');
             return;
           }
           const { user, profileCompletionPercentage } = response;
           setProfileData(user);
-          setProgress(profileCompletionPercentage);
+          setProgress(profileCompletionPercentage || 0);
         } catch (error) {
           console.error('Error fetching profile data:', error);
           ToastService.error('Failed to load profile data.');
@@ -112,7 +130,7 @@ const BannerSection = () => {
     };
 
     fetchProfile();
-  }, [session, status]);
+  }, [session, status, router]);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -143,7 +161,6 @@ const BannerSection = () => {
                 </div>
               )}
 
-              {/* Profile Completion Progress */}
               {profileData.profileCompleted ? (
                 <p className="text-success text-center pt-3 mb-2 body-small">
                   Your profile is 100% complete!
@@ -166,7 +183,7 @@ const BannerSection = () => {
           </div>
         )}
         <div className="charity-account-banner-wrapper grid grid-cols-12 gap-2 sm:block sm:h-[320px] sm:relative sm:bg-mono-100">
-          <div className="col-span-5 w-full pr-[57px] laptop-x:pr-[103px] laptop-m:pr-14 py-[42px] flex flex-col justify-end  sm:absolute sm:z-[999] bottom-0 left-0 sm:bg-mono-100 sm:pb-6 sm:pt-5 sm:px-6">
+          <div className="col-span-5 w-full pr-[57px] laptop-x:pr-[103px] laptop-m:pr-14 py-[42px] flex flex-col justify-end sm:absolute sm:z-[999] bottom-0 left-0 sm:bg-mono-100 sm:pb-6 sm:pt-5 sm:px-6">
             <div className="charity-account-banner-cont max-w-[385px] ml-auto">
               {userData ? (
                 <Image
@@ -180,25 +197,13 @@ const BannerSection = () => {
                 <span className="skeleton bg-mono-40 h-10 w-10 rounded-full"></span>
               )}
               <h1 className="h3 charity-account-banner-tittle !text-mono-0">
-                {userData ? (
-                  userData.charityName || 'Please add your charity name'
-                ) : (
-                  <span className="skeleton bg-mono-40 h-2 w-20"></span>
-                )}
+                {userData?.charityName || 'Please add your charity name'}
               </h1>
-              <div className="charity-insight-info flex items-center gap-4 mt-2 sm:mt-1">
-                <p className="available-product-total-number body-small !text-mono-0">
-                  24 items for sale
-                </p>
-                <p className="available-product-total-number body-small !text-mono-0">
-                  24 items sold
-                </p>
-              </div>
             </div>
           </div>
           <div className="col-span-7 w-full">
             <div className="charity-account-banner-modal-img bg-mono-40 w-full h-[387px] sm:h-[320px] relative">
-              <div className="chang-image-btn-box absolute flex items-center gap-2  left-4 bottom-4 sm:top-4">
+              <div className="chang-image-btn-box absolute flex items-center gap-2 left-4 bottom-4 sm:top-4">
                 {isEditing && (
                   <Button
                     variant="primary"
@@ -220,7 +225,7 @@ const BannerSection = () => {
                   variant="primary"
                   className="change-storefront-img relative"
                 >
-                  {isEditing ? 'Confirm save' : 'Change storefront image'}
+                  {isEditing ? 'Confirmed save' : 'Change storefront image'}
                 </Button>
               </div>
               <Image

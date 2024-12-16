@@ -1,57 +1,149 @@
 'use client';
-import React, { useState } from 'react';
-import { FavoriteOutlineSecondaryIcon, ShearIcon } from '@/icons';
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { ShearIcon } from '@/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../elements';
 import RelatedCategoryProducts from './RelatedProductCategory';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import {
-  // Autoplay,
-  EffectFade,
-  FreeMode,
-  Navigation,
-  Thumbs,
-} from 'swiper/modules';
+import { EffectFade, FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import ToastNotification, {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
+import { useSession } from 'next-auth/react';
+import axios from 'axios';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
+import PreLoader from '../common/pre-loader/PreLoader';
+import countries from 'i18n-iso-countries';
+import FavoriteButton from '../elements/button/FavoriteButton';
+import enLocale from 'i18n-iso-countries/langs/en.json';
+import type { Swiper as SwiperInstance } from 'swiper';
 
+countries.registerLocale(enLocale);
 
+// Define types for product and its related entities
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  brand: string;
+  condition: string;
+  material?: string;
+  color?: string;
+  size?: string;
+  images: { url: string; altText?: string }[];
+  dimensions?: {
+    height?: string;
+    width?: string;
+  };
+  category: string;
+  additionalInfo?: string;
+  charityProfit: number;
+  seller?: {
+    firstName: string;
+    lastName: string;
+    profileImage?: string;
+    address?: {
+      city?: string;
+      country?: string;
+    };
+  };
+  charity?: {
+    storefrontId: string;
+  };
+}
 
-const ProductSinglepage = () => {
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+// Type definition for route parameters
+// interface Params {
+//   productid: string;
+// }
+const ProductSinglepage: React.FC = () => {
+  const { data: session } = useSession() || {};
+  const params = useParams();
+
+  // Safely parse product ID
+  const productid = (params as Record<string, string | undefined>)?.productid;
+
+  const [product, setProduct] = useState<Product | null>(null);
+  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperInstance | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!productid) return;
+
+    const fetchProductDetails = async () => {
+      try {
+        setLoading(true);
+
+        const headers: Record<string, string> = {};
+        if (session?.token) {
+          headers.Authorization = `Bearer ${session.token}`;
+        }
+
+        const response = await axios.get<{ product: Product }>(
+          `${process.env.NEXT_PUBLIC_API_URL}/products/details/${productid}`,
+          {
+            params: { isArchived: false },
+            headers,
+          }
+        );
+
+        setProduct(response.data.product);
+      } catch (err: unknown) {
+          setError('Failed to load product details.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductDetails();
+  }, [productid, session]);
 
   const handleAddToBasket = () => {
     console.log('Added to basket');
   };
 
-  const handleViewCharityStorefront = () => {
-    console.log('View charity storefront');
-  };
   const handleShareProduct = () => {
-    const productUrl = window.location.href; // Get the current page URL
+    const productUrl = window.location.href;
     navigator.clipboard
       .writeText(productUrl)
       .then(() => {
         ToastService.success('Product link copied to clipboard!');
       })
-      .catch(err => {
-        ToastService.error('Failed to copy url: ', err);
+      .catch(() => {
+        ToastService.error('Failed to copy URL.');
       });
   };
-  const [isFavorite, setIsFavorite] = useState(false);
-  const handleFavoriteClick = () => {
-    setIsFavorite(!isFavorite);
-    // if (onFavoriteClick) {
-    //   onFavoriteClick();
-    // }
-  };
+
+  if (loading) {
+    return <PreLoader />;
+  }
+
+  if (error) {
+    return <p className="text-red-600">{error}</p>;
+  }
+
+  if (!product) {
+    return <p className="text-gray-500">Product not found.</p>;
+  }
+
+  const sellerAddress = product.seller?.address;
+  const countryCode = sellerAddress?.country
+    ? countries.getAlpha2Code(sellerAddress.country, 'en') || 'N/A'
+    : 'N/A';
+
+  const location = sellerAddress
+    ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
+    : 'Location Not Available';
+
+
   return (
     <section className="product-singlepage-section">
       <div className="custom-container max-w-[960px] w-full">
@@ -64,13 +156,16 @@ const ProductSinglepage = () => {
               <span className="angle">{'>'}</span>
             </li>
             <li className="breadcrumb-item body-caption prev-pages flex items-center gap-[10px]">
-              <Link className="body-caption text-mono-100" href="/electronics">
-                Electronics
+              <Link
+                className="body-caption text-mono-100"
+                href={`/category/${product.category}`}
+              >
+                {product.category}
               </Link>
               <span className="angle">{'>'}</span>
             </li>
             <li className="breadcrumb-item body-caption current-page text-mono-70 flex items-center gap-[10px]">
-              <span className="body-caption text-mono-70">iPhone 13</span>
+              <span className="body-caption text-mono-70">{product.name}</span>
             </li>
           </ul>
         </div>
@@ -83,13 +178,7 @@ const ProductSinglepage = () => {
                   spaceBetween={10}
                   effect="fade"
                   loop
-                  // autoplay={{ delay: 6000, disableOnInteraction: false }}
-                  thumbs={{
-                    swiper:
-                      thumbsSwiper && !thumbsSwiper.destroyed
-                        ? thumbsSwiper
-                        : null,
-                  }}
+                  thumbs={{ swiper: thumbsSwiper }}
                   modules={[EffectFade, FreeMode, Navigation, Thumbs]}
                   breakpoints={{
                     640: { slidesPerView: 1 },
@@ -98,41 +187,13 @@ const ProductSinglepage = () => {
                   }}
                   className="thumbs w-full rounded-lg"
                 >
-                  {[
-                    'product-view-img1.jpeg',
-                    'product-view-img2.jpeg',
-                    'product-view-img3.jpeg',
-                    'product-view-img4.jpeg',
-                    'product-view-img5.jpeg',
-                    'product-view-img1.jpeg',
-                    'product-view-img2.jpeg',
-                    'product-view-img3.jpeg',
-                    'product-view-img4.jpeg',
-                    'product-view-img5.jpeg',
-                  ].map((image, index) => (
+                  {product.images.map((image, index) => (
                     <SwiperSlide key={index}>
                       <div className="slide-view-item">
-                        {/* <ReactImageMagnify
-                          smallImage={{
-                            alt: `Product thumbnail ${index + 1}`,
-                            isFluidWidth: true,
-                            src: `/images/products/${image}`,
-                          }}
-                          largeImage={{
-                            src: `/images/products/${image}`,
-                            width: 1200,
-                            height: 1800,
-                          }}
-                          lensStyle={{ backgroundColor: 'rgba(0,0,0,.3)' }}
-                          enlargedImageContainerDimensions={{
-                            width: '100%',
-                            height: '100%',
-                          }}
-                        /> */}
                         <Image
-                          src={`/images/products/${image}`}
+                          src={image.url}
                           className="w-full max-w-full sm:h-[340px] h-[452px] object-cover"
-                          alt={`Product list ${index + 1}`}
+                          alt={image.altText || 'Product Image'}
                           width={359}
                           height={452}
                         />
@@ -140,6 +201,7 @@ const ProductSinglepage = () => {
                     </SwiperSlide>
                   ))}
                 </Swiper>
+                <div className="selected-charity-image"></div>
               </div>
 
               <div className="swiper-product-slide-tab-item mt-2">
@@ -160,24 +222,13 @@ const ProductSinglepage = () => {
                     1024: { slidesPerView: 6, spaceBetween: 12 },
                   }}
                 >
-                  {[
-                    'product-view-img1.jpeg',
-                    'product-view-img2.jpeg',
-                    'product-view-img3.jpeg',
-                    'product-view-img4.jpeg',
-                    'product-view-img5.jpeg',
-                    'product-view-img1.jpeg',
-                    'product-view-img2.jpeg',
-                    'product-view-img3.jpeg',
-                    'product-view-img4.jpeg',
-                    'product-view-img5.jpeg',
-                  ].map((image, index) => (
+                  {product.images.map((image, index) => (
                     <SwiperSlide key={index}>
                       <div className="slide-tab-item w-14 h-14">
                         <Image
-                          src={`/images/products/${image}`}
+                          src={image.url}
                           className="w-14 h-14 object-cover cursor-pointer"
-                          alt={`Product thumbnail ${index + 1}`}
+                          alt={image.altText || 'Product Image'}
                           width={48}
                           height={48}
                         />
@@ -192,29 +243,29 @@ const ProductSinglepage = () => {
           <div className="product-singlepage-right-cont max-w-[388px] w-full">
             <div className="product-info-header flex mb-6 items-center gap-3 justify-between">
               <div className="product-posted-user-info flex items-center gap-[13px]">
-                <Image
-                  src="/images/products/userimg1.jpeg"
-                  className="w-8 h-8 rounded-full object-cover"
-                  alt="Whitney Moss"
-                  width={32}
-                  height={32}
-                />
+                <div className="seller-peofile-image w-8 h-8 rounded-full">
+                  <Image
+                    src={product.seller?.profileImage || '/placeholder.jpg'}
+                    className="w-8 h-8 rounded-full object-cover"
+                    alt={`${product.seller?.firstName} ${product.seller?.lastName}`}
+                    width={480}
+                    height={320}
+                  />
+                </div>
                 <div className="posted-user-info">
                   <p className="posted-user-name eyebrow-medium text-black">
                     <span className="caption text-mono-90 block">
                       Donated by
                     </span>
-                    Whitney Moss
+                    {`${product.seller?.firstName} ${product.seller?.lastName}`}
                   </p>
                 </div>
               </div>
               <div className="product-states flex items-center gap-[14px]">
-                <div
-                  className="product-favorite-btn cursor-pointer"
-                  onClick={handleFavoriteClick}
-                >
-                  <FavoriteOutlineSecondaryIcon
-                    fillColor={isFavorite ? '#611192' : 'none'}
+                <div className="product-favorite-btn cursor-pointer">
+                  <FavoriteButton
+                    itemId={product.id.toString()}
+                    type="Product"
                   />
                 </div>
                 <div
@@ -226,12 +277,12 @@ const ProductSinglepage = () => {
               </div>
             </div>
 
-            <ul className="product-highlight-info mb-4 flex items-center sm:flex-wrap gap-2">
+            <ul className="product-highlight-info mb-4 flex items-center flex-wrap gap-2">
               <li className="product-highlight-info-item product-condition caption py-[4px] px-2 rounded-[16px] bg-primary-color-70 text-primary-color-100">
-                Used
+                {product.condition}
               </li>
               <li className="product-highlight-info-item product-shipping-from caption py-[4px] px-2 rounded-[16px] bg-primary-color-70 text-primary-color-100">
-                Shipping from London, UK
+                Shipping from {location}
               </li>
               <li className="product-highlight-info-item product-delivery-type caption py-[4px] px-2 rounded-[16px] bg-primary-color-70 text-primary-color-100">
                 5-7 business days
@@ -239,20 +290,21 @@ const ProductSinglepage = () => {
             </ul>
 
             <h5 className="product-title h5 font-primary mb-[26px]">
-              iPhone 13
+              {product.name}
             </h5>
 
             <div className="product-price-group flex items-end gap-2 mb-6 max-w-[306px] sm:max-w-[375px] w-full">
               <div className="product-price-box max-w-[103px] w-full">
                 <span className="forms text-mono-100">Price</span>
                 <p className="input-type-text body-bold-small py-[9.5px] px-2 w-full h-10 bg-[#f1f1f1]">
-                  £65.00
+                  £{product.price}
                 </p>
               </div>
               <div className="product-price-item charity-profit-received max-w-full w-full">
                 <span className="forms text-mono-100">Charity receives</span>
                 <p className="input-type-text body-bold-small flex items-center py-[9.5px] px-2 w-full h-10 bg-[#f1f1f1] text-[#6A0398]">
-                  £58.50<span className="text-mono-70 text-[11px]"> /90%</span>
+                  £{product.charityProfit}
+                  <span className="text-mono-70 text-[11px]"> /90%</span>
                 </p>
               </div>
             </div>
@@ -265,11 +317,13 @@ const ProductSinglepage = () => {
               >
                 Add to basket
               </Button>
-              <Link href="/charity/1" className='block w-full'> 
+              <Link
+                href={`/charity/store/${product.charity?.storefrontId}`}
+                className="block w-full"
+              >
                 <Button
                   className="link-to-charity-storefront-btn w-full !text-primary-color-100 !border-primary-color-100"
                   variant="secondary"
-                  onClick={handleViewCharityStorefront}
                 >
                   View charity storefront
                 </Button>
@@ -280,28 +334,37 @@ const ProductSinglepage = () => {
               <p className="body-small mb-3">Product Specifications</p>
               <ul className="product-specification-lists flex flex-col gap-3">
                 {[
-                  { label: 'Condition', value: 'Used' },
-                  { label: 'Brand', value: 'Apple' },
-                  { label: 'Material', value: 'Metal' },
-                  { label: 'Colour', value: 'Space Grey' },
-                  { label: 'Height', value: '13.76 cm' },
-                  { label: 'Width', value: '7.15 cm' },
-                ].map((spec, index) => (
-                  <li
-                    key={index}
-                    className="specification-items flex items-center gap-2"
-                  >
-                    <span className="specification-title body-bold-small empty:!hidden">
-                      {spec.label}
-                    </span>
-                    <span className="specification-info body-small">
-                      {spec.value}
-                    </span>
-                  </li>
-                ))}
+                  { label: 'Condition', value: `${product.condition}` },
+                  { label: 'Brand', value: `${product?.brand}` },
+                  { label: 'Material', value: `${product.material}` },
+                  { label: 'Colour', value: `${product.color}` },
+                  { label: 'Size', value: `${product.size}` },
+                  {
+                    label: 'Height',
+                    value: `${product.dimensions?.height || ''}`,
+                  },
+                  {
+                    label: 'Width',
+                    value: `${product.dimensions?.width || ''}`,
+                  },
+                ]
+                  .filter(spec => spec.value)
+                  .map((spec, index) => (
+                    <li
+                      key={index}
+                      className="specification-items flex items-center gap-2"
+                    >
+                      <span className="specification-title body-bold-small empty:!hidden">
+                        {spec.label}
+                      </span>
+                      <span className="specification-info body-small">
+                        {spec.value}
+                      </span>
+                    </li>
+                  ))}
                 <li className="specification-items mt-0">
                   <p className="caption text-mono-90">
-                    Comes with 20mm charging cable and original packaging
+                    {product.additionalInfo}
                   </p>
                 </li>
               </ul>
@@ -310,7 +373,11 @@ const ProductSinglepage = () => {
         </div>
       </div>
       <ToastNotification />
-      <RelatedCategoryProducts isLoggedIn={true} />
+      <RelatedCategoryProducts
+        secClassName="bg-[#f1f1f7] pt-[35px] pb-5"
+        category={product.category}
+        currentProductId={product.id}
+      />
     </section>
   );
 };

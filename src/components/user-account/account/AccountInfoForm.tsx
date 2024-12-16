@@ -5,10 +5,31 @@ import { fetchUserData } from '@utils/api';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
-// AccountInfo form component
-const AccountInfoForm = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [accountInfo, setAccountInfo] = useState({
+
+
+// Define the shape of account info for clarity and type safety
+interface AccountInfo {
+  email: string;
+  userName: string;
+  currentPassword: string;
+  newPassword: string;
+}
+
+// Extend the session type to include `token` if not already present
+declare module 'next-auth' {
+  interface Session {
+    token?: string;
+  }
+}
+interface ErrorWithResponse {
+  response?: {
+    data?: unknown;
+  };
+}
+const AccountInfoForm: React.FC = () => {
+
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [accountInfo, setAccountInfo] = useState<AccountInfo>({
     email: '',
     userName: '',
     currentPassword: '',
@@ -70,19 +91,22 @@ const AccountInfoForm = () => {
       } else {
         console.error('Failed to update account info:', response.data);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error updating account info:', error);
 
-      // Handle error response
-      if (error.response) {
-        console.error('Response data:', error.response.data);
+      // Check if the error matches the structure of ErrorWithResponse
+      if (error instanceof Error && (error as ErrorWithResponse).response) {
+        console.error(
+          'Response data:',
+          (error as ErrorWithResponse).response?.data
+        );
       } else {
         console.error('An unknown error occurred');
       }
     }
   };
 
-  const handleChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setAccountInfo({ ...accountInfo, [name]: value });
   };

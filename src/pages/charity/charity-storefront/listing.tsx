@@ -8,16 +8,18 @@ import SearchBar from '@/components/elements/search/SearchBar';
 import { productData } from '@/libs/productData';
 import { Product } from '@/types/productTypes'; // Ensure this path is correct
 import { CloseIcon, FilterIcon } from '@/icons';
+import { useSession } from 'next-auth/react';
 
 // Define the type for filters
 interface Filters {
   category: string[];
   subCategory: string[];
-  productBrand: string[];
-  productCondition: string[];
+  brand: string[];
+  condition: string[];
 }
 
 const CharityStoreListing: React.FC = () => {
+  const { data: session, status } = useSession() || {};
   const [products] = useState<Product[]>(productData); // Initial product data
   const [filteredProducts, setFilteredProducts] =
     useState<Product[]>(productData);
@@ -26,8 +28,8 @@ const CharityStoreListing: React.FC = () => {
   const [filters, setFilters] = useState<Filters>({
     category: [],
     subCategory: [],
-    productBrand: [],
-    productCondition: [],
+    brand: [],
+    condition: [],
   });
   const [sort, setSort] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -81,18 +83,18 @@ const CharityStoreListing: React.FC = () => {
           filters.subCategory.includes(product.subcategory)
       );
     }
-    if (filters.productBrand.length > 0) {
+    if (filters.brand.length > 0) {
       updatedProducts = updatedProducts.filter(
         product =>
-          product.productBrand !== undefined &&
-          filters.productBrand.includes(product.productBrand)
+          product.brand !== undefined &&
+          filters.brand.includes(product.brand)
       );
     }
-    if (filters.productCondition.length > 0) {
+    if (filters.condition.length > 0) {
       updatedProducts = updatedProducts.filter(
         product =>
-          product.productCondition !== undefined &&
-          filters.productCondition.includes(product.productCondition)
+          product.condition !== undefined &&
+          filters.condition.includes(product.condition)
       );
     }
 
@@ -100,14 +102,14 @@ const CharityStoreListing: React.FC = () => {
     if (query) {
       updatedProducts = updatedProducts.filter(
         product =>
-          (product.productTitle &&
-            product.productTitle.toLowerCase().includes(query.toLowerCase())) ||
+          (product.name &&
+            product.name.toLowerCase().includes(query.toLowerCase())) ||
           (product.category &&
             product.category.toLowerCase().includes(query.toLowerCase())) ||
           (product.subcategory &&
             product.subcategory.toLowerCase().includes(query.toLowerCase())) ||
-          (product.productBrand &&
-            product.productBrand.toLowerCase().includes(query.toLowerCase()))
+          (product.brand &&
+            product.brand.toLowerCase().includes(query.toLowerCase()))
       );
     }
 
@@ -115,20 +117,20 @@ const CharityStoreListing: React.FC = () => {
     if (sort === 'price-asc') {
       updatedProducts.sort(
         (a, b) =>
-          parseFloat(a.productPrice || '0') - parseFloat(b.productPrice || '0')
+          parseFloat(a.price || '0') - parseFloat(b.price || '0')
       );
     } else if (sort === 'price-desc') {
       updatedProducts.sort(
         (a, b) =>
-          parseFloat(b.productPrice || '0') - parseFloat(a.productPrice || '0')
+          parseFloat(b.price || '0') - parseFloat(a.price || '0')
       );
     } else if (sort === 'name-asc') {
       updatedProducts.sort((a, b) =>
-        (a.productTitle || '').localeCompare(b.productTitle || '')
+        (a.name || '').localeCompare(b.name || '')
       );
     } else if (sort === 'name-desc') {
       updatedProducts.sort((a, b) =>
-        (b.productTitle || '').localeCompare(a.productTitle || '')
+        (b.name || '').localeCompare(a.name || '')
       );
     }
 
@@ -146,6 +148,14 @@ const CharityStoreListing: React.FC = () => {
     startIndex + productsPerPage
   );
 
+    if (status === 'loading') {
+      return <p>Loading...</p>;
+    }
+
+    if (status === 'unauthenticated') {
+      return <p>You must be logged in to view this page.</p>;
+    }
+    
   return (
     <section className="products-lists-section pt-[31px] pb-[54px] md:pb-9 sm:pt-5 sm:pb-8 bg-[#F1F1F7]">
       <div className="custom-container">
@@ -157,8 +167,8 @@ const CharityStoreListing: React.FC = () => {
                   ...product,
                   category: product.category || '', // Ensuring category is defined
                   subcategory: product.subcategory || '', // Similarly for other properties
-                  productBrand: product.productBrand || '',
-                  productCondition: product.productCondition || '',
+                  brand: product.brand || '',
+                  condition: product.condition || '',
                 }))}
                 selectedFilters={filters}
                 onFilterChange={handleFilterChange}
@@ -242,9 +252,8 @@ const CharityStoreListing: React.FC = () => {
                                   ...product,
                                   category: product.category || '', // Ensuring category is defined
                                   subcategory: product.subcategory || '', // Similarly for other properties
-                                  productBrand: product.productBrand || '',
-                                  productCondition:
-                                    product.productCondition || '',
+                                  brand: product.brand || '',
+                                  condition: product.condition || '',
                                 }))}
                                 selectedFilters={filters}
                                 onFilterChange={handleFilterChange}
@@ -282,7 +291,7 @@ const CharityStoreListing: React.FC = () => {
                 <Sorting onSortChange={handleSortChange} />
               </div>
 
-              <ProductList products={currentProducts} isLoggedIn={true} />
+              <ProductList products={currentProducts} isLoggedIn={!!session} />
               <div className="product-lists-footer mt-[38px] md:mt-6 flex md:flex-row-reverse md:justify-between sm:flex-col sm:mt-4 items-center">
                 <div className="pagination-wrapper ml-auto mr-auto md:mx-0">
                   <Pagination

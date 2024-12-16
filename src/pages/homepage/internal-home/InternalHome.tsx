@@ -15,16 +15,16 @@ const InternalHome = () => {
     <div className="internal-homepage-main-wrapper">
       <HomePageMainBanner />
       <TopCategoryProducts isLoggedIn={true} />
-      <WomansCategoryProducts isLoggedIn={true} />
+      <WomansCategoryProducts  />
       <HomewareTopCategoryProducts />
       <JewelleryProductCtaSec />
       <ElectronicsTopCategoryProducts />
-      <BagsTopCategoryProducts isLoggedIn={true} />
+      <BagsTopCategoryProducts  />
       <IntHomeCtaSec />
-      <GiftFeaturedCategoryProducts isLoggedIn={true} />
+      <GiftFeaturedCategoryProducts  />
       <LatestBlogsSection />
     </div>
-  );
+  ); 
 };
 
 export default InternalHome;

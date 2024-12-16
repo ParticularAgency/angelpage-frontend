@@ -9,10 +9,10 @@ import UsersProductListingArea from './listing';
 import SoldItemsPage from './sold';
 import BoughtItemsPage from './bought';
 const UsersAccount = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState<number>(0);
 
   return (
-    <div className="charity-account-main-wrapper"> 
+    <div className="charity-account-main-wrapper">
       <BannerSection />
       <div className="charity-storefront-wrapper-area">
         <div className="storefront-tabs-area">

@@ -1,80 +1,88 @@
 'use client';
-import React, { useRef , useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { Button, Input, Select, Textarea } from '@/components/elements';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import ToastNotification, {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
-import { categoriesData } from '@/libs/categoriesData'; // Adjust the path as needed
-import { charityData } from '@/libs/charities'; // Assuming this is your JSON data file for charities
+import { categoriesData } from '@/libs/categoriesData';
 
+interface Dimensions {
+  height?: `${number}${'in' | 'cm'}` | '';
+  width?: `${number}${'in' | 'cm'}` | '';
+  depth?: `${number}${'in' | 'cm'}` | '';
+}
 
 interface DetailsData {
-  charity?: string;
+  charityId?: string; // Adding charityId to the details data
+  charityName?: string; // Adding charityName to the details data
   itemTitle?: string;
   condition?: string;
   brand?: string;
   material?: string;
   color?: string;
+  size?: string;
+  dimensions?: Dimensions[];
   selectedCategory?: string;
   selectedSubCategory?: string;
   additionalInfo?: string;
-  height?: `${number}${'in' | 'cm'}` | ''; 
-  width?: `${number}${'in' | 'cm'}` | ''; 
-  depth?: `${number}${'in' | 'cm'}` | ''; 
 }
-
-// Props for the DetailsForm component
+interface CharitiesResponse {
+  charities: Array<{
+    _id: string;
+    charityName: string;
+  }>;
+}
 interface FormProps {
-  setActiveTab: (tabName: 'details' | 'photos' | 'price') => void; 
-  onSubmit: (detailsData: DetailsData) => void; 
+  setActiveTab: (tabName: 'details' | 'photos' | 'price') => void;
+  onSubmit: (detailsData: DetailsData) => void;
   formData: DetailsData;
+   onSaveAsDraft: () => void;
+  hideCharitySelection?: boolean;
 }
-
+interface Charity {
+  _id: string;
+  charityName: string;
+}
 const DetailsForm: React.FC<FormProps> = ({
   setActiveTab,
   onSubmit,
   formData = {},
+  onSaveAsDraft,
+  hideCharitySelection = false,
 }) => {
   const [unit, setUnit] = useState<'in' | 'cm'>('in');
+  const { data: session } = useSession() || {};
 
-  // Initialize state with values from formData or empty string
-  const [charity, setCharity] = useState(formData.charity || '');
-  const [charityList] = useState(charityData);
-  const [filteredCharities, setFilteredCharities] = useState(charityList);
+  // Separate states for charityId and charityName
+  const [charityName, setCharityName] = useState(formData.charityName || '');
+  const [charityId, setCharityId] = useState<string | null>(
+    formData.charityId || null
+  );
+  const [charityList, setCharityList] = useState<Charity[]>([]);
+  const [filteredCharities, setFilteredCharities] = useState<Charity[]>([]);
+  const [loadingCharities, setLoadingCharities] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCharity, setSelectedCharity] = useState<string | null>(null);
-
   const [showDropdown, setShowDropdown] = useState(false);
+
   const [itemTitle, setItemTitle] = useState(formData.itemTitle || '');
   const [condition, setCondition] = useState(formData.condition || '');
   const [brand, setBrand] = useState(formData.brand || '');
   const [material, setMaterial] = useState(formData.material || '');
   const [color, setColor] = useState(formData.color || '');
+  const [size, setSize] = useState(formData.size || '');
   const [additionalInfo, setAdditionalInfo] = useState(
     formData.additionalInfo || ''
   );
   const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
-  const extractNumber = (
-    value: `${number}in` | `${number}cm` | '' | undefined
-  ): number | '' => {
-    if (typeof value === 'string' && value !== '') {
-      const numberMatch = value.match(/^\d+(\.\d+)?/);
-      return numberMatch ? parseFloat(numberMatch[0]) : '';
-    }
-    return '';
-  };
 
-  // Initialize state with parsed values
-  const [height, setHeight] = useState<number | ''>(
-    extractNumber(formData.height)
-  );
-  const [width, setWidth] = useState<number | ''>(
-    extractNumber(formData.width)
-  );
-  const [depth, setDepth] = useState<number | ''>(
-    extractNumber(formData.depth)
-  );
+const [dimensions, setDimensions] = useState<Dimensions>({
+  height: formData.dimensions?.[0]?.height || '',
+  width: formData.dimensions?.[0]?.width || '',
+  depth: formData.dimensions?.[0]?.depth || '',
+});
 
   const [selectedCategory, setSelectedCategory] = useState<string>(
     formData.selectedCategory || 'Select'
@@ -84,49 +92,142 @@ const DetailsForm: React.FC<FormProps> = ({
   );
   const { categories } = categoriesData;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
 
-    // Validation: Check required fields
-    if (
-      !selectedCharity ||
-      !charity ||
-      !itemTitle ||
-      selectedCategory === 'Select' ||
-      !condition
-    ) {
-      ToastService.error('Please fill in all required fields.');
-      return;
-    }
+  if (
+    (!hideCharitySelection && (!charityId || !charityName)) ||
+    !itemTitle ||
+    selectedCategory === 'Select' ||
+    !condition
+  ) {
+    ToastService.error('Please fill in all required fields.');
+    return;
+  }
 
-    const detailsData: DetailsData = {
-      charity,
-      itemTitle,
-      condition,
-      brand,
-      material,
-      color,
-      selectedCategory,
-      selectedSubCategory,
-      additionalInfo,
-      height: height !== '' ? `${height}${unit}` : '',
-      width: width !== '' ? `${width}${unit}` : '',
-      depth: depth !== '' ? `${depth}${unit}` : '',
-    };
-
-    console.log(detailsData);
-    onSubmit(detailsData);
-    setActiveTab('photos');
+  const detailsData: DetailsData = {
+    ...formData,
+    charityId: charityId || undefined, // Convert null to undefined
+    charityName,
+    itemTitle,
+    condition,
+    brand,
+    material,
+    color,
+    size,
+    selectedCategory,
+    selectedSubCategory,
+    additionalInfo,
+    dimensions: [{ ...dimensions }], // Wrap dimensions as an array
   };
 
-  const handleUnitChange = (selectedUnit: 'in' | 'cm') => {
-    setUnit(selectedUnit);
+  onSubmit(detailsData);
+  setActiveTab('photos');
+};
+
+
+  // Fetch charity list from API
+  useEffect(() => {
+    const fetchCharityList = async () => {
+      if (!session?.token) {
+        console.warn('No session token available, cannot fetch charities.');
+        return;
+      }
+
+      setLoadingCharities(true);
+      try {
+        console.log('Fetching charities with session token:', session.token);
+
+          const response = await axios.get<CharitiesResponse>(
+            `${process.env.NEXT_PUBLIC_API_URL}/charity/charities`,
+            {
+              headers: {
+                Authorization: `Bearer ${session.token}`,
+              },
+            }
+          );
+
+        // Log the entire response to understand its structure
+        console.log('Full API response:', response);
+
+        // Check if the response has the correct structure
+        if (response.data && Array.isArray(response.data?.charities)) {
+          setCharityList(response.data?.charities);
+          setFilteredCharities(response.data?.charities);
+        } else {
+          console.warn('Unexpected response format:', response);
+          ToastService.error(
+            'Failed to load charity list. Unexpected response format.'
+          );
+        }
+      } catch (error) {
+            ToastService.error(
+              'Bad request. Please verify the request parameters.'
+            );
+      } finally {
+        setLoadingCharities(false);
+      }
+    };
+
+    if (session) {
+      fetchCharityList();
+    }
+  }, [session]);
+
+  // Update charity dropdown when search term changes
+  useEffect(() => {
+    if (Array.isArray(charityList) && charityList.length > 0) {
+      const filtered = charityList.filter(charity =>
+        charity.charityName
+          ?.toLowerCase()
+          .startsWith(debouncedSearchTerm.toLowerCase())
+      );
+      setFilteredCharities(filtered);
+      setShowDropdown(filtered.length > 0 && debouncedSearchTerm.length > 0);
+    }
+  }, [debouncedSearchTerm, charityList]);
+
+  const handleCharityInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setCharityName(value);
+    setCharityId(null); // Clear the charityId when the input changes
+    setShowDropdown(value.length > 0);
+  };
+
+  const handleCharitySelect = (charity: Charity) => {
+    setCharityName(charity.charityName);
+    setCharityId(charity._id); // Save the charityId when a charity is selected
+    setSearchTerm(charity.charityName);
+    setShowDropdown(false);
+  };
+
+  const handleDropdownBlur = () => {
+    setTimeout(() => {
+      setShowDropdown(false);
+    }, 200);
   };
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    setSelectedSubCategory('Select'); // Reset subcategory when category changes
+    setSelectedSubCategory('Select');
   };
+
+ const handleDimensionChange = (
+   e: React.ChangeEvent<HTMLInputElement>,
+   key: 'height' | 'width' | 'depth'
+ ) => {
+   const value = e.target.value;
+   setDimensions(prev => ({
+     ...prev,
+     [key]: value !== '' ? `${value}${unit}` : '',
+   }));
+
+   const updatedDimensions = [
+     { ...dimensions, [key]: value !== '' ? `${value}${unit}` : '' },
+   ];
+   onSubmit({ ...formData, dimensions: updatedDimensions });
+ };
 
   const filteredSubCategories =
     categories.find(cat => cat.id === selectedCategory)?.subCategories || [];
@@ -144,93 +245,45 @@ const DetailsForm: React.FC<FormProps> = ({
     'electronics',
     'accessories',
   ].includes(selectedCategory);
-  // Update filtered charities based on the debounced search term
-useEffect(() => {
-  const filtered = charityList.filter(charity =>
-    charity.name.toLowerCase().startsWith(debouncedSearchTerm.toLowerCase())
-  );
-  setFilteredCharities(filtered);
-  setShowDropdown(filtered.length > 0 && debouncedSearchTerm.length > 0); // Show dropdown if filtered results exist
-}, [debouncedSearchTerm, charityList]);
 
-
- const handleCharityInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-   const value = e.target.value;
-   setSearchTerm(value);
-   setCharity(value);
-   setSelectedCharity(null);
-
-   // Show dropdown only when there's a search term
-   if (value.length > 0) {
-     setShowDropdown(true);
-   } else {
-     setShowDropdown(false);
-   }
- };
-
-
- const handleInputFocus = () => {
-   // Show dropdown if there's a search term
-   if (searchTerm.length > 0) {
-     setShowDropdown(true);
-   }
-   inputRef.current?.focus(); // Set focus on input
- };
-
-const handleCharitySelect = (charityName: string) => {
-  // Set the selected charity
-  setCharity(charityName);
-  setSelectedCharity(charityName);
-  setSearchTerm(charityName);
-
-  // Close the dropdown immediately after selecting an item
-  setShowDropdown(false);
-};
-
-const handleDropdownBlur = () => {
-  // Close the dropdown after a delay if the input loses focus
-  setTimeout(() => {
-    setShowDropdown(false);
-  }, 200); // This can be adjusted as needed
-};
-
- const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   return (
     <>
       <p className="mb-5 body-bold-regular">Item details</p>
       <form className="flex flex-col w-full space-y-4" onSubmit={handleSubmit}>
         <div className="relative">
-          <Input
-            label="Choose Charity"
-            name="charity"
-            value={charity}
-            onChange={handleCharityInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleDropdownBlur}
-            placeholder="Start typing"
-            id="charity"
-            ref={inputRef} // Attach ref to Input
-            className="flex-col"
-          />
+          {!hideCharitySelection && (
+            <Input
+              label="Choose Charity"
+              name="charity"
+              value={charityName}
+              onChange={handleCharityInputChange}
+              onBlur={handleDropdownBlur}
+              placeholder="Start typing"
+              id="charity"
+              ref={inputRef}
+              className="flex-col"
+            />
+          )}
           {showDropdown && (
             <div className="absolute z-10 bg-white border border-gray-300 rounded shadow-lg w-full max-h-60 overflow-auto">
-              <div className="max-h-48 overflow-y-auto">
-                {filteredCharities.length > 0 ? (
-                  filteredCharities.map(charity => (
+              {loadingCharities ? (
+                <div className="p-2">Loading charities...</div>
+              ) : filteredCharities.length > 0 ? (
+                <div className="max-h-48 overflow-y-auto">
+                  {filteredCharities.map(charity => (
                     <div
-                      key={charity.id}
-                      onClick={() => handleCharitySelect(charity.name)} // Call updated function
+                      key={charity._id}
+                      onClick={() => handleCharitySelect(charity)}
                       className="p-2 caption hover:bg-gray-200 cursor-pointer"
                     >
-                      {charity.name}
+                      {charity.charityName}
                     </div>
-                  ))
-                ) : (
-                  <div className="p-2 caption hover:bg-gray-200">
-                    No results found
-                  </div>
-                )}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-2 caption">No results found</div>
+              )}
             </div>
           )}
         </div>
@@ -273,7 +326,7 @@ const handleDropdownBlur = () => {
                   label: sub.name,
                 })),
               ]}
-              disabled={selectedCategory === 'Select'} // Disable subcategory if no category is selected
+              disabled={selectedCategory === 'Select'}
             />
           </div>
         </div>
@@ -336,6 +389,8 @@ const handleDropdownBlur = () => {
               label="Size"
               name="size"
               id="size"
+              value={size}
+              onChange={e => setSize(e.target.value)}
               options={[
                 { value: '', label: 'Select' },
                 { value: 'Small', label: 'Small' },
@@ -359,13 +414,11 @@ const handleDropdownBlur = () => {
                 placeholder={`Enter height (${unit})`}
                 id="height"
                 type="number"
-                value={height || ''}
-                onChange={e =>
-                  setHeight(e.target.value ? parseFloat(e.target.value) : '')
-                }
+                value={dimensions.height || ''}
+                onChange={e => handleDimensionChange(e, 'height')}
                 className="flex-col w-11/12"
               />
-              <UnitButton unit={unit} handleUnitChange={handleUnitChange} />
+              <UnitButton unit={unit} handleUnitChange={setUnit} />
             </div>
 
             <div className="flex gap-2">
@@ -375,13 +428,11 @@ const handleDropdownBlur = () => {
                 placeholder={`Enter width (${unit})`}
                 id="width"
                 type="number"
-                value={width || ''}
-                onChange={e =>
-                  setWidth(e.target.value ? parseFloat(e.target.value) : '')
-                }
+                value={dimensions.width || ''}
+                onChange={e => handleDimensionChange(e, 'width')}
                 className="flex-col w-11/12"
               />
-              <UnitButton unit={unit} handleUnitChange={handleUnitChange} />
+              <UnitButton unit={unit} handleUnitChange={setUnit} />
             </div>
 
             <div className="flex gap-2">
@@ -391,13 +442,11 @@ const handleDropdownBlur = () => {
                 placeholder={`Enter depth (${unit})`}
                 id="depth"
                 type="number"
-                value={depth || ''}
-                onChange={e =>
-                  setDepth(e.target.value ? parseFloat(e.target.value) : '')
-                }
+                value={dimensions.depth || ''}
+                onChange={e => handleDimensionChange(e, 'depth')}
                 className="flex-col w-11/12"
               />
-              <UnitButton unit={unit} handleUnitChange={handleUnitChange} />
+              <UnitButton unit={unit} handleUnitChange={setUnit} />
             </div>
           </>
         )}
@@ -414,7 +463,7 @@ const handleDropdownBlur = () => {
           <Button
             variant="accend-link"
             className="flex items-center underline !text-primary-color-100"
-            onClick={() => ToastService.success('Save as draft')}
+            onClick={onSaveAsDraft}
           >
             Save as draft
           </Button>

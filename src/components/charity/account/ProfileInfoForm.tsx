@@ -3,9 +3,17 @@ import { EditIcon, SaveIcon } from '@/icons';
 import { fetchCharityData } from '@utils/api';
 import { useSession } from 'next-auth/react';
 import { Input } from '@/components/elements';
-// import axios from 'axios';
-// import { Button, Input } from '@/components/elements';
 
+declare module 'next-auth' {
+  interface Session {
+    token?: string;
+  }
+}
+interface ErrorWithResponse {
+  response?: {
+    data?: unknown;
+  };
+}
 const AdminInfoForm = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [adminInfo, setAdminInfo] = useState({
@@ -26,7 +34,7 @@ const AdminInfoForm = () => {
           if (data) {
             setAdminInfo({
               email: data.email || '',
-              userName: data.userName || '',
+              userName: data?.userName || '',
               currentPassword: '',
               newPassword: '',
             });
@@ -70,12 +78,22 @@ const AdminInfoForm = () => {
       } else {
         console.error('Failed to update account info:', response.data);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error updating account info:', error);
+
+      // Check if the error matches the structure of ErrorWithResponse
+      if (error instanceof Error && (error as ErrorWithResponse).response) {
+        console.error(
+          'Response data:',
+          (error as ErrorWithResponse).response?.data
+        );
+      } else {
+        console.error('An unknown error occurred');
+      }
     }
   };
 
-  const handleChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setAdminInfo({ ...adminInfo, [name]: value });
   };
@@ -144,6 +162,12 @@ const AdminInfoForm = () => {
               </span>{' '}
               <span className="inline-block">********</span>
             </p>
+            {/* <Button
+              variant="accend-link"
+              className="underline !text-primary-color-100"
+            >
+              Forgot password
+            </Button> */}
           </>
         ) : (
           <>
@@ -208,6 +232,12 @@ const AdminInfoForm = () => {
                 className="max-w-[257px] w-full h-10 body-small"
               />
             </p>
+            {/* <Button
+              variant="accend-link"
+              className="underline !text-primary-color-100"
+            >
+              Forgot password
+            </Button> */}
           </>
         )}
       </div>
