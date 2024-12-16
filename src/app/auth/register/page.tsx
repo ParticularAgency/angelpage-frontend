@@ -20,7 +20,7 @@ const Register = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prevData => ({
       ...prevData,
@@ -28,7 +28,7 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
@@ -52,7 +52,7 @@ const Register = () => {
       if (!response.ok) {
         const errorData = await response.json();
         // throw new Error(errorData.message || 'Registration failed');
-       ToastService.error(errorData.message || 'Registration failed');
+        ToastService.error(errorData.message || 'Registration failed');
       }
 
       const responseData = await response.json();
@@ -65,8 +65,13 @@ const Register = () => {
         window.location.href = '/auth/login';
       }, 2000);
     } catch (err) {
-       ToastService.error(err.message);
-      setError(err.message);
+      if (err instanceof Error) {
+        ToastService.error(err.message);
+        setError(err.message);
+      } else {
+        ToastService.error('An unknown error occurred');
+        setError('An unknown error occurred');
+      }
     } finally {
       setIsSubmitting(false);
     }

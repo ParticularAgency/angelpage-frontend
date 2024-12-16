@@ -8,13 +8,20 @@ export default NextAuth({
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
+        email: {
+          label: 'Email',
+          type: 'email',
+          placeholder: 'example@example.com',
+        },
         password: { label: 'Password', type: 'password' },
         role: { label: 'Role', type: 'text' },
       },
       async authorize(credentials) {
+        if (!credentials) {
+          throw new Error('No credentials provided');
+        }
         try {
-          const res = await axios.post(
+          const response = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
             {
               email: credentials.email,
@@ -23,18 +30,21 @@ export default NextAuth({
             }
           );
 
-          if (res.data) {
-            const { user, token } = res.data;
-            return { ...user, token };
+          const user = response.data;
+
+          if (user) {
+            return user;
+          } else {
+            throw new Error('Invalid credentials');
           }
-          return null;
         } catch (error) {
-          console.error('Login error:', error);
-          return null;
+          console.error('Error during login:', error);
+          throw new Error('Login failed');
         }
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

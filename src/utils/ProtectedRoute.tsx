@@ -29,8 +29,9 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
       return;
     }
 
-    // Check if the user has an allowed role
-    if (session && !allowedRoles.includes(session.user.role)) {
+    // Ensure role is defined and check allowed roles
+    const userRole = session?.user?.role ?? ''; // Default to an empty string if role is undefined
+    if (!allowedRoles.includes(userRole)) {
       router.push('/403');
       return;
     }
@@ -58,9 +59,8 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
   }
 
   // Check if session is active and user has an allowed role
-  return session && allowedRoles.includes(session.user.role) ? (
-    <>{children}</>
-  ) : null;
+  const userRole = session?.user?.role ?? ''; // Ensure role is a string
+  return allowedRoles.includes(userRole) ? <>{children}</> : null;
 };
 
 export default ProtectedRoute;

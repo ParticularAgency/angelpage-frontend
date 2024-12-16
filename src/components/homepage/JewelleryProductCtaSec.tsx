@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '../elements';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const JewelleryProductCtaSec = () => {
   return (
@@ -15,13 +16,15 @@ const JewelleryProductCtaSec = () => {
               Lorem ipsum dolor sit amet consectetur. Mattis ac a aenean enim
               quam.
             </p>
-            <Button
-              variant="primary"
-              className="mt-6"
-              onClick={() => console.log('button on click')}
-            >
-              Shop jewellery
-            </Button>
+            <Link href="/product?category=jewellery">
+              <Button
+                variant="primary"
+                className="mt-6"
+                onClick={() => console.log('button on click')}
+              >
+                Shop jewellery
+              </Button>
+            </Link>
           </div>
           <div className="jewellery-modelimg-area  col-span-6 sm:col-span-full pt-[35px] sm:pt-0 pl-[29px] lg:pl-0 flex gap-0 items-end">
             <Image

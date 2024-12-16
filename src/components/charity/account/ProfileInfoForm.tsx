@@ -3,24 +3,7 @@ import { EditIcon, SaveIcon } from '@/icons';
 import { fetchCharityData } from '@utils/api';
 import { useSession } from 'next-auth/react';
 import { Input } from '@/components/elements';
-// import axios from 'axios';
-// import { Button, Input } from '@/components/elements';
 
-// Define the shape of account info for clarity and type safety
-// interface AccountInfo {
-//   email: string;
-//   userName: string;
-//   currentPassword: string;
-//   newPassword: string;
-// }
-
-// Define expected response from fetchUserData
-// interface UserDataResponse {
-//   email?: string;
-//   userName?: string;
-// }
-
-// Extend the session type to include `token` if not already present
 declare module 'next-auth' {
   interface Session {
     token?: string;
@@ -51,7 +34,7 @@ const AdminInfoForm = () => {
           if (data) {
             setAdminInfo({
               email: data.email || '',
-              userName: data.userName || '',
+              userName: data?.userName || '',
               currentPassword: '',
               newPassword: '',
             });

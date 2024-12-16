@@ -15,12 +15,6 @@ interface AccountInfo {
   newPassword: string;
 }
 
-// Define expected response from fetchUserData
-interface UserDataResponse {
-  email?: string;
-  userName?: string;
-}
-
 // Extend the session type to include `token` if not already present
 declare module 'next-auth' {
   interface Session {
@@ -49,7 +43,7 @@ const AccountInfoForm: React.FC = () => {
     const fetchData = async () => {
       if (status === 'authenticated' && session?.token) {
         try {
-          const data: UserDataResponse = await fetchUserData(session.token);
+          const data = await fetchUserData(session.token);
           if (data) {
             setAccountInfo({
               email: data.email || '',

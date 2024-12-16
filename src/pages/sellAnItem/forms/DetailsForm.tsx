@@ -29,7 +29,12 @@ interface DetailsData {
   selectedSubCategory?: string;
   additionalInfo?: string;
 }
-
+interface CharitiesResponse {
+  charities: Array<{
+    _id: string;
+    charityName: string;
+  }>;
+}
 interface FormProps {
   setActiveTab: (tabName: 'details' | 'photos' | 'price') => void;
   onSubmit: (detailsData: DetailsData) => void;
@@ -37,7 +42,10 @@ interface FormProps {
    onSaveAsDraft: () => void;
   hideCharitySelection?: boolean;
 }
-
+interface Charity {
+  _id: string;
+  charityName: string;
+}
 const DetailsForm: React.FC<FormProps> = ({
   setActiveTab,
   onSubmit,
@@ -53,8 +61,8 @@ const DetailsForm: React.FC<FormProps> = ({
   const [charityId, setCharityId] = useState<string | null>(
     formData.charityId || null
   );
-  const [charityList, setCharityList] = useState<any[]>([]);
-  const [filteredCharities, setFilteredCharities] = useState<any[]>([]);
+  const [charityList, setCharityList] = useState<Charity[]>([]);
+  const [filteredCharities, setFilteredCharities] = useState<Charity[]>([]);
   const [loadingCharities, setLoadingCharities] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -70,11 +78,11 @@ const DetailsForm: React.FC<FormProps> = ({
   );
   const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
 
-  const [dimensions, setDimensions] = useState<Dimensions>({
-    height: formData.dimensions?.height || '',
-    width: formData.dimensions?.width || '',
-    depth: formData.dimensions?.depth || '',
-  });
+const [dimensions, setDimensions] = useState<Dimensions>({
+  height: formData.dimensions?.[0]?.height || '',
+  width: formData.dimensions?.[0]?.width || '',
+  depth: formData.dimensions?.[0]?.depth || '',
+});
 
   const [selectedCategory, setSelectedCategory] = useState<string>(
     formData.selectedCategory || 'Select'
@@ -84,41 +92,39 @@ const DetailsForm: React.FC<FormProps> = ({
   );
   const { categories } = categoriesData;
 
-  // Handler for form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (
-      (!hideCharitySelection && (!charityId || !charityName)) || // Ensure charityId is selected
-      !itemTitle ||
-      selectedCategory === 'Select' ||
-      !condition
-    ) {
-      ToastService.error('Please fill in all required fields.');
-      return;
-    }
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
 
-    const detailsData: DetailsData = {
-      charityId,
-      charityName,
-      itemTitle,
-      condition,
-      brand,
-      material,
-      color,
-      size,
-      selectedCategory,
-      selectedSubCategory,
-      additionalInfo,
-      dimensions: {
-        height: dimensions.height !== '' ? `${dimensions.height}${unit}` : '',
-        width: dimensions.width !== '' ? `${dimensions.width}${unit}` : '',
-        depth: dimensions.depth !== '' ? `${dimensions.depth}${unit}` : '',
-      },
-    };
+  if (
+    (!hideCharitySelection && (!charityId || !charityName)) ||
+    !itemTitle ||
+    selectedCategory === 'Select' ||
+    !condition
+  ) {
+    ToastService.error('Please fill in all required fields.');
+    return;
+  }
 
-    onSubmit(detailsData);
-    setActiveTab('photos');
+  const detailsData: DetailsData = {
+    ...formData,
+    charityId: charityId || undefined, // Convert null to undefined
+    charityName,
+    itemTitle,
+    condition,
+    brand,
+    material,
+    color,
+    size,
+    selectedCategory,
+    selectedSubCategory,
+    additionalInfo,
+    dimensions: [{ ...dimensions }], // Wrap dimensions as an array
   };
+
+  onSubmit(detailsData);
+  setActiveTab('photos');
+};
+
 
   // Fetch charity list from API
   useEffect(() => {
@@ -132,22 +138,22 @@ const DetailsForm: React.FC<FormProps> = ({
       try {
         console.log('Fetching charities with session token:', session.token);
 
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/charity/charities`,
-          {
-            headers: {
-              Authorization: `Bearer ${session.token}`,
-            },
-          }
-        );
+          const response = await axios.get<CharitiesResponse>(
+            `${process.env.NEXT_PUBLIC_API_URL}/charity/charities`,
+            {
+              headers: {
+                Authorization: `Bearer ${session.token}`,
+              },
+            }
+          );
 
         // Log the entire response to understand its structure
         console.log('Full API response:', response);
 
         // Check if the response has the correct structure
-        if (response.data && Array.isArray(response.data.charities)) {
-          setCharityList(response.data.charities);
-          setFilteredCharities(response.data.charities);
+        if (response.data && Array.isArray(response.data?.charities)) {
+          setCharityList(response.data?.charities);
+          setFilteredCharities(response.data?.charities);
         } else {
           console.warn('Unexpected response format:', response);
           ToastService.error(
@@ -155,19 +161,9 @@ const DetailsForm: React.FC<FormProps> = ({
           );
         }
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          if (error.response?.status === 400) {
             ToastService.error(
               'Bad request. Please verify the request parameters.'
             );
-          } else if (error.response?.status === 401) {
-            ToastService.error('Unauthorized access. Please log in again.');
-          } else {
-            ToastService.error('Failed to load charity list.');
-          }
-        } else {
-          console.error('Unexpected error:', error);
-        }
       } finally {
         setLoadingCharities(false);
       }
@@ -199,7 +195,7 @@ const DetailsForm: React.FC<FormProps> = ({
     setShowDropdown(value.length > 0);
   };
 
-  const handleCharitySelect = (charity: any) => {
+  const handleCharitySelect = (charity: Charity) => {
     setCharityName(charity.charityName);
     setCharityId(charity._id); // Save the charityId when a charity is selected
     setSearchTerm(charity.charityName);
@@ -217,16 +213,21 @@ const DetailsForm: React.FC<FormProps> = ({
     setSelectedSubCategory('Select');
   };
 
-  const handleDimensionChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: 'height' | 'width' | 'depth'
-  ) => {
-    const value = e.target.value;
-    setDimensions(prev => ({
-      ...prev,
-      [key]: value !== '' ? parseFloat(value) : '',
-    }));
-  };
+ const handleDimensionChange = (
+   e: React.ChangeEvent<HTMLInputElement>,
+   key: 'height' | 'width' | 'depth'
+ ) => {
+   const value = e.target.value;
+   setDimensions(prev => ({
+     ...prev,
+     [key]: value !== '' ? `${value}${unit}` : '',
+   }));
+
+   const updatedDimensions = [
+     { ...dimensions, [key]: value !== '' ? `${value}${unit}` : '' },
+   ];
+   onSubmit({ ...formData, dimensions: updatedDimensions });
+ };
 
   const filteredSubCategories =
     categories.find(cat => cat.id === selectedCategory)?.subCategories || [];

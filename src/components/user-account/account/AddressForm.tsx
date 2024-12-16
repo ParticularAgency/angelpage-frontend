@@ -16,7 +16,9 @@ interface Address {
   postcode: string;
   isEditing: boolean;
 }
-
+interface AddressAPIResponse {
+  addresses: Address[];
+}
 // Define the structure of the user profile response
 interface UserProfileResponse {
   user?: {
@@ -147,7 +149,7 @@ const AddressForm: React.FC = () => {
          );
        } else {
          // Add new address
-         const response = await axios.post(
+         const response = await axios.post<AddressAPIResponse>(
            `${process.env.NEXT_PUBLIC_API_URL}/users/profile/addresses`,
            address,
            {

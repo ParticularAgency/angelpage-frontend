@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { EditIcon, SaveIcon } from '@/icons';
 import { Input, Textarea} from '@/components/elements';
-import { fetchAdminInfo } from '@utils/api';
+// import { fetchAdminInfo } from '@utils/api';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
@@ -13,27 +13,9 @@ const ProfileInfoForm = () => {
     charityID: '',
     description: '',
   });
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
-  // Fetch user data on mount if session is authenticated
-  useEffect(() => {
-    const fetchData = async () => {
-      if (status === 'authenticated' && session?.token) {
-        const data = await fetchAdminInfo(session.token);
-        if (data) {
-          setCharityInfo({
-            charityName: data.charityName || '',
-            charityNumber: data.charityNumber || '',
-            charityID: data.charityID || '',
-            description: data.description || '',
-          });
-        } else {
-          console.error('Failed to fetch user data');
-        }
-      }
-    };
-    fetchData();
-  }, [session, status]);
+ 
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

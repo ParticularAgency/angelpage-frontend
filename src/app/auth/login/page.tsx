@@ -17,7 +17,7 @@ const Login = () => {
   const [activeRole, setActiveRole] = useState('USER'); // State to manage selected role
   const router = useRouter();
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
@@ -41,43 +41,45 @@ const Login = () => {
       return;
     }
 
-    const userRole = result?.user?.role || session?.user?.role;
-    const userId = result?.user?.id || session?.user?.id;
+    // Wait for session to update
+    const updatedSession = await fetch('/api/auth/session').then(res =>
+      res.json()
+    );
+    const userRole = updatedSession?.user?.role;
+    const userId = updatedSession?.user?.id;
 
-
-     if (userRole && userId) {
-       if (userRole === activeRole) {
-         ToastService.success('Login successful! Redirecting...');
-         setTimeout(() => {
-           if (userRole === 'USER') {
-             router.push(`/`);
-           } else if (userRole === 'CHARITY') {
-             router.push(`/`);
-           }
-           setIsSubmitting(false);
-         }, 2000);
-       } else {
-         setError(
-           `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
-         );
-         ToastService.error(
-           `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
-         );
-         setIsSubmitting(false);
-       }
-     }
+    if (userRole && userId) {
+      if (userRole === activeRole) {
+        ToastService.success('Login successful! Redirecting...');
+        setTimeout(() => {
+          if (userRole === 'USER') {
+            router.push(`/`);
+          } else if (userRole === 'CHARITY') {
+            router.push(`/`);
+          }
+          setIsSubmitting(false);
+        }, 2000);
+      } else {
+        setError(
+          `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
+        );
+        ToastService.error(
+          `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
+        );
+        setIsSubmitting(false);
+      }
+    }
   };
 
   useEffect(() => {
     if (session?.user?.role && session?.user?.id) {
       const userRole = session.user.role;
-      const userId = session.user.id;
       ToastService.success('Login successful! Redirecting to account...');
       setTimeout(() => {
         if (userRole === 'USER') {
-          router.push(`/user/account/${userId}`);
+          router.push(`/`);
         } else if (userRole === 'CHARITY') {
-          router.push(`/charity/account/${userId}`);
+          router.push(`/`);
         }
       }, 2000);
     }
@@ -106,13 +108,21 @@ const Login = () => {
 
           <div className="flex space-x-2 justify-center mb-[54px]">
             <button
-              className={`p-2 text-body-small rounded-3xl ${activeRole === 'USER' ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold' : 'bg-transparent text-mono-100'}`}
+              className={`p-2 text-body-small rounded-3xl ${
+                activeRole === 'USER'
+                  ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold'
+                  : 'bg-transparent text-mono-100'
+              }`}
               onClick={() => setActiveRole('USER')}
             >
               Individual
             </button>
             <button
-              className={`text-body-small p-2 rounded-3xl ${activeRole === 'CHARITY' ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold' : 'bg-transparent text-mono-100'}`}
+              className={`text-body-small p-2 rounded-3xl ${
+                activeRole === 'CHARITY'
+                  ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold'
+                  : 'bg-transparent text-mono-100'
+              }`}
               onClick={() => setActiveRole('CHARITY')}
             >
               Charity/Brand

@@ -1,18 +1,79 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// Define AxiosError manually if not found in 'axios'
+interface AxiosError<T = unknown> extends Error {
+  isAxiosError: boolean;
+  response?: {
+    data?: T;
+    status?: number;
+    statusText?: string;
+  };
+  request?: unknown;
+  config: unknown;
+}
 
+// Helper to check if an error is an AxiosError
+function isAxiosError(error: unknown): error is AxiosError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'isAxiosError' in error &&
+    (error as AxiosError).isAxiosError === true
+  );
+}
+
+
+// Define types
+interface CharityUser {
+  charityName: string;
+  profileImage: string;
+  userName: string;
+  email: string;
+  verified: boolean;
+  profileCompleted: boolean;
+  charityBannerImage: string;
+}
+
+interface UserProfile {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  profileImage: string;
+  email: string;
+  verified: boolean;
+  profileCompleted: boolean;
+  dateBirth: string;
+}
+
+interface ProfileResponse {
+  user: CharityUser;
+  profileCompletionPercentage: number;
+}
+
+interface UserProfileResponse {
+  user: UserProfile | null;
+  profileCompletionPercentage?: number;
+}
+
+
+
+interface Product {
+  id: string;
+  name: string;
+  images: { url: string }[];
+  brand: string;
+  price: number;
+  size: string;
+  status: string;
+  averageDeliveryTime?: number;
+}
+
+// API URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 // ===================
-// Verification Email API Endpoint
+// Verification Email API Endpoints
 // ===================
-
-/**
- * Verifies the user's email with the provided verification code.
- * @param {string} email - The user's email address.
- * @param {string} verificationCode - The verification code sent to the user's email.
- * @returns {Object} - The response data from the verification request.
- */
 export const verifyEmail = async ({
   email,
   verificationCode,
@@ -25,18 +86,19 @@ export const verifyEmail = async ({
       email,
       verificationCode,
     });
-    console.log('Email verification successful:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error verifying email:', error.response || error);
-    throw error.response?.data || error;
+    if (isAxiosError(error)) {
+      console.error(
+        'Error verifying email:',
+        error.response?.data || error.message
+      );
+      throw error.response?.data || error;
+    }
+    throw error;
   }
 };
-/**
- * Resends a new verification email to the user.
- * @param {string} email - The user's email address.
- * @returns {Object} - The response data from the resend request.
- */
+
 export const resendVerificationEmail = async ({
   email,
   verificationCode,
@@ -49,161 +111,162 @@ export const resendVerificationEmail = async ({
       email,
       verificationCode,
     });
-    console.log('Email verification successful:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error verifying email:', error.response || error);
-    throw error.response?.data || error;
+    if (isAxiosError(error)) {
+      console.error(
+        'Error resending verification email:',
+        error.response?.data || error.message
+      );
+      throw error.response?.data || error;
+    }
+    throw error;
   }
 };
-export const fetchUserProfileData = async (email: string) => {
+
+// ===================
+// Profile Data API Endpoints
+// ===================
+export const fetchUserProfileData = async (
+  email: string
+): Promise<UserProfileResponse | null> => {
   try {
-    const response = await axios.get(`${API_URL}/auth/profile/${email}`);
-    console.log('API Response:', response.data);
+    const response = await axios.get<UserProfileResponse>(
+      `${API_URL}/auth/profile/${email}`
+    );
     return response.data;
   } catch (error) {
-    console.error('Error fetching user profile data:', error);
+    if (isAxiosError(error)) {
+      console.error(
+        'Error fetching user profile data:',
+        error.response?.data || error.message
+      );
+    }
     return null;
   }
 };
 
-export const fetchCharityProfileData = async (email: string) => {
+export const fetchCharityProfileData = async (
+  email: string
+): Promise<ProfileResponse> => {
   try {
-    const response = await axios.get(`${API_URL}/auth/charity-profile/${email}`);
-    console.log('API Response:', response.data);
+    const response = await axios.get<ProfileResponse>(
+      `${API_URL}/charity/profile`,
+      {
+        params: { email },
+      }
+    );
+
+    if (!response.data.user) {
+      throw new Error('Invalid response: User data is missing');
+    }
+
     return response.data;
   } catch (error) {
-    console.error('Error fetching user profile data:', error);
-    return null;
+    if (isAxiosError(error)) {
+      console.error(
+        'Error fetching charity profile data:',
+        error.response?.data || error.message
+      );
+    }
+    throw error;
   }
 };
+
 // ===================
 // User Data API Endpoints
 // ===================
+// export const saveProfile = async (profileData: FormData, token: string) => {
+//   try {
+//     const response = await axios.put(`${API_URL}/users/profile`, profileData, {
+//       headers: { Authorization: `Bearer ${token}` },
+//     });
+//     return response.data.user;
+//   } catch (error) {
+//     if (isAxiosError(error)) {
+//       console.error(
+//         'Error updating profile:',
+//         error.response?.data || error.message
+//       );
+//     }
+//     throw error;
+//   }
+// };
 
-/**
- * Updates the user's profile data.
- * @param {FormData} profileData - The data to update the user's profile with.
- * @param {string} token - The JWT token for authorization.
- * @returns {Object} The response data from the profile update.
- */
-export const saveProfile = async (profileData: FormData, token: string) => {
+export const fetchUserData = async (
+  token: string
+): Promise<UserProfile | null> => {
   try {
-    const response = await axios.put(`${API_URL}/users/profile`, profileData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log('Profile updated:', response.data);
+    const response = await axios.get<{ user: UserProfile }>(
+      `${API_URL}/users/profile`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     return response.data.user;
   } catch (error) {
-    console.error('Error updating profile:', error);
-    throw error;
-  }
-};
-
-/**
- * Fetch user profile data.
- * @param {string} token - The JWT token for authorization.
- * @returns {Object | null} - The user data or null if an error occurs.
- */
-export const fetchUserData = async (token: string) => {
-  try {
-    const response = await axios.get(`${API_URL}/users/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log('API Response:', response.data);
-    return response.data.user;
-  } catch (error) {
-    console.error('Error fetching user data:', error);
+    if (isAxiosError(error)) {
+      console.error(
+        'Error fetching user data:',
+        error.response?.data || error.message
+      );
+    }
     return null;
   }
 };
+
 // ===================
 // Charity Data API Endpoints
 // ===================
-/**
- * Updates the user's profile data.
- * @param {FormData} profileData - The data to update the user's profile with.
- * @param {string} token - The JWT token for authorization.
- * @returns {Object} The response data from the profile update.
- */
-export const saveCharityProfile = async (profileData: FormData, token: string) => {
+// export const saveCharityProfile = async (
+//   profileData: FormData,
+//   token: string
+// ) => {
+//   try {
+//     const response = await axios.put(
+//       `${API_URL}/charity/profile`,
+//       profileData,
+//       {
+//         headers: { Authorization: `Bearer ${token}` },
+//       }
+//     );
+//     return response.data.user;
+//   } catch (error) {
+//     if (isAxiosError(error)) {
+//       console.error(
+//         'Error updating charity profile:',
+//         error.response?.data || error.message
+//       );
+//     }
+//     throw error;
+//   }
+// };
+
+export const fetchCharityData = async (
+  token: string
+): Promise<CharityUser | null> => {
   try {
-    const response = await axios.put(
+    const response = await axios.get<{ user: CharityUser }>(
       `${API_URL}/charity/profile`,
-      profileData,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    console.log('Profile updated:', response.data);
     return response.data.user;
   } catch (error) {
-    console.error('Error updating profile:', error);
-    throw error;
-  }
-};
-/**
- * Fetch charity profile data.
- * @param {string} token - The JWT token for authorization.
- * @returns {Object | null} - The user data or null if an error occurs.
- */
-export const fetchCharityData = async (token: string) => {
-  try {
-    const response = await axios.get(`${API_URL}/charity/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log('API Response:', response.data);
-    return response.data.user;
-  } catch (error) {
-    console.error('Error fetching user data:', error);
+    if (isAxiosError(error)) {
+      console.error(
+        'Error fetching charity data:',
+        error.response?.data || error.message
+      );
+    }
     return null;
   }
 };
 
-/**
- * Updates the user's profile data.
- * @param {FormData} profileData - The data to update the user's profile with.
- * @param {string} token - The JWT token for authorization.
- * @returns {Object} The response data from the profile update.
- */
-export const saveAdminInfo = async (profileData: FormData, token: string) => {
-  try {
-    const response = await axios.put(
-      `${API_URL}/charity/adminInfo`,
-      profileData,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    console.log('Profile updated:', response.data);
-    return response.data.user;
-  } catch (error) {
-    console.error('Error updating profile:', error);
-    throw error;
-  }
-};
-/**
- * Fetch charity profile data.
- * @param {string} token - The JWT token for authorization.
- * @returns {Object | null} - The user data or null if an error occurs.
- */
-export const fetchAdminInfo = async (token: string) => {
-  try {
-    const response = await axios.get(`${API_URL}/charity/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log('API Response:', response.data);
-    return response.data.user;
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-    return null;
-  }
-};
-/**
- * Fetches admin data.
- * @param {string} token - The JWT token for authorization.
- * @returns {Object} The admin dashboard data.
- */
+// ===================
+// Admin Data API Endpoints
+// ===================
 export const fetchAdminData = async (token: string) => {
   try {
     const response = await axios.get(`${API_URL}/admin/dashboard`, {
@@ -211,7 +274,12 @@ export const fetchAdminData = async (token: string) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching admin data:', error);
+    if (isAxiosError(error)) {
+      console.error(
+        'Error fetching admin data:',
+        error.response?.data || error.message
+      );
+    }
     throw error;
   }
 };
@@ -219,34 +287,27 @@ export const fetchAdminData = async (token: string) => {
 // ===================
 // Password Reset & Account Deletion API Endpoints
 // ===================
-
-/**
- * Requests a password reset.
- * @param {string} email - The user's email to send the reset token to.
- * @param {string} role - The user's role to specify (e.g., "USER", "CHARITY", "ADMIN").
- * @returns {Object} - The response data from the password reset request.
- */
 export const requestPasswordReset = async (email: string, role: string) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/request-password-reset`, {
-      email,
-      role,  // Pass the role along with the email
-    });
-    console.log('Password reset email sent:', response.data);
+    const response = await axios.post(
+      `${API_URL}/auth/request-password-reset`,
+      {
+        email,
+        role,
+      }
+    );
     return response.data;
   } catch (error) {
-    console.error('Error requesting password reset:', error.response || error);
+    if (isAxiosError(error)) {
+      console.error(
+        'Error requesting password reset:',
+        error.response?.data || error.message
+      );
+    }
     throw error;
   }
 };
 
-/**
- * Resets the user's password.
- * @param {string} token - The reset token sent to the user's email.
- * @param {string} newPassword - The new password for the user.
- * @returns {Object} - The response data from the password reset.
- * @throws Will throw an error if the request fails.
- */
 export const resetPassword = async (token: string, newPassword: string) => {
   try {
     const response = await axios.post(`${API_URL}/auth/reset-password`, {
@@ -255,27 +316,43 @@ export const resetPassword = async (token: string, newPassword: string) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error resetting password:', error);
-    throw error.response?.data || error;
+    if (isAxiosError(error)) {
+      console.error(
+        'Error resetting password:',
+        error.response?.data || error.message
+      );
+    }
+    throw error;
   }
 };
 
-/**
- * Deletes the user's account.
- * @param {string} userId - The ID of the user to delete.
- * @param {string} role - The role of the user (e.g., USER, CHARITY, ADMIN).
- * @param {string} token - The JWT token for authorization.
- * @returns {Object} - The response data from the account deletion.
- */
-export const deleteAccount = async (userId: string, role: string, token: string) => {
+
+
+// ===================
+// Product Data API Endpoints
+// ===================
+export const fetchProductsByCategory = async (
+  category: string,
+  authToken: string,
+  isArchived: boolean = false,
+  status?: string
+): Promise<Product[]> => {
   try {
-    const response = await axios.delete(`${API_URL}/auth/delete-account`, {
-      data: { userId, role },
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
+    const response = await axios.get<{ products: Product[] }>(
+      `${API_URL}/products/category/${category}`,
+      {
+        params: { isArchived, status },
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
+    return response.data.products;
   } catch (error) {
-    console.error('Error deleting account:', error);
-    throw error;
+    if (isAxiosError(error)) {
+      console.error(
+        'Error fetching products by category:',
+        error.response?.data || error.message
+      );
+    }
+    throw new Error('Failed to fetch category products.');
   }
 };

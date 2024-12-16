@@ -4,8 +4,8 @@ import Checkbox from '../input-fields/checkbox';
 interface Product {
   category: string;
   subcategory: string;
-  productBrand: string;
-  productCondition: string;
+  brand: string;
+  condition: string;
 }
 interface FilterSidebarProps {
   availableProducts?: Product[];
@@ -13,14 +13,14 @@ interface FilterSidebarProps {
     // Accept selectedFilters as a prop from the parent
     category: string[];
     subCategory: string[];
-    productBrand: string[];
-    productCondition: string[];
+    brand: string[];
+    condition: string[];
   };
   onFilterChange: (filters: {
     category: string[];
     subCategory: string[];
-    productBrand: string[];
-    productCondition: string[];
+    brand: string[];
+    condition: string[];
   }) => void;
 }
 
@@ -51,8 +51,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       subCategoriesMap
         .get(product.category)
         ?.add(product.subcategory || 'Unknown');
-      brandsSet.add(product.productBrand || 'Unknown');
-      conditionsSet.add(product.productCondition || 'Unknown');
+      brandsSet.add(product.brand || 'Unknown');
+      conditionsSet.add(product.condition || 'Unknown');
     });
 
     const categoriesArray = Array.from(categoriesSet).map(category => ({
@@ -92,10 +92,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   };
 
   // Calculate total selected counts
-  const totalSelectedCategories = selectedFilters.category.length;
-  const totalSelectedSubcategories = selectedFilters.subCategory.length;
-  const totalSelectedBrands = selectedFilters.productBrand.length;
-  const totalSelectedConditions = selectedFilters.productCondition.length;
+  const totalSelectedCategories = selectedFilters?.category?.length;
+  const totalSelectedSubcategories = selectedFilters?.subCategory?.length;
+  const totalSelectedBrands = selectedFilters?.brand?.length;
+  const totalSelectedConditions = selectedFilters?.condition?.length;
 
   return (
     <div className="filter-sidebar">
@@ -217,8 +217,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 <label className="flex items-center gap-2 caption">
                   {/* <input type="checkbox" className="!bg-[#fff]" /> */}
                   <Checkbox
-                    checked={selectedFilters.productBrand.includes(brand)}
-                    onChange={() => handleFilterChange('productBrand', brand)}
+                    checked={selectedFilters.brand.includes(brand)}
+                    onChange={() => handleFilterChange('brand', brand)}
                   />
                   {brand || 'Unknown'}
                 </label>
@@ -258,11 +258,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   <input
                     type="checkbox"
                     className="!bg-[#fff]"
-                    checked={selectedFilters.productCondition.includes(
+                    checked={selectedFilters.condition.includes(
                       condition
                     )}
                     onChange={() =>
-                      handleFilterChange('productCondition', condition)
+                      handleFilterChange('condition', condition)
                     }
                   />
                   {condition || 'Unknown'}

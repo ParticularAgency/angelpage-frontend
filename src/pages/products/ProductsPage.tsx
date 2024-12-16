@@ -1,12 +1,20 @@
+'use client';
+import React from 'react';
+import { useSearchParams } from 'next/navigation';
 import ProductBannerSec from '@/components/banner/ProductBannerSec';
 import ProductsListsSec from '@/components/product/ProductsListsSec';
-import React from 'react';
 
 const ProductsPage = () => {
+  const searchParams = useSearchParams();
+
+  // Use optional chaining and explicitly convert null to undefined
+  const category = searchParams?.get('category') || 'All Products';
+  const subcategory = searchParams?.get('subcategory') || undefined;
+
   return (
     <div className="products-page-main-wrapper">
-      <ProductBannerSec />
-      <ProductsListsSec />
+      <ProductBannerSec category={category} subcategory={subcategory} />
+      <ProductsListsSec category={category} subcategory={subcategory} />
     </div>
   );
 };

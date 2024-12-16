@@ -1,35 +1,123 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import FilterSidebar from '@/components/elements/search/FilterSidebar';
 import Sorting from '@/components/elements/search/Sorting';
 import ProductList from '@/components/product/ProductList';
 import Pagination from '@/components/elements/Pagination';
-// import SearchBar from "@/components/elements/search/SearchBar";
-import { productData } from '@/libs/productData';
+import { useSession } from 'next-auth/react';
+import axios from 'axios';
 import { CloseIcon, FilterIcon } from '@/icons';
+import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
 
+interface Product {
+  id: number;
+  charity: {
+    charityName: string;
+    profileImage: string; // Image URL for the charity
+  };
+  seller: {
+    firstName: string;
+    lastName: string;
+    profileImages: string;
+    address?: {
+      city?: string;
+      country?: string;
+    };
+  };
+  images: Array<{ url: string; altText: string }>;
+  productImageAlt?: string;
+  brand?: string;
+  size?: string;
+  dimensionHeight?: string;
+  dimensionWidth?: string;
+  location?: string;
+  status?: 'Draft' | 'LIVE' | 'Removed'; // Refined status types
+  stock?: number;
+
+  averageDeliveryTime?: number;
+  isLoggedIn?: boolean;
+  onFavoriteClick?: () => void;
+  onDeleteConfirm?: (productId: number) => void; // Adjusted for ID type consistency
+  isFavorite?: boolean;
+  name?: string;
+  condition?: string;
+  subcategory?: string;
+  category?: string;
+  price?: string;
+}
+
+interface ProductsResponse {
+  products: Product[];
+}
 interface Filters {
   category: string[];
   subCategory: string[];
-  productBrand: string[];
-  productCondition: string[];
+  brand: string[];
+  condition: string[];
+}
+interface ProductsListsSecProps {
+  category: string;
+  subcategory?: string;
 }
 
-const ProductsListsSec = () => {
-  const [products] = useState(productData); // Original product data
-  const [filteredProducts, setFilteredProducts] = useState(productData);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
+  const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const category = searchParams?.get('category') || '';
+  const subcategory = searchParams?.get('subcategory') || '';
+  
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [filters, setFilters] = useState<Filters>({
     category: [],
     subCategory: [],
-    productBrand: [],
-    productCondition: [],
+    brand: [],
+    condition: [],
   });
   const [sort, setSort] = useState<string>('');
-  // const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const productsPerPage = 12;
+  // Fetch Products on Category/Subcategory Change
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const headers: Record<string, string> = {};
+        if (session?.token) {
+          headers.Authorization = `Bearer ${session.token}`;
+        }
+        const endpoint =
+          category || subcategory
+            ? `${process.env.NEXT_PUBLIC_API_URL}/products/category`
+            : `${process.env.NEXT_PUBLIC_API_URL}/products/all`;
+
+        const response = await axios.get<ProductsResponse>(endpoint, {
+          params: { category, subcategory },
+          headers,
+        });
+
+        const productsData = response.data.products || [];
+        setProducts(productsData);
+        setFilteredProducts(productsData);
+        setTotalPages(Math.ceil(productsData.length / productsPerPage));
+        setCurrentPage(1); // Reset to first page
+      } catch (err: unknown) {
+          setError( 'Failed to load products. Please try again.' );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [category, subcategory]);
 
   useEffect(() => {
     filterAndSortProducts(filters, sort);
@@ -70,14 +158,14 @@ const ProductsListsSec = () => {
         filters.subCategory.includes(product.subcategory || '')
       );
     }
-    if (filters.productBrand.length > 0) {
+    if (filters.brand.length > 0) {
       updatedProducts = updatedProducts.filter(product =>
-        filters.productBrand.includes(product.productBrand || '')
+        filters.brand.includes(product.brand || '')
       );
     }
-    if (filters.productCondition.length > 0) {
+    if (filters.condition.length > 0) {
       updatedProducts = updatedProducts.filter(product =>
-        filters.productCondition.includes(product.productCondition || '')
+        filters.condition.includes(product.condition || '')
       );
     }
 
@@ -85,20 +173,20 @@ const ProductsListsSec = () => {
     if (sort === 'price-asc') {
       updatedProducts.sort(
         (a, b) =>
-          parseFloat(a.productPrice || '0') - parseFloat(b.productPrice || '0')
+          parseFloat(a.price || '0') - parseFloat(b.price || '0')
       );
     } else if (sort === 'price-desc') {
       updatedProducts.sort(
         (a, b) =>
-          parseFloat(b.productPrice || '0') - parseFloat(a.productPrice || '0')
+          parseFloat(b.price || '0') - parseFloat(a.price || '0')
       );
     } else if (sort === 'name-asc') {
       updatedProducts.sort((a, b) =>
-        (a.productTitle || '').localeCompare(b.productTitle || '')
+        (a.name || '').localeCompare(b.name || '')
       );
     } else if (sort === 'name-desc') {
       updatedProducts.sort((a, b) =>
-        (b.productTitle || '').localeCompare(a.productTitle || '')
+        (b.name || '').localeCompare(a.name || '')
       );
     }
 
@@ -114,6 +202,11 @@ const ProductsListsSec = () => {
     startIndex,
     startIndex + productsPerPage
   );
+
+
+  if (error) {
+    return <p className="text-red-600">{error}</p>;
+  }
 
   return (
     <section className="products-lists-section pt-[31px] pb-[54px] md:pb-9 sm:pt-5 sm:pb-8 bg-[#F1F1F7]">
@@ -194,12 +287,10 @@ const ProductsListsSec = () => {
                         <FilterSidebar
                           availableProducts={products.map(product => ({
                             ...product,
-                            productBrand:
-                              product.productBrand || 'Unknown Brand',
-                            productTitle:
-                              product.productTitle || 'Untitled Product',
-                            productCondition:
-                              product.productCondition || 'Unknown Condition',
+                            brand: product.brand || 'Unknown Brand',
+                            name:
+                              product.name || 'Untitled Product',
+                            condition: product.condition || 'Unknown Condition',
                             subcategory: product.subcategory || 'Uncategorized',
                             category: product.category || 'Uncategorized', // Default category
                           }))}
@@ -239,10 +330,9 @@ const ProductsListsSec = () => {
               <FilterSidebar
                 availableProducts={products.map(product => ({
                   ...product,
-                  productBrand: product.productBrand || 'Unknown Brand',
-                  productTitle: product.productTitle || 'Untitled Product',
-                  productCondition:
-                    product.productCondition || 'Unknown Condition',
+                  brand: product.brand || 'Unknown Brand',
+                  name: product.name || 'Untitled Product',
+                  condition: product.condition || 'Unknown Condition',
                   subcategory: product.subcategory || 'Uncategorized',
                   category: product.category || 'Uncategorized', // Default category
                 }))}
@@ -251,7 +341,18 @@ const ProductsListsSec = () => {
               />
             </div>
             <div className="products-list-main-right-cont">
-              <ProductList isLoggedIn={true} products={currentProducts} />
+              {loading ? (
+                <div className="product-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Array.from({ length: 12 }).map((_, index) => (
+                    <ProductSkeletonCard key={index} />
+                  ))}
+                </div>
+              ) : (
+                <ProductList
+                  isLoggedIn={!!session?.token}
+                  products={currentProducts}
+                />
+              )}
               <div className="product-lists-footer mt-[38px] md:mt-6 flex md:flex-row-reverse md:justify-between sm:flex-col sm:mt-4 items-center">
                 <div className="pagination-wrapper ml-auto mr-auto md:mx-0">
                   <Pagination

@@ -22,14 +22,15 @@ interface CharityData {
   profileImage?: string;
   charityBannerImage?: string;
 }
-
+interface CharityStorefrontResponse {
+  charity: CharityData;
+}
 const CharityStorefront: React.FC<{ storefrontid: string }> = ({
   storefrontid,
 }) => {
   const { data: session, status } = useSession();
   const [charityData, setCharityData] = useState<CharityData | null>(null);
   const [activeTab, setActiveTab] = useState<number>(0);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
   // Fetch charity data and favorite status on mount
   useEffect(() => {
@@ -38,14 +39,14 @@ const CharityStorefront: React.FC<{ storefrontid: string }> = ({
         console.log('Fetching storefront with id:', storefrontid);
 
         try {
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}`,
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token}`,
-              },
-            }
-          );
+           const response = await axios.get<CharityStorefrontResponse>(
+             `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}`,
+             {
+               headers: {
+                 Authorization: `Bearer ${session?.token}`,
+               },
+             }
+           );
           console.log('Charity Data fetched successfully:', response.data);
           setCharityData(response.data.charity);
         } catch (error) {
@@ -54,31 +55,7 @@ const CharityStorefront: React.FC<{ storefrontid: string }> = ({
       }
     };
 
-    const fetchFavoriteStatus = async () => {
-      if (status === 'authenticated' && session?.token && storefrontid) {
-        try {
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/favorites`,
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token}`,
-              },
-            }
-          );
-
-          const { favoriteCharities } = response.data;
-          const isFav = favoriteCharities.some(
-            (favCharity: { _id: string }) => favCharity._id === storefrontid
-          );
-          setIsFavorite(isFav);
-        } catch (error) {
-          console.error('Error fetching favorite status:', error);
-        }
-      }
-    };
-
     fetchCharityData();
-    fetchFavoriteStatus();
   }, [storefrontid, session, status]);
 
   if (!charityData) {
@@ -118,11 +95,12 @@ const CharityStorefront: React.FC<{ storefrontid: string }> = ({
                 </ul>
                 {activeTab === 1 && charityData.storefrontId && (
                   <div className="favorite-btn-item cursor-pointer p-3">
-                    <FavoriteButton
-                      itemId={charityData.storefrontId}
-                      type="charity"
-                      initialStatus={isFavorite}
-                    />
+                    {charityData.charityID && (
+                      <FavoriteButton
+                        itemId={charityData.charityID}
+                        type="Charity"
+                      />
+                    )}
                   </div>
                 )}
               </div>

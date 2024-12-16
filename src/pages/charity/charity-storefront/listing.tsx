@@ -13,8 +13,8 @@ import { CloseIcon, FilterIcon } from '@/icons';
 interface Filters {
   category: string[];
   subCategory: string[];
-  productBrand: string[];
-  productCondition: string[];
+  brand: string[];
+  condition: string[];
 }
 
 const CharityStoreListing: React.FC = () => {
@@ -26,8 +26,8 @@ const CharityStoreListing: React.FC = () => {
   const [filters, setFilters] = useState<Filters>({
     category: [],
     subCategory: [],
-    productBrand: [],
-    productCondition: [],
+    brand: [],
+    condition: [],
   });
   const [sort, setSort] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -81,18 +81,18 @@ const CharityStoreListing: React.FC = () => {
           filters.subCategory.includes(product.subcategory)
       );
     }
-    if (filters.productBrand.length > 0) {
+    if (filters.brand.length > 0) {
       updatedProducts = updatedProducts.filter(
         product =>
-          product.productBrand !== undefined &&
-          filters.productBrand.includes(product.productBrand)
+          product.brand !== undefined &&
+          filters.brand.includes(product.brand)
       );
     }
-    if (filters.productCondition.length > 0) {
+    if (filters.condition.length > 0) {
       updatedProducts = updatedProducts.filter(
         product =>
-          product.productCondition !== undefined &&
-          filters.productCondition.includes(product.productCondition)
+          product.condition !== undefined &&
+          filters.condition.includes(product.condition)
       );
     }
 
@@ -100,14 +100,14 @@ const CharityStoreListing: React.FC = () => {
     if (query) {
       updatedProducts = updatedProducts.filter(
         product =>
-          (product.productTitle &&
-            product.productTitle.toLowerCase().includes(query.toLowerCase())) ||
+          (product.name &&
+            product.name.toLowerCase().includes(query.toLowerCase())) ||
           (product.category &&
             product.category.toLowerCase().includes(query.toLowerCase())) ||
           (product.subcategory &&
             product.subcategory.toLowerCase().includes(query.toLowerCase())) ||
-          (product.productBrand &&
-            product.productBrand.toLowerCase().includes(query.toLowerCase()))
+          (product.brand &&
+            product.brand.toLowerCase().includes(query.toLowerCase()))
       );
     }
 
@@ -115,20 +115,20 @@ const CharityStoreListing: React.FC = () => {
     if (sort === 'price-asc') {
       updatedProducts.sort(
         (a, b) =>
-          parseFloat(a.productPrice || '0') - parseFloat(b.productPrice || '0')
+          parseFloat(a.price || '0') - parseFloat(b.price || '0')
       );
     } else if (sort === 'price-desc') {
       updatedProducts.sort(
         (a, b) =>
-          parseFloat(b.productPrice || '0') - parseFloat(a.productPrice || '0')
+          parseFloat(b.price || '0') - parseFloat(a.price || '0')
       );
     } else if (sort === 'name-asc') {
       updatedProducts.sort((a, b) =>
-        (a.productTitle || '').localeCompare(b.productTitle || '')
+        (a.name || '').localeCompare(b.name || '')
       );
     } else if (sort === 'name-desc') {
       updatedProducts.sort((a, b) =>
-        (b.productTitle || '').localeCompare(a.productTitle || '')
+        (b.name || '').localeCompare(a.name || '')
       );
     }
 
@@ -157,8 +157,8 @@ const CharityStoreListing: React.FC = () => {
                   ...product,
                   category: product.category || '', // Ensuring category is defined
                   subcategory: product.subcategory || '', // Similarly for other properties
-                  productBrand: product.productBrand || '',
-                  productCondition: product.productCondition || '',
+                  brand: product.brand || '',
+                  condition: product.condition || '',
                 }))}
                 selectedFilters={filters}
                 onFilterChange={handleFilterChange}
@@ -242,9 +242,9 @@ const CharityStoreListing: React.FC = () => {
                                   ...product,
                                   category: product.category || '', // Ensuring category is defined
                                   subcategory: product.subcategory || '', // Similarly for other properties
-                                  productBrand: product.productBrand || '',
-                                  productCondition:
-                                    product.productCondition || '',
+                                  brand: product.brand || '',
+                                  condition:
+                                    product.condition || '',
                                 }))}
                                 selectedFilters={filters}
                                 onFilterChange={handleFilterChange}

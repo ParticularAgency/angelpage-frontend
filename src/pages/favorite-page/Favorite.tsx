@@ -5,27 +5,49 @@ import FavoriteProductListing from './FavoriteProducts';
 import FavoriteCharityListing from './FavoriteCharities';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import { Product } from '@/types/productTypes';
+
+interface FavoriteResponse {
+  favoriteProducts: Array<{
+    products: Product[];
+  }>;
+  favoriteCharities: Array<{
+    id: string;
+    name: string;
+    listingProduct?: string;
+    image: string;
+    description?: string;
+  }>;
+}
 
 const FavoritePage = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
   const { data: session, status } = useSession();
-  const [favoriteProducts, setFavoriteProducts] = useState([]);
-  const [favoriteCharities, setFavoriteCharities] = useState([]);
+  const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
+  const [favoriteCharities, setFavoriteCharities] = useState<
+    FavoriteResponse['favoriteCharities']
+  >([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFavorites = async () => {
       if (status !== 'authenticated') return;
+
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/favorites/favorites`,
+        const response = await axios.get<FavoriteResponse>(
+          `${process.env.NEXT_PUBLIC_API_URL}/favorites/added`,
           {
             headers: {
               Authorization: `Bearer ${session?.token}`,
             },
           }
         );
-        setFavoriteProducts(response.data.favoriteProducts);
+
+        // Flatten the favoriteProducts array
+        const products = response.data.favoriteProducts.flatMap(
+          item => item.products
+        );
+        setFavoriteProducts(products);
         setFavoriteCharities(response.data.favoriteCharities);
       } catch (error) {
         console.error('Error fetching favorites:', error);
@@ -33,13 +55,13 @@ const FavoritePage = () => {
         setLoading(false);
       }
     };
+
     fetchFavorites();
   }, [status, session]);
 
   if (loading) {
     return <div>Loading favorites...</div>;
   }
-
   return (
     <div className="favorite-page-content-wrapper">
       <BannerSection />

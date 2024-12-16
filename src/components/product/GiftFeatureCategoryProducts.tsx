@@ -1,84 +1,69 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import ProductCard from '../common/cards/product/productCard';
+import { useSession } from 'next-auth/react';
+import axios from 'axios';
+import { Product } from '@/types/productTypes';
+import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
+import countries from 'i18n-iso-countries';
+import enLocale from 'i18n-iso-countries/langs/en.json'; // Importing JSON correctly
+
+// Load English language data
+countries.registerLocale(enLocale);
 
 interface GiftFeaturedCategoryProductsProps {
   secClassName?: string;
-  isLoggedIn: boolean;
 }
-
+interface GiftsCategoryResponse {
+  products: Product[];
+}
 const GiftFeaturedCategoryProducts: React.FC<
   GiftFeaturedCategoryProductsProps
-> = ({ secClassName, isLoggedIn }) => {
-  const productData = [
-    {
-      id: 1,
-      charityImageSrc: '/images/icons/charity-img.png',
-      charityImageAlt: 'The Salvation Army Logo',
-      productImageSrc: '/images/products/product1.png',
-      productImageAlt: 'Hollister Crew Neck Jumper',
-      productBrand: 'Hollister',
-      productTitle: 'Crew Neck Jumper',
-      productSize: '12 UK',
-      productPrice: '£11.50',
-      location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(0),
-      isLoggedIn,
-    },
-    {
-      id: 2,
-      charityImageSrc: '/images/icons/charity-img2.png',
-      charityImageAlt: 'RSPCA Logo',
-      productImageSrc: '/images/products/product2.png',
-      productImageAlt: 'Jordan Dunks',
-      productBrand: 'Jordan',
-      productTitle: 'Jordan Dunks',
-      productSize: '10 UK',
-      productPrice: '£40.00',
-      location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(0),
-      isLoggedIn,
-    },
-    {
-      id: 3,
-      charityImageSrc: '/images/icons/charity-img3.png',
-      charityImageAlt: 'WaterAid Logo',
-      productImageSrc: '/images/products/product3.png',
-      productImageAlt: 'Addison Ross Fine Bone China Mug',
-      productBrand: 'Addison Ross',
-      productTitle: 'Fine Bone China Mug',
-      productSize: 'N/A',
-      productPrice: '£3.00',
-      location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(0),
-      isLoggedIn,
-    },
-    {
-      id: 4,
-      charityImageSrc: '/images/icons/charity-img4.png',
-      charityImageAlt: 'Decor Logo',
-      productImageSrc: '/images/products/product4.png',
-      productImageAlt: 'Balineum Flora Wall Mirror',
-      productBrand: 'Balineum',
-      productTitle: 'Flora Wall Mirror',
-      productSize: '100x100',
-      productPrice: '£15.00',
-      location: 'London',
-      onFavoriteClick: () => handleFavoriteClick(0),
-      isLoggedIn,
-    },
-  ];
+> = ({ secClassName }) => {
+  const { data: session } = useSession();
+  const [productData, setProductData] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleFavoriteClick = (index: number) => {
-    console.log(`Favorite clicked on product ${index}`);
-  };
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const headers: Record<string, string> = {};
+        if (session?.token) {
+          headers.Authorization = `Bearer ${session.token}`;
+        }
+
+        const response = await axios.get<GiftsCategoryResponse>(
+          `${process.env.NEXT_PUBLIC_API_URL}/products/listing/latest-products`,
+          {
+            params: { isArchived: false },
+            headers,
+          }
+        );
+        setProductData(response.data.products);
+      } catch (err: unknown) {
+          setError('');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [session]);
+
+  if (error) return <p className="text-red-600">{error}</p>;
 
   return (
     <section
-      className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-8 pb-[25px]'}`} 
+      className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-8 pb-[25px]'}`}
     >
       <div className="custom-container">
         <div className="product-sec-title-box mb-10 flex sm:flex-col items-start justify-between gap-4">
@@ -95,21 +80,50 @@ const GiftFeaturedCategoryProducts: React.FC<
             slidesPerView={2}
             navigation
             modules={[Navigation, Autoplay]}
-            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            autoplay={{ delay: 3500, disableOnInteraction: false }}
             breakpoints={{
-              640: { slidesPerView: 2, spaceBetween: 10 }, // Breakpoint for small screens
-              768: { slidesPerView: 3, spaceBetween: 15 }, // Breakpoint for medium screens
-              1024: { slidesPerView: 5, spaceBetween: 19 }, // Breakpoint for larger screens
+              640: { slidesPerView: 2, spaceBetween: 10 },
+              768: { slidesPerView: 3, spaceBetween: 15 },
+              1024: { slidesPerView: 5, spaceBetween: 19 },
             }}
           >
-            {productData.map((item, index) => (
-              <SwiperSlide key={index}>
-                <ProductCard
-                  {...item}
-                  onFavoriteClick={() => handleFavoriteClick(index)} // Pass the click handler to ProductCard
-                />
-              </SwiperSlide>
-            ))}
+            {loading
+              ? Array.from({ length: 5 }).map((_, index) => (
+                  <SwiperSlide key={`skeleton-${index}`}>
+                    <ProductSkeletonCard />
+                  </SwiperSlide>
+                ))
+              : productData.map(item => {
+                  // Safely extract location
+                  const sellerAddress = item.seller?.address;
+                  let countryCode = 'N/A';
+                  if (sellerAddress?.country) {
+                    countryCode =
+                      countries.getAlpha2Code(sellerAddress.country, 'en') ||
+                      'N/A';
+                  }
+
+                  const location = sellerAddress
+                    ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
+                    : 'Location Not Available';
+
+                  return (
+                    <SwiperSlide key={item.id}>
+                      <ProductCard
+                        {...item}
+                        id={item.id.toString()}
+                        charityImageSrc={item.charity?.profileImage}
+                        charityImageAlt={
+                          item.charity?.charityName || 'Charity Image'
+                        }
+                        dimensionHeight={item.dimensionHeight || '0in'}
+                        dimensionWidth={item.dimensionWidth || '0in'}
+                        location={location}
+                        isLoggedIn={!!session?.token}
+                      />
+                    </SwiperSlide>
+                  );
+                })}
           </Swiper>
         </div>
       </div>

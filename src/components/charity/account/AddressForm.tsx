@@ -3,7 +3,9 @@ import { Button, Input, Select } from '@/components/elements';
 import { EditIcon, SaveIcon } from '@/icons';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-
+interface CreateAddressResponse {
+  addresses: Address[];
+}
 // Define the shape of an address for type safety
 interface Address {
   _id?: string;
@@ -145,7 +147,7 @@ const handleSave = async (id: string | number) => {
         );
       } else {
         // Add new address
-        const response = await axios.post(
+        const response = await axios.post<CreateAddressResponse>(
           `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/addresses`,
           address,
           {

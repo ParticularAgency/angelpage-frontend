@@ -1,7 +1,8 @@
-"use client"
+'use client';
+
 import React, { useState } from 'react';
 import { requestPasswordReset } from '@/utils/api';
-import { Button, Input, Select } from '@/components/elements';
+import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import ToastNotification, {
   ToastService,
@@ -12,11 +13,12 @@ const roles = [
   { label: 'Charity', value: 'CHARITY' },
   { label: 'Admin', value: 'ADMIN' },
 ];
-const RequestPasswordReset: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [role, setRole] = useState<string>('USER'); // Default role can be USER
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
+
+const RequestPasswordReset = () => {
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('USER'); // Default role can be USER
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleRequestReset = async () => {
@@ -30,22 +32,19 @@ const RequestPasswordReset: React.FC = () => {
     setMessage('');
 
     try {
-      const response = await requestPasswordReset(email, role); // Pass both email and role
-    const successMessage =
-      response.message || 'Password reset email sent. Please check your inbox.';
+      const response = await requestPasswordReset(email, role);
+      const successMessage =
+        response.message ||
+        'Password reset email sent. Please check your inbox.';
       setMessage(successMessage);
-      ToastService.error(successMessage);
+      ToastService.success(successMessage);
       setEmail('');
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage =
-        error.response?.data?.message ||
+        error.response?.message ||
         'Error requesting password reset. Please try again.';
       setError(errorMessage);
       ToastService.error(errorMessage);
-      console.error(
-        'Error requesting password reset:',
-        error.response || error
-      );
     } finally {
       setLoading(false);
     }
@@ -72,18 +71,20 @@ const RequestPasswordReset: React.FC = () => {
         <div className="w-1/2 md:w-full md:flex md:justify-center md:px-10 pt-[103px] pb-[260px] md:pb-[160px]">
           <div className="w-full max-w-md">
             <h4 className="text-center mb-[18px]">Reset password</h4>
-          
+
             {message && (
               <p className="success-message text-green-600">{message}</p>
             )}
             {error && <p className="error-message text-red-600">{error}</p>}
+
             <Input
               type="email"
               placeholder="Enter your email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full p-2 border  rounded-md mb-4"
+              className="w-full p-2 border rounded-md mb-4"
             />
+
             <div className="select-role-area px-2">
               <select
                 id="RestPassRoleSelect"

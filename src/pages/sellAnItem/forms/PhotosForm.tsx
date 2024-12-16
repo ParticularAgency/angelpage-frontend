@@ -1,7 +1,5 @@
 'use client';
 import { Button } from '@/components/elements';
-import axios from 'axios';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import React, { useRef, useState, useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';

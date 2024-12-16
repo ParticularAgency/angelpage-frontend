@@ -1,84 +1,89 @@
 import React, { useState, useEffect } from 'react';
-import { deleteAccount } from '@/utils/api'; // Import the API function
+import axios from 'axios';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/elements';
 
-// Define a custom type for NextAuth session with custom fields
-interface CustomSession {
-  user: {
-    id: string;
-    role: 'USER' | 'CHARITY' | 'ADMIN'; // Specify allowed roles
-  };
-  token: string; // Adjust to match session structure
+// Helper to check if an error is an AxiosError
+function isAxiosError(error) {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'isAxiosError' in error &&
+    error.isAxiosError === true
+  );
 }
 
-const DeleteAccount: React.FC = () => {
-  const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
+const DeleteAccount = () => {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [message, setMessage] = useState('');
   const { data: session } = useSession();
   const router = useRouter();
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  // Log the entire session object to debug its structure
   useEffect(() => {
     console.log('Session data:', session);
   }, [session]);
 
-  // Type guard to verify if session data has custom properties and role is "USER"
-  const isUserSession = (session: unknown): session is CustomSession => {
-    const isUser =
-      typeof session === 'object' &&
-      session !== null &&
-      'user' in session &&
-      typeof (session as CustomSession).user.id === 'string' &&
-      (session as CustomSession).user.role === 'CHARITY' &&
-      'token' in session; // Adjust to check for `token` instead of `accessToken`
-
-    if (!isUser) {
-      console.error(
-        'Session does not have expected structure or role:',
-        session
-      );
-    }
-
-    return isUser;
-  };
-
-  // Function to open confirmation modal
-  const openConfirmation = () => {
-    setIsConfirmOpen(true);
-  };
-
   const handleDeleteAccount = async () => {
-    if (!session || !isUserSession(session)) {
-      setMessage('You need to be logged in as a user to delete your account.');
+    if (!session) {
+      setMessage('You need to be logged in to delete your account.');
       return;
     }
 
     try {
-      const response = await deleteAccount(
-        session.user.id,
-        session.user.role,
-        session.token
-      );
+      const formData = new FormData();
+      const userId = session.user?.id || '';
+      const role = session.user?.role || '';
 
-      setMessage(response.message || 'Account deleted successfully.');
-      await signOut();
-      router.push('/');
-    } catch (error: any) {
-      if (error.response) {
-        console.error('Server responded with:', error.response.data);
-        setMessage(error.response.data.message || 'Error deleting account');
+      if (!userId || !role) {
+        throw new Error('Invalid user session: Missing userId or role.');
+      }
+
+      formData.append('userId', userId);
+      formData.append('role', role);
+
+      const response = await axios.request({
+        url: `${API_URL}/auth/delete-account`,
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${session.token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+        data: formData,
+      });
+
+      if (response.data?.message) {
+        setMessage(response.data.message);
+        await signOut();
+        router.push('/');
+      } else {
+        console.error('Invalid response structure:', response.data);
+        setMessage('Failed to delete account. Please try again.');
+      }
+    } catch (error) {
+      if (isAxiosError(error)) {
+        console.error(
+          'Error deleting account:',
+          error.response?.data || error.message
+        );
+        setMessage(
+          error.response?.data?.message ||
+            'Failed to delete the account. Please try again.'
+        );
       } else {
         console.error('Unexpected error:', error);
-        setMessage('An unexpected error occurred. Please try again later.');
+        setMessage('An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsConfirmOpen(false);
     }
   };
 
-  // Function to cancel and close the modal
+  const openConfirmation = () => {
+    setIsConfirmOpen(true);
+  };
+
   const handleCancel = () => {
     setIsConfirmOpen(false);
   };

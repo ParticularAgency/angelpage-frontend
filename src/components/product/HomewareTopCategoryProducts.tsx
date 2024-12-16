@@ -13,26 +13,31 @@ const homewareCategories = [
   {
     productImageSrc: '/images/products/homeware-cat-img1.png',
     productImageAlt: 'Cutlery',
+    productCategory: '/product?category=homeware&subcategory=cutlery',
     productTitle: 'Cutlery',
   },
   {
     productImageSrc: '/images/products/homeware-cat-img2.png',
     productImageAlt: 'Bedding',
+    productCategory: '/product?category=homeware&subcategory=bedding',
     productTitle: 'Bedding',
   },
   {
     productImageSrc: '/images/products/homeware-cat-img3.png',
     productImageAlt: 'Crockery',
+    productCategory: '/product?category=homeware&subcategory=crockery',
     productTitle: 'Crockery',
   },
   {
     productImageSrc: '/images/products/homeware-cat-img4.png',
     productImageAlt: 'Decor',
+    productCategory: '/product?category=homeware&subcategory=decor',
     productTitle: 'Decor',
   },
   {
     productImageSrc: '/images/products/homeware-cat-img5.png',
     productImageAlt: 'Curtains',
+    productCategory: '/product?category=homeware&subcategory=curtains',
     productTitle: 'Curtains',
   },
 ];
@@ -70,12 +75,13 @@ const HomewareTopCategoryProducts: React.FC<
                 1024: { slidesPerView: 5, spaceBetween: 19 }, // Breakpoint for larger screens
               }}
             >
-              {homewareCategories.map((category, index) => (
+              {homewareCategories.map((item, index) => (
                 <SwiperSlide key={index}>
                   <ProductCategoryCardV1
-                    productImageSrc={category.productImageSrc}
-                    productImageAlt={category.productImageAlt}
-                    productTitle={category.productTitle}
+                    productCategory={item.productCategory}
+                    productImageSrc={item.productImageSrc}
+                    productImageAlt={item.productImageAlt}
+                    productTitle={item.productTitle}
                   />
                 </SwiperSlide>
               ))}

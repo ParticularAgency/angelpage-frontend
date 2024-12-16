@@ -30,7 +30,7 @@ const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
     if (query) {
       updatedProducts = updatedProducts.filter(
         product =>
-          product.productTitle?.toLowerCase().includes(query.toLowerCase()) ||
+          product.name?.toLowerCase().includes(query.toLowerCase()) ||
           product.category?.toLowerCase().includes(query.toLowerCase())
       );
     }
@@ -39,20 +39,20 @@ const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
     if (sort === 'price-asc') {
       updatedProducts.sort(
         (a, b) =>
-          parseFloat(a.productPrice || '0') - parseFloat(b.productPrice || '0')
+          parseFloat(a.price || '0') - parseFloat(b.price || '0')
       );
     } else if (sort === 'price-desc') {
       updatedProducts.sort(
         (a, b) =>
-          parseFloat(b.productPrice || '0') - parseFloat(a.productPrice || '0')
+          parseFloat(b.price || '0') - parseFloat(a.price || '0')
       );
     } else if (sort === 'name-asc') {
       updatedProducts.sort((a, b) =>
-        (a.productTitle || '').localeCompare(b.productTitle || '')
+        (a.name || '').localeCompare(b.name || '')
       );
     } else if (sort === 'name-desc') {
       updatedProducts.sort((a, b) =>
-        (b.productTitle || '').localeCompare(a.productTitle || '')
+        (b.name || '').localeCompare(a.name || '')
       );
     }
 

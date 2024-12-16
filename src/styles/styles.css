@@ -1140,3 +1140,6 @@ button.steps-completed {
     position: relative;
     /* Ensure the lens can render outside the image */
 }
+.product-quantity-area{
+    border: 1px solid #0B0112;
+}
