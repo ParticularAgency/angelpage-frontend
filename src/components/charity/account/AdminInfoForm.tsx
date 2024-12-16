@@ -13,7 +13,7 @@ const ProfileInfoForm = () => {
     charityID: '',
     description: '',
   });
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
 
  
 

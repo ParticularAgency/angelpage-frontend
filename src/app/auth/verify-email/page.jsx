@@ -13,8 +13,8 @@ const VerifyEmail = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [resending, setResending] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
 
   // Function to handle email verification
   const handleVerify = async () => {

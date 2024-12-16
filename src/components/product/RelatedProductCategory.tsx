@@ -28,7 +28,7 @@ const RelatedCategoryProducts: React.FC<RelatedCategoryProductsProps> = ({
   category,
   currentProductId,
 }) => {
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const [productData, setProductData] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -119,7 +119,7 @@ const RelatedCategoryProducts: React.FC<RelatedCategoryProductsProps> = ({
                     <SwiperSlide key={item.id}>
                       <ProductCard
                         {...item}
-                        id={item.id.toString()}
+                        id={item.id ? item.id.toString() : 'unknown-id'}
                         charityImageSrc={item.charity?.profileImage}
                         charityImageAlt={
                           item.charity?.charityName || 'Charity Image'

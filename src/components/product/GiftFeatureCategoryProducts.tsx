@@ -25,7 +25,7 @@ interface GiftsCategoryResponse {
 const GiftFeaturedCategoryProducts: React.FC<
   GiftFeaturedCategoryProductsProps
 > = ({ secClassName }) => {
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const [productData, setProductData] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -111,7 +111,7 @@ const GiftFeaturedCategoryProducts: React.FC<
                     <SwiperSlide key={item.id}>
                       <ProductCard
                         {...item}
-                        id={item.id.toString()}
+                        id={item.id ? item.id.toString() : 'unknown-id'}
                         charityImageSrc={item.charity?.profileImage}
                         charityImageAlt={
                           item.charity?.charityName || 'Charity Image'

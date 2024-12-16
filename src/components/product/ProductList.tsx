@@ -31,7 +31,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, isLoggedIn }) => {
           return (
             <ProductCard
               key={product.id || `product-${index}`} // Use index as fallback key
-              id={product.id.toString()} // Use `product.id` instead of `item.id`
+              id={product.id ? product.id.toString() : 'unknown-id'} // Use `product.id` instead of `item.id`
               charityImageSrc={
                 product.charity?.profileImage ||
                 '/images/icons/elisp-profile-default-img.svg'

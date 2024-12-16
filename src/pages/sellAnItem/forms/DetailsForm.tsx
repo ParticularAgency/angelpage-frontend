@@ -54,7 +54,7 @@ const DetailsForm: React.FC<FormProps> = ({
   hideCharitySelection = false,
 }) => {
   const [unit, setUnit] = useState<'in' | 'cm'>('in');
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
 
   // Separate states for charityId and charityName
   const [charityName, setCharityName] = useState(formData.charityName || '');

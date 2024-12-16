@@ -63,7 +63,7 @@ interface ProductsListsSecProps {
 }
 
 const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const searchParams = useSearchParams();
   const category = searchParams?.get('category') || '';
   const subcategory = searchParams?.get('subcategory') || '';

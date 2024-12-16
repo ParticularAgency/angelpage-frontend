@@ -32,7 +32,7 @@ interface SessionData {
 }
 
 const AddressForm: React.FC = () => {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);

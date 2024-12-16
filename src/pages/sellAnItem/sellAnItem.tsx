@@ -68,7 +68,7 @@ interface PriceData {
 
 const SellAnItem: React.FC = () => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const [activeTab, setActiveTab] = useState<'details' | 'photos' | 'price'>(
     'details'
   );

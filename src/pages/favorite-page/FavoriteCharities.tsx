@@ -13,7 +13,7 @@ interface FavoriteCharityListingProps {
 }
 
 const FavoriteCharityListing: React.FC<FavoriteCharityListingProps> = ({
-  charities,
+  charities = [],
 }) => {
   return (
     <section className="products-lists-section pt-[56px] pb-[54px] md:pb-9 sm:pt-10 sm:pb-12 bg-[#F1F1F7]">

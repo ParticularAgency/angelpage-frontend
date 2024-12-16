@@ -46,7 +46,7 @@ interface CartResponse {
 }
 
 const BasketPage = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();

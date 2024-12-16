@@ -1,22 +1,24 @@
 import React from 'react';
 
+interface Address {
+  address?: string;
+  city?: string;
+  country?: string;
+  postcode?: string;
+}
+
 interface AboutInfoComponentProps {
-  charityData: {
+  charityData?: {
     charityName?: string;
     charityNumber?: string;
     charityID?: string;
     description?: string;
-    addresses?: Array<{
-      address?: string;
-      city?: string;
-      country?: string;
-      postcode?: string;
-    }>;
+    addresses?: Address[];
   };
 }
 
 const AboutInfoComponent: React.FC<AboutInfoComponentProps> = ({
-  charityData,
+  charityData = {}, // Default to an empty object
 }) => {
   const {
     charityName = 'Charity Name Not Available',
@@ -25,6 +27,8 @@ const AboutInfoComponent: React.FC<AboutInfoComponentProps> = ({
     description = 'No description available for this charity.',
     addresses = [],
   } = charityData;
+
+  const address = addresses[0] || {};
 
   return (
     <div className="storefront-about-tabs-cont pt-[35px] pb-[90px]">
@@ -48,10 +52,10 @@ const AboutInfoComponent: React.FC<AboutInfoComponentProps> = ({
               <li className="charity-storefront-info-item flex items-center gap-2 body-bold-small">
                 Address:{' '}
                 <span className="body-small">
-                  {addresses[0]?.address || 'Address Not Available'},{' '}
-                  {addresses[0]?.city || 'City Not Available'},{' '}
-                  {addresses[0]?.country || 'Country Not Available'},{' '}
-                  {addresses[0]?.postcode || 'Postcode Not Available'}
+                  {address.address || 'Address Not Available'},{' '}
+                  {address.city || 'City Not Available'},{' '}
+                  {address.country || 'Country Not Available'},{' '}
+                  {address.postcode || 'Postcode Not Available'}
                 </span>
               </li>
             )}

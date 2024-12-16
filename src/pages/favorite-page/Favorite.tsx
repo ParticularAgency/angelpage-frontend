@@ -22,7 +22,7 @@ interface FavoriteResponse {
 
 const FavoritePage = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
   const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
   const [favoriteCharities, setFavoriteCharities] = useState<
     FavoriteResponse['favoriteCharities']

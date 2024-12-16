@@ -8,6 +8,7 @@ import SearchBar from '@/components/elements/search/SearchBar';
 import { productData } from '@/libs/productData';
 import { Product } from '@/types/productTypes'; // Ensure this path is correct
 import { CloseIcon, FilterIcon } from '@/icons';
+import { useSession } from 'next-auth/react';
 
 // Define the type for filters
 interface Filters {
@@ -18,6 +19,7 @@ interface Filters {
 }
 
 const CharityStoreListing: React.FC = () => {
+  const { data: session, status } = useSession() || {};
   const [products] = useState<Product[]>(productData); // Initial product data
   const [filteredProducts, setFilteredProducts] =
     useState<Product[]>(productData);
@@ -146,6 +148,14 @@ const CharityStoreListing: React.FC = () => {
     startIndex + productsPerPage
   );
 
+    if (status === 'loading') {
+      return <p>Loading...</p>;
+    }
+
+    if (status === 'unauthenticated') {
+      return <p>You must be logged in to view this page.</p>;
+    }
+    
   return (
     <section className="products-lists-section pt-[31px] pb-[54px] md:pb-9 sm:pt-5 sm:pb-8 bg-[#F1F1F7]">
       <div className="custom-container">
@@ -243,8 +253,7 @@ const CharityStoreListing: React.FC = () => {
                                   category: product.category || '', // Ensuring category is defined
                                   subcategory: product.subcategory || '', // Similarly for other properties
                                   brand: product.brand || '',
-                                  condition:
-                                    product.condition || '',
+                                  condition: product.condition || '',
                                 }))}
                                 selectedFilters={filters}
                                 onFilterChange={handleFilterChange}
@@ -282,7 +291,7 @@ const CharityStoreListing: React.FC = () => {
                 <Sorting onSortChange={handleSortChange} />
               </div>
 
-              <ProductList products={currentProducts} isLoggedIn={true} />
+              <ProductList products={currentProducts} isLoggedIn={!!session} />
               <div className="product-lists-footer mt-[38px] md:mt-6 flex md:flex-row-reverse md:justify-between sm:flex-col sm:mt-4 items-center">
                 <div className="pagination-wrapper ml-auto mr-auto md:mx-0">
                   <Pagination

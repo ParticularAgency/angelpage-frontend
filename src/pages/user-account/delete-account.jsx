@@ -17,7 +17,7 @@ function isAxiosError(error) {
 const DeleteAccount = () => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

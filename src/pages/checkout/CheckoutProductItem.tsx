@@ -39,15 +39,15 @@ interface CartItem {
 }
 
 interface CheckoutProductItemProps {
-  cartItems: CartItem[];
+  cartItems: CartItem[] | undefined; 
   setCartItems: (items: CartItem[]) => void;
 }
 
 const CheckoutProductItem = ({
-  cartItems,
+  cartItems = [],
   setCartItems,
 }: CheckoutProductItemProps) => {
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const userId = session?.user?.id;
   const token = session?.token;
 
@@ -131,7 +131,7 @@ const updateCart = async (productId: string, quantityChange: number) => {
                     <div className="seller-info-cont">
                       <p className="caption mb-[2px]">Seller</p>
                       <p className="eyebrow-medium text-black">
-                        {item.productId?.seller?.firstName}
+                        {item.productId?.seller?.firstName || 'Unknown'}
                       </p>
                     </div>
                   </div>
@@ -148,29 +148,22 @@ const updateCart = async (productId: string, quantityChange: number) => {
                         item.productId?.images?.[0]?.url ||
                         '/images/products/default-product.jpg'
                       }
-                      alt={item.productId?.name}
+                      alt={item.productId?.name || 'Product Image'}
                       width={74}
                       height={70}
                       className="w-[74px] h-[70px] object-cover"
                     />
                     <div className="added-product-info">
                       <p className="product-brand eyebrow-medium text-mono-100">
-                        {item.productId?.brand}
+                        {item.productId?.brand || 'Unknown Brand'}
                       </p>
                       <p className="product-title caption-bold mt-[3px] text-mono-70">
-                        {item.productId.name}
+                        {item.productId.name || 'Product Name'}
                       </p>
                       <p className="product-specification caption mt-2">
-                        {item.productId?.size ? (
-                          <>size: {item.productId?.size || ''}</>
-                        ) : (
-                          <>
-                            {' '}
-                            dimensionHeight?: string; dimensionWidth?: string;
-                            Height: {item.productId?.dimensions?.height} |
-                            Width: {item.productId?.dimensions?.width}
-                          </>
-                        )}
+                        {item.productId?.size
+                          ? `Size: ${item.productId?.size}`
+                          : `Dimensions: ${item.productId?.dimensions?.height || 'N/A'} x ${item.productId?.dimensions?.width || 'N/A'}`}
                       </p>
                       <p className="flex items-center gap-[13px] mt-[13px] caption">
                         <Image
@@ -179,11 +172,14 @@ const updateCart = async (productId: string, quantityChange: number) => {
                           width={10}
                           height={12}
                         />{' '}
-                        {item.productId?.seller?.addresses[0].city ||
-                          (item.productId?.seller?.addresses[0].country && (
+                        {item.productId?.seller?.addresses[0]?.city ||
+                          (item.productId?.seller?.addresses[0]?.country && (
                             <>
-                              {item.productId?.seller?.addresses[0].city},{' '}
-                              {item.productId?.seller?.addresses[0].country}
+                              {item.productId?.seller?.addresses[0]?.city ||
+                                'Unknown City'}
+                              ,{' '}
+                              {item.productId?.seller?.addresses[0]?.country ||
+                                'Unknown Country'}
                             </>
                           ))}
                       </p>

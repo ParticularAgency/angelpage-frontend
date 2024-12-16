@@ -19,7 +19,7 @@ const RequestPasswordReset = () => {
   const [role, setRole] = useState('USER'); // Default role can be USER
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   const handleRequestReset = async () => {
     if (!email) {

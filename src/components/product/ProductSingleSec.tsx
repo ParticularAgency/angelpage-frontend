@@ -64,7 +64,7 @@ interface Product {
 //   productid: string;
 // }
 const ProductSinglepage: React.FC = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const params = useParams();
 
   // Safely parse product ID

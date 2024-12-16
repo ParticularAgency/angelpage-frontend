@@ -23,7 +23,7 @@ const AdminInfoForm = () => {
     newPassword: '',
   });
 
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
 
   // Fetch user data on mount if session is authenticated
   useEffect(() => {

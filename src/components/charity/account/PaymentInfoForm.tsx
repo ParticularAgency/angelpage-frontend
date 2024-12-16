@@ -36,7 +36,7 @@ interface SessionData {
 }
 
 const PaymentInfoForm: React.FC = () => {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isAdding, setIsAdding] = useState(false);

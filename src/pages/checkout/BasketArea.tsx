@@ -17,12 +17,12 @@ interface BasketAreaProps {
   cartItems: CartItem[];
 }
 
-const BasketArea: React.FC<BasketAreaProps> = ({ onPay, cartItems }) => {
+const BasketArea: React.FC<BasketAreaProps> = ({ onPay, cartItems = [] }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [loading] = useState(false);
 
   // Total calculations
-  const totalProductPrice = cartItems.reduce(
+  const totalProductPrice = (cartItems || []).reduce(
     (sum, item) => sum + item.quantity * item.productId.price,
     0
   );

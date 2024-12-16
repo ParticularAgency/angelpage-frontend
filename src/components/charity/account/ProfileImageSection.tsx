@@ -18,7 +18,7 @@ interface UserData {
 }
 
 const ProfileImageSection: React.FC = () => {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [image, setImage] = useState<string>(

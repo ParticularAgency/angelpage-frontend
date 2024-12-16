@@ -27,7 +27,7 @@ interface ProfileResponse {
 
 const BannerSection = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState<CharityUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

@@ -28,7 +28,7 @@ interface CharityStorefrontResponse {
 const CharityStorefront: React.FC<{ storefrontid: string }> = ({
   storefrontid,
 }) => {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
   const [charityData, setCharityData] = useState<CharityData | null>(null);
   const [activeTab, setActiveTab] = useState<number>(0);
 

@@ -11,7 +11,7 @@ interface FavoriteProductListingProps {
 }
 
 const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
-  products,
+  products = [],
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sort, setSort] = useState('');
