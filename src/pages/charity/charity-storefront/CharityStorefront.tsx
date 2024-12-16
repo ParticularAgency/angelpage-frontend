@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import StoreFrontBanner from './banner';
 import AboutInfoComponent from './about';
-import CharityStoreListing from './listing';
+// import CharityStoreListing from './listing';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
 
 interface CharityData {
@@ -26,9 +26,9 @@ interface CharityStorefrontResponse {
   charity: CharityData;
 }
 const CharityStorefront: React.FC<{ storefrontid: string }> = ({
-  storefrontid,
+  storefrontid = {},
 }) => {
-  const { data: session, status } = useSession() || {};
+  const { data: session, status } = useSession() || '';
   const [charityData, setCharityData] = useState<CharityData | null>(null);
   const [activeTab, setActiveTab] = useState<number>(0);
 
@@ -113,7 +113,7 @@ const CharityStorefront: React.FC<{ storefrontid: string }> = ({
               {activeTab === 0 && (
                 <li className="tabs-cont-item">
                   <div className="storefront-shop-tabs-cont bg-[#F1F1F7] sm:!py-0">
-                    <CharityStoreListing />
+                    {/* <CharityStoreListing /> */}
                   </div>
                 </li>
               )}
