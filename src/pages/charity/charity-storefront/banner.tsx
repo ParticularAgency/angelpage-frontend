@@ -13,7 +13,7 @@ interface StoreFrontBannerProps {
 }
 
 const StoreFrontBanner: React.FC<StoreFrontBannerProps> = ({
-  charityStore
+  charityStore = {},
 }) => {
   return (
     <section className="storefront-banner-component bg-mono-100 sm:bg-transparent sm:mt-2">
