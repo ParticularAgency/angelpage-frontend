@@ -1,18 +1,17 @@
-"use client";
-import { Footer, Header } from "@/components";
-import React from "react";
-// import LoadingScreen from "@/components/common/pre-loader/LoadingScreen";
+'use client';
+
+import { Footer, Header } from '@/components';
+import AuthProvider from '@utils/AuthProvider';
 
 export default function Template({ children }: { children: React.ReactNode }) {
-  // const [pageLoaded, setPageLoaded] = useState(false);
+    //  useReportWebVitals(metric => {
+    //    console.log(metric);
+    //  });
   return (
-    <>
+    <AuthProvider>
       <Header />
-      <div className="angelpage-template-main-wraper">{children}</div>
+      <main>{children}</main>
       <Footer />
-      {/* {!pageLoaded && (
-				<LoadingScreen  />
-			)} */}
-    </>
+    </AuthProvider>
   );
 }

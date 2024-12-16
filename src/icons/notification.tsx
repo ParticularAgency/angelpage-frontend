@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
 const NotificationIcon: React.FC = () => {
   return (
-    <svg width="14" height="16" viewBox="0 0 14 16" fill="none">
+    <svg width="24" height="24" viewBox="0 0 14 16" fill="none">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -24,4 +24,3 @@ const NotificationIcon: React.FC = () => {
 };
 
 export default NotificationIcon;
-
