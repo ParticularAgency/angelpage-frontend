@@ -5,30 +5,33 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import ProductCard from '../common/cards/product/productCard';
+import ProductCard from '../common/cards/product/productCard'; 
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import { Product } from '@/types/productTypes';
+// import { Product } from '@/types/productTypes';
 import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
 import countries from 'i18n-iso-countries';
-import enLocale from 'i18n-iso-countries/langs/en.json'; // Importing JSON correctly
-
 // Load English language data
+import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
 
-interface GiftFeaturedCategoryProductsProps {
-  secClassName?: string;
-}
-interface GiftsCategoryResponse {
-  products: Product[];
-}
-const GiftFeaturedCategoryProducts: React.FC<
-  GiftFeaturedCategoryProductsProps
-> = ({ secClassName }) => {
+// interface RelatedCategoryProductsProps {
+//   secClassName?: string;
+//   category: string;
+//   currentProductId: number;
+// }
+// interface RelatedCategoryResponse {
+//   products: Product[];
+// }
+const RelatedCategoryProducts = ({
+  secClassName,
+  category,
+  currentProductId,
+}) => {
   const { data: session } = useSession() || {};
-  const [productData, setProductData] = useState<Product[]>([]);
+  const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,20 +39,24 @@ const GiftFeaturedCategoryProducts: React.FC<
       setError(null);
 
       try {
-        const headers: Record<string, string> = {};
+        const headers = {};
         if (session?.token) {
           headers.Authorization = `Bearer ${session.token}`;
         }
 
-        const response = await axios.get<GiftsCategoryResponse>(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/listing/latest-products`,
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/products/related`,
           {
-            params: { isArchived: false },
+            params: { category },
             headers,
           }
         );
-        setProductData(response.data.products);
-      } catch (err: unknown) {
+        const filteredProducts = response.data.products.filter(
+          (product) => product.id !== currentProductId 
+        );
+
+        setProductData(filteredProducts);
+      } catch (err) {
           setError('');
       } finally {
         setLoading(false);
@@ -57,20 +64,21 @@ const GiftFeaturedCategoryProducts: React.FC<
     };
 
     fetchProducts();
-  }, [session]);
+  }, [session, category, currentProductId]);
 
   if (error) return <p className="text-red-600">{error}</p>;
 
   return (
     <section
-      className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-8 pb-[25px]'}`}
+      className={`product-section ${secClassName || 'bg-[#f1f1f7] pt-[35px] pb-5'}`}
     >
       <div className="custom-container">
         <div className="product-sec-title-box mb-10 flex sm:flex-col items-start justify-between gap-4">
           <div className="product-title-box-left-cont">
-            <h4 className="title h4">Gifts for a loved one?</h4>
-            <p className="body-small mt-2">Here are some great gift ideas!</p>
+            <h4 className="title h4">You may like</h4>
+            <p className="body-small mt-2 empty:hidden"></p>
           </div>
+          <div className="product-title-box-right-cont sm:hidden pt-2"></div>
         </div>
       </div>
       <div className="custom-container md:!pr-0">
@@ -111,7 +119,7 @@ const GiftFeaturedCategoryProducts: React.FC<
                     <SwiperSlide key={item.id}>
                       <ProductCard
                         {...item}
-                        id={item.id ? item.id.toString() : 'unknown-id'}
+                        id={item._id}
                         charityImageSrc={item.charity?.profileImage}
                         charityImageAlt={
                           item.charity?.charityName || 'Charity Image'
@@ -131,4 +139,4 @@ const GiftFeaturedCategoryProducts: React.FC<
   );
 };
 
-export default GiftFeaturedCategoryProducts;
+export default RelatedCategoryProducts;

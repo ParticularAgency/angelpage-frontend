@@ -9,7 +9,7 @@ import 'swiper/css/navigation';
 import ProductCard from '../common/cards/product/productCard';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import { Product } from '@/types/productTypes';
+// import { Product } from '@/types/productTypes';
 import Link from 'next/link';
 import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
 import countries from 'i18n-iso-countries';
@@ -17,32 +17,32 @@ import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
 
-interface TopCategoryProductsProps {
-  secClassName?: string;
-  isLoggedIn: boolean;
-}
-interface TopCategoryResponse {
-  products: Product[];
-}
-const TopCategoryProducts: React.FC<TopCategoryProductsProps> = ({
+// interface TopCategoryProductsProps {
+//   secClassName?: string;
+//   isLoggedIn: boolean;
+// }
+// interface TopCategoryResponse {
+//   products: Product[];
+// }
+const TopCategoryProducts = ({
   secClassName,
 }) => {
   const { data: session } = useSession() || {};
-  const [productData, setProductData] = useState<Product[]>([]);
+  const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const headers: Record<string, string> = {};
+        const headers = {};
         if (session?.token) {
           headers.Authorization = `Bearer ${session.token}`;
         }
 
-        const response = await axios.get<TopCategoryResponse>(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/products/listing/latest-products`,
           {
             params: { isArchived: false },
@@ -50,7 +50,7 @@ const TopCategoryProducts: React.FC<TopCategoryProductsProps> = ({
           }
         );
         setProductData(response.data.products);
-      } catch (err: unknown) {
+      } catch (err) {
           setError('');
       } finally {
         setLoading(false);
@@ -126,7 +126,7 @@ const TopCategoryProducts: React.FC<TopCategoryProductsProps> = ({
                     <SwiperSlide key={item.id}>
                       <ProductCard
                         {...item}
-                        id={item.id ? item.id.toString() : 'unknown-id'}
+                        id={item._id}
                         charityImageSrc={item.charity?.profileImage}
                         charityImageAlt={
                           item.charity?.charityName || 'Charity Image'

@@ -24,8 +24,8 @@ interface Dimensions {
   depth?: `${number}${'in' | 'cm'}` | '';
 }
 interface FormData {
-  charityId?: string;
-  charityName?: string;
+  charityId: string;
+  charityName: string;
   itemTitle: string;
   selectedCategory: string;
   selectedSubCategory: string;
@@ -48,8 +48,8 @@ interface FormData {
 }
 
 interface DetailsData {
-  charityId?: string;
-  charityName?: string;
+  charityId: string;
+  charityName: string;
   itemTitle?: string;
   condition?: string;
   brand?: string;
@@ -100,19 +100,14 @@ const SellAnItem: React.FC = () => {
     formDataRef.current = { ...formDataRef.current, ...newData };
   };
 
-const updateDetails = (detailsData: DetailsData) => {
-  if (!detailsData.charityId) {
-    console.warn('Charity ID is undefined. Cannot proceed.');
-    return;
-  }
-
-  updateFormData({
-    ...detailsData,
-    stepCompletion: { ...formDataRef.current.stepCompletion, details: true },
-  });
-  setActiveTab('photos');
-};
-
+  const updateDetails = (detailsData: DetailsData) => {
+    updateFormData({
+      ...detailsData,
+      charityId: detailsData.charityId, // Update charityId as well
+      stepCompletion: { ...formDataRef.current.stepCompletion, details: true },
+    });
+    setActiveTab('photos');
+  };
 
   const updateImages = (newImages: UploadedImage[]) => {
     updateFormData({
@@ -128,133 +123,137 @@ const updateDetails = (detailsData: DetailsData) => {
       stepCompletion: { ...formDataRef.current.stepCompletion, price: true },
     });
   };
- const saveDraft = async () => {
-   if (!session) {
-     ToastService.error('You must be logged in to save a draft.');
-     return;
-   }
-
-   const finalData = formDataRef.current;
-
-   try {
-     const formData = new FormData();
-     formData.append('name', finalData.itemTitle || '');
-     formData.append('price', finalData.price || '0');
-     formData.append('charityProfit', finalData.charityProfit || '0');
-     formData.append('category', finalData.selectedCategory || '');
-     formData.append('subcategory', finalData.selectedSubCategory || '');
-     formData.append('condition', finalData.condition || '');
-     formData.append('brand', finalData.brand || '');
-     formData.append('material', finalData.material || '');
-     formData.append('color', finalData.color || '');
-     formData.append('size', finalData.size || '');
-     formData.append('dimensions', JSON.stringify(finalData.dimensions || []));
-     formData.append('additionalInfo', finalData.additionalInfo || '');
-     formData.append('selectedCharityName', finalData.charityName || '');
-     formData.append('selectedCharityId', finalData.charityId || '');
-     formData.append('status', 'DRAFT'); // Save as draft
-     // Charity handling for USER role
-     if (session.user.role === 'USER' && !finalData.charityId) {
-       ToastService.error('You must select a charity to save the product.');
-       return;
-     }
-   if (session.user.role === 'USER' && finalData.charityId) {
-     formData.append('charity', finalData.charityId);
-   }
-
-     finalData.images.forEach(image => {
-       formData.append('images', image.file);
-     });
-     console.log('Payload being sent as draft:', formData);
-     const response = await axios.post(
-       `${process.env.NEXT_PUBLIC_API_URL}/products/create`,
-       formData,
-       {
-         headers: {
-           Authorization: `Bearer ${session.token}`,
-           'Content-Type': 'multipart/form-data',
-         },
-       }
-     );
-
-     if (response.status === 201) {
-       ToastService.success('Product saved as draft!');
-     } else {
-       ToastService.error('Failed to save the product as draft.');
-     }
-   } catch (error) {
-     console.error('Error saving product as draft:', error);
-     ToastService.error('An error occurred while saving the product as draft.');
-   }
- };
-
-const handleFinalSubmit = async () => {
-  if (!session) {
-    ToastService.error('You must be logged in to submit a product.');
-    return;
-  }
-
-  const finalData = formDataRef.current;
-
-  if (finalData.images.length === 0) {
-    ToastService.error('Please upload at least one image.');
-    return;
-  }
-
-  try {
-    const formData = new FormData();
-    formData.append('name', finalData.itemTitle);
-    formData.append('price', finalData.price.replace(/[^\d.-]/g, '')); // Strip non-numeric characters
-    formData.append('charityProfit', finalData.charityProfit.replace(/[^\d.-]/g, '')); // Strip non-numeric characters
-    formData.append('category', finalData.selectedCategory);
-    formData.append('subcategory', finalData.selectedSubCategory || '');
-    formData.append('condition', finalData.condition || '');
-    formData.append('brand', finalData.brand || '');
-    formData.append('material', finalData.material || '');
-    formData.append('color', finalData.color || '');
-    formData.append('size', finalData.size || '');
-    formData.append('dimensions', JSON.stringify(finalData.dimensions || []));
-    formData.append('additionalInfo', finalData.additionalInfo || '');
-    formData.append('selectedCharityName', finalData.charityName || '');
-    formData.append('selectedCharityId', finalData.charityId || '');
-    formData.append('status', 'LIVE');
-    // Charity handling for USER role
-    if (session.user.role === 'USER' && !finalData.charityId) {
-      ToastService.error('You must select a charity to save the product.');
+  const saveDraft = async () => {
+    if (!session) {
+      ToastService.error('You must be logged in to save a draft.');
       return;
     }
-   if (session.user.role === 'USER' && finalData.charityId) {
-     formData.append('charity', finalData.charityId);
-   }
 
-    // Append files
-    finalData.images.forEach(image => {
-      formData.append('images', image.file);
-    });
-    console.log('Payload being sent as draft:', formData);
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/create`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${session.token}`,
-          'Content-Type': 'multipart/form-data',
-        },
+    const finalData = formDataRef.current;
+
+    try {
+      const formData = new FormData();
+      formData.append('name', finalData.itemTitle || '');
+      formData.append('price', finalData.price || '0');
+      formData.append('charityProfit', finalData.charityProfit || '0');
+      formData.append('category', finalData.selectedCategory || '');
+      formData.append('subcategory', finalData.selectedSubCategory || '');
+      formData.append('condition', finalData.condition || '');
+      formData.append('brand', finalData.brand || '');
+      formData.append('material', finalData.material || '');
+      formData.append('color', finalData.color || '');
+      formData.append('size', finalData.size || '');
+      formData.append('dimensions', JSON.stringify(finalData.dimensions || []));
+      formData.append('additionalInfo', finalData.additionalInfo || '');
+      formData.append('selectedCharityName', finalData.charityName || '');
+      formData.append('selectedCharityId', finalData.charityId || '');
+      formData.append('status', 'DRAFT'); // Save as draft
+      // Charity handling for USER role
+      if (session.user.role === 'USER' && !finalData.charityId) {
+        ToastService.error('You must select a charity to save the product.');
+        return;
       }
-    );
+      if (session.user.role === 'USER') {
+        formData.append('charity', finalData.charityId);
+      }
 
-    if (response.status === 201) {
-      ToastService.success('Product created successfully!');
-      setIsModalOpen(true);
-    } else {
-      ToastService.error('Failed to create the product.');
+      finalData.images.forEach(image => {
+        formData.append('images', image.file);
+      });
+      console.log('Payload being sent as draft:', formData);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/create`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        ToastService.success('Product saved as draft!');
+      } else {
+        ToastService.error('Failed to save the product as draft.');
+      }
+    } catch (error) {
+      console.error('Error saving product as draft:', error);
+      ToastService.error(
+        'An error occurred while saving the product as draft.'
+      );
     }
-  } catch (error) {
-    console.error('Error creating product:', error);
-    ToastService.error('An error occurred while creating the product.');
-  }
-};
+  };
 
+  const handleFinalSubmit = async () => {
+    if (!session) {
+      ToastService.error('You must be logged in to submit a product.');
+      return;
+    }
+
+    const finalData = formDataRef.current;
+
+    if (finalData.images.length === 0) {
+      ToastService.error('Please upload at least one image.');
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('name', finalData.itemTitle);
+      formData.append('price', finalData.price.replace(/[^\d.-]/g, '')); // Strip non-numeric characters
+      formData.append(
+        'charityProfit',
+        finalData.charityProfit.replace(/[^\d.-]/g, '')
+      ); // Strip non-numeric characters
+      formData.append('category', finalData.selectedCategory);
+      formData.append('subcategory', finalData.selectedSubCategory || '');
+      formData.append('condition', finalData.condition || '');
+      formData.append('brand', finalData.brand || '');
+      formData.append('material', finalData.material || '');
+      formData.append('color', finalData.color || '');
+      formData.append('size', finalData.size || '');
+      formData.append('dimensions', JSON.stringify(finalData.dimensions || []));
+      formData.append('additionalInfo', finalData.additionalInfo || '');
+      formData.append('selectedCharityName', finalData.charityName || '');
+      formData.append('selectedCharityId', finalData.charityId || '');
+      formData.append('status', 'LIVE');
+      // Charity handling for USER role
+      if (session.user.role === 'USER' && !finalData.charityId) {
+        ToastService.error('You must select a charity to save the product.');
+        return;
+      }
+      if (session.user.role === 'USER') {
+        formData.append('charity', finalData.charityId);
+      }
+
+      // Append files
+      finalData.images.forEach(image => {
+        formData.append('images', image.file);
+      });
+      console.log('Payload being sent as draft:', formData);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/create`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        ToastService.success('Product created successfully!');
+        setIsModalOpen(true);
+      } else {
+        ToastService.error('Failed to create the product.');
+      }
+    } catch (error) {
+      console.error('Error creating product:', error);
+      ToastService.error('An error occurred while creating the product.');
+    }
+  };
 
   const handleBack = (currentTab: 'details' | 'photos' | 'price') => {
     const newStepCompletion = {
@@ -308,7 +307,6 @@ const handleFinalSubmit = async () => {
               onSaveAsDraft={saveDraft}
             />
           )}
-
           {activeTab === 'photos' && (
             <PhotosForm
               setActiveTab={setActiveTab}

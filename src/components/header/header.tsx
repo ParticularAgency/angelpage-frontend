@@ -169,12 +169,14 @@ const userRole = session?.user?.role;
                         <GlobalSearch />
                         {!shouldHideBottomNav && session ? (
                           <div className="post-product-btn sm:hidden">
-                            <Button
-                              variant="primary"
-                              className="w-full block max-w-[105px]"
-                            >
-                              Sell an item
-                            </Button>
+                            <Link href="/product/post-product/">
+                              <Button
+                                variant="primary"
+                                className="w-full block max-w-[105px]"
+                              >
+                                Sell an item
+                              </Button>
+                            </Link>
                           </div>
                         ) : (
                           ''

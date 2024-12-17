@@ -14,14 +14,14 @@ const InternalHome = () => {
   return (
     <div className="internal-homepage-main-wrapper">
       <HomePageMainBanner />
-      <TopCategoryProducts isLoggedIn={true} />
-      <WomansCategoryProducts  />
+      <TopCategoryProducts secClassName="" />
+      <WomansCategoryProducts secClassName="" />
       <HomewareTopCategoryProducts />
       <JewelleryProductCtaSec />
       <ElectronicsTopCategoryProducts />
-      <BagsTopCategoryProducts  />
+      <BagsTopCategoryProducts secClassName="" />
       <IntHomeCtaSec />
-      <GiftFeaturedCategoryProducts  />
+      <GiftFeaturedCategoryProducts secClassName="" />
       <LatestBlogsSection />
     </div>
   ); 

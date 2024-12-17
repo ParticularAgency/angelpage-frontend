@@ -13,15 +13,14 @@ const HomeLanding = () => {
   return (
     <div className="homepage-main-wrapper">
       <HomeLandingBanner />
-      <TopCategoryProduct isLoggedIn={false} />
-      <WomansCategoryProducts  />
+      <TopCategoryProduct secClassName="" />
+      <WomansCategoryProducts secClassName="" />
       <HowItWorkSection />
       {/* <CharitySection /> */}
       <CtaSection />
       <AboutSection />
       <AngelPageInfoSection />
       <OurPlatformSection />
-      
     </div>
   );
 };
