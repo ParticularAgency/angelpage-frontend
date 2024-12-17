@@ -59,7 +59,7 @@
     ".next/types/**/*.ts",
     "src/utils/realtimeMessaging.js",
      "src/types/next-auth.d.ts"
-, "next.config.mjs", "src/components/product/ProductSingleSec.tsx", "src/redux/store.ts", "src/redux/cartSlice.ts", "src/app/auth/request-reset-password/page.jsx", "src/app/auth/reset-password/page.jsx", "src/app/auth/verify-email/page.jsx", "src/pages/api/auth/[...nextauth].js", "src/utils/api.ts", "src/pages/charity/charity-account/delete-account.jsx", "src/pages/user-account/delete-account.jsx", "src/pages/charity/charity-storefront/listing.tsx"  ],
+, "next.config.mjs", "src/components/product/ProductSingleSec.tsx", "src/redux/store.ts", "src/redux/cartSlice.ts", "src/app/auth/request-reset-password/page.jsx", "src/app/auth/reset-password/page.jsx", "src/app/auth/verify-email/page.jsx", "src/pages/api/auth/[...nextauth].ts", "src/utils/api.ts", "src/pages/charity/charity-account/delete-account.jsx", "src/pages/user-account/delete-account.jsx", "src/pages/charity/charity-storefront/listing.tsx", "src/components/product/BagsCategoryProducts.jsx", "src/components/product/GiftFeatureCategoryProducts.jsx", "src/components/product/ProductList.jsx", "src/components/product/RelatedProductCategory.jsx", "src/components/product/TopCategoryProducts.jsx", "src/components/product/WomansCategoryProducts.jsx", "src/pages/sellAnItem/forms/DetailsForm.jsx"  ],
   "exclude": [
     "node_modules"
   ]

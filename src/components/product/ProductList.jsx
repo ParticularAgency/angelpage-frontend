@@ -1,17 +1,17 @@
 import React from 'react';
 import ProductCard from '@/components/common/cards/product/productCard'; // Ensure the path is correct
-import { Product } from '@/types/productTypes';
+// import { Product } from '@/types/productTypes';
 import countries from 'i18n-iso-countries';
 // Load English language data
 import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
 
-interface ProductListProps {
-  products: Product[];
-  isLoggedIn: boolean; // Corrected type to `boolean` for better clarity
-}
+// interface ProductListProps {
+//   products: Product[];
+//   isLoggedIn: boolean; // Corrected type to `boolean` for better clarity
+// }
 
-const ProductList: React.FC<ProductListProps> = ({ products, isLoggedIn }) => {
+const ProductList  = ({ products, isLoggedIn }) => {
   return (
     <div className="product-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {products && products.length > 0 ? (
@@ -31,7 +31,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, isLoggedIn }) => {
           return (
             <ProductCard
               key={product.id || `product-${index}`} // Use index as fallback key
-              id={product.id ? product.id.toString() : 'unknown-id'} // Use `product.id` instead of `item.id`
+              id={product._id} // Use `product.id` instead of `item.id`
               charityImageSrc={
                 product.charity?.profileImage ||
                 '/images/icons/elisp-profile-default-img.svg'

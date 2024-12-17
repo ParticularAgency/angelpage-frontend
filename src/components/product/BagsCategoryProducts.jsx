@@ -8,7 +8,7 @@ import 'swiper/css/navigation';
 import ProductCard from '../common/cards/product/productCard';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import { Product } from '@/types/productTypes';
+// import { Product } from '@/types/productTypes';
 import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
@@ -16,21 +16,21 @@ import enLocale from 'i18n-iso-countries/langs/en.json';
 // Load English language data
 countries.registerLocale(enLocale);
 
-interface BagsCategoryProductsProps {
-  secClassName?: string;
-}
+// interface BagsCategoryProductsProps {
+//   secClassName?: string;
+// }
 
-interface BagsCategoryResponse {
-  products: Product[];
-}
+// interface BagsCategoryResponse {
+//   products: Product[];
+// }
 
-const BagsCategoryProducts: React.FC<BagsCategoryProductsProps> = ({
+const BagsCategoryProducts = ({
   secClassName,
 }) => {
   const { data: session } = useSession() || {};
-  const [productData, setProductData] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [productData, setProductData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -38,12 +38,12 @@ const BagsCategoryProducts: React.FC<BagsCategoryProductsProps> = ({
       setError(null);
 
       try {
-        const headers: Record<string, string> = {};
+        const headers = {};
         if (session?.token) {
           headers.Authorization = `Bearer ${session.token}`;
         }
 
-        const response = await axios.get<BagsCategoryResponse>(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/products/category/bags`,
           {
             params: { isArchived: false },
@@ -51,7 +51,7 @@ const BagsCategoryProducts: React.FC<BagsCategoryProductsProps> = ({
           }
         );
         setProductData(response.data.products);
-      } catch (err: unknown) {
+      } catch (err) {
         setError('Failed to load products. Please try again.');
       } finally {
         setLoading(false);
@@ -112,7 +112,7 @@ const BagsCategoryProducts: React.FC<BagsCategoryProductsProps> = ({
                     <SwiperSlide key={item.id}>
                       <ProductCard
                         {...item}
-                        id={item.id ? item.id.toString() : 'unknown-id'}
+                        id={item._id}
                         charityImageSrc={item.charity?.profileImage}
                         charityImageAlt={
                           item.charity?.charityName || 'Charity Image'

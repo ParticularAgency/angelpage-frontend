@@ -43,17 +43,16 @@ const MiniCart: React.FC = () => {
 
     try {
       setLoading(true);
-       const response = await axios.get<CartResponse>(
-         `${API_BASE_URL}/cart/${userId}`,
-         {
-           headers: {
-             Authorization: `Bearer ${token}`,
-           },
-         }
-       );
+      const response = await axios.get<CartResponse>(
+        `${API_BASE_URL}/cart/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setCartItems(response.data.cart.items || []); // Sync cart items
     } catch (error) {
-      
       ToastService.error('Failed to load cart. Please try again.');
     } finally {
       setLoading(false);
@@ -122,7 +121,6 @@ const MiniCart: React.FC = () => {
       );
       ToastService.success('Product removed from cart successfully!');
     } catch (error) {
-     
       ToastService.error('Failed to remove product. Please try again.');
       await fetchCart(); // Re-fetch cart on failure
     }
