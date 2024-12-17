@@ -67,17 +67,17 @@ const BasketPage = () => {
       const itemsWithDefaults = response.data.cart.items.map(item => ({
         ...item,
         productId: {
-          ...item?.productId,
-          brand: item?.productId?.brand || 'Unknown Brand',
+           ...item?.productId,
+           brand: item?.productId?.brand || 'Unknown Brand',
           seller: {
-            ...item.productId?.seller,
+             ...item.productId?.seller,
             profileImage:
-              item?.productId?.seller?.profileImage ||
+               item?.productId?.seller?.profileImage ||
               '/images/default-profile.png',
-            addresses: Array.isArray(item.productId?.seller?.addresses)
-              ? item?.productId?.seller?.addresses.map(address => ({
-                  city: address?.city || 'Unknown City',
-                  country: address?.country || 'Unknown Country',
+             addresses: Array.isArray(item.productId?.seller?.addresses)
+               ? item?.productId?.seller?.addresses.map(address => ({
+                   city: address?.city || 'Unknown City',
+                   country: address?.country || 'Unknown Country',
                 }))
               : [], // Default to an empty array if not provided
           },
