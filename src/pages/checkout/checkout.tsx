@@ -19,7 +19,7 @@ interface Seller {
 }
 
 interface Product {
-  _id: string; // Backend uses _id
+  _id: string; 
   name: string;
   price: number;
   brand: string;
