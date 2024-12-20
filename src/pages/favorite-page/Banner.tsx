@@ -1,6 +1,14 @@
 import React from 'react';
 
-const BannerSection = () => {
+interface BannerSectionProps {
+  totalProducts: number;
+  totalCharities: number;
+}
+
+const BannerSection: React.FC<BannerSectionProps> = ({
+  totalProducts,
+  totalCharities,
+}) => {
   return (
     <section className="favorite-banner-section pt-10 pb-7 sm:pt-6">
       <div className="custom-container">
@@ -10,10 +18,10 @@ const BannerSection = () => {
           </h1>
           <div className="favorite-info flex items-center gap-[15px]">
             <p className="total-favorite-product body-small text-mono-80">
-              40 items
+              {totalProducts  || '0'} items
             </p>
             <p className="total-favorite-charity body-small text-mono-80">
-              6 Charities
+              {totalCharities || '0'} Charities
             </p>
           </div>
         </div>

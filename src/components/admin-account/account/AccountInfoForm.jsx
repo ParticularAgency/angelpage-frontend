@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { EditIcon, SaveIcon } from '@/icons';
 import { Input } from '@/components/elements';
-import { fetchUserData } from '@utils/api';
+import { fetchAdminData } from '@utils/api';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
-const ProfileInfoForm = () => {
+const AccountInfoForm = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [personalInfo, setPersonalInfo] = useState({
-    firstName: '',
-    lastName: '',
-    dateBirth: '',
+  const [accountInfo, setAccountInfo] = useState({
+    email: '',
+    AdminName: '',
+    currentPassword: '',
+    newPassword: '',
   });
 
   const { data: session, status } = useSession() || {};
@@ -19,37 +20,35 @@ const ProfileInfoForm = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (status === 'authenticated' && session?.token) {
-        const data = await fetchUserData(session.token);
-        if (data) {
-          setPersonalInfo({
-            firstName: data.firstName || '',
-            lastName: data.lastName || '',
-            dateBirth: data.dateBirth || '',
-          });
-        } else {
-          console.error('Failed to fetch user data');
+        try {
+          const data = await fetchAdminData(session.token);
+          if (data) {
+            setAccountInfo({
+              email: data.email || '',
+              userName: data.userName || '',
+              currentPassword: '',
+              newPassword: '',
+            });
+          } else {
+            console.error('Failed to fetch user data');
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
         }
       }
     };
     fetchData();
   }, [session, status]);
 
-  // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setPersonalInfo({ ...personalInfo, [name]: value });
-  };
-
   const handleSave = async () => {
-    console.log('Saving user data:', personalInfo); // Log the data to be sent
-
     try {
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/profile`,
         {
-          firstName: personalInfo.firstName,
-          lastName: personalInfo.lastName,
-          dateBirth: personalInfo.dateBirth,
+          email: accountInfo.email,
+          userName: accountInfo.userName,
+          currentPassword: accountInfo.currentPassword,
+          newPassword: accountInfo.newPassword,
         },
         {
           headers: {
@@ -60,18 +59,33 @@ const ProfileInfoForm = () => {
       );
 
       if (response.status === 200) {
-        console.log('User info updated successfully');
+        console.log('Account info updated successfully');
+        setAccountInfo(prev => ({
+          ...prev,
+          currentPassword: '',
+          newPassword: '',
+        }));
         setIsEditing(false);
       } else {
-        console.error('Failed to update user info:', response.data);
+        console.error('Failed to update account info:', response.data);
       }
     } catch (error) {
-      console.error('Error updating user info:', error);
-        console.error('Response data:', error); // Log the server's response
+      console.error('Error updating account info:', error);
+
+      // Check if the error matches the structure of ErrorWithResponse
+      if (error instanceof Error && error.response) {
+        console.error('Response data:', error.response?.data);
+      } else {
+        console.error('An unknown error occurred');
+      }
     }
   };
 
-  // Toggle between edit and save
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setAccountInfo({ ...accountInfo, [name]: value });
+  };
+
   const handleEditClick = () => {
     if (isEditing) {
       handleSave();
@@ -83,7 +97,7 @@ const ProfileInfoForm = () => {
   return (
     <div className="personal-info-section pt-[23px] pb-8">
       <div className="title-line-area-section flex mb-[18px] pb-[13px] justify-between items-center gap-3 w-full">
-        <p className="body-bold-regular">Personal info</p>
+        <p className="body-bold-regular">Account info</p>
         <div className="btn-states-box">
           <button
             onClick={handleEditClick}
@@ -108,67 +122,78 @@ const ProfileInfoForm = () => {
           <>
             <p className="personal-info-item body-small">
               <span className="inline-block whitespace-nowrap text-right">
-                First name
+                Email
               </span>{' '}
               <span className="inline-block">
-                {personalInfo ? personalInfo.firstName : 'Loading...'}
+                {accountInfo ? accountInfo.email : 'Loading...'}
               </span>
             </p>
             <p className="personal-info-item body-small">
               <span className="inline-block whitespace-nowrap text-right">
-                Last name
+                Username
               </span>{' '}
               <span className="inline-block">
-                {personalInfo ? personalInfo.lastName : 'Loading...'}
+                {accountInfo ? accountInfo.userName : 'Loading...'}
               </span>
             </p>
             <p className="personal-info-item body-small">
               <span className="inline-block whitespace-nowrap text-right">
-                Date of birth
+                Password
               </span>{' '}
-              <span className="inline-block">
-                {personalInfo ? personalInfo.dateBirth : 'Loading...'}
-              </span>
+              <span className="inline-block">********</span>
             </p>
           </>
         ) : (
           <>
             <div className="personal-info-item body-small h-full">
               <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
-                First name
-              </span>
+                Email
+              </span>{' '}
               <Input
                 type="text"
-                name="firstName"
-                value={personalInfo.firstName}
+                name="email"
+                value={accountInfo.email}
                 onChange={handleChange}
-                placeholder="First name"
+                placeholder="Email"
                 className="max-w-[257px] w-full h-10 body-small"
               />
             </div>
             <div className="personal-info-item body-small h-full">
               <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
-                Last name
+                Username
               </span>
               <Input
                 type="text"
-                name="lastName"
-                value={personalInfo.lastName}
+                name="userName"
+                value={accountInfo.userName}
                 onChange={handleChange}
-                placeholder="Last name"
+                placeholder="Username"
                 className="max-w-[257px] w-full h-10 body-small"
               />
             </div>
             <div className="personal-info-item body-small h-full">
               <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
-                Date of birth
+                Current Password
               </span>
               <Input
-                type="date"
-                name="dateBirth"
-                value={personalInfo.dateBirth}
+                type="password"
+                name="currentPassword"
+                value={accountInfo.currentPassword}
                 onChange={handleChange}
-                placeholder="Date of birth"
+                placeholder="Current Password"
+                className="max-w-[257px] w-full h-10 body-small"
+              />
+            </div>
+            <div className="personal-info-item body-small h-full">
+              <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
+                New Password
+              </span>
+              <Input
+                type="password"
+                name="newPassword"
+                value={accountInfo.newPassword}
+                onChange={handleChange}
+                placeholder="New Password"
                 className="max-w-[257px] w-full h-10 body-small"
               />
             </div>
@@ -179,4 +204,4 @@ const ProfileInfoForm = () => {
   );
 };
 
-export default ProfileInfoForm;
+export default AccountInfoForm;

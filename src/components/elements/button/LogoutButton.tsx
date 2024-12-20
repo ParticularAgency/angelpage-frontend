@@ -2,7 +2,7 @@
 import React from 'react';
 import { signOut } from 'next-auth/react';
 import { Button } from '@/components/elements';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
@@ -35,7 +35,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
       <Button variant={variant} className='mt-0' onClick={handleLogout}>
         Logout
       </Button>
-      <ToastNotification />
+   
     </>
   );
 };

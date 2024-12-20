@@ -1,14 +1,57 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import axios from 'axios';
 import BannerSection from './Banner';
 import CharityAccountInfoMain from './account';
 import DeleteAccount from './delete-account';
 import CharityProductListingArea from './listing';
-import { productData } from '@/libs/postProductData';
+// import { productData } from '@/libs/postProductData';
+import {Product} from '@/types/productTypes'
 import SoldItems from './sold';
 import AnalyticsPage from './Analytics';
+import LogoutButton from '@/components/elements/button/LogoutButton';
+import Loading from '@/app/loading';
+
+interface ProductResponse {
+  products: Product[]; // Adjust the product structure as needed
+}
 const CharityAccount = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
+  const { data: session } = useSession() || {};
+  const [productsCount, setProductsCount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
+  const fetchUserProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get<ProductResponse>(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/listings`,
+        {
+          params: { role: 'USER' },
+          headers: {
+            Authorization: `Bearer ${session?.token}`,
+          },
+        }
+      );
+      setProductsCount(response.data.products.length);
+    } catch (error) {
+      console.error('Error fetching user products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (session?.token) {
+      fetchUserProducts();
+    }
+  }, [session?.token]);
+
+  if (!session) {
+    return <p>Please log in to view your account listing products.</p>;
+  }
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="charity-account-main-wrapper">
@@ -41,14 +84,19 @@ const CharityAccount = () => {
                     Account
                   </li>
                   <li
-                    className={`tabs-btn-list body-small  whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer ${
+                    className={`tabs-btn-list body-small relative whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer ${
                       activeTab === 2
                         ? 'bg-[#FCF2FF] text-primary-color-100'
                         : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
                     }`}
                     onClick={() => setActiveTab(2)} // Set active tab to "Listings"
                   >
-                    Listings
+                    Listings{' '}
+                    {productsCount && (
+                      <span className="absolute -top-3 -right-[14px] w-[17px] h-6 flex items-center justify-center bg-error forms-bold font-medium text-mono-0 rounded-[8px] ">
+                        {productsCount}
+                      </span>
+                    )}
                   </li>
                   <li
                     className={`tabs-btn-list body-small  whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer ${
@@ -71,6 +119,9 @@ const CharityAccount = () => {
                   >
                     Delete account
                   </li>
+                  <li className="tabs-btn-list body-small whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer">
+                    <LogoutButton />
+                  </li>
                 </ul>
               </div>
             </div>
@@ -92,7 +143,7 @@ const CharityAccount = () => {
                 )}
                 {activeTab === 2 && (
                   <li className="tabs-cont-item">
-                    <CharityProductListingArea products={productData} />
+                    <CharityProductListingArea  />
                   </li>
                 )}
                 {activeTab === 3 && (

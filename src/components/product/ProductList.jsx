@@ -1,23 +1,26 @@
 import React from 'react';
-import ProductCard from '@/components/common/cards/product/productCard'; // Ensure the path is correct
-// import { Product } from '@/types/productTypes';
+import ProductCard from '@/components/common/cards/product/productCard'; 
 import countries from 'i18n-iso-countries';
-// Load English language data
 import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
 
-// interface ProductListProps {
-//   products: Product[];
-//   isLoggedIn: boolean; // Corrected type to `boolean` for better clarity
-// }
+
 
 const ProductList  = ({ products, isLoggedIn }) => {
   return (
     <div className="product-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {products && products.length > 0 ? (
         products.map((product, index) => {
+           if (!product) {
+             return null; 
+           }
           // Safely extract location
-          const sellerAddress = product.seller?.address;
+          const sellerUserAddress = product.seller?.address;
+          const sellerCharityAddress = product.charity?.address;
+
+          // Determine which address to use (User or Charity)
+          const sellerAddress = sellerUserAddress || sellerCharityAddress;
+
           let countryCode = 'N/A';
           if (sellerAddress?.country) {
             countryCode =
@@ -37,15 +40,18 @@ const ProductList  = ({ products, isLoggedIn }) => {
                 '/images/icons/elisp-profile-default-img.svg'
               }
               charityImageAlt={product.charity?.charityName || 'Charity Image'}
-              images={product.images || []}
+              images={
+                product.images || '/images/products/card-placeholder-image.webp'
+              }
               brand={product.brand || 'Unknown Brand'}
               name={product.name || 'Untitled Product'}
               size={product.size || ''}
               price={`${product.price || '0.00'}`}
               location={location}
-              dimensionHeight={product.dimensionHeight || '0in'} // Use `product.dimensionHeight`
-              dimensionWidth={product.dimensionWidth || '0in'} // Use `product.dimensionWidth`
+              dimensionHeight={product.dimensionHeight || '0in'}
+              dimensionWidth={product.dimensionWidth || '0in'}
               isLoggedIn={isLoggedIn}
+              status={product.status}
             />
           );
         })

@@ -6,37 +6,36 @@ import axios from 'axios';
 import { fetchCharityData, fetchCharityProfileData } from '@utils/api';
 import { useRouter } from 'next/navigation';
 import { Button, ProgressBar } from '@/components/elements';
-import ToastNotification, {
-  ToastService,
-} from '@/components/elements/notifications/ToastService';
+import { ToastService } from '@/components/elements/notifications/ToastService';
 
-// Define the structure of the expected API response
-interface CharityUser {
-  charityName: string;
-  profileImage: string;
-  email: string;
-  verified: boolean;
-  profileCompleted: boolean;
-  charityBannerImage: string;
-}
+// // Define the structure of the expected API response
+// interface CharityUser {
+//   charityName: string;
+//   profileImage: string;
+//   email: string;
+//   verified: boolean;
+//   profileCompleted: boolean;
+//   charityBannerImage: string;
+//   listedProducts: number; // Number of items for sale
+// }
 
-interface ProfileResponse {
-  user?: CharityUser; // Optional to prevent runtime errors
-  profileCompletionPercentage?: number; // Optional for type safety
-}
+// interface ProfileResponse {
+//   user: CharityUser | null; // Explicitly mark as nullable
+//   profileCompletionPercentage?: number;
+// }
 
 const BannerSection = () => {
   const router = useRouter();
   const { data: session, status } = useSession() || {};
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState<CharityUser | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [progress, setProgress] = useState<number>(0);
-  const [userData, setUserData] = useState<CharityUser | null>(null);
-  const [image, setImage] = useState<string>(
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [userData, setUserData] = useState(null);
+  const [image, setImage] = useState(
     '/images/charity-storefront/charity-banner-img1.png'
   );
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState(null);
 
   // Fetch charity data
   useEffect(() => {
@@ -63,7 +62,7 @@ const BannerSection = () => {
   }, [session, status]);
 
   // Handle image file selection
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
@@ -82,7 +81,7 @@ const BannerSection = () => {
     formData.append('charityBannerImage', file);
 
     try {
-      const response = await axios.put<ProfileResponse>(
+      const response = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/charity/profile`,
         formData,
         {
@@ -110,11 +109,15 @@ const BannerSection = () => {
       if (status === 'authenticated' && session?.user?.email) {
         try {
           setLoading(true);
-          const response = await fetchCharityProfileData(session.user.email);
-          if (!response?.user) {
+          const response =
+            await fetchCharityProfileData(session.user.email);
+
+          if (!response || !response.user) {
             ToastService.error('Failed to load profile data.');
+            setProfileData(null);
             return;
           }
+
           const { user, profileCompletionPercentage } = response;
           setProfileData(user);
           setProgress(profileCompletionPercentage || 0);
@@ -199,6 +202,14 @@ const BannerSection = () => {
               <h1 className="h3 charity-account-banner-tittle !text-mono-0">
                 {userData?.charityName || 'Please add your charity name'}
               </h1>
+              <ul className="list-info flex items-center gap-3 justify-start">
+                <li className="font-secondary text-[14px] font-normal text-mono-0 leading-[150%]">
+                  {userData?.listedProducts} items for sale
+                </li>
+                <li className="font-secondary text-[14px] font-normal text-mono-0 leading-[150%]">
+                  0 items sold
+                </li>
+              </ul>
             </div>
           </div>
           <div className="col-span-7 w-full">
@@ -238,7 +249,6 @@ const BannerSection = () => {
             </div>
           </div>
         </div>
-        <ToastNotification />
       </div>
     </section>
   );

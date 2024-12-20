@@ -100,7 +100,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
             : `${process.env.NEXT_PUBLIC_API_URL}/products/all`;
 
         const response = await axios.get<ProductsResponse>(endpoint, {
-          params: { category, subcategory },
+          params: { category, subcategory, status: 'LIVE' },
           headers,
         });
 

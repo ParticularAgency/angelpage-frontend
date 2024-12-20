@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import React, { useState, useEffect } from 'react';
 import BannerSection from './Banner';
 import FavoriteProductListing from './FavoriteProducts';
@@ -13,63 +13,87 @@ interface FavoriteResponse {
   }>;
   favoriteCharities: Array<{
     id: string;
-    name: string;
-    listingProduct?: string;
-    image: string;
+    charityName: string;
+    storefrontId: string;
+    listedProducts?: Array<string | object>;
+    profileImage: string;
     description?: string;
   }>;
 }
 
+
+
+interface FavoriteCharity {
+  id: string;
+  charityName: string;
+  storefrontId: string;
+  listedProducts?: Array<string | object>;
+  profileImage: string;
+  description?: string;
+}
+
 const FavoritePage = () => {
-  const [activeTab, setActiveTab] = useState<number>(0);
-  const { data: session, status } = useSession() || {};
   const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
-  const [favoriteCharities, setFavoriteCharities] = useState<
-    FavoriteResponse['favoriteCharities']
-  >([]);
+  const [favoriteCharities, setFavoriteCharities] = useState<FavoriteCharity[]>(
+    []
+  );
+  const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { data: session } = useSession() || {};
+
+  const fetchFavorites = async () => {
+    if (!session?.token) return;
+
+    setLoading(true);
+    try {
+      const response = await axios.get<FavoriteResponse>(
+        `${process.env.NEXT_PUBLIC_API_URL}/favorites/added`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+          },
+        }
+      );
+
+      if (response.data) {
+        // Flatten products from the favoriteProducts array
+        const flattenedProducts = response.data.favoriteProducts.flatMap(
+          fav => fav.products
+        );
+        setFavoriteProducts(flattenedProducts);
+        setFavoriteCharities(response.data.favoriteCharities || []);
+      } else {
+        setFavoriteProducts([]);
+        setFavoriteCharities([]);
+      }
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+      setFavoriteProducts([]);
+      setFavoriteCharities([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchFavorites = async () => {
-      if (status !== 'authenticated') return;
-
-      try {
-        const response = await axios.get<FavoriteResponse>(
-          `${process.env.NEXT_PUBLIC_API_URL}/favorites/added`,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token}`,
-            },
-          }
-        );
-
-        // Flatten the favoriteProducts array
-        const products = response.data.favoriteProducts.flatMap(
-          item => item.products
-        );
-        setFavoriteProducts(products);
-        setFavoriteCharities(response.data.favoriteCharities);
-      } catch (error) {
-        console.error('Error fetching favorites:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchFavorites();
-  }, [status, session]);
+  }, [session]);
 
   if (loading) {
     return <div>Loading favorites...</div>;
   }
+
   return (
     <div className="favorite-page-content-wrapper">
-      <BannerSection />
+      <BannerSection
+        totalProducts={favoriteProducts.length}
+        totalCharities={favoriteCharities.length}
+      />
       <div className="favorites-wrapper-area">
         <div className="favorites-tabs-area">
           <div className="favorites-tabs-box">
             <div className="custom-container">
-              <div className="favorites-tabs-btn-box pt-3 pb-4 flex justify-between items-center  gap-6">
+              <div className="favorites-tabs-btn-box pt-3 pb-4 flex justify-between items-center gap-6">
                 <ul className="tabs-btn-items flex items-center gap-6">
                   <li
                     className={`tabs-btn-list body-small px-[11px] py-2 rounded-[24px] cursor-pointer ${

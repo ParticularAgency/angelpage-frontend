@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React, { useRef, useState, useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 interface UploadedImage {
@@ -208,7 +208,7 @@ const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
           </div>
         </div>
       </DndProvider>
-      <ToastNotification />
+     
     </>
   );
 };

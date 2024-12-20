@@ -1,13 +1,12 @@
 'use client';
-
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { LocationIcon } from '@/icons';
+import { Checkmark, LocationIcon } from '@/icons';
 import { useSession } from 'next-auth/react';
-import { ToastService } from '@/components/elements/notifications/ToastService';
 import { Button } from '@/components/elements';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
+import { ToastService } from '@/components/elements/notifications/ToastService';
 import axios from 'axios';
 
 interface CartItem {
@@ -40,6 +39,7 @@ interface ProductCardProps {
   isLoggedIn?: boolean;
   dimensionHeight?: string;
   dimensionWidth?: string;
+  status?: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -56,25 +56,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
   dimensionWidth = '',
   isLoggedIn = false,
 }) => {
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
+  const userId = session?.user?.id;
+  const token = session?.token;
   const [isAddedToCart, setIsAddedToCart] = useState<boolean>(false);
 
   const fetchCartCount = useCallback(async () => {
-    if (!session?.token || !session.user?.id) return;
+   if (!userId || !token) return;
 
     try {
       const response = await axios.get<CartResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/cart/${session.user.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/cart/${userId}`,
         {
           headers: {
-            Authorization: `Bearer ${session.token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       const cartItems = response.data.cart.items || [];
       setIsAddedToCart(cartItems.some(item => item.productId === id));
     } catch (error) {
-      console.error('Error fetching cart count:', error);
+      
     }
   }, [session, id]);
 
@@ -111,11 +113,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-useEffect(() => {
-  if (isLoggedIn && session) {
-    fetchCartCount();
-  }
-}, [isLoggedIn, session, fetchCartCount]);
+  useEffect(() => {
+    if (isLoggedIn && session) {
+      fetchCartCount();
+    }
+  }, [isLoggedIn, session, fetchCartCount]);
+
+  // Validate and set default image URLs
+  const validatedImageSrc =
+    images[0]?.url &&
+    (images[0].url.startsWith('/') || images[0].url.startsWith('http'))
+      ? images[0].url
+      : '/images/products/card-placeholder-image.webp';
 
   return (
     <div
@@ -126,7 +135,12 @@ useEffect(() => {
       <div className="product-head-cont flex justify-between">
         <div className="donate-charity-img h-[46px] flex items-center">
           <Image
-            src={charityImageSrc}
+            src={
+              charityImageSrc.startsWith('/') ||
+              charityImageSrc.startsWith('http')
+                ? charityImageSrc
+                : '/images/icons/elisp-profile-default-img.svg'
+            }
             alt={charityImageAlt}
             width={500}
             height={500}
@@ -142,7 +156,8 @@ useEffect(() => {
           <Image
             className="max-w-[116px] h-[110px] w-full object-cover sm:object-contain"
             src={
-              images[0]?.url || '/images/icons/elisp-profile-default-img.svg'
+              validatedImageSrc ||
+              '/images/products/card-placeholder-image.webp'
             }
             alt={images[0]?.altText || 'Product Image'}
             width={180}
@@ -167,10 +182,12 @@ useEffect(() => {
           </Link>
           <div className="product-size eyebrow-small mt-3">
             {size ? (
-              <>{size}</>
+              <>
+                {size}
+              </>
             ) : (
               <>
-                Height: {dimensionHeight} | Width: {dimensionWidth}
+                Height: {dimensionHeight} | Width: {dimensionWidth} 
               </>
             )}
           </div>
@@ -187,11 +204,11 @@ useEffect(() => {
           <div className="product-card-btn-states">
             {isAddedToCart ? (
               <Button
-                variant="secondary"
+                variant="primary"
                 className="w-full mt-3 flex items-center justify-center"
                 disabled
               >
-                ✅ Added
+                <Checkmark /> Added
               </Button>
             ) : (
               <Button

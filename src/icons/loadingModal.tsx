@@ -2,7 +2,7 @@ import React from 'react';
 
 const LoadingModal = () => {
   return (
-    <div className="loading-modal">
+    <div className="loading-modal flex items-center justify-center mb-3">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="41"

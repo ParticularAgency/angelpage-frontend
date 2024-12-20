@@ -3,11 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
-  FavoriteIcon, 
+  // FavoriteIcon, 
   // NotificationIcon,
    UserIcon } from '@/icons';
 // import NotificationAlert from './notificationAlert';
 import NotificationButton from './NotificationButton';
+import FavoritesAlert from './favoritesAlert';
 
 interface StickyNavbar {
   toggleDropdown: () => void;
@@ -132,21 +133,18 @@ const StickyNavMenu: React.FC<StickyNavbar> = ({ toggleDropdown, session }) => {
               </div>
             </li>
             <li className="sticky-mobilenav-list">
-              <Link
-                href="/favorite"
-                className="text-center flex items-center justify-center flex-col gap-[13px]"
-              >
+              <div className="text-center flex items-center justify-center flex-col gap-[13px]">
                 <div className="icons-box">
-                  <FavoriteIcon />
+                  <FavoritesAlert className="sm:block" />
                 </div>
                 <p className="link-title font-secondary font-normal text-center text-mono-100 text-body-small xxs:text-[13px] leading-[150%]">
                   Favourites
                 </p>
-              </Link>
+              </div>
             </li>
             <li className="sticky-mobilenav-list">
               <Link
-                href="/post-product"
+                href="/product/post-product"
                 className="text-center flex items-center justify-center flex-col gap-[13px]"
               >
                 <div className="icons-box">

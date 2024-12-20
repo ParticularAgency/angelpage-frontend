@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { resetPassword } from '@/utils/api'; // Import the API utility function for resetting the password
 import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
@@ -115,7 +115,7 @@ const ResetPassword = () => {
           </Button>
         </div>
       </div>
-      <ToastNotification />
+     
     </div>
   );
 };

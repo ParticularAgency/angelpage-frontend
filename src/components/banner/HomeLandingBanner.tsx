@@ -20,13 +20,13 @@ const HomeLandingBanner = () => {
     {
       eyebrow: "Join the movement",
       title: "Together, we can make a difference!",
-      imageSrc: "/images/home/home-banner-modal-1.jpg",
+      imageSrc: "/images/home/home-banner-modal-3.jpg",
       alt: "banner slides modal image 2"
     },
     {
       eyebrow: "Your impact matters",
       title: "Every contribution counts towards a better tomorrow.",
-      imageSrc: "/images/home/home-banner-modal-1.jpg",
+      imageSrc: "/images/home/home-banner-modal-2.jpg",
       alt: "banner slides modal image 3"
     }
   ];

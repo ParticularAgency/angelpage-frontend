@@ -4,16 +4,7 @@ import { fetchCharityData } from '@utils/api';
 import { useSession } from 'next-auth/react';
 import { Input } from '@/components/elements';
 
-declare module 'next-auth' {
-  interface Session {
-    token?: string;
-  }
-}
-interface ErrorWithResponse {
-  response?: {
-    data?: unknown;
-  };
-}
+
 const AdminInfoForm = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [adminInfo, setAdminInfo] = useState({
@@ -78,14 +69,14 @@ const AdminInfoForm = () => {
       } else {
         console.error('Failed to update account info:', response.data);
       }
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('Error updating account info:', error);
 
       // Check if the error matches the structure of ErrorWithResponse
-      if (error instanceof Error && (error as ErrorWithResponse).response) {
+      if (error instanceof Error && (error).response) {
         console.error(
           'Response data:',
-          (error as ErrorWithResponse).response?.data
+          (error).response?.data
         );
       } else {
         console.error('An unknown error occurred');
@@ -93,7 +84,7 @@ const AdminInfoForm = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setAdminInfo({ ...adminInfo, [name]: value });
   };

@@ -10,11 +10,16 @@ interface Seller {
   firstName: string;
   lastName: string;
   profileImage: string;
-  addresses: { city: string; country: string }[]; // Fixed to be an array of objects
+  addresses: { city: string; country: string }[]; 
 }
-
+interface Charity {
+  charityName: string;
+  charityID: string;
+  profileImage: string;
+  addresses: { city: string; country: string }[];
+}
 interface Product {
-  _id: string; // Backend uses _id
+  _id: string;
   name: string;
   price: number;
   brand: string;
@@ -22,10 +27,7 @@ interface Product {
   condition?: string;
   images: Array<{ url: string; altText?: string }>;
   location?: string;
-  charity: {
-    charityName: string;
-    profileImage: string;
-  };
+  charity: Charity;
   dimensions?: {
     height?: string;
     width?: string;
@@ -39,13 +41,15 @@ interface CartItem {
 }
 
 interface CheckoutProductItemProps {
-  cartItems: CartItem[] | undefined; 
+  cartItems: CartItem[] | undefined;
   setCartItems: (items: CartItem[]) => void;
+  isLoading: boolean;
 }
 
 const CheckoutProductItem = ({
   cartItems = [],
   setCartItems,
+  isLoading,
 }: CheckoutProductItemProps) => {
   const { data: session } = useSession() || {};
   const userId = session?.user?.id;
@@ -53,36 +57,36 @@ const CheckoutProductItem = ({
 
   const [isPriceSplitOpen, setIsPriceSplitOpen] = useState(false);
 
-const updateCart = async (productId: string, quantityChange: number) => {
-  try {
-    // Filter and update cart items
-    const updatedCart: CartItem[] = cartItems
-      .map(item => {
-        if (item.productId._id === productId) {
-          const newQuantity = item.quantity + quantityChange;
-          return newQuantity > 0 ? { ...item, quantity: newQuantity } : null;
+  const updateCart = async (productId: string, quantityChange: number) => {
+    try {
+     
+      const updatedCart: CartItem[] = cartItems
+        .map(item => {
+          if (item.productId._id === productId) {
+            const newQuantity = item.quantity + quantityChange;
+            return newQuantity > 0 ? { ...item, quantity: newQuantity } : null;
+          }
+          return item;
+        })
+        .filter((item): item is CartItem => item !== null); 
+
+   
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/cart/add-product-to-cart`,
+        { userId, productId, quantity: quantityChange },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-        return item;
-      })
-      .filter((item): item is CartItem => item !== null); // Type guard to exclude null values
+      );
 
-    // API call to update the cart
-    await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/cart/add-product-to-cart`,
-      { userId, productId, quantity: quantityChange },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    // Update state with the filtered cart
-    setCartItems(updatedCart);
-  } catch (error) {
-    console.error('Error updating cart:', error);
-  }
-};
+     
+      setCartItems(updatedCart);
+    } catch (error) {
+      console.error('Error updating cart:', error);
+    }
+  };
 
   const handleRemoveItem = async (productId: string) => {
     try {
@@ -105,6 +109,48 @@ const updateCart = async (productId: string, quantityChange: number) => {
   const handlePriceSplitClick = () => setIsPriceSplitOpen(true);
   const handleClosePriceSplit = () => setIsPriceSplitOpen(false);
 
+  if (isLoading) {
+    return (
+      <>
+        <div className="skeleton-basket-product-item basket-product-items">
+          <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mb-4"></div>
+          <div className="basket-added-product-items">
+            <div className="basket-added-product-item">
+              <div className="basket-product-item-head gap-[23px] flex items-center">
+                <div className="seller-info-box flex items-center gap-[13px] pb-4">
+                  <div className="skeleton bg-mono-40 block h-8 w-8 rounded-full max-w-10 mt-0"></div>
+                  <div className="seller-info-cont">
+                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mb-2"></div>
+                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-0"></div>
+                  </div>
+                </div>
+                <div className="delivery-timeline">
+                  <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-0"></div>
+                </div>
+              </div>
+              <div className="added-product-item-info-box flex items-center gap-5 justify-between py-8">
+                <div className="added-product-item-left-cont flex items-start gap-[18px]">
+                  <div className="skeleton bg-mono-40 block h-[70px] w-[74px] rounded-[4px] max-w-10 mt-[13px]"></div>
+                  <div className="added-product-info">
+                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-0]"></div>
+                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-[3px]"></div>
+                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-2"></div>
+                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-[13px]"></div>
+                  </div>
+                </div>
+                <div className="skeleton bg-mono-40 block h-3 w-full max-w-8 mt-2"></div>
+                <div className="added-product-item-right-cont text-right">
+                  <div className="skeleton bg-mono-40 block h-2 w-full max-w-8 mt-2"></div>
+                  <div className="skeleton bg-mono-40 block h-2 w-full max-w-8 mt-2"></div>
+                  <div className="skeleton bg-mono-40 block h-2 w-full max-w-8 mt-2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
   return (
     <>
       <div className="basket-product-items">
@@ -118,22 +164,45 @@ const updateCart = async (productId: string, quantityChange: number) => {
               >
                 <div className="basket-product-item-head gap-[23px] flex items-center">
                   <div className="seller-info-box flex items-center gap-[13px] pb-4">
-                    <Image
-                      src={
-                        item.productId?.seller?.profileImage ||
-                        '/images/users/default-seller.jpg'
-                      }
-                      alt="Seller"
-                      width={74}
-                      height={70}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                    <div className="seller-info-cont">
-                      <p className="caption mb-[2px]">Seller</p>
-                      <p className="eyebrow-medium text-black">
-                        {item.productId?.seller?.firstName || 'Unknown'}
-                      </p>
-                    </div>
+                    {item.productId?.seller ? (
+                      <>
+                        <Image
+                          src={
+                            item.productId?.seller?.profileImage ||
+                            '/images/icons/elisp-profile-default-img.svg'
+                          }
+                          alt="Seller"
+                          width={74}
+                          height={70}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                        <div className="seller-info-cont">
+                          <p className="caption mb-[2px]">Seller</p>
+                          <p className="eyebrow-medium text-black">
+                            {item.productId?.seller?.firstName || 'Unknown'}
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <Image
+                          src={
+                            item.productId?.charity?.profileImage ||
+                            '/images/icons/elisp-profile-default-img.svg'
+                          }
+                          alt="Seller"
+                          width={74}
+                          height={70}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                        <div className="seller-info-cont">
+                          <p className="caption mb-[2px]">Seller</p>
+                          <p className="eyebrow-medium text-black">
+                            {item.productId?.charity?.charityName || ''}
+                          </p>
+                        </div>
+                      </>
+                    )}
                   </div>
                   <div className="delivery-timeline">
                     <span className="p-2 body-bold-small bg-[#FCF2FF] text-primary-color-100 rounded-[24px]">
@@ -163,7 +232,7 @@ const updateCart = async (productId: string, quantityChange: number) => {
                       <p className="product-specification caption mt-2">
                         {item.productId?.size
                           ? `Size: ${item.productId?.size}`
-                          : `Dimensions: ${item.productId?.dimensions?.height || 'N/A'} x ${item.productId?.dimensions?.width || 'N/A'}`}
+                          : `Height: ${item.productId?.dimensions?.height || 'N/A'} | Width: ${item.productId?.dimensions?.width || 'N/A'}`}
                       </p>
                       <p className="flex items-center gap-[13px] mt-[13px] caption">
                         <Image
@@ -172,16 +241,35 @@ const updateCart = async (productId: string, quantityChange: number) => {
                           width={10}
                           height={12}
                         />{' '}
-                        {item.productId?.seller?.addresses[0]?.city ||
-                          (item.productId?.seller?.addresses[0]?.country && (
-                            <>
-                              {item.productId?.seller?.addresses[0]?.city ||
-                                'Unknown City'}
-                              ,{' '}
-                              {item.productId?.seller?.addresses[0]?.country ||
-                                'Unknown Country'}
-                            </>
-                          ))}
+                        {item.productId?.seller?.addresses ? (
+                          <>
+                            {item.productId?.seller?.addresses[0]?.city ||
+                              (item.productId?.seller?.addresses[0]
+                                ?.country && (
+                                <>
+                                  {item.productId?.seller?.addresses[0]?.city ||
+                                    'Unknown City'}
+                                  ,{' '}
+                                  {item.productId?.seller?.addresses[0]
+                                    ?.country || 'Unknown Country'}
+                                </>
+                              ))}
+                          </>
+                        ) : (
+                          <>
+                            {item.productId?.charity?.addresses[0]?.city ||
+                              (item.productId?.charity?.addresses[0]
+                                ?.country && (
+                                <>
+                                  {item.productId?.charity?.addresses[0]?.city ||
+                                    'Unknown City'}
+                                  ,{' '}
+                                  {item.productId?.charity?.addresses[0]
+                                    ?.country || 'Unknown Country'}
+                                </>
+                              ))}
+                          </>
+                        )}
                       </p>
                     </div>
                   </div>

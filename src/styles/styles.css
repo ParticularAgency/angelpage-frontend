@@ -693,7 +693,7 @@ select#sort-select option {
     border-bottom: 1px solid var(--Mono-40, #E6E3E8);
 }
 
-.storefront-tabs-btn-box .favorite-btn-item {
+.storefront-tabs-btn-box .favorite-btn-item-store .favorite-btn-item {
     border: 1px solid var(--Mono-40, #E7E3E8);
 }
 
@@ -726,9 +726,6 @@ select#sort-select option {
     width: 100%;
 }
 
-.business-overview-area {
-    border-bottom: 1px solid #E6E3E8;
-}
 
 .charity-info-details .charity-info-item {
     display: grid;
@@ -1142,4 +1139,8 @@ button.steps-completed {
 }
 .product-quantity-area{
     border: 1px solid #0B0112;
+}
+
+.table-user-info-list-bottom{
+    border-top:1px solid #CCD3DB;
 }

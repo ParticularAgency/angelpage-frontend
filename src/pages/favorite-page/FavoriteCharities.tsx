@@ -5,9 +5,10 @@ import FavoriteCharityCard from '@/components/common/cards/charity/favoriteChari
 interface FavoriteCharityListingProps {
   charities: Array<{
     id: string;
-    name: string;
-    listingProduct?: string;
-    image: string;
+    charityName: string;
+    storefrontId: string; // Ensure storefrontId is included in the charity object
+    listedProducts?: Array<string | object>; // Assuming this is an array of products
+    profileImage: string;
     description?: string;
   }>;
 }

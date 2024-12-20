@@ -481,6 +481,47 @@
         height: 33px;
       }
     }
+    .business-overview-area .analytics-card-items{
+      border: 1px solid #CCD3DB;
+      border: 1px solid color(display-p3 0.8039 0.8275 0.8549);
+    }
+    .latest-transaction-statistics .latest-transaction-overview,
+    .revenue-statistics .revenue-overview-card{
+      border: 1px solid #CCD3DB;
+      border: 1px solid color(display-p3 0.8039 0.8275 0.8549);
+    }
+    .latest-transaction-statistics .latest-transaction-overview .card-header,
+    .revenue-statistics .revenue-overview-card .card-header{
+      border-bottom: 1px solid #CCD3DB;
+    }
+    .revenue-statistics .revenue-overview-card .card-body-wrapper
+    {
+      padding: 32px 19px 40px; 
+    }
+    .transaction-status-lists-item:not(:last-child),
+    .revenue-status-lists-item:not(:last-child){
+      border-bottom: 1px solid #ccd3db;
+    }
+    .latest-transaction-statistics .latest-transaction-overview  .card-body-wrapper{
+      height: 314px;
+      overflow: hidden;
+      overflow-y: scroll;
+    }
+    .user-info-table-wrapper{
+      border: 1px solid #CCD3DB;
+      border: 1px solid color(display-p3 0.8039 0.8275 0.8549);
+      background: rgba(116, 99, 99, 0.00);
+      background: color(display-p3 0.4449 0.3902 0.3902 / 0.00);
+    }
+     .table-item-delet-btn{
+        border-radius: 24px;
+        border: 1px solid #E50035;
+        border: 1px solid color(display-p3 0.8212 0.046 0.2321);
+      }
+        .table-user-info-bottom{
+          border-top: 1px solid #ccd3db;
+        }
+        /* .users-info-table-overview .user-info-table  */
   }
 
   @layer utilities {}

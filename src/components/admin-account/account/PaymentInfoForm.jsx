@@ -4,51 +4,19 @@ import { Button, Checkbox, Input, Select } from '@/components/elements';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
-// Define types for Address and PaymentMethod objects
-type Address = {
-  _id: string;
-  type: string;
-  name: string;
-  address: string;
-  city: string;
-  country: string;
-  postcode: string;
-};
-
-type PaymentMethod = {
-  _id?: string;
-  nameAccountHolder: string;
-  accountNumber: string;
-  expiryDate: string;
-  cvvNumber: string;
-  billingAddress: {
-    name: string;
-    address: string;
-    city: string;
-    country: string;
-    postalCode: string;
-  };
-};
-
-// Define type for session token
-interface SessionData {
-  token: string;
-}
-
-const PaymentInfoForm: React.FC = () => {
+const PaymentInfoForm = () => {
   const { data: session, status } = useSession() || {};
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [addresses, setAddresses] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingIndex, setEditingIndex] = useState(null);
   const [useShippingAsBilling, setUseShippingAsBilling] = useState(false);
-  const [selectedShippingAddressId, setSelectedShippingAddressId] = useState<
-    string | null
-  >(null);
+  const [selectedShippingAddressId, setSelectedShippingAddressId] =
+    useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [paymentToDelete, setPaymentToDelete] = useState<string | null>(null);
+  const [paymentToDelete, setPaymentToDelete] = useState(null);
 
-  const [newPayment, setNewPayment] = useState<PaymentMethod>({
+  const [newPayment, setNewPayment] = useState({
     nameAccountHolder: '',
     accountNumber: '',
     expiryDate: '',
@@ -58,22 +26,23 @@ const PaymentInfoForm: React.FC = () => {
       address: '',
       city: '',
       country: '',
-      postalCode: '',
+      postCode: '',
     },
   });
 
   // Fetch payment methods and addresses on component mount
   useEffect(() => {
     const fetchUserData = async () => {
-      if (status === 'authenticated' && (session as SessionData)?.token) {
+      if (status === 'authenticated' && session?.token) {
         try {
-          const response = await axios.get<{
-            user: { payments: PaymentMethod[]; addresses: Address[] };
-          }>(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
-            headers: {
-              Authorization: `Bearer ${(session as SessionData).token}`,
-            },
-          });
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${session.token}`,
+              },
+            }
+          );
           setPaymentMethods(response.data.user?.payments || []);
           setAddresses(response.data.user?.addresses || []);
         } catch (error) {
@@ -95,7 +64,7 @@ const PaymentInfoForm: React.FC = () => {
         address: '',
         city: '',
         country: '',
-        postalCode: '',
+        postCode: '',
       },
     });
     setIsAdding(true);
@@ -104,7 +73,7 @@ const PaymentInfoForm: React.FC = () => {
     setSelectedShippingAddressId(null);
   };
 
-  const handleEditClick = (index: number) => {
+  const handleEditClick = index => {
     setNewPayment(paymentMethods[index]);
     setEditingIndex(index);
     setIsAdding(true);
@@ -113,6 +82,10 @@ const PaymentInfoForm: React.FC = () => {
   };
 
   const handleSave = async () => {
+    if (!newPayment.billingAddress.postCode) {
+      alert('Please provide a postal code for the billing address.');
+      return;
+    }
     try {
       let billingAddress = { ...newPayment.billingAddress };
 
@@ -128,7 +101,7 @@ const PaymentInfoForm: React.FC = () => {
             address: selectedShippingAddress.address,
             city: selectedShippingAddress.city,
             country: selectedShippingAddress.country,
-            postalCode: selectedShippingAddress.postcode,
+            postCode: selectedShippingAddress.postcode,
           };
         } else {
           console.error('Selected shipping address not found');
@@ -140,17 +113,17 @@ const PaymentInfoForm: React.FC = () => {
         ...newPayment,
         billingAddress,
       };
-
+      console.log('Payment payload:', payment);
       if (editingIndex !== null) {
         // Update existing payment method
         const paymentId = paymentMethods[editingIndex]._id;
         if (paymentId) {
           await axios.put(
-            `${process.env.NEXT_PUBLIC_API_URL}/users/profile/payments/${paymentId}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/profile/payments/${paymentId}`,
             payment,
             {
               headers: {
-                Authorization: `Bearer ${(session as SessionData)?.token}`,
+                Authorization: `Bearer ${session?.token}`,
               },
             }
           );
@@ -162,12 +135,12 @@ const PaymentInfoForm: React.FC = () => {
         }
       } else {
         // Add new payment method
-        const response = await axios.post<{ payments: PaymentMethod[] }>(
-          `${process.env.NEXT_PUBLIC_API_URL}/users/profile/payments`,
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/profile/payments`,
           payment,
           {
             headers: {
-              Authorization: `Bearer ${(session as SessionData)?.token}`,
+              Authorization: `Bearer ${session?.token}`,
             },
           }
         );
@@ -187,7 +160,7 @@ const PaymentInfoForm: React.FC = () => {
           address: '',
           city: '',
           country: '',
-          postalCode: '',
+          postCode: '',
         },
       });
     } catch (error) {
@@ -199,10 +172,10 @@ const PaymentInfoForm: React.FC = () => {
     if (paymentToDelete) {
       try {
         await axios.delete(
-          `${process.env.NEXT_PUBLIC_API_URL}/users/profile/payments/${paymentToDelete}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/profile/payments/${paymentToDelete}`,
           {
             headers: {
-              Authorization: `Bearer ${(session as SessionData)?.token}`,
+              Authorization: `Bearer ${session?.token}`,
             },
           }
         );
@@ -217,7 +190,7 @@ const PaymentInfoForm: React.FC = () => {
     }
   };
 
-  const handleDeleteConfirmation = (id: string) => {
+  const handleDeleteConfirmation = id => {
     setPaymentToDelete(id);
     setIsConfirmOpen(true);
   };
@@ -227,7 +200,7 @@ const PaymentInfoForm: React.FC = () => {
     setPaymentToDelete(null);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     if (name in newPayment.billingAddress) {
       setNewPayment({
@@ -246,9 +219,7 @@ const PaymentInfoForm: React.FC = () => {
     }
   };
 
-  const handleShippingAddressSelect = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleShippingAddressSelect = e => {
     setSelectedShippingAddressId(e.target.value);
   };
 
@@ -364,8 +335,8 @@ const PaymentInfoForm: React.FC = () => {
                 <Input
                   label="Postal Code"
                   type="text"
-                  name="postalCode"
-                  value={newPayment.billingAddress.postalCode}
+                  name="postCode"
+                  value={newPayment.billingAddress.postCode}
                   onChange={handleChange}
                   className="w-full max-w-[386px] sm:max-w-full px-3 py-2 flex-col border rounded-md"
                 />
@@ -399,13 +370,23 @@ const PaymentInfoForm: React.FC = () => {
               **** **** **** {method.accountNumber.slice(-4)}
             </p>
             <p className="forms-bold text-mono-80 mb-2">Billing address</p>
-            <p className="body-small text-mono-100">{method.billingAddress.name}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.address}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.city}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.country}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.postalCode}</p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.name}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.address}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.city}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.country}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.postCode}
+            </p>
             <button
-              onClick={() => handleDeleteConfirmation(method._id as string)}
+              onClick={() => handleDeleteConfirmation(method._id)}
               className="flex items-center body-small mt-4 gap-1 text-primary-color-100"
             >
               Delete card details

@@ -4,49 +4,49 @@ import { EditIcon, SaveIcon } from '@/icons';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
-// Define the shape of an address for type safety
-interface Address {
-  _id?: string;
-  tempId?: number;
-  type: 'Shipping from' | 'Shipping to';
-  name: string;
-  address: string;
-  city: string;
-  country: string;
-  postcode: string;
-  isEditing: boolean;
-}
-interface AddressAPIResponse {
-  addresses: Address[];
-}
-// Define the structure of the user profile response
-interface UserProfileResponse {
-  user?: {
-    addresses: Address[];
-  };
-}
+// // Define the shape of an address for type safety
+// interface Address {
+//   _id?: string;
+//   tempId?: number;
+//   type: 'Shipping from' | 'Shipping to';
+//   name: string;
+//   address: string;
+//   city: string;
+//   country: string;
+//   postcode: string;
+//   isEditing: boolean;
+// }
+// interface AddressAPIResponse {
+//   addresses: Address[];
+// }
+// // Define the structure of the user profile response
+// interface UserProfileResponse {
+//   user?: {
+//     addresses: Address[];
+//   };
+// }
 
-// Define the expected structure of session data
-interface SessionData {
-  token: string;
-}
+// // Define the expected structure of session data
+// interface SessionData {
+//   token: string;
+// }
 
-const AddressForm: React.FC = () => {
+const AddressForm  = () => {
   const { data: session, status } = useSession() || {};
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState([]);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
+  const [addressToDelete, setAddressToDelete] = useState(null);
 
   // Fetch existing addresses on component mount
   useEffect(() => {
     const fetchAddresses = async () => {
-      if (status === 'authenticated' && (session as SessionData)?.token) {
+      if (status === 'authenticated' && session?.token) {
         try {
-          const response = await axios.get<UserProfileResponse>(
+          const response = await axios.get(
             `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
             {
               headers: {
-                Authorization: `Bearer ${(session as SessionData).token}`,
+                Authorization: `Bearer ${session.token}`,
               },
             }
           );
@@ -60,7 +60,7 @@ const AddressForm: React.FC = () => {
   }, [session, status]);
 
   const handleAddNewAddress = () => {
-    const newAddress: Address = {
+    const newAddress = {
       tempId: Date.now(),
       type: 'Shipping from',
       name: '',
@@ -73,7 +73,7 @@ const AddressForm: React.FC = () => {
     setAddresses([...addresses, newAddress]);
   };
 
-  const handleEditClick = (id: string | number) => {
+  const handleEditClick = (id) => {
     setAddresses(
       addresses.map(address =>
         address._id === id || address.tempId === id
@@ -84,8 +84,8 @@ const AddressForm: React.FC = () => {
   };
 
   const handleChange = (
-    id: string | number,
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    id,
+    e
   ) => {
     const { name, value } = e.target;
     setAddresses(
@@ -97,7 +97,7 @@ const AddressForm: React.FC = () => {
     );
   };
 
-  const handleDeleteConfirmation = (id: string) => {
+  const handleDeleteConfirmation = (id) => {
     setAddressToDelete(id);
     setIsConfirmOpen(true);
   };
@@ -109,7 +109,7 @@ const AddressForm: React.FC = () => {
           `${process.env.NEXT_PUBLIC_API_URL}/users/profile/addresses/${addressToDelete}`,
           {
             headers: {
-              Authorization: `Bearer ${(session as SessionData)?.token}`,
+              Authorization: `Bearer ${session?.token}`,
             },
           }
         );
@@ -124,7 +124,7 @@ const AddressForm: React.FC = () => {
     setAddressToDelete(null);
   };
 
- const handleSave = async (id: string | number) => {
+ const handleSave = async (id) => {
    const address = addresses.find(
      addr => addr._id === id || addr.tempId === id
    );
@@ -138,7 +138,7 @@ const AddressForm: React.FC = () => {
            address,
            {
              headers: {
-               Authorization: `Bearer ${(session as SessionData)?.token}`,
+               Authorization: `Bearer ${session?.token}`,
              },
            }
          );
@@ -154,7 +154,7 @@ const AddressForm: React.FC = () => {
            address,
            {
              headers: {
-               Authorization: `Bearer ${(session as SessionData)?.token}`,
+               Authorization: `Bearer ${session?.token}`,
              },
            }
          );
@@ -175,8 +175,8 @@ const AddressForm: React.FC = () => {
      } catch (error) {
        console.error(
          'Error saving address:',
-         (error as { response?: { data?: unknown } }).response?.data ||
-           (error as Error).message
+         error.response?.data ||
+           error.message
        );
      }
    }

@@ -16,46 +16,48 @@ interface ProductCardProps {
   productSize?: string;
   productPrice?: string;
   location?: string;
-  onDeleteConfirm: (productId: string) => void;
-  isLoggedIn?: boolean;
-  status?: 'Draft' | 'Active' | 'Removed';
-  averageDeliveryTime: number;
+  onDelete?: () => void;
+  onEdit?: () => void;
+  onArchive?: () => void;
+  // isArchived: boolean;
+  status: 'DRAFT' | 'LIVE' | 'REMOVED';
+  averageDeliveryTime?: number;
+  isArchived?: boolean;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   productId,
-  charityImageSrc,
-  charityImageAlt = 'Charity Image', // Provide a fallback value
-  productImageSrc,
+  charityImageSrc = '/images/icons/elisp-profile-default-img.svg',
+  charityImageAlt = 'Charity Image',
+  productImageSrc = '/images/products/card-placeholder-image.webp',
   productImageAlt = 'Product Image',
   productBrand = 'Unknown Brand',
   productTitle = 'No Title',
   productSize = 'One Size',
   productPrice = 'N/A',
   location = 'No Location',
-  onDeleteConfirm,
-  isLoggedIn = false,
-  status,
+    onDelete,
+    // onEdit,
+    onArchive,
+    status,
   // averageDeliveryTime,
 }) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const handleDeleteClick = () => {
-    setIsConfirmOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsConfirmOpen(false);
-  };
-
-  const handleDeleteAccount = () => {
-    onDeleteConfirm(productId);
+  const handleDeleteClick = () => setIsConfirmOpen(true);
+  const handleCancel = () => setIsConfirmOpen(false);
+  const handleConfirmAction = () => {
+    if (status === 'DRAFT' && onDelete) {
+      onDelete();
+    } else if (status === 'LIVE' && onArchive) {
+      onArchive();
+    }
     setIsConfirmOpen(false);
   };
 
   return (
     <div
-      className={`product-card-item bg-mono-0 max-w-[289px] w-full px-[15px] py-4 flex flex-col gap-[33px] border ${status === 'Removed' ? 'opacity-80' : ''}`}
+      className={`product-card-item bg-mono-0 max-w-[289px] w-full px-[15px] py-4 flex flex-col gap-[33px] border ${status === 'REMOVED' ? 'opacity-80' : ''}`}
     >
       <div className="product-head-cont flex justify-between">
         <div className="donate-charity-img h-[46px] flex items-center">
@@ -92,7 +94,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {productBrand ?? ''}
               </h6>
               <p className="product-price sm:hidden body-bold">
-                {productPrice ?? ''}
+                £{productPrice || 'N/A'}
               </p>
             </div>
             <p className="product-title caption-bold mt-2 text-mono-60">
@@ -103,7 +105,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           </div>
           <p className="product-price mt-3 hidden sm:block body-bold-small">
-            {productPrice}
+            £{productPrice || 'N/A'}
           </p>
         </div>
 
@@ -115,7 +117,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         <div className="product-card-btn-box mt-3 flex items-center sm:items-start sm:flex-col-reverse sm:w-full gap-4 sm:gap-2">
-          {status === 'Draft' && (
+          {status === 'DRAFT' && (
             <>
               <Button
                 variant="primary"
@@ -132,11 +134,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </Button>
             </>
           )}
-          {status === 'Active' && isLoggedIn && (
+          {status === 'LIVE' && (
             <>
               <Button
                 variant="primary"
                 className="product-states-btn sm:w-full block max-w-full"
+                // onClick={}
               >
                 Edit listing
               </Button>
@@ -158,14 +161,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="bg-white p-6 shadow-lg max-w-sm w-full mx-4">
             <h3 className="h6 font-primary">Are you sure?</h3>
             <p className="text-body-small mt-2">
-              This action cannot be undone.
+              {status === 'DRAFT'
+                ? 'This will permanently delete the product.'
+                : 'This will archive the product.'}
             </p>
             <div className="flex justify-end gap-4 mt-6">
               <Button variant="secondary" onClick={handleCancel}>
                 No
               </Button>
-              <Button variant="primary" onClick={handleDeleteAccount}>
-                Yes, delete
+              <Button variant="primary" onClick={handleConfirmAction}>
+                Yes, {status === 'DRAFT' ? 'delete' : 'archive'}
               </Button>
             </div>
           </div>

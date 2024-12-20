@@ -15,9 +15,14 @@ interface CartItem {
 interface BasketAreaProps {
   onPay: () => void;
   cartItems: CartItem[];
+  isLoading: boolean;
 }
 
-const BasketArea: React.FC<BasketAreaProps> = ({ onPay, cartItems = [] }) => {
+const BasketArea: React.FC<BasketAreaProps> = ({
+  onPay,
+  cartItems = [],
+  isLoading,
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [loading] = useState(false);
 
@@ -115,7 +120,7 @@ const BasketArea: React.FC<BasketAreaProps> = ({ onPay, cartItems = [] }) => {
             onClick={onPay}
             disabled={loading}
           >
-            {loading ? 'Processing...' : 'Pay now'}
+            {isLoading ? 'Processing...' : 'Pay now'}
           </Button>
         </div>
       </div>

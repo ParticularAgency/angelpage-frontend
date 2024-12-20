@@ -2,7 +2,7 @@
 import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import { useState } from 'react';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
@@ -241,7 +241,7 @@ const Register = () => {
           </form>
         </div>
       </div>
-      <ToastNotification />
+    
     </div>
   );
 };

@@ -1,17 +1,16 @@
 export interface Product {
-  id: number;
+  id: number | string;
   charity: {
     charityName: string;
-    profileImage: string; // Image URL for the charity
+    profileImage: string;
+    charityID: string;
+    addresses: { city: string; country: string }[];
   };
   seller: {
     firstName: string;
     lastName: string;
     profileImages: string;
-    address?: {
-      city?: string;
-      country?: string;
-    };
+    addresses: { city: string; country: string }[];
   };
   charityImageSrc?: string;
   charityImageAlt?: string;
@@ -28,14 +27,14 @@ export interface Product {
   category?: string;
   subcategory?: string;
   condition?: string;
-  status?: 'Draft' | 'LIVE' | 'Removed'; // Refined status types
+  status?: 'DRAFT' | 'LIVE' | 'REMOVED'; // Refined status types
   stock?: number;
-
   averageDeliveryTime?: number;
   isLoggedIn?: boolean;
   onFavoriteClick?: () => void;
-  onDeleteConfirm?: (productId: number) => void; // Adjusted for ID type consistency
+  onDeleteConfirm?: (productId: number) => void;
   isFavorite?: boolean;
+  isArchived?: boolean;
 }
 export interface CartItem {
   productId: Product;

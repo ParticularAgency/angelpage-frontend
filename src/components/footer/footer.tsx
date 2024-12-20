@@ -7,17 +7,44 @@ import {
   TwitterIcon,
 } from '@/icons';
 import Link from 'next/link';
+import axios from 'axios';
 import { Button, Input } from '../elements';
 
-const Footer = () => {
-  const [email, setEmail] = useState('');
+import { ToastService } from '@/components/elements/notifications/ToastService'; // Toast for notifications
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Logic to handle form submission
-    console.log({ email });
-    // You could also add a call to an API here
-  };
+const Footer = () => {
+   const [email, setEmail] = useState('');
+   const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      if (!email) {
+        ToastService.error('Please enter an email address.');
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/email/subscribe`,
+          { email }
+        );
+
+        if (response.status === 200) {
+          ToastService.success(`Subscription successful! Check your ${email} inbox.`);
+          setEmail(''); // Clear the input field
+        } else {
+          ToastService.error('Something went wrong. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error subscribing:', error);
+        
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return (
     <footer className="footer-section pt-[120px] pb-20 md:pt-20 sm:pb-[127px] sm:pt-[54px] bg-mono-0">
@@ -43,9 +70,9 @@ const Footer = () => {
             </div>
             <div className="col-span-2 md:col-span-3 sm:col-span-6 sm:order-3">
               <ul className="quick-link-lists quick-link-area-two flex flex-col gap-6 sm:gap-0">
-                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption">
+                {/* <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption">
                   <Link href="/">FAQS</Link>
-                </li>
+                </li> */}
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption">
                   <Link href="/contact">CONTACT US</Link>
                 </li>
@@ -110,9 +137,10 @@ const Footer = () => {
                     <Button
                       variant="primary"
                       className="max-w-[149px] w-full sm:max-w-full"
-                     type='submit'
+                      type="submit"
+                      disabled={loading}
                     >
-                      Subscribe
+                      {loading ? 'Submitting...' : 'Subscribe'}
                     </Button>
                   </div>
                 </form>

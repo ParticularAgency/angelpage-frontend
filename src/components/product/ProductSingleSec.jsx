@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { ShearIcon } from '@/icons';
+import { Checkmark, ShearIcon } from '@/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../elements';
 import RelatedCategoryProducts from './RelatedProductCategory';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectFade, FreeMode, Navigation, Thumbs } from 'swiper/modules';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 import { useSession } from 'next-auth/react';
@@ -19,61 +19,64 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
+import 'swiper/swiper-bundle.css';
+
 import PreLoader from '../common/pre-loader/PreLoader';
 import countries from 'i18n-iso-countries';
 import FavoriteButton from '../elements/button/FavoriteButton';
 import enLocale from 'i18n-iso-countries/langs/en.json';
-import type { Swiper as SwiperInstance } from 'swiper';
+// import type { Swiper as SwiperInstance } from 'swiper';
 
 countries.registerLocale(enLocale);
 
-// Define types for product and its related entities
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  brand: string;
-  condition: string;
-  material?: string;
-  color?: string;
-  size?: string;
-  images: { url: string; altText?: string }[];
-  dimensions?: {
-    height?: string;
-    width?: string;
-  };
-  category: string;
-  additionalInfo?: string;
-  charityProfit: number;
-  seller?: {
-    firstName: string;
-    lastName: string;
-    profileImage?: string;
-    address?: {
-      city?: string;
-      country?: string;
-    };
-  };
-  charity?: {
-    storefrontId: string;
-  };
-}
+// // Define types for product and its related entities
+// interface Product {
+//   id: number;
+//   name: string;
+//   price: number;
+//   brand: string;
+//   condition: string;
+//   material?: string;
+//   color?: string;
+//   size?: string;
+//   images: { url: string; altText?: string }[];
+//   dimensions?: {
+//     height?: string;
+//     width?: string;
+//   };
+//   category: string;
+//   additionalInfo?: string;
+//   charityProfit: number;
+//   seller?: {
+//     firstName: string;
+//     lastName: string;
+//     profileImage?: string;
+//     address?: {
+//       city?: string;
+//       country?: string;
+//     };
+//   };
+//   charity?: {
+//     storefrontId: string;
+//     charityName: string;
+//   };
+// }
 
 // Type definition for route parameters
 // interface Params {
 //   productid: string;
 // }
-const ProductSinglepage: React.FC = () => {
+const ProductSinglepage = () => {
   const { data: session } = useSession() || {};
   const params = useParams();
 
   // Safely parse product ID
-  const productid = (params as Record<string, string | undefined>)?.productid;
-
-  const [product, setProduct] = useState<Product | null>(null);
-  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperInstance | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const productid = (params)?.productid;
+ const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [product, setProduct] = useState(null);
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!productid) return;
@@ -82,12 +85,12 @@ const ProductSinglepage: React.FC = () => {
       try {
         setLoading(true);
 
-        const headers: Record<string, string> = {};
+        const headers = {};
         if (session?.token) {
           headers.Authorization = `Bearer ${session.token}`;
         }
 
-        const response = await axios.get<{ product: Product }>(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/products/details/${productid}`,
           {
             params: { isArchived: false },
@@ -96,7 +99,7 @@ const ProductSinglepage: React.FC = () => {
         );
 
         setProduct(response.data.product);
-      } catch (err: unknown) {
+      } catch (err) {
           setError('Failed to load product details.');
       } finally {
         setLoading(false);
@@ -106,9 +109,38 @@ const ProductSinglepage: React.FC = () => {
     fetchProductDetails();
   }, [productid, session]);
 
-  const handleAddToBasket = () => {
-    console.log('Added to basket');
-  };
+   const handleAddToCart = async () => {
+     if (!session?.token) {
+       ToastService.error(
+         'You need to be logged in to add products to the cart.'
+       );
+       return;
+     }
+
+     setIsAddedToCart(true);
+
+     try {
+       (await axios.post) <
+         AddToCartResponse >
+         (`${process.env.NEXT_PUBLIC_API_URL}/cart/add-product-to-cart`,
+         {
+           userId: session.user.id,
+           productId: id,
+           quantity: 1,
+         },
+         {
+           headers: {
+             Authorization: `Bearer ${session.token}`,
+           },
+         });
+       ToastService.success('Product added to cart successfully!');
+     } catch (error) {
+       ToastService.error(
+         'Failed to add product to cart. Please try again later.'
+       );
+       setIsAddedToCart(false);
+     }
+   };
 
   const handleShareProduct = () => {
     const productUrl = window.location.href;
@@ -134,11 +166,11 @@ const ProductSinglepage: React.FC = () => {
     return <p className="text-gray-500">Product not found.</p>;
   }
 
-  const sellerAddress = product.seller?.address;
+  const sellerAddress = product.seller?.addresses;
   const countryCode = sellerAddress?.country
-    ? countries.getAlpha2Code(sellerAddress.country, 'en') || 'N/A'
+    ? countries.getAlpha2Code(sellerAddresses.country, 'en') || 'N/A'
     : 'N/A';
-
+ 
   const location = sellerAddress
     ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
     : 'Location Not Available';
@@ -243,23 +275,40 @@ const ProductSinglepage: React.FC = () => {
           <div className="product-singlepage-right-cont max-w-[388px] w-full">
             <div className="product-info-header flex mb-6 items-center gap-3 justify-between">
               <div className="product-posted-user-info flex items-center gap-[13px]">
-                <div className="seller-peofile-image w-8 h-8 rounded-full">
-                  <Image
-                    src={product.seller?.profileImage || '/placeholder.jpg'}
-                    className="w-8 h-8 rounded-full object-cover"
-                    alt={`${product.seller?.firstName} ${product.seller?.lastName}`}
-                    width={480}
-                    height={320}
-                  />
-                </div>
-                <div className="posted-user-info">
-                  <p className="posted-user-name eyebrow-medium text-black">
-                    <span className="caption text-mono-90 block">
-                      Donated by
-                    </span>
-                    {`${product.seller?.firstName} ${product.seller?.lastName}`}
-                  </p>
-                </div>
+                {product.seller?.profileImage ||
+                product.seller?.firstName ||
+                product.seller?.lastName ? (
+                  <>
+                    <div className="seller-peofile-image w-8 h-8 rounded-full">
+                      <Image
+                        src={product.seller?.profileImage || '/placeholder.jpg'}
+                        className="w-8 h-8 rounded-full object-cover"
+                        alt={`${product.seller?.firstName} ${product.seller?.lastName}`}
+                        width={480}
+                        height={320}
+                      />
+                    </div>
+                    <div className="posted-user-info">
+                      <p className="posted-user-name eyebrow-medium text-black">
+                        <span className="caption text-mono-90 block">
+                          Donated by
+                        </span>
+                        {`${product.seller?.firstName} ${product.seller?.lastName}`}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="posted-user-info">
+                      <p className="posted-user-name eyebrow-medium text-black">
+                        <span className="caption text-mono-90 block">
+                          Sold by
+                        </span>
+                        {`${product.charity?.charityName}`}
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
               <div className="product-states flex items-center gap-[14px]">
                 <div className="product-favorite-btn cursor-pointer">
@@ -310,13 +359,28 @@ const ProductSinglepage: React.FC = () => {
             </div>
 
             <div className="product-cta-box flex flex-col gap-4 mb-6 max-w-[306px] sm:max-w-[375px] w-full">
-              <Button
-                className="add-to-basket-btn"
-                variant="primary"
-                onClick={handleAddToBasket}
-              >
-                Add to basket
-              </Button>
+              {!!session?.token && (
+                <div className="product-card-btn-states">
+                  {isAddedToCart ? (
+                    <Button
+                      variant="primary"
+                      className="add-to-basket-btn"
+                      disabled
+                    >
+                      <Checkmark /> Added
+                    </Button>
+                  ) : (
+                    <Button
+                      className="add-to-basket-btn w-full"
+                      variant="primary"
+                      onClick={handleAddToCart}
+                    >
+                      Add to basket
+                    </Button>
+                  )}
+                </div>
+              )}
+
               <Link
                 href={`/charity/store/${product.charity?.storefrontId}`}
                 className="block w-full"
@@ -372,7 +436,7 @@ const ProductSinglepage: React.FC = () => {
           </div>
         </div>
       </div>
-      <ToastNotification />
+     
       <RelatedCategoryProducts
         secClassName="bg-[#f1f1f7] pt-[35px] pb-5"
         category={product.category}
