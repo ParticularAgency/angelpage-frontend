@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { DeleteIcon,  LocationIcon } from '@/icons';
+import {   LocationIcon } from '@/icons';
 import { Button } from '@/components/elements';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
 
