@@ -73,7 +73,7 @@ const Login = () => {
       ToastService.success('Login successful! Redirecting to account...');
       setTimeout(() => {
         if (userRole === 'ADMIN') {
-          router.push(`/`);
+          router.push(`/admin/`);
         } 
       }, 2000);
     }
