@@ -34,7 +34,7 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
       return;
     }
 
-    const interval = setInterval(checkBackendToken, 30000); // Check every 30 seconds
+    const interval = setInterval(checkBackendToken, 30000);
     return () => clearInterval(interval);
   }, [status, session, router, allowedRoles]);
 
