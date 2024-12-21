@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { requestPasswordReset } from '@/utils/api';
 import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
@@ -110,7 +110,7 @@ const RequestPasswordReset = () => {
             </Button>
           </div>
         </div>
-        <ToastNotification />
+    
       </div>
     </>
   );

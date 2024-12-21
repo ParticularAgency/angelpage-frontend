@@ -4,85 +4,107 @@ import React, { useEffect, useState } from 'react';
 import { FavoriteOutlineIcon } from '@/icons';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
+import { ToastService } from '@/components/elements/notifications/ToastService';
 
 interface FavoriteButtonProps {
-  itemId: string; // ID of the product or charity
-  type: 'Product' | 'Charity'; // Type of the item
+  itemId: string;
+  type: 'Product' | 'Charity';
 }
+interface FavoriteButtonProps {
+  itemId: string;
+  type: 'Product' | 'Charity';
+}
+
+interface FavoriteProduct {
+  _id: string;
+}
+
+interface FavoriteCharity {
+  _id: string;
+}
+
 interface FavoriteResponse {
-  favoriteProducts: string[]; // Array of product IDs or another type
-  favoriteCharities: string[]; // Array of charity IDs or another type
+  favoriteProducts: (string | FavoriteProduct)[];
+  favoriteCharities: (string | FavoriteCharity)[];
 }
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ itemId, type }) => {
-  const { data: session } = useSession(); // Fetch the current session
-  const [isFavorite, setIsFavorite] = useState(false); // Track favorite state
-  const [loading, setLoading] = useState(false); // Track loading state
+  const { data: session } = useSession();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Fetch favorite status on component mount
-useEffect(() => {
-  const fetchFavoriteStatus = async () => {
-    if (!session?.token) {
-      console.error('No token available in session');
-      return;
-    }
+  useEffect(() => {
+    const fetchFavoriteStatus = async () => {
+      if (!session?.token) return;
 
-    try {
-       const response = await axios.get<FavoriteResponse>(
-         `${process.env.NEXT_PUBLIC_API_URL}/favorites/added`,
-         {
-           headers: {
-             Authorization: `Bearer ${session.token}`,
-           },
-         }
-       );
-      console.log('Favorite status fetched successfully', response.data);
+      try {
+        const response = await axios.get<FavoriteResponse>(
+          `${process.env.NEXT_PUBLIC_API_URL}/favorites/added`,
+          {
+            headers: {
+              Authorization: `Bearer ${session.token}`,
+            },
+          }
+        );
 
-      const { favoriteProducts, favoriteCharities } = response.data;
+        const { favoriteProducts, favoriteCharities } = response.data;
 
-      const isItemFavorite =
-        type === 'Product'
-          ? favoriteProducts.includes(itemId)
-          : favoriteCharities.includes(itemId);
+        // Extract IDs from products and charities
+        const favoriteProductIds = favoriteProducts.map(product =>
+          typeof product === 'string' ? product : product._id
+        );
 
-      setIsFavorite(isItemFavorite);
-    } catch (error) {
-      
-    }
-  };
+        const favoriteCharityIds = favoriteCharities.map(charity =>
+          typeof charity === 'string' ? charity : charity._id
+        );
 
-  fetchFavoriteStatus();
-}, [itemId, type, session]);
+        const isItemFavorite =
+          type === 'Product'
+            ? favoriteProductIds.includes(itemId)
+            : favoriteCharityIds.includes(itemId);
 
+        setIsFavorite(isItemFavorite);
+      } catch (error) {
+        console.error('Error fetching favorite status:', error);
+      }
+    };
+
+    fetchFavoriteStatus();
+  }, [itemId, type, session]);
 
   // Toggle favorite status
   const handleFavoriteToggle = async () => {
     if (!session?.user?.id) {
-      alert('You must be logged in to favorite an item.');
+      ToastService.error('You must be logged in to favorite an item.');
       return;
     }
 
-    setLoading(true); // Set loading state to true during the operation
+    setLoading(true);
 
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/favorites/toggle`,
         {
-          userId: session.user.id, // Pass the user ID
+          userId: session.user.id,
           itemId,
           type,
         },
         {
           headers: {
-            Authorization: `Bearer ${session.token}`, // Authenticate the request
+            Authorization: `Bearer ${session.token}`,
           },
         }
       );
 
-      setIsFavorite(prev => !prev); // Toggle the favorite state
+      // Update the local favorite state
+      setIsFavorite(prev => !prev);
+      ToastService.success(
+        isFavorite ? 'Removed from favorites' : 'Added to favorites'
+      );
     } catch (error) {
-     
+      console.error('Error toggling favorite:', error);
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 

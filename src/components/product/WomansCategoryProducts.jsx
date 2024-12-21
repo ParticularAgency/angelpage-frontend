@@ -16,12 +16,6 @@ import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
 
 
-// interface WomansCategoryProductsProps {
-//   secClassName?: string;
-// }
-// interface WomenCategoryResponse {
-//   products: Product[];
-// }
 const WomansCategoryProducts = ({
   secClassName,
 }) => {
@@ -44,7 +38,7 @@ const WomansCategoryProducts = ({
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/products/category/women`,
           {
-            params: { isArchived: false },
+            params: { isArchived: false, status: 'LIVE' },
             headers,
           }
         );
@@ -96,7 +90,12 @@ const WomansCategoryProducts = ({
                 ))
               : productData.map(item => {
                 // Safely extract location
-                const sellerAddress = item.seller?.address;
+                const sellerUserAddress = item.seller?.address;
+                const sellerCharityAddress = item.charity?.address;
+
+                // Determine which address to use (User or Charity)
+                const sellerAddress = sellerUserAddress || sellerCharityAddress;
+
                 let countryCode = 'N/A';
                 if (sellerAddress?.country) {
                   countryCode =
@@ -121,6 +120,7 @@ const WomansCategoryProducts = ({
                       dimensionWidth={item.dimensionWidth || '0in'}
                       location={location}
                       isLoggedIn={!!session?.token}
+                      status={item.status}
                     />
                   </SwiperSlide>
                 );

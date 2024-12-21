@@ -1,7 +1,8 @@
 'use client';
-import { useSession, signOut, getSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, ReactNode } from 'react';
+import axios from 'axios';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -9,58 +10,96 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
   const router = useRouter();
-
-  // Function to refresh session
-  const refreshSession = async () => {
-    const refreshedSession = await getSession();
-    if (!refreshedSession) {
-      signOut({ callbackUrl: '/auth/login' });
-    }
-  };
 
   useEffect(() => {
     if (status === 'loading') return;
 
-    // If the user is not authenticated, redirect to login
-    if (status === 'unauthenticated') {
-      router.push('/auth/login');
-      return;
-    }
-
-    // Ensure role is defined and check allowed roles
-    const userRole = session?.user?.role ?? ''; // Default to an empty string if role is undefined
-    if (!allowedRoles.includes(userRole)) {
-      router.push('/403');
-      return;
-    }
-
-    // Set an interval to refresh the session 1 minute before it expires
-    const intervalId = setInterval(() => {
-      if (session?.expires) {
-        const sessionExpiry = new Date(session.expires).getTime();
-        const currentTime = new Date().getTime();
-        const timeLeft = sessionExpiry - currentTime;
-
-        if (timeLeft < 60 * 1000) {
-          refreshSession();
-        }
+    const checkBackendToken = async () => {
+      try {
+        await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/check-token`, {
+          headers: { Authorization: `Bearer ${session?.token}` },
+        });
+      } catch {
+        signOut({ callbackUrl: '/' });
       }
-    }, 30 * 1000); // Check every 30 seconds
+    };
 
-    // Clean up interval on component unmount
-    return () => clearInterval(intervalId);
+    if (
+      status === 'unauthenticated' ||
+      !allowedRoles.includes(session?.user?.role || '')
+    ) {
+      signOut({ callbackUrl: '/' });
+      return;
+    }
+
+    const interval = setInterval(checkBackendToken, 30000); // Check every 30 seconds
+    return () => clearInterval(interval);
   }, [status, session, router, allowedRoles]);
 
-  // Loading state
-  if (status === 'loading') {
-    return <p>Loading...</p>;
-  }
+  if (status === 'loading') return <p>Loading...</p>;
 
-  // Check if session is active and user has an allowed role
-  const userRole = session?.user?.role ?? ''; // Ensure role is a string
-  return allowedRoles.includes(userRole) ? <>{children}</> : null;
+  return <>{children}</>;
 };
 
-export default ProtectedRoute;
+ export default ProtectedRoute;
+// 'use client';
+
+// import { useSession, signOut } from 'next-auth/react';
+// import { useRouter } from 'next/navigation';
+// import { useEffect, ReactNode } from 'react';
+// import axios from 'axios';
+
+// interface ProtectedRouteProps {
+//   children: ReactNode;
+//   allowedRoles: string[];
+// }
+
+// const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
+//   const { data: session, status } = useSession();
+//   const router = useRouter();
+
+//   useEffect(() => {
+//     if (status === 'loading') return;
+
+//     const handleLogout = () => {
+//       signOut({ callbackUrl: '/' }); // Redirects to homepage
+//       router.push('/'); // Ensures the frontend navigates to the homepage
+//     };
+
+//     const checkBackendToken = async () => {
+//       try {
+//         const response = await axios.get(
+//           `${process.env.NEXT_PUBLIC_API_URL}/auth/check-token`,
+//           {
+//             headers: { Authorization: `Bearer ${session?.token}` },
+//           }
+//         );
+
+//         if (!response.data?.valid) {
+//           handleLogout();
+//         }
+//       } catch {
+//         handleLogout();
+//       }
+//     };
+
+//     if (
+//       status === 'unauthenticated' ||
+//       !allowedRoles.includes(session?.user?.role || '')
+//     ) {
+//       handleLogout();
+//       return;
+//     }
+
+//     const interval = setInterval(checkBackendToken, 30000); // Check every 30 seconds
+//     return () => clearInterval(interval);
+//   }, [status, session, router, allowedRoles]);
+
+//   if (status === 'loading') return <p>Loading...</p>;
+
+//   return <>{children}</>;
+// };
+
+// export default ProtectedRoute;

@@ -13,12 +13,16 @@ interface AboutInfoComponentProps {
     charityNumber?: string;
     charityID?: string;
     description?: string;
+    storefrontId?: string;
     addresses?: Address[];
-  };
+    profileImage?: string;
+    charityBannerImage?: string;
+  } | null;
 }
 
+
 const AboutInfoComponent: React.FC<AboutInfoComponentProps> = ({
-  charityData = {}, // Default to an empty object
+  charityData // Default to an empty object
 }) => {
   const {
     charityName = 'Charity Name Not Available',
@@ -26,7 +30,7 @@ const AboutInfoComponent: React.FC<AboutInfoComponentProps> = ({
     charityID = 'N/A',
     description = 'No description available for this charity.',
     addresses = [],
-  } = charityData;
+  } = charityData || {};
 
   const address = addresses[0] || {};
 

@@ -5,7 +5,7 @@ import { Button, ProgressBar } from '@/components/elements';
 import { fetchUserData, fetchUserProfileData } from '@utils/api';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
@@ -155,7 +155,7 @@ const BannerSection = () => {
             </p>
           </div>
         </div>
-        <ToastNotification />
+       
       </div>
     </section>
   );

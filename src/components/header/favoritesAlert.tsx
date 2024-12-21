@@ -16,6 +16,7 @@ interface FavoritesResponse {
 }
 interface FavoritesAlertProps {
   ref: React.Ref<FavoritesAlertRef>;
+  className?: string;
 }
 
 export interface FavoritesAlertRef {
@@ -23,7 +24,7 @@ export interface FavoritesAlertRef {
 }
 
 const FavoritesAlert = forwardRef<FavoritesAlertRef, FavoritesAlertProps>(
-  (_, ref) => {
+  ({ className = '' }, ref) => {
     const { data: session } = useSession();
     const [favoriteCount, setFavoriteCount] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
@@ -41,14 +42,14 @@ const FavoritesAlert = forwardRef<FavoritesAlertRef, FavoritesAlertProps>(
             },
           }
         );
-
+        // Log the API response to the console
+        console.log('Favorites API Response:', response.data);
         const totalFavorites =
           response.data.favoriteProducts.length +
           response.data.favoriteCharities.length;
 
         setFavoriteCount(totalFavorites);
       } catch (error) {
-        
       } finally {
         setLoading(false);
       }
@@ -65,7 +66,7 @@ const FavoritesAlert = forwardRef<FavoritesAlertRef, FavoritesAlertProps>(
     }, [session]);
 
     return (
-      <div className="user-saveitem flex items-center sm:hidden relative">
+      <div className={`user-saveitem flex items-center ${className} relative`}>
         <Link href="/favorites" aria-label="Go to favorites">
           {loading ? (
             <span className="absolute top-[-8px] w-5 h-5 right-[-8px] bg-gray-500 text-white text-[11px]  flex items-center justify-center  rounded-full p-1">
@@ -75,7 +76,7 @@ const FavoritesAlert = forwardRef<FavoritesAlertRef, FavoritesAlertProps>(
             <span className="absolute top-[-8px] w-5 h-5 right-[-8px] bg-red-500 text-white text-[11px]  flex items-center justify-center rounded-full p-1">
               {favoriteCount}
             </span>
-          ) : null} 
+          ) : null}
           <FavoriteIcon />
         </Link>
       </div>

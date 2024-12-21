@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import BusinessOverview from './BusinessOverview';
 import RevenueStatistics from './RevenueStatistics';
 import CustomerAcquisition from './CustomerAcquisition';
@@ -95,6 +95,7 @@ const AnalyticsPage: React.FC = () => {
   const revenueChange = 10.05; // Assume static percentage change for now
   const itemsSoldChange = 10.08; // Assume static percentage change for now
 
+
   // Data structure passed to BusinessOverview
   const overviewData = {
     revenue: totalRevenue,
@@ -107,13 +108,14 @@ const AnalyticsPage: React.FC = () => {
     moneySpentChange: revenueChange,
   };
 
+
   return (
     <div className="analytics-page py-8">
       {/* Business Overview Section */}
       <div className="max-w-7xl mx-auto bg-white">
         <h2 className="h5 font-primary mb-6">Business Overview</h2>
         {/* Pass overviewData to BusinessOverview */}
-        <BusinessOverview data={overviewData} />
+        <BusinessOverview data={overviewData}  />
       </div>
 
       {/* Revenue Statistics Section */}

@@ -4,7 +4,7 @@ import { useDebounce } from 'use-debounce';
 import { Button, Input, Select, Textarea } from '@/components/elements';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 import { categoriesData } from '@/libs/categoriesData';
@@ -471,7 +471,7 @@ const DetailsForm = ({
           </Button>
         </div>
       </form>
-      <ToastNotification />
+      
     </>
   );
 };

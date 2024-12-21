@@ -104,8 +104,11 @@ const userRole = session?.user?.role;
                         </div>
                         {isTempLogin && (
                           <>
-                            <FavoritesAlert ref={favoritesAlertRef} />
-
+                            <FavoritesAlert
+                              className="sm:hidden"
+                              ref={favoritesAlertRef} 
+                            />
+ 
                             <div className="notification-dropdown-area relative sm:static">
                               <NotificationButton
                                 notificationBtnClass="sm:!hidden"
@@ -188,7 +191,7 @@ const userRole = session?.user?.role;
                         </div>
                         {!shouldHideBottomNav && session ? (
                           <>
-                            <FavoritesAlert />
+                            <FavoritesAlert className='sm:hidden' />
 
                             <div className="notification-dropdown-area relative sm:static">
                               <NotificationButton

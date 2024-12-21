@@ -10,40 +10,22 @@ import { Button } from '@/components/elements';
 import { useSession } from 'next-auth/react';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-interface CartResponse {
-  cart: {
-    items: CartItem[];
-  };
-}
-interface Product {
-  _id: string;
-  name: string;
-  brand: string;
-  price: number;
-  images: { url: string }[];
-  selectedCharityName?: string;
-}
 
-interface CartItem {
-  productId: Product;
-  quantity: number;
-}
-
-const MiniCart: React.FC = () => {
-  const { data: session } = useSession();
+const MiniCart = () => {
+  const { data: session } = useSession() || {};
   const userId = session?.user?.id;
   const token = session?.token;
 
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Fetch cart from backend
+
   const fetchCart = async () => {
     if (!userId || !token) return;
 
     try {
       setLoading(true);
-      const response = await axios.get<CartResponse>(
+      const response = await axios.get(
         `${API_BASE_URL}/cart/${userId}`,
         {
           headers: {
@@ -51,24 +33,24 @@ const MiniCart: React.FC = () => {
           },
         }
       );
-      setCartItems(response.data.cart.items || []); // Sync cart items
+      setCartItems(response.data.cart.items || []); 
     } catch (error) {
-      ToastService.error('Failed to load cart. Please try again.');
+      console.log('Failed to load cart. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   // Update item quantity optimistically
-  const updateQuantity = (productId: string, quantityChange: number) => {
-    // Optimistic update for instant UI response
+  const updateQuantity = (productId, quantityChange) => {
+  
     const updatedCart = cartItems.map(item =>
       item.productId._id === productId
-        ? { ...item, quantity: Math.max(item.quantity + quantityChange, 0) } // Ensure quantity doesn't go below 0
+        ? { ...item, quantity: Math.max(item.quantity + quantityChange, 0) } 
         : item
     );
-    const filteredCart = updatedCart.filter(item => item.quantity > 0); // Remove items with quantity 0
-    setCartItems(filteredCart); // Immediate UI update
+    const filteredCart = updatedCart.filter(item => item.quantity > 0); 
+    setCartItems(filteredCart);
 
     // Sync with backend in the background
     syncQuantityWithBackend(productId, quantityChange);
@@ -76,8 +58,8 @@ const MiniCart: React.FC = () => {
 
   // Sync quantity with backend
   const syncQuantityWithBackend = async (
-    productId: string,
-    quantityChange: number
+    productId,
+    quantityChange
   ) => {
     try {
       await axios.post(
@@ -97,7 +79,7 @@ const MiniCart: React.FC = () => {
   };
 
   // Remove an item from the cart optimistically
-  const removeItem = (productId: string) => {
+  const removeItem = (productId) => {
     const updatedCart = cartItems.filter(
       item => item.productId._id !== productId
     );
@@ -108,7 +90,7 @@ const MiniCart: React.FC = () => {
   };
 
   // Sync remove with backend
-  const syncRemoveFromBackend = async (productId: string) => {
+  const syncRemoveFromBackend = async (productId) => {
     try {
       await axios.post(
         `${API_BASE_URL}/cart/remove`,
@@ -134,7 +116,7 @@ const MiniCart: React.FC = () => {
   );
 
   // Helper function for item price calculation
-  const getItemPrice = (item: CartItem) => {
+  const getItemPrice = (item) => {
     const price = Number(item.productId?.price || 0);
     const quantity = Number(item.quantity || 0);
     return price * quantity;
@@ -155,7 +137,7 @@ const MiniCart: React.FC = () => {
               className="drawer-button btn !bg-transparent !p-0 !border-none"
             >
               {cartItems.length > 0 && (
-                <span className="absolute top-[3px] w-5 h-5  right-[-19px] bg-red-500 text-white text-[11px]  flex items-center justify-center rounded-full p-1">
+                <span className="absolute top-[3px] w-5 h-5  right-[-19px] sm:right-[-8px] bg-red-500 text-white text-[11px]  flex items-center justify-center rounded-full p-1">
                   {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
                 </span>
               )}
@@ -215,7 +197,15 @@ const MiniCart: React.FC = () => {
                               {item.productId.name}
                             </p>
                             <p className="body-small text-mono-100">
-                              Charity: {item.productId?.selectedCharityName}
+                              Charity: {'  '}
+                              {item.productId?.selectedCharityName ? (
+                                <>{item.productId?.selectedCharityName}</>
+                              ) : (
+                                <>{item.productId?.charity?.charityName}</>
+                              )}
+                              {'  '}
+                              {/* {item.productId?.charity?.addresses[0].country}
+                              {item.productId?.seller?.addresses[0].country} */}
                             </p>
                             <div className="minicart-states mt-[23px] flex items-center justify-between gap-2">
                               <div className="minicart-states-group flex items-center gap-3">

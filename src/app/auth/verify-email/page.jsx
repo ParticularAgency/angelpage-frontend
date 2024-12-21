@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { verifyEmail, resendVerificationEmail } from '@/utils/api'; // Import both verify and resend functions
 import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
@@ -141,7 +141,7 @@ const VerifyEmail = () => {
           </Button>
         </div>
       </div>
-      <ToastNotification />
+      
     </div>
   );
 };

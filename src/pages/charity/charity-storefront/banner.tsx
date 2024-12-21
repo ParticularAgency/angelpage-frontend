@@ -3,17 +3,31 @@ import React from 'react';
 import Image from 'next/image';
 
 interface CharityStore {
-  profileImage?: string;
   charityName?: string;
+  charityNumber?: string;
+  charityID?: string;
+  description?: string;
+  storefrontId?: string;
+  addresses?: Array<{
+    address: string;
+    city: string;
+    country: string;
+    postcode: string;
+  }>;
+  profileImage?: string;
   charityBannerImage?: string;
 }
 
+
 interface StoreFrontBannerProps {
   charityStore?: CharityStore;
+  productCount: number;
 }
 
 const StoreFrontBanner: React.FC<StoreFrontBannerProps> = ({
   charityStore = {},
+  productCount,
+
 }) => {
   return (
     <section className="storefront-banner-component bg-mono-100 sm:bg-transparent sm:mt-2">
@@ -42,7 +56,7 @@ const StoreFrontBanner: React.FC<StoreFrontBannerProps> = ({
                 )}
               </h1>
               <p className="available-product-total-number body-small mt-2 sm:mt-1 !text-mono-0">
-                24 items for sale
+                {productCount || ''} items for sale
               </p>
             </div>
           </div>

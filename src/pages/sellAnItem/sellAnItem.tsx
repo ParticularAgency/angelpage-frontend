@@ -8,7 +8,7 @@ import PhotosForm from './forms/PhotosForm';
 import PriceForm from './forms/PriceForm';
 import TabNavigation from './navigation/TabNavigation';
 import ConfirmationModal from './forms/popupModal';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
@@ -73,6 +73,7 @@ const SellAnItem: React.FC = () => {
     'details'
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initialFormData: FormData = {
     charityId: '',
@@ -199,6 +200,7 @@ const SellAnItem: React.FC = () => {
     }
 
     try {
+      setIsSubmitting(true);
       const formData = new FormData();
       formData.append('name', finalData.itemTitle);
       formData.append('price', finalData.price.replace(/[^\d.-]/g, '')); // Strip non-numeric characters
@@ -252,6 +254,8 @@ const SellAnItem: React.FC = () => {
     } catch (error) {
       console.error('Error creating product:', error);
       ToastService.error('An error occurred while creating the product.');
+    } finally{
+       setIsSubmitting(false);
     }
   };
 
@@ -288,9 +292,9 @@ const SellAnItem: React.FC = () => {
   const userRole = session?.user?.role;
 
   return (
-    <div className="max-w-[590px] m-auto pt-14 pb-[111px] sm:pb-18">
+    <div className="max-w-[590px] m-auto pt-4 pb-[111px] sm:pb-18">
       <div className="flex sm:flex-col gap-5">
-        <div className="sm:w-full sm:px-4 w-full max-w-[183px] sm:max-w-full sticky top-8 h-[30vh]">
+        <div className="sm:w-full sm:px-4 w-full max-w-[183px] sm:max-w-full sticky sm:relative top-8 sm:pt-8 sm:top-0 sm:pb-6  h-[30vh] sm:h-auto">
           <TabNavigation
             activeTab={activeTab}
             setActiveTab={setActiveTab}
@@ -318,6 +322,7 @@ const SellAnItem: React.FC = () => {
           )}
           {activeTab === 'price' && (
             <PriceForm
+              isSubmitting={isSubmitting}
               setActiveTab={setActiveTab}
               onSubmit={updatePrice}
               onBack={() => handleBack('price')}
@@ -334,7 +339,7 @@ const SellAnItem: React.FC = () => {
         onClose={closeModal}
         onConfirm={confirmAnotherPost}
       />
-      <ToastNotification />
+     
     </div>
   );
 };

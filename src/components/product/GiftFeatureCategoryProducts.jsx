@@ -42,7 +42,7 @@ const GiftFeaturedCategoryProducts = ({ secClassName }) => {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/products/listing/latest-products`,
           {
-            params: { isArchived: false },
+            params: { isArchived: false, status: 'LIVE' },
             headers,
           }
         );
@@ -92,36 +92,42 @@ const GiftFeaturedCategoryProducts = ({ secClassName }) => {
                   </SwiperSlide>
                 ))
               : productData.map(item => {
-                  // Safely extract location
-                  const sellerAddress = item.seller?.address;
-                  let countryCode = 'N/A';
-                  if (sellerAddress?.country) {
-                    countryCode =
-                      countries.getAlpha2Code(sellerAddress.country, 'en') ||
-                      'N/A';
-                  }
+                // Safely extract location
+                const sellerUserAddress = item.seller?.address;
+                const sellerCharityAddress = item.charity?.address;
 
-                  const location = sellerAddress
-                    ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
-                    : 'Location Not Available';
+                // Determine which address to use (User or Charity)
+                const sellerAddress = sellerUserAddress || sellerCharityAddress;
 
-                  return (
-                    <SwiperSlide key={item.id}>
-                      <ProductCard
-                        {...item}
-                        id={item._id}
-                        charityImageSrc={item.charity?.profileImage}
-                        charityImageAlt={
-                          item.charity?.charityName || 'Charity Image'
-                        }
-                        dimensionHeight={item.dimensionHeight || '0in'}
-                        dimensionWidth={item.dimensionWidth || '0in'}
-                        location={location}
-                        isLoggedIn={!!session?.token}
-                      />
-                    </SwiperSlide>
-                  );
-                })}
+                let countryCode = 'N/A';
+                if (sellerAddress?.country) {
+                  countryCode =
+                    countries.getAlpha2Code(sellerAddress.country, 'en') ||
+                    'N/A';
+                }
+
+                const location = sellerAddress
+                  ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
+                  : 'Location Not Available';
+
+                return (
+                  <SwiperSlide key={item.id}>
+                    <ProductCard
+                      {...item}
+                      id={item._id}
+                      charityImageSrc={item.charity?.profileImage}
+                      charityImageAlt={
+                        item.charity?.charityName || 'Charity Image'
+                      }
+                      dimensionHeight={item.dimensionHeight || '0in'}
+                      dimensionWidth={item.dimensionWidth || '0in'}
+                      location={location}
+                      isLoggedIn={!!session?.token}
+                      status={item.status}
+                    />
+                  </SwiperSlide>
+                );
+              })}
           </Swiper>
         </div>
       </div>

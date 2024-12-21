@@ -8,10 +8,12 @@ import { Product } from '@/types/productTypes';
 
 interface FavoriteProductListingProps {
   products: Product[];
+  isLoggedin: boolean;
 }
 
 const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
   products = [],
+  isLoggedin,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sort, setSort] = useState('');
@@ -38,13 +40,11 @@ const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
     // Sorting logic
     if (sort === 'price-asc') {
       updatedProducts.sort(
-        (a, b) =>
-          parseFloat(a.price || '0') - parseFloat(b.price || '0')
+        (a, b) => parseFloat(a.price || '0') - parseFloat(b.price || '0')
       );
     } else if (sort === 'price-desc') {
       updatedProducts.sort(
-        (a, b) =>
-          parseFloat(b.price || '0') - parseFloat(a.price || '0')
+        (a, b) => parseFloat(b.price || '0') - parseFloat(a.price || '0')
       );
     } else if (sort === 'name-asc') {
       updatedProducts.sort((a, b) =>
@@ -107,7 +107,7 @@ const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
                   <Sorting onSortChange={handleSortChange} />
                 </div>
               </div>
-              <ProductList isLoggedIn={true} products={currentProducts} />
+              <ProductList isLoggedIn={isLoggedin} products={currentProducts} />
               <div className="product-lists-footer mt-[38px] md:mt-6 flex md:flex-row-reverse md:justify-between sm:flex-col sm:mt-4 items-center">
                 <div className="pagination-wrapper ml-auto mr-auto md:mx-0">
                   <Pagination

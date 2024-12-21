@@ -4,7 +4,7 @@ import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ToastNotification, {
+import  {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
@@ -184,7 +184,7 @@ const Login = () => {
           </form>
         </div>
       </div>
-      <ToastNotification />
+
     </div>
   );
 };

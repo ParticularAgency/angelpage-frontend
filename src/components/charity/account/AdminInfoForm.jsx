@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { EditIcon, SaveIcon } from '@/icons';
 import { Input, Textarea} from '@/components/elements';
-// import { fetchAdminInfo } from '@utils/api';
+import { fetchAdminInfo } from '@utils/api';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
+import  { ToastService } from '@/components/elements/notifications/ToastService';
 
 const ProfileInfoForm = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -13,19 +14,37 @@ const ProfileInfoForm = () => {
     charityID: '',
     description: '',
   });
-  const { data: session } = useSession() || {};
+  const { data: session, status } = useSession() || {};
 
- 
+  // Fetch user data on mount if session is authenticated
+  useEffect(() => {
+    const fetchData = async () => {
+      if (status === 'authenticated' && session?.token) {
+        const data = await fetchAdminInfo(session.token);
+        if (data) {
+          setCharityInfo({
+            charityName: data.charityName || '',
+            charityNumber: data.charityNumber || '',
+            charityID: data.charityID || '',
+            description: data.description || '',
+          });
+        } else {
+          console.error('Failed to fetch user data');
+        }
+      }
+    };
+    fetchData();
+  }, [session, status]);
 
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setCharityInfo({ ...charityInfo, [name]: value });
   };
-    const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setCharityInfo({ ...charityInfo, [name]: value });
-    };
+  const handleTextChange = (e) => {
+    const { name, value } = e.target;
+    setCharityInfo({ ...charityInfo, [name]: value });
+  };
   const handleSave = async () => {
     console.log('Saving user data:', charityInfo); // Log the data to be sent
 
@@ -47,7 +66,7 @@ const ProfileInfoForm = () => {
       );
 
       if (response.status === 200) {
-        console.log(' charity info updated successfully');
+        ToastService.success('charity info updated successfully');
         setIsEditing(false);
       } else {
         console.error('Failed to update charity info:', response.data);
@@ -172,7 +191,7 @@ const ProfileInfoForm = () => {
             </p>
             <p className="charity-info-item body-small h-full">
               <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
-                Charity number
+                CharityID
               </span>
               <Input
                 type="text"

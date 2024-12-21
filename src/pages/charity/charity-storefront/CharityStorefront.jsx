@@ -1,70 +1,86 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
 import StoreFrontBanner from './banner';
 import AboutInfoComponent from './about';
-// import CharityStoreListing from './listing';
+import CharityStoreListing from './listing';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
+import { ToastService } from '@/components/elements/notifications/ToastService';
+import Loading from '@/app/loading';
 
-interface CharityData {
-  charityName?: string;
-  charityNumber?: string;
-  charityID?: string;
-  description?: string;
-  storefrontId?: string;
-  addresses?: Array<{
-    address: string;
-    city: string;
-    country: string;
-    postcode: string;
-  }>;
-  profileImage?: string;
-  charityBannerImage?: string;
-}
-interface CharityStorefrontResponse {
-  charity: CharityData;
-}
-const CharityStorefront: React.FC<{ storefrontid: string }> = ({
-  storefrontid = {},
+
+const CharityStorefront = ({
+  storefrontid,
 }) => {
-  const { data: session, status } = useSession() || '';
-  const [charityData, setCharityData] = useState<CharityData | null>(null);
-  const [activeTab, setActiveTab] = useState<number>(0);
+  const [charityData, setCharityData] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const [productCount, setProductCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch charity data and favorite status on mount
   useEffect(() => {
     const fetchCharityData = async () => {
-      if (status === 'authenticated' && session?.token) {
-        console.log('Fetching storefront with id:', storefrontid);
+      if (!storefrontid) {
+        console.error('Storefront ID is missing.');
+        return;
+      }
 
-        try {
-           const response = await axios.get<CharityStorefrontResponse>(
-             `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}`,
-             {
-               headers: {
-                 Authorization: `Bearer ${session?.token}`,
-               },
-             }
-           );
-          console.log('Charity Data fetched successfully:', response.data);
-          setCharityData(response.data.charity);
-        } catch (error) {
-          console.error('Error fetching charity data:', error);
+      console.log('Fetching storefront with id:', storefrontid);
+
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}`
+        );
+
+        ToastService.success(
+          'Charity Data fetched successfully:',
+          response.data
+        );
+
+        setCharityData(response.data.charity);
+        console.log(response.data.charity);
+      } catch (error) {
+        ToastService.error('Error fetching charity data:', error);
+      }
+    };
+
+
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}/products`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
         }
+        const data = await response.json();
+        setProductCount(data.charity.listedProducts?.length || 0);
+        console.log('list product:', data.charity.listedProducts);
+        console.log('total product:', data.charity.listedProducts?.length || 0);
+        ToastService.success('Products loaded successfully.');
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        ToastService.error('Error loading products.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCharityData();
-  }, [storefrontid, session, status]);
+    fetchProducts();
+  }, [storefrontid]);
 
-  if (!charityData) {
-    return <p>Loading storefront...</p>;
-  }
+    if (loading && !charityData) {
+      return <Loading />;
+    }
 
   return (
     <div className="charity-storefront-main-page-wrapper">
-      <StoreFrontBanner charityStore={charityData} />
+      <StoreFrontBanner
+        charityStore={charityData}
+        productCount={productCount}
+      />
       <div className="charity-storefront-wrapper-area">
         <div className="storefront-tabs-area">
           <div className="storefront-tabs-box">
@@ -93,11 +109,11 @@ const CharityStorefront: React.FC<{ storefrontid: string }> = ({
                     About
                   </li>
                 </ul>
-                {activeTab === 1 && charityData.storefrontId && (
-                  <div className="favorite-btn-item cursor-pointer p-3">
-                    {charityData.charityID && (
+                {activeTab === 1 && charityData?.storefrontId && (
+                  <div className="favorite-btn-item-store test cursor-pointer p-3">
+                    {charityData?._id && (
                       <FavoriteButton
-                        itemId={charityData.charityID}
+                        itemId={charityData?._id}
                         type="Charity"
                       />
                     )}
@@ -113,7 +129,7 @@ const CharityStorefront: React.FC<{ storefrontid: string }> = ({
               {activeTab === 0 && (
                 <li className="tabs-cont-item">
                   <div className="storefront-shop-tabs-cont bg-[#F1F1F7] sm:!py-0">
-                    {/* <CharityStoreListing /> */}
+                    <CharityStoreListing storefrontid={storefrontid} />
                   </div>
                 </li>
               )}

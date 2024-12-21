@@ -4,33 +4,23 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import axios from 'axios';
 import { EditIcon, SaveIcon } from '@/icons';
-import { fetchCharityData } from '@utils/api';
+import { fetchUserData } from '@utils/api';
 
-// Define the structure of the expected API response
-interface UserProfileResponse {
-  user: {
-    profileImage: string;
-  };
-}
 
-interface UserData {
-  profileImage?: string;
-}
-
-const ProfileImageSection: React.FC = () => {
+const ProfileImageSection = () => {
   const { data: session, status } = useSession() || {};
   const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [image, setImage] = useState<string>(
+  const [userData, setUserData] = useState(null);
+  const [image, setImage] = useState(
     '/images/icons/elisp-profile-default-img.svg'
   );
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       if (status === 'authenticated' && session?.token) {
         try {
-          const data = await fetchCharityData(session.token);
+          const data = await fetchUserData(session.token);
           if (data) {
             setUserData(data);
             setImage(
@@ -48,7 +38,7 @@ const ProfileImageSection: React.FC = () => {
     fetchData();
   }, [session, status]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
@@ -66,8 +56,8 @@ const ProfileImageSection: React.FC = () => {
     formData.append('profileImage', file);
 
     try {
-      const response = await axios.put<UserProfileResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/charity/profile`,
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
         formData,
         {
           headers: {

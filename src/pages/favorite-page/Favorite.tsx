@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import BannerSection from './Banner';
 import FavoriteProductListing from './FavoriteProducts';
@@ -6,70 +7,82 @@ import FavoriteCharityListing from './FavoriteCharities';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { Product } from '@/types/productTypes';
+import ProductSkeletonCard from '@/components/common/cards/product/productskeletonCard';
+import { Button } from '@/components/elements';
+import Link from 'next/link';
+
+interface Charity {
+  id: string;
+  charityName: string;
+  storefrontId: string;
+  listedProducts?: (string | object)[];
+  profileImage: string;
+  description?: string;
+}
 
 interface FavoriteResponse {
-  favoriteProducts: Array<{
-    products: Product[];
-  }>;
-  favoriteCharities: Array<{
-    id: string;
-    name: string;
-    listingProduct?: string;
-    image: string;
-    description?: string;
-  }>;
+  favoriteProducts: Product[];
+  favoriteCharities: Charity[];
 }
 
 const FavoritePage = () => {
-  const [activeTab, setActiveTab] = useState<number>(0);
-  const { data: session, status } = useSession() || {};
-  const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
-  const [favoriteCharities, setFavoriteCharities] = useState<
-    FavoriteResponse['favoriteCharities']
-  >([]);
+   const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
+   const [favoriteCharities, setFavoriteCharities] = useState<Charity[]>([]);
+  const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { data: session } = useSession() || {};
+
+  const fetchFavorites = async () => {
+    if (!session?.token) return;
+
+    setLoading(true);
+    try {
+      const response = await axios.get<FavoriteResponse>(
+        `${process.env.NEXT_PUBLIC_API_URL}/favorites/added`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+          },
+        }
+      );
+
+      if (response.data) {
+        setFavoriteProducts(response.data.favoriteProducts || []);
+        setFavoriteCharities(response.data.favoriteCharities || []);
+      } else {
+        setFavoriteProducts([]);
+        setFavoriteCharities([]);
+      }
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+      setFavoriteProducts([]);
+      setFavoriteCharities([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchFavorites = async () => {
-      if (status !== 'authenticated') return;
-
-      try {
-        const response = await axios.get<FavoriteResponse>(
-          `${process.env.NEXT_PUBLIC_API_URL}/favorites/added`,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token}`,
-            },
-          }
-        );
-
-        // Flatten the favoriteProducts array
-        const products = response.data.favoriteProducts.flatMap(
-          item => item.products
-        );
-        setFavoriteProducts(products);
-        setFavoriteCharities(response.data.favoriteCharities);
-      } catch (error) {
-        console.error('Error fetching favorites:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchFavorites();
-  }, [status, session]);
+  }, [session]);
 
-  if (loading) {
-    return <div>Loading favorites...</div>;
-  }
+  // if (loading) {
+  //   return <PreLoader />
+  // }
+
+  console.log('Favorite Products:', favoriteProducts);
+
   return (
     <div className="favorite-page-content-wrapper">
-      <BannerSection />
+      <BannerSection
+        totalProducts={favoriteProducts.length}
+        totalCharities={favoriteCharities.length}
+      />
       <div className="favorites-wrapper-area">
         <div className="favorites-tabs-area">
           <div className="favorites-tabs-box">
             <div className="custom-container">
-              <div className="favorites-tabs-btn-box pt-3 pb-4 flex justify-between items-center  gap-6">
+              <div className="favorites-tabs-btn-box pt-3 pb-4 flex justify-between items-center gap-6">
                 <ul className="tabs-btn-items flex items-center gap-6">
                   <li
                     className={`tabs-btn-list body-small px-[11px] py-2 rounded-[24px] cursor-pointer ${
@@ -102,9 +115,49 @@ const FavoritePage = () => {
                 <li className="tabs-cont-item">
                   <div className="favorite-product-tabs-cont">
                     {favoriteProducts.length === 0 ? (
-                      <p>No favorite products yet!</p>
+                      <>
+                        <div className="not-found-screen-design flex flex-col items-center pt-20 pb-24 custom-container">
+                          <h5 className="body-bold-medium text-mono-100 font-medium font-secondary mb-2 text-center">
+                            No favourites yet!
+                          </h5>
+                          <p className="body-regular font-secondary font-regular text-mono-90 text-center max-w-[412px] w-full mx-auto">
+                            Click the 'Heart' button on items you love and
+                            you'll be able to keep an eye on the items here
+                          </p>
+                          <Link href="/product/">
+                            <Button variant="primary" className="mx-auto">
+                              Start shopping
+                            </Button>
+                          </Link>
+                        </div>
+                      </>
                     ) : (
-                      <FavoriteProductListing products={favoriteProducts} />
+                      <>
+                        {loading ? (
+                          <>
+                            <div className="skeleton-sec-area custom-container">
+                              <div className="grid grid-cols-12 gap-6 product-handle-listing-wrapper bg-[#F1F1F7] py-8 px-6 sm:px-[5px]">
+                                <div className="col-span-3 sm:col-span-full">
+                                  <ProductSkeletonCard />
+                                </div>
+                                <div className="col-span-3 sm:hidden">
+                                  <ProductSkeletonCard />
+                                </div>
+                                <div className="col-span-3 md:hidden">
+                                  <ProductSkeletonCard />
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <FavoriteProductListing
+                              isLoggedin={!!session?.token}
+                              products={favoriteProducts}
+                            />
+                          </>
+                        )}
+                      </>
                     )}
                   </div>
                 </li>
@@ -113,9 +166,48 @@ const FavoritePage = () => {
                 <li className="tabs-cont-item">
                   <div className="favorite-charity-tabs-cont">
                     {favoriteCharities.length === 0 ? (
-                      <p>No favorite charities yet!</p>
+                      <>
+                        <div className="not-found-screen-design flex flex-col items-center pt-20 pb-24 custom-container">
+                          <h5 className="body-bold-medium text-mono-100 font-medium font-secondary mb-2 text-center">
+                            No favourites yet!
+                          </h5>
+                          <p className="body-regular font-secondary font-regular text-mono-90 text-center max-w-[412px] w-full mx-auto">
+                            Click the 'Heart' button on items you love and
+                            you'll be able to keep an eye on the items here
+                          </p>
+                          <Link href="/product/">
+                            <Button variant="primary" className="mx-auto">
+                              Start shopping
+                            </Button>
+                          </Link>
+                        </div>
+                      </>
                     ) : (
-                      <FavoriteCharityListing charities={favoriteCharities} />
+                      <>
+                        {loading ? (
+                          <>
+                            <div className="skeleton-sec-area custom-container">
+                              <div className="grid grid-cols-12 gap-6 product-handle-listing-wrapper bg-[#F1F1F7] py-8 px-6 sm:px-[5px]">
+                                <div className="col-span-3 sm:col-span-full">
+                                  <ProductSkeletonCard />
+                                </div>
+                                <div className="col-span-3 sm:hidden">
+                                  <ProductSkeletonCard />
+                                </div>
+                                <div className="col-span-3 md:hidden">
+                                  <ProductSkeletonCard />
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <FavoriteCharityListing
+                              charities={favoriteCharities}
+                            />
+                          </>
+                        )}
+                      </>
                     )}
                   </div>
                 </li>

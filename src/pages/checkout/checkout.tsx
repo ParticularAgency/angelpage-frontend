@@ -15,11 +15,16 @@ interface Seller {
   firstName: string;
   lastName: string;
   profileImage: string;
-  addresses: { city: string; country: string }[]; // Fixed to be an array of objects
+  addresses: { city: string; country: string }[];
 }
-
+interface Charity {
+  charityName: string;
+  charityID: string;
+  profileImage: string;
+  addresses: { city: string; country: string }[];
+}
 interface Product {
-  _id: string; 
+  _id: string;
   name: string;
   price: number;
   brand: string;
@@ -27,9 +32,10 @@ interface Product {
   condition?: string;
   images: Array<{ url: string; altText?: string }>;
   location?: string;
-  charity: {
-    charityName: string;
-    profileImage: string;
+  charity: Charity;
+  dimensions?: {
+    height?: string;
+    width?: string;
   };
   seller: Seller;
 }
@@ -47,48 +53,33 @@ interface CartResponse {
 
 const BasketPage = () => {
   const { data: session } = useSession() || {};
+  const userId = session?.user?.id;
+  const token = session?.token;
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [isCartLoading, setIsCartLoading] = useState(true);
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const fetchCartItems = async () => {
+  if (!userId || !token) return;
 
-  const fetchCartItems = async () => {
-    if (!session?.token) return;
-
-    try {
-      const response = await axios.get<CartResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/cart/${session.user.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-        }
-      );
-
-      const itemsWithDefaults = response.data.cart.items.map(item => ({
-        ...item,
-        productId: {
-           ...item?.productId,
-           brand: item?.productId?.brand || 'Unknown Brand',
-          seller: {
-             ...item.productId?.seller,
-            profileImage:
-               item?.productId?.seller?.profileImage ||
-              '/images/default-profile.png',
-             addresses: Array.isArray(item.productId?.seller?.addresses)
-               ? item?.productId?.seller?.addresses.map(address => ({
-                   city: address?.city || 'Unknown City',
-                   country: address?.country || 'Unknown Country',
-                }))
-              : [], // Default to an empty array if not provided
-          },
+  try {
+    setIsCartLoading(true);
+    const response = await axios.get<CartResponse>(
+      `${API_BASE_URL}/cart/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      }));
-
-      setCartItems(itemsWithDefaults);
-    } catch (error) {
-      console.error('Error fetching cart items:', error);
-    }
-  };
+      }
+    );
+    setCartItems(response.data.cart.items || []);
+  } catch (error) {
+    console.log('Failed to load cart. Please try again.');
+  } finally {
+    setIsCartLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchCartItems();
@@ -116,6 +107,7 @@ const BasketPage = () => {
             <section className="basket-page-main-content-grid grid grid-cols-12 gap-5">
               <div className="basket-page-left-cont col-span-7 md:col-span-6 sm:col-span-full">
                 <CheckoutProductItem
+                  isLoading={isCartLoading}
                   cartItems={cartItems}
                   setCartItems={setCartItems}
                 />
@@ -127,7 +119,11 @@ const BasketPage = () => {
                 </div>
               </div>
 
-              <BasketArea cartItems={cartItems} onPay={handlePayment} />
+              <BasketArea
+                cartItems={cartItems}
+                onPay={handlePayment}
+                isLoading={isCartLoading}
+              />
             </section>
           </>
         )}

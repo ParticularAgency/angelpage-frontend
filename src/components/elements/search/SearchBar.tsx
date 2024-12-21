@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 // Define the props interface
 interface SearchBarProps {
   onSearch: (query: string) => void; // Function type, accepts a string argument
-  filteredProducts: number;
+  filteredProducts?: number;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({

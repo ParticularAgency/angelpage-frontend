@@ -6,55 +6,36 @@ import axios from 'axios';
 import { fetchCharityData, fetchCharityProfileData } from '@utils/api';
 import { useRouter } from 'next/navigation';
 import { Button, ProgressBar } from '@/components/elements';
-import ToastNotification, {
-  ToastService,
-} from '@/components/elements/notifications/ToastService';
+import { ToastService } from '@/components/elements/notifications/ToastService';
 
-// Define the structure of the expected API response
-interface CharityUser {
-  charityName: string;
-  profileImage: string;
-  email: string;
-  verified: boolean;
-  profileCompleted: boolean;
-  charityBannerImage: string;
-}
-
-interface ProfileResponse {
-  user?: CharityUser; // Optional to prevent runtime errors
-  profileCompletionPercentage?: number; // Optional for type safety
-}
 
 const BannerSection = () => {
   const router = useRouter();
   const { data: session, status } = useSession() || {};
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState<CharityUser | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [progress, setProgress] = useState<number>(0);
-  const [userData, setUserData] = useState<CharityUser | null>(null);
-  const [image, setImage] = useState<string>(
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [userData, setUserData] = useState(null);
+  const [image, setImage] = useState(
     '/images/charity-storefront/charity-banner-img1.png'
   );
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState(null);
 
-  // Fetch charity data
-  useEffect(() => {
+
+    useEffect(() => {
     const fetchData = async () => {
       if (status === 'authenticated' && session?.token) {
-        try {
-          const data = await fetchCharityData(session.token);
-          if (data) {
-            setUserData(data);
-            setImage(
-              data.charityBannerImage ||
-                '/images/charity-storefront/charity-banner-img1.png'
-            );
-          } else {
-            console.error('Failed to fetch user data');
-          }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
+        const data = await fetchCharityData(session.token);
+        if (data) {
+           setUserData(data);
+           setImage(
+             data.charityBannerImage ||
+               '/images/charity-storefront/charity-banner-img1.png'
+           );
+        } else {
+           console.error('Error fetching charity data:', error);
+           ToastService.error('Failed to load charity data.');
         }
       }
     };
@@ -63,7 +44,7 @@ const BannerSection = () => {
   }, [session, status]);
 
   // Handle image file selection
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
@@ -82,7 +63,8 @@ const BannerSection = () => {
     formData.append('charityBannerImage', file);
 
     try {
-      const response = await axios.put<ProfileResponse>(
+      setLoading(false); 
+      const response = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/charity/profile`,
         formData,
         {
@@ -96,11 +78,17 @@ const BannerSection = () => {
       if (response.data?.user?.charityBannerImage) {
         setImage(response.data.user.charityBannerImage);
         setIsEditing(false);
+        // Show success toast notification
+        ToastService.success('Banner image updated successfully!');
       } else {
         console.error('Invalid response structure:', response.data);
+        // Show error toast notification
+        ToastService.error('Failed to update banner image. Please try again.');
       }
     } catch (error) {
       console.error('Error uploading image:', error);
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -124,6 +112,7 @@ const BannerSection = () => {
         } finally {
           setLoading(false);
         }
+
       } else if (status === 'unauthenticated') {
         router.push('/auth/login');
       }
@@ -199,6 +188,14 @@ const BannerSection = () => {
               <h1 className="h3 charity-account-banner-tittle !text-mono-0">
                 {userData?.charityName || 'Please add your charity name'}
               </h1>
+              <ul className="list-info flex items-center gap-3 justify-start">
+                <li className="font-secondary text-[14px] font-normal text-mono-0 leading-[150%]">
+                  {userData?.listedProducts.length} items for sale
+                </li>
+                <li className="font-secondary text-[14px] font-normal text-mono-0 leading-[150%]">
+                  0 items sold
+                </li>
+              </ul>
             </div>
           </div>
           <div className="col-span-7 w-full">
@@ -224,8 +221,13 @@ const BannerSection = () => {
                   }
                   variant="primary"
                   className="change-storefront-img relative"
+                  disabled={loading}
                 >
-                  {isEditing ? 'Confirmed save' : 'Change storefront image'}
+                  {loading
+                    ? 'Saving...'
+                    : isEditing
+                      ? 'Confirm Save'
+                      : 'Change Storefront Image'}
                 </Button>
               </div>
               <Image
@@ -238,7 +240,6 @@ const BannerSection = () => {
             </div>
           </div>
         </div>
-        <ToastNotification />
       </div>
     </section>
   );

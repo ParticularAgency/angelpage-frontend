@@ -1,47 +1,60 @@
-import { charityData } from '@/libs/charities'; // Import charity data
-import Image from 'next/image'; // Import Next.js Image component
-import Link from 'next/link'; // Corrected import path for Link component
+'use client';
 
-// Define types for charity contact and charity data
-interface CharityContact {
-  phone?: string; // Phone number of the charity
-  website?: string; // Website of the charity
-}
-
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link'; 
 interface Charity {
-  id: string; // Unique identifier for the charity
-  name: string; // Name of the charity
-  charityNumber: string;
-  description: string; // Description of the charity
-  image?: string; // Image URL of the charity
-  contact: CharityContact; // Contact information for the charity
+  charityBannerImage?: string;
+  charityName?: string;
+  charityNumber?: string;
+  description?: string;
+  contact?: {
+    phone?: string;
+    website?: string;
+  };
 }
+const CharityDetails = () => {
+  const params = useParams(); // Retrieve parameters from the route
+  const charityid = params?.charityid; // Ensure `charityid` is correctly retrieved
+  const [charity, setCharity] = useState<Charity | null>(null);
+  const [loading, setLoading] = useState(true);
 
-// Define type for the params passed to the page
-interface Params {
-  charityId: string; // The ID of the charity from the URL
-}
+  useEffect(() => {
+    // Only fetch details if `charityid` is available
+    if (charityid) {
+      const fetchCharityDetails = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/charity/charities/${charityid}`
+          );
+          if (!response.ok) {
+            throw new Error('Failed to fetch charity details');
+          }
+          const data = await response.json();
+          setCharity(data.charity);
+          console.log('Charity details:', data.charity);
+        } catch (error) {
+          console.error('Error fetching charity details:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchCharityDetails();
+    }
+  }, [charityid]);
 
-// Page component
-const CharityDetailsPage = ({ params }: { params: Params }) => {
-  const { charityId } = params;
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  // Find the charity data by ID
-  const charity = charityData.find(
-    (charity: Charity) => charity.id === charityId
-  );
-
-  // Fallback image if charity image is not available
-  const imagePath = charity?.image || '/images/default-image.png';
-
-  // Return an error message if the charity is not found
   if (!charity) {
     return (
       <section className="bg-[#F1F1F7]">
         <div className="p-6 text-center">
           <h1 className="text-2xl font-bold text-red-600">Charity Not Found</h1>
           <p className="mt-2">The charity you're looking for does not exist.</p>
-          <Link href="/charities">
+          <Link href="/charity/find-a-charity">
             <button className="mt-4 px-4 py-2 bg-[#0B0112] text-white">
               Back to Charities
             </button>
@@ -51,15 +64,18 @@ const CharityDetailsPage = ({ params }: { params: Params }) => {
     );
   }
 
-  // Render the charity details
+
   return (
     <section className="bg-[#F1F1F7]">
       <div className="flex md:flex-col md:w-full">
         {/* Left Image Section */}
         <div className="flex-shrink-0">
           <Image
-            src={imagePath}
-            alt={charity.name || 'Charity Image'}
+            src={
+              charity?.charityBannerImage ||
+              '/images/products/card-placeholder-image.webp'
+            }
+            alt={charity.charityName || 'Charity Image'}
             width={510}
             height={598}
             className="h-full md:w-full object-cover"
@@ -68,8 +84,8 @@ const CharityDetailsPage = ({ params }: { params: Params }) => {
 
         {/* Right Text Section */}
         <div className="w-2/3 md:w-full md:p-6 pl-[50px] pt-[121px] pb-[145px]">
-          <h3 className="text-[#0B0112] capitalize">{charity.name}</h3>
-          <p className="text-[10px] text-[#611192] font-semibold"> 
+          <h3 className="text-[#0B0112] capitalize">{charity.charityName}</h3>
+          <p className="text-[10px] text-[#611192] font-semibold">
             CHARITY NUMBER: {charity.charityNumber || 'N/A'}
           </p>
           <p className="mt-4 text-[#0B0112] font-normal text-[14px] w-[651px] sm:w-full">
@@ -109,7 +125,7 @@ const CharityDetailsPage = ({ params }: { params: Params }) => {
             </div>
           </div>
 
-          <Link href="/sign-up">
+          <Link href="/auth/register">
             <button className="px-4 py-2 bg-[#0B0112] w-[228px] sm:w-auto text-white">
               Sign up
             </button>
@@ -120,4 +136,4 @@ const CharityDetailsPage = ({ params }: { params: Params }) => {
   );
 };
 
-export default CharityDetailsPage;
+export default CharityDetails;

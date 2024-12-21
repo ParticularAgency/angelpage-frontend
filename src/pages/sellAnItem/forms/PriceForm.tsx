@@ -3,7 +3,7 @@ import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState, useRef, useEffect } from 'react';
-import ToastNotification, {
+import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
 
@@ -14,6 +14,7 @@ interface FormProps {
   onBack: () => void;
   onSaveAsDraft: () => void; // Handler for Save as Draft
   formData?: { price: string; charityProfit: string };
+  isSubmitting: boolean;
 }
 
 interface DetailsData {
@@ -27,6 +28,7 @@ const PriceForm: React.FC<FormProps> = ({
   onBack,
   onSaveAsDraft,
   formData = { price: '', charityProfit: '' },
+  isSubmitting,
 }) => {
   const [price, setPrice] = useState<string>(formData.price);
   const [charityProfit, setCharityProfit] = useState<string>(
@@ -115,7 +117,7 @@ const PriceForm: React.FC<FormProps> = ({
     <>
       <div className="flex flex-col w-full">
         <p className="mb-2 body-bold-regular">Price</p>
-        <div className="flex space-x-2 md:flex-col md:space-x-0 md:gap-3 mb-8">
+        <div className="flex space-x-2  md:space-x-0 md:gap-3 mb-8">
           <div className="w-1/2 md:w-full price-input-box">
             <Input
               label="Price"
@@ -202,7 +204,7 @@ const PriceForm: React.FC<FormProps> = ({
               onClick={handleSubmit}
               disabled={!!error} // Disable button if there's an error
             >
-              Finish
+              {isSubmitting ? 'Loading...' : 'Finish'}
             </Button>
           </div>
         </div>
@@ -224,7 +226,7 @@ const PriceForm: React.FC<FormProps> = ({
           agreement.
         </p>
       </div>
-      <ToastNotification />
+     
     </>
   );
 };
