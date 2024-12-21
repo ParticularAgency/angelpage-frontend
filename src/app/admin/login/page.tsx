@@ -12,7 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeRole, setActiveRole] = useState('USER'); // State to manage selected role
+  const [activeRole, setActiveRole] = useState('ADMIN'); // State to manage selected role
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -50,19 +50,17 @@ const Login = () => {
       if (userRole === activeRole) {
         ToastService.success('Login successful! Redirecting...');
         setTimeout(() => {
-          if (userRole === 'USER') {
-            router.push(`/`);
-          } else if (userRole === 'CHARITY') {
-            router.push(`/`);
-          }
+          if (userRole === 'ADMIN') {
+            router.push(`/admin/`); 
+          } 
           setIsSubmitting(false);
         }, 2000);
       } else {
         setError(
-          `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
+          `Only ${activeRole === 'ADMIN' ? 'User' : 'Charity'} accounts can log in here.`
         );
         ToastService.error(
-          `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
+          `Only ${activeRole === 'ADMIN' ? 'User' : 'Charity'} accounts can log in here.`
         );
         setIsSubmitting(false);
       }
@@ -74,11 +72,9 @@ const Login = () => {
       const userRole = session.user.role;
       ToastService.success('Login successful! Redirecting to account...');
       setTimeout(() => {
-        if (userRole === 'USER') {
-          router.push(`/`);
-        } else if (userRole === 'CHARITY') {
-          router.push(`/`);
-        }
+        if (userRole === 'ADMIN') {
+          router.push(`/admin/`); 
+        } 
       }, 2000);
     }
   }, [session, router]);
@@ -107,15 +103,15 @@ const Login = () => {
           <div className="flex space-x-2 justify-center mb-[54px]">
             <button
               className={`p-2 text-body-small rounded-3xl ${
-                activeRole === 'USER'
+                activeRole === 'ADMIN'
                   ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold'
                   : 'bg-transparent text-mono-100'
               }`}
-              onClick={() => setActiveRole('USER')}
+              onClick={() => setActiveRole('ADMIN')}
             >
               Individual
             </button>
-            <button
+            {/* <button
               className={`text-body-small p-2 rounded-3xl ${
                 activeRole === 'CHARITY'
                   ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold'
@@ -124,7 +120,7 @@ const Login = () => {
               onClick={() => setActiveRole('CHARITY')}
             >
               Charity/Brand
-            </button>
+            </button> */}
           </div>
           {error && <p className="text-error text-body-small mb-4">{error}</p>}
 
@@ -173,7 +169,7 @@ const Login = () => {
             <p className="text-body-small">
               New here?{' '}
               <a
-                href="/auth/register"
+                href="/admin/register"
                 className="text-primary-color-100 underline"
               >
                 Create an account
