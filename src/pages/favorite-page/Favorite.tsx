@@ -10,6 +10,7 @@ import { Product } from '@/types/productTypes';
 import ProductSkeletonCard from '@/components/common/cards/product/productskeletonCard';
 import { Button } from '@/components/elements';
 import Link from 'next/link';
+import PreLoader from '@/components/common/pre-loader/PreLoader';
 
 interface Charity {
   id: string;
@@ -66,9 +67,9 @@ const FavoritePage = () => {
     fetchFavorites();
   }, [session]);
 
-  // if (loading) {
-  //   return <PreLoader />
-  // }
+  if (loading) {
+    return <PreLoader />;
+  }
 
   console.log('Favorite Products:', favoriteProducts);
 
@@ -125,7 +126,7 @@ const FavoritePage = () => {
                             you'll be able to keep an eye on the items here
                           </p>
                           <Link href="/product/">
-                            <Button variant="primary" className="mx-auto">
+                            <Button variant="primary" className="mx-auto mt-6">
                               Start shopping
                             </Button>
                           </Link>
@@ -176,7 +177,7 @@ const FavoritePage = () => {
                             you'll be able to keep an eye on the items here
                           </p>
                           <Link href="/product/">
-                            <Button variant="primary" className="mx-auto">
+                            <Button variant="primary" className="mx-auto mt-6">
                               Start shopping
                             </Button>
                           </Link>
