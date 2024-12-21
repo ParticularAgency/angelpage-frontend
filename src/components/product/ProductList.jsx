@@ -5,8 +5,7 @@ import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
 
 
-
-const ProductList  = ({ products, isLoggedIn }) => {
+const ProductList = ({ products, isLoggedIn }) => {
   return (
     <div className="product-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {products && products.length > 0 ? (
@@ -50,8 +49,8 @@ const ProductList  = ({ products, isLoggedIn }) => {
               location={location}
               dimensionHeight={product.dimensionHeight || '0in'}
               dimensionWidth={product.dimensionWidth || '0in'}
-              isLoggedIn={isLoggedIn}
               status={product.status}
+              isLoggedIn={isLoggedIn}
             />
           );
         })

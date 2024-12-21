@@ -8,21 +8,6 @@ import { useRouter } from 'next/navigation';
 import { Button, ProgressBar } from '@/components/elements';
 import { ToastService } from '@/components/elements/notifications/ToastService';
 
-// // Define the structure of the expected API response
-// interface CharityUser {
-//   charityName: string;
-//   profileImage: string;
-//   email: string;
-//   verified: boolean;
-//   profileCompleted: boolean;
-//   charityBannerImage: string;
-//   listedProducts: number; // Number of items for sale
-// }
-
-// interface ProfileResponse {
-//   user: CharityUser | null; // Explicitly mark as nullable
-//   profileCompletionPercentage?: number;
-// }
 
 const BannerSection = () => {
   const router = useRouter();
@@ -37,23 +22,20 @@ const BannerSection = () => {
   );
   const [file, setFile] = useState(null);
 
-  // Fetch charity data
-  useEffect(() => {
+
+    useEffect(() => {
     const fetchData = async () => {
       if (status === 'authenticated' && session?.token) {
-        try {
-          const data = await fetchCharityData(session.token);
-          if (data) {
-            setUserData(data);
-            setImage(
-              data.charityBannerImage ||
-                '/images/charity-storefront/charity-banner-img1.png'
-            );
-          } else {
-            console.error('Failed to fetch user data');
-          }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
+        const data = await fetchCharityData(session.token);
+        if (data) {
+           setUserData(data);
+           setImage(
+             data.charityBannerImage ||
+               '/images/charity-storefront/charity-banner-img1.png'
+           );
+        } else {
+           console.error('Error fetching charity data:', error);
+           ToastService.error('Failed to load charity data.');
         }
       }
     };
@@ -81,6 +63,7 @@ const BannerSection = () => {
     formData.append('charityBannerImage', file);
 
     try {
+      setLoading(false); 
       const response = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/charity/profile`,
         formData,
@@ -95,11 +78,17 @@ const BannerSection = () => {
       if (response.data?.user?.charityBannerImage) {
         setImage(response.data.user.charityBannerImage);
         setIsEditing(false);
+        // Show success toast notification
+        ToastService.success('Banner image updated successfully!');
       } else {
         console.error('Invalid response structure:', response.data);
+        // Show error toast notification
+        ToastService.error('Failed to update banner image. Please try again.');
       }
     } catch (error) {
       console.error('Error uploading image:', error);
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -109,15 +98,11 @@ const BannerSection = () => {
       if (status === 'authenticated' && session?.user?.email) {
         try {
           setLoading(true);
-          const response =
-            await fetchCharityProfileData(session.user.email);
-
-          if (!response || !response.user) {
+          const response = await fetchCharityProfileData(session.user.email);
+          if (!response?.user) {
             ToastService.error('Failed to load profile data.');
-            setProfileData(null);
             return;
           }
-
           const { user, profileCompletionPercentage } = response;
           setProfileData(user);
           setProgress(profileCompletionPercentage || 0);
@@ -127,6 +112,7 @@ const BannerSection = () => {
         } finally {
           setLoading(false);
         }
+
       } else if (status === 'unauthenticated') {
         router.push('/auth/login');
       }
@@ -204,7 +190,7 @@ const BannerSection = () => {
               </h1>
               <ul className="list-info flex items-center gap-3 justify-start">
                 <li className="font-secondary text-[14px] font-normal text-mono-0 leading-[150%]">
-                  {userData?.listedProducts} items for sale
+                  {userData?.listedProducts.length} items for sale
                 </li>
                 <li className="font-secondary text-[14px] font-normal text-mono-0 leading-[150%]">
                   0 items sold
@@ -235,8 +221,13 @@ const BannerSection = () => {
                   }
                   variant="primary"
                   className="change-storefront-img relative"
+                  disabled={loading}
                 >
-                  {isEditing ? 'Confirmed save' : 'Change storefront image'}
+                  {loading
+                    ? 'Saving...'
+                    : isEditing
+                      ? 'Confirm Save'
+                      : 'Change Storefront Image'}
                 </Button>
               </div>
               <Image

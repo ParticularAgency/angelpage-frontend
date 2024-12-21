@@ -6,13 +6,14 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
+import ProductSkeletonCard from '@/components/common/cards/product/productskeletonCard';
 
 // Load English language data
 countries.registerLocale(enLocale);
 
 const UsersProductListingArea = () => {
   const { data: session } = useSession() || {};
-  const [products, setProducts] = useState();
+ const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true); 
 
   const fetchUserProducts = async () => {
@@ -93,7 +94,21 @@ const UsersProductListingArea = () => {
   return (
     <div className="product-handle-listing-area sm:bg-[#F1F1F7]">
       {loading ? (
-        <p>Loading...</p>
+        <>
+          <div className="skeleton-sec-area custom-container">
+            <div className="grid grid-cols-12 gap-6 product-handle-listing-wrapper bg-[#F1F1F7] py-8 px-6 sm:px-[5px]">
+              <div className="col-span-3 sm:col-span-full">
+                <ProductSkeletonCard />
+              </div>
+              <div className="col-span-3 sm:hidden">
+                <ProductSkeletonCard />
+              </div>
+              <div className="col-span-3 md:hidden">
+                <ProductSkeletonCard />
+              </div>
+            </div>
+          </div>
+        </>
       ) : (
         <div className="product-handle-listing-wrapper bg-[#F1F1F7] py-8 px-6 sm:px-[5px]">
           {/* Draft Products */}

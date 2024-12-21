@@ -10,46 +10,47 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { CloseIcon, FilterIcon } from '@/icons';
 import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
+import {Product} from '@/types/productTypes';
+// interface Product {
+//   id: number;
+//   charity: {
+//     charityName: string;
+//     profileImage: string; // Image URL for the charity
+//   };
+//   seller: {
+//     firstName: string;
+//     lastName: string;
+//     profileImages: string;
+//     address?: {
+//       city?: string;
+//       country?: string;
+//     };
+//   };
+//   images: Array<{ url: string; altText: string }>;
+//   productImageAlt?: string;
+//   brand?: string;
+//   size?: string;
+//   dimensionHeight?: string;
+//   dimensionWidth?: string;
+//   location?: string;
+//   status?: 'Draft' | 'LIVE' | 'Removed'; // Refined status types
+//   stock?: number;
 
-interface Product {
-  id: number;
-  charity: {
-    charityName: string;
-    profileImage: string; // Image URL for the charity
-  };
-  seller: {
-    firstName: string;
-    lastName: string;
-    profileImages: string;
-    address?: {
-      city?: string;
-      country?: string;
-    };
-  };
-  images: Array<{ url: string; altText: string }>;
-  productImageAlt?: string;
-  brand?: string;
-  size?: string;
-  dimensionHeight?: string;
-  dimensionWidth?: string;
-  location?: string;
-  status?: 'Draft' | 'LIVE' | 'Removed'; // Refined status types
-  stock?: number;
-
-  averageDeliveryTime?: number;
-  isLoggedIn?: boolean;
-  onFavoriteClick?: () => void;
-  onDeleteConfirm?: (productId: number) => void; // Adjusted for ID type consistency
-  isFavorite?: boolean;
-  name?: string;
-  condition?: string;
-  subcategory?: string;
-  category?: string;
-  price?: string;
-}
+//   averageDeliveryTime?: number;
+//   isLoggedIn?: boolean;
+//   onFavoriteClick?: () => void;
+//   onDeleteConfirm?: (productId: number) => void; // Adjusted for ID type consistency
+//   isFavorite?: boolean;
+//   name?: string;
+//   condition?: string;
+//   subcategory?: string;
+//   category?: string;
+//   price?: string;
+// }
 
 interface ProductsResponse {
   products: Product[];
+  isLoggedIn: boolean;
 }
 interface Filters {
   category: string[];

@@ -3,17 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from '@/components/common/cards/product/postProductCard';
 import { useSession } from 'next-auth/react';
-// import { Product } from '@/types/productTypes';
 import axios from 'axios';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
+import ProductSkeletonCard from '@/components/common/cards/product/productskeletonCard';
 
 // Load English language data
 countries.registerLocale(enLocale);
 
-// interface ProductResponse {
-//   products: Product[];
-// }
+
 const UsersProductListingArea = () => {
   const { data: session } = useSession() || {};
   const [products, setProducts] = useState([]);
@@ -22,7 +20,7 @@ const UsersProductListingArea = () => {
   const fetchUserProducts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get<ProductResponse>(
+      const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/products/listings`,
         {
           params: { role: 'USER' },
@@ -97,7 +95,21 @@ const UsersProductListingArea = () => {
   return (
     <div className="product-handle-listing-area sm:bg-[#F1F1F7]">
       {loading ? (
-        <p>Loading...</p>
+        <>
+          <div className="skeleton-sec-area custom-container">
+            <div className="grid grid-cols-12 gap-6 product-handle-listing-wrapper bg-[#F1F1F7] py-8 px-6 sm:px-[5px]">
+              <div className="col-span-3 sm:col-span-full">
+                <ProductSkeletonCard />
+              </div>
+              <div className="col-span-3 sm:hidden">
+                <ProductSkeletonCard />
+              </div>
+              <div className="col-span-3 md:hidden">
+                <ProductSkeletonCard />
+              </div>
+            </div>
+          </div>
+        </>
       ) : (
         <div className="product-handle-listing-wrapper bg-[#F1F1F7] py-8 px-6 sm:px-[5px]">
           {/* Draft Products */}
@@ -108,23 +120,24 @@ const UsersProductListingArea = () => {
             <div className="product-listing-list-area grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-4">
               {draftProducts.length > 0 ? (
                 draftProducts.map(product => {
-                   // Safely extract location
-                const sellerUserAddress = product.seller?.address;
-                const sellerCharityAddress = product.charity?.address;
+                  // Safely extract location
+                  const sellerUserAddress = product.seller?.address;
+                  const sellerCharityAddress = product.charity?.address;
 
-                // Determine which address to use (User or Charity)
-                const sellerAddress = sellerUserAddress || sellerCharityAddress;
+                  // Determine which address to use (User or Charity)
+                  const sellerAddress =
+                    sellerUserAddress || sellerCharityAddress;
 
-                let countryCode = 'N/A';
-                if (sellerAddress?.country) {
-                  countryCode =
-                    countries.getAlpha2Code(sellerAddress.country, 'en') ||
-                    'N/A';
-                }
+                  let countryCode = 'N/A';
+                  if (sellerAddress?.country) {
+                    countryCode =
+                      countries.getAlpha2Code(sellerAddress.country, 'en') ||
+                      'N/A';
+                  }
 
-                const location = sellerAddress
-                  ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
-                  : 'Location Not Available';
+                  const location = sellerAddress
+                    ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
+                    : 'Location Not Available';
 
                   return (
                     <ProductCard
@@ -164,23 +177,24 @@ const UsersProductListingArea = () => {
             <div className="product-listing-list-area grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {activeProducts.length > 0 ? (
                 activeProducts.map(product => {
-                   // Safely extract location
-                const sellerUserAddress = product.seller?.address;
-                const sellerCharityAddress = product.charity?.address;
+                  // Safely extract location
+                  const sellerUserAddress = product.seller?.address;
+                  const sellerCharityAddress = product.charity?.address;
 
-                // Determine which address to use (User or Charity)
-                const sellerAddress = sellerUserAddress || sellerCharityAddress;
+                  // Determine which address to use (User or Charity)
+                  const sellerAddress =
+                    sellerUserAddress || sellerCharityAddress;
 
-                let countryCode = 'N/A';
-                if (sellerAddress?.country) {
-                  countryCode =
-                    countries.getAlpha2Code(sellerAddress.country, 'en') ||
-                    'N/A';
-                }
+                  let countryCode = 'N/A';
+                  if (sellerAddress?.country) {
+                    countryCode =
+                      countries.getAlpha2Code(sellerAddress.country, 'en') ||
+                      'N/A';
+                  }
 
-                const location = sellerAddress
-                  ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
-                  : 'Location Not Available';
+                  const location = sellerAddress
+                    ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
+                    : 'Location Not Available';
 
                   return (
                     <ProductCard
@@ -220,23 +234,24 @@ const UsersProductListingArea = () => {
             <div className="product-listing-list-area grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {removedProducts.length > 0 ? (
                 removedProducts.map(product => {
-                   // Safely extract location
-                const sellerUserAddress = product.seller?.address;
-                const sellerCharityAddress = product.charity?.address;
+                  // Safely extract location
+                  const sellerUserAddress = product.seller?.address;
+                  const sellerCharityAddress = product.charity?.address;
 
-                // Determine which address to use (User or Charity)
-                const sellerAddress = sellerUserAddress || sellerCharityAddress;
+                  // Determine which address to use (User or Charity)
+                  const sellerAddress =
+                    sellerUserAddress || sellerCharityAddress;
 
-                let countryCode = 'N/A';
-                if (sellerAddress?.country) {
-                  countryCode =
-                    countries.getAlpha2Code(sellerAddress.country, 'en') ||
-                    'N/A';
-                }
+                  let countryCode = 'N/A';
+                  if (sellerAddress?.country) {
+                    countryCode =
+                      countries.getAlpha2Code(sellerAddress.country, 'en') ||
+                      'N/A';
+                  }
 
-                const location = sellerAddress
-                  ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
-                  : 'Location Not Available';
+                  const location = sellerAddress
+                    ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
+                    : 'Location Not Available';
 
                   return (
                     <ProductCard

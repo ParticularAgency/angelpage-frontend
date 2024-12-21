@@ -17,7 +17,7 @@ const CharityStorefront = ({
   const [activeTab, setActiveTab] = useState(0);
   const [productCount, setProductCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  // Fetch charity data
+
   useEffect(() => {
     const fetchCharityData = async () => {
       if (!storefrontid) {
@@ -28,7 +28,7 @@ const CharityStorefront = ({
       console.log('Fetching storefront with id:', storefrontid);
 
       try {
-        const response = await axios.get<CharityStorefrontResponse>(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}`
         );
 

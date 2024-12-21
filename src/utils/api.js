@@ -63,8 +63,8 @@ export const resendVerificationEmail = async ({
 export const fetchUserProfileData = async (
   email
 ) => {
-  try {
-    const response = await axios.get<ProfileResponse>(
+  try { 
+    const response = await axios.get(
       `${API_URL}/auth/profile/${email}`
     );
     return response.data;
@@ -78,9 +78,11 @@ export const fetchCharityProfileData = async (
   email
 ) => {
   try {
-    const response = await axios.get<ProfileResponse>(
-      `${process.env.NEXT_PUBLIC_API_URL}/charity/profile?email=${email}`
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/profile/${email}`
     );
+    console.log('charity profile data here:', response.data)
+
     return response.data;
   } catch (error) {
     console.error('Error fetching charity profile data:', error);

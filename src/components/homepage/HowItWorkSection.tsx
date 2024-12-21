@@ -27,7 +27,7 @@ const HowItWorkSection = () => {
                 Upload your pre-loved items straight to your chosen Charity
                 storefront, ready for others to purchase.
               </p>
-              <Link href="/how-it-work">
+              <Link href="/how-it-works">
                 <Button
                   variant="accend-link"
                   className="!text-mono-0 inline-block w-auto max-w-max underline !px-0"
