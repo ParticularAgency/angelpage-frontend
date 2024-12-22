@@ -29,49 +29,12 @@ import enLocale from 'i18n-iso-countries/langs/en.json';
 
 countries.registerLocale(enLocale);
 
-// // Define types for product and its related entities
-// interface Product {
-//   id: number;
-//   name: string;
-//   price: number;
-//   brand: string;
-//   condition: string;
-//   material?: string;
-//   color?: string;
-//   size?: string;
-//   images: { url: string; altText?: string }[];
-//   dimensions?: {
-//     height?: string;
-//     width?: string;
-//   };
-//   category: string;
-//   additionalInfo?: string;
-//   charityProfit: number;
-//   seller?: {
-//     firstName: string;
-//     lastName: string;
-//     profileImage?: string;
-//     address?: {
-//       city?: string;
-//       country?: string;
-//     };
-//   };
-//   charity?: {
-//     storefrontId: string;
-//     charityName: string;
-//   };
-// }
-
-// Type definition for route parameters
-// interface Params {
-//   productid: string;
-// }
 const ProductSinglepage = () => {
   const { data: session } = useSession() || {};
   const params = useParams();
 
   // Safely parse product ID
-  const productid = (params)?.productid;
+  const productid = params?.productid;
  const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [product, setProduct] = useState(null);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -109,38 +72,44 @@ const ProductSinglepage = () => {
     fetchProductDetails();
   }, [productid, session]);
 
-   const handleAddToCart = async () => {
-     if (!session?.token) {
-       ToastService.error(
-         'You need to be logged in to add products to the cart.'
-       );
-       return;
-     }
+  const handleAddToCart = async () => {
+    if (!session?.token) {
+      ToastService.error(
+        'You need to be logged in to add products to the cart.'
+      );
+      return;
+    }
 
-     setIsAddedToCart(true);
+      if (!product?.id) {
+        ToastService.error('Product information is missing.');
+        return;
+      }
 
-     try {
-       (await axios.post) <
-         AddToCartResponse >
-         (`${process.env.NEXT_PUBLIC_API_URL}/cart/add-product-to-cart`,
-         {
-           userId: session.user.id,
-           productId: id,
-           quantity: 1,
-         },
-         {
-           headers: {
-             Authorization: `Bearer ${session.token}`,
-           },
-         });
-       ToastService.success('Product added to cart successfully!');
-     } catch (error) {
-       ToastService.error(
-         'Failed to add product to cart. Please try again later.'
-       );
-       setIsAddedToCart(false);
-     }
-   };
+      setIsAddedToCart(true);
+
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/cart/add-product-to-cart`,
+        {
+          userId: session.user.id,
+          productId: product.id,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+          },
+        }
+      );
+      console.log();
+      ToastService.success('Product added to cart successfully!');
+    } catch (error) {
+      ToastService.error(
+        'Failed to add product to cart. Please try again later.'
+      );
+      setIsAddedToCart(false);
+    }
+  };
 
   const handleShareProduct = () => {
     const productUrl = window.location.href;
@@ -364,7 +333,7 @@ const ProductSinglepage = () => {
                   {isAddedToCart ? (
                     <Button
                       variant="primary"
-                      className="add-to-basket-btn"
+                      className="add-to-basket-btn  w-full"
                       disabled
                     >
                       <Checkmark /> Added

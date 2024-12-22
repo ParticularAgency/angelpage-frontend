@@ -84,7 +84,7 @@ const userRole = session?.user?.role;
                   >
                     {isTempLogin && (
                       <>
-                        <GlobalSearch />
+                        <GlobalSearch className="sm:hidden" />
                         {isTempLogin && (
                           <div className="post-product-btn sm:hidden">
                             <Link href="/product/post-product/">
@@ -106,9 +106,9 @@ const userRole = session?.user?.role;
                           <>
                             <FavoritesAlert
                               className="sm:hidden"
-                              ref={favoritesAlertRef} 
+                              ref={favoritesAlertRef}
                             />
- 
+
                             <div className="notification-dropdown-area relative sm:static">
                               <NotificationButton
                                 notificationBtnClass="sm:!hidden"
@@ -169,7 +169,7 @@ const userRole = session?.user?.role;
                   >
                     {!isPostProductPage && !isCheckoutPage && (
                       <>
-                        <GlobalSearch />
+                        <GlobalSearch className="sm:hidden" />
                         {!shouldHideBottomNav && session ? (
                           <div className="post-product-btn sm:hidden">
                             <Link href="/product/post-product/">
@@ -191,7 +191,7 @@ const userRole = session?.user?.role;
                         </div>
                         {!shouldHideBottomNav && session ? (
                           <>
-                            <FavoritesAlert className='sm:hidden' />
+                            <FavoritesAlert className="sm:hidden" />
 
                             <div className="notification-dropdown-area relative sm:static">
                               <NotificationButton

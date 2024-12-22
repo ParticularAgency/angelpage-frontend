@@ -1,22 +1,52 @@
 'use client';
 import React, { useState } from 'react';
 import { Button, Input } from '@/components/elements';
+import axios from 'axios';
+import { ToastService } from '@/components/elements/notifications/ToastService';
 
 const Contact = () => {
-  // State variables for each input field
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Form submission handler
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Logic to handle form submission
-    console.log({ firstName, lastName, email, phone, message });
-    // You could also add a call to an API here
-  };
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      setLoading(true);
+
+      try {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/email/contact`, {
+          firstName,
+          lastName,
+          email,
+          phone,
+          message,
+        });
+
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setPhone('');
+        setMessage('');
+         if (response.status === 200) {
+           ToastService.success(
+             `Mail send successfully! Check your ${email} inbox.`
+           );
+           setEmail(''); // Clear the input field
+         } else {
+           ToastService.error('Something went wrong. Please try again.');
+         }
+      } catch (err) {
+         ToastService.error(
+           'Failed to send your message. Please try again later.'
+         );
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return (
     <div className="flex custom-container gap-[139px] md:gap-5 md:flex-col pt-[73px] pb-[49px] md:pb-20">
@@ -106,8 +136,14 @@ const Contact = () => {
               onChange={e => setMessage(e.target.value)}
             />
           </div>
-          <Button type="submit" variant="primary" className="mt-[27px]">
-            Send
+          
+          <Button
+            type="submit"
+            variant="primary"
+            className="mt-[27px]"
+            disabled={loading}
+          >
+            {loading ? 'Sending...' : 'Send'}
           </Button>
         </form>
       </div>

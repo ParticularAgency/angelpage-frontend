@@ -599,13 +599,11 @@ const BottomNavMegmenu = () => {
   }, []);
 
   return (
-    <nav className="header-bottom-navbar navbar-megamenu-area" ref={menuRef}>
+  <nav className="header-bottom-navbar navbar-megamenu-area" ref={menuRef}>
       <div className="custom-container">
         <ul className="navbar-nav-list flex gap-10 md:gap-6 w-full">
           {categories.map((category, index) => (
             <li key={category.title} className="navbar-nav-items relative">
-              {' '}
-              {/* Add relative positioning */}
               <button
                 className="text-mono-90 text-body-eyebrow-small font-normal leading-[150%] uppercase tracking-[.5px] font-secondary"
                 onClick={() => handleToggleMenu(index)}
@@ -616,7 +614,6 @@ const BottomNavMegmenu = () => {
           ))}
         </ul>
       </div>
-      {/* Megamenu will be displayed below the ul */}
       {activeIndex !== null && (
         <div className="megamenu-group-items">
           <div className="custom-container">
@@ -626,13 +623,19 @@ const BottomNavMegmenu = () => {
                   className="megamenu-column col-span-2"
                   key={subcategory.title}
                 >
-                  <div className="group-category-title">
-                    {subcategory.title}
-                  </div>
+                  <div className="group-category-title">{subcategory.title}</div>
                   <ul className="subcategory-lists">
                     {subcategory.items.map(item => (
                       <li key={item}>
-                        <Link href={`/${item.toLowerCase()}`}>{item}</Link>
+                        <Link
+                          href={`/product?category=${encodeURIComponent(
+                            categories[activeIndex].title
+                          )}&subcategory=${encodeURIComponent(
+                            subcategory.title
+                          )}&item=${encodeURIComponent(item)}`}
+                        >
+                          {item}
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -642,9 +645,8 @@ const BottomNavMegmenu = () => {
           </div>
         </div>
       )}
-
     </nav>
-  );
+  )
 };
 
 export default BottomNavMegmenu;

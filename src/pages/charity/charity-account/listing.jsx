@@ -142,7 +142,7 @@ const UsersProductListingArea = () => {
                     <ProductCard
                       key={product.id}
                       productId={product.id}
-                      charityImageSrc={product?.charity?.profileImage}
+                      charityImageSrc={product?.charity?.profileImage  || '/images/icons/elisp-profile-default-img.svg'}
                       charityImageAlt={product?.charity?.charityName}
                       productBrand={product.brand}
                       productTitle={product.name}
@@ -199,7 +199,7 @@ const UsersProductListingArea = () => {
                     <ProductCard
                       key={product.id}
                       productId={product.id}
-                      charityImageSrc={product?.charity?.profileImage}
+                      charityImageSrc={product?.charity?.profileImage  || '/images/icons/elisp-profile-default-img.svg'}
                       charityImageAlt={product?.charity?.charityName}
                       productBrand={product.brand}
                       productTitle={product.name}
@@ -256,7 +256,7 @@ const UsersProductListingArea = () => {
                     <ProductCard
                       key={product.id}
                       productId={product.id}
-                      charityImageSrc={product?.charity?.profileImage}
+                      charityImageSrc={product?.charity?.profileImage  || '/images/icons/elisp-profile-default-img.svg'}
                       charityImageAlt={product?.charity?.charityName}
                       productBrand={product.brand}
                       productTitle={product.name}

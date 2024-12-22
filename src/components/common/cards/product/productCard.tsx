@@ -144,7 +144,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             alt={charityImageAlt}
             width={500}
             height={500}
-            className="w-full h-full object-cover rounded-[4px]"
+            className="w-full h-full sm:w-8 sm:h-8  object-cover rounded-[4px]"
           />
         </div>
         <FavoriteButton itemId={id} type="Product" />
@@ -182,12 +182,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </Link>
           <div className="product-size eyebrow-small mt-3">
             {size ? (
-              <>
-                {size}
-              </>
+              <>{size}</>
             ) : (
               <>
-                Height: {dimensionHeight} | Width: {dimensionWidth} 
+                Height: {dimensionHeight} | Width: {dimensionWidth}
               </>
             )}
           </div>

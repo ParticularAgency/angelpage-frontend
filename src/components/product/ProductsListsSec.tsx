@@ -11,42 +11,8 @@ import axios from 'axios';
 import { CloseIcon, FilterIcon } from '@/icons';
 import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
 import {Product} from '@/types/productTypes';
-// interface Product {
-//   id: number;
-//   charity: {
-//     charityName: string;
-//     profileImage: string; // Image URL for the charity
-//   };
-//   seller: {
-//     firstName: string;
-//     lastName: string;
-//     profileImages: string;
-//     address?: {
-//       city?: string;
-//       country?: string;
-//     };
-//   };
-//   images: Array<{ url: string; altText: string }>;
-//   productImageAlt?: string;
-//   brand?: string;
-//   size?: string;
-//   dimensionHeight?: string;
-//   dimensionWidth?: string;
-//   location?: string;
-//   status?: 'Draft' | 'LIVE' | 'Removed'; // Refined status types
-//   stock?: number;
-
-//   averageDeliveryTime?: number;
-//   isLoggedIn?: boolean;
-//   onFavoriteClick?: () => void;
-//   onDeleteConfirm?: (productId: number) => void; // Adjusted for ID type consistency
-//   isFavorite?: boolean;
-//   name?: string;
-//   condition?: string;
-//   subcategory?: string;
-//   category?: string;
-//   price?: string;
-// }
+import { Button } from '@/components/elements';
+import Link from 'next/link';
 
 interface ProductsResponse {
   products: Product[];
@@ -84,7 +50,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
   const [error, setError] = useState<string | null>(null);
 
   const productsPerPage = 12;
-  // Fetch Products on Category/Subcategory Change
+
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -134,9 +100,6 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
     setSort(newSort);
   };
 
-  // const handleSearch = (query) => {
-  //   setSearchQuery(query);
-  // };
 
   const removeFilter = (filterType: keyof Filters, value: string) => {
     setFilters(prevFilters => ({
@@ -206,7 +169,24 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
 
 
   if (error) {
-    return <p className="text-red-600">{error}</p>;
+    return (
+      <>
+        <div className="not-found-screen-design flex flex-col items-center pt-20 pb-24 custom-container">
+          <h5 className="body-bold-medium text-mono-100 font-medium font-secondary mb-2 text-center">
+            No products listed!
+          </h5>
+          <p className="body-regular font-secondary font-regular text-mono-90 text-center max-w-[620px] w-full mx-auto">
+            Currently, there are no products available in this category. Please
+            return to the homepage for more options.
+          </p>
+          <Link href="/">
+            <Button variant="primary" className="mx-auto mt-6">
+              Return Home
+            </Button>
+          </Link>
+        </div>
+      </>
+    );
   }
 
   return (

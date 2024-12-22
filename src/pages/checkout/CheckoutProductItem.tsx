@@ -81,7 +81,6 @@ const CheckoutProductItem = ({
         }
       );
 
-     
       setCartItems(updatedCart);
     } catch (error) {
       console.error('Error updating cart:', error);
@@ -113,36 +112,36 @@ const CheckoutProductItem = ({
     return (
       <>
         <div className="skeleton-basket-product-item basket-product-items">
-          <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mb-4"></div>
+          <div className="skeleton bg-mono-40 block h-2 w-10 mb-4"></div>
           <div className="basket-added-product-items">
             <div className="basket-added-product-item">
               <div className="basket-product-item-head gap-[23px] flex items-center">
                 <div className="seller-info-box flex items-center gap-[13px] pb-4">
-                  <div className="skeleton bg-mono-40 block h-8 w-8 rounded-full max-w-10 mt-0"></div>
+                  <div className="skeleton bg-mono-40 block h-8 w-8 rounded-full mt-0"></div>
                   <div className="seller-info-cont">
-                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mb-2"></div>
-                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-0"></div>
+                    <div className="skeleton bg-mono-40 block h-2 w-10 mb-2"></div>
+                    <div className="skeleton bg-mono-40 block h-2 w-10 mt-0"></div>
                   </div>
                 </div>
                 <div className="delivery-timeline">
-                  <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-0"></div>
+                  <div className="skeleton bg-mono-40 block h-2 w-24 mt-0"></div>
                 </div>
               </div>
               <div className="added-product-item-info-box flex items-center gap-5 justify-between py-8">
                 <div className="added-product-item-left-cont flex items-start gap-[18px]">
-                  <div className="skeleton bg-mono-40 block h-[70px] w-[74px] rounded-[4px] max-w-10 mt-[13px]"></div>
+                  <div className="skeleton bg-mono-40 block h-[70px] w-[74px] rounded-[4px] max-w-10 mt-0"></div>
                   <div className="added-product-info">
-                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-0]"></div>
-                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-[3px]"></div>
-                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-2"></div>
-                    <div className="skeleton bg-mono-40 block h-2 w-full max-w-10 mt-[13px]"></div>
+                    <div className="skeleton bg-mono-40 block h-2 w-16 mt-0]"></div>
+                    <div className="skeleton bg-mono-40 block h-2 w-16 mt-[3px]"></div>
+                    <div className="skeleton bg-mono-40 block h-2 w-16 mt-2"></div>
+                    <div className="skeleton bg-mono-40 block h-2 w-16 mt-[13px]"></div>
                   </div>
                 </div>
-                <div className="skeleton bg-mono-40 block h-3 w-full max-w-8 mt-2"></div>
+                <div className="skeleton bg-mono-40 block h-8 w-24 mt-2"></div>
                 <div className="added-product-item-right-cont text-right">
-                  <div className="skeleton bg-mono-40 block h-2 w-full max-w-8 mt-2"></div>
-                  <div className="skeleton bg-mono-40 block h-2 w-full max-w-8 mt-2"></div>
-                  <div className="skeleton bg-mono-40 block h-2 w-full max-w-8 mt-2"></div>
+                  <div className="skeleton bg-mono-40 block h-2 w-8 mt-2"></div>
+                  <div className="skeleton bg-mono-40 block h-2 w-8 mt-2"></div>
+                  <div className="skeleton bg-mono-40 block h-2 w-8 mt-2"></div>
                 </div>
               </div>
             </div>
@@ -177,7 +176,7 @@ const CheckoutProductItem = ({
                           className="w-8 h-8 rounded-full object-cover"
                         />
                         <div className="seller-info-cont">
-                          <p className="caption mb-[2px]">Seller</p>
+                          <p className="caption mb-[2px]">Donated by</p>
                           <p className="eyebrow-medium text-black">
                             {item.productId?.seller?.firstName || 'Unknown'}
                           </p>
@@ -261,8 +260,8 @@ const CheckoutProductItem = ({
                               (item.productId?.charity?.addresses[0]
                                 ?.country && (
                                 <>
-                                  {item.productId?.charity?.addresses[0]?.city ||
-                                    'Unknown City'}
+                                  {item.productId?.charity?.addresses[0]
+                                    ?.city || 'Unknown City'}
                                   ,{' '}
                                   {item.productId?.charity?.addresses[0]
                                     ?.country || 'Unknown Country'}

@@ -60,11 +60,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
       className={`product-card-item bg-mono-0 max-w-[289px] w-full px-[15px] py-4 flex flex-col gap-[33px] border ${status === 'REMOVED' ? 'opacity-80' : ''}`}
     >
       <div className="product-head-cont flex justify-between">
-        <div className="donate-charity-img h-[46px] flex items-center">
+        <div className="donate-charity-img h-[46px]  sm:w-8 sm:h-8 flex items-center">
           <Image
             src={charityImageSrc ?? ''}
             alt={charityImageAlt ?? ''}
-            className="w-full h-full object-cover"
+            className="w-full h-full sm:w-8 sm:h-8  object-cover"
             width={46}
             height={46}
           />

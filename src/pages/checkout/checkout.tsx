@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import BannerSection from './Banner';
@@ -41,7 +40,7 @@ interface Product {
 }
 
 interface CartItem {
-  productId: Product; // Refers to the actual Product object
+  productId: Product;
   quantity: number;
 }
 
@@ -59,28 +58,31 @@ const BasketPage = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [isCartLoading, setIsCartLoading] = useState(true);
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const fetchCartItems = async () => {
-  if (!userId || !token) return;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  try {
-    setIsCartLoading(true);
-    const response = await axios.get<CartResponse>(
-      `${API_BASE_URL}/cart/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    setCartItems(response.data.cart.items || []);
-  } catch (error) {
-    console.log('Failed to load cart. Please try again.');
-  } finally {
-    setIsCartLoading(false);
-  }
-};
+  // Fetch cart items for the user
+  const fetchCartItems = async () => {
+    if (!userId || !token) return;
 
+    try {
+      setIsCartLoading(true);
+      const response = await axios.get<CartResponse>(
+        `${API_BASE_URL}/cart/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCartItems(response.data.cart.items || []);
+    } catch (error) {
+      console.error('Failed to load cart. Please try again.', error);
+    } finally {
+      setIsCartLoading(false);
+    }
+  };
+
+  // Fetch cart items on component mount or session change
   useEffect(() => {
     fetchCartItems();
   }, [session]);
@@ -112,9 +114,9 @@ const fetchCartItems = async () => {
                   setCartItems={setCartItems}
                 />
                 <div className="shipping-and-payment-information">
-                  <ShippingAddress />
+                  <ShippingAddress  />
                   <div className="payment-info-wrapper pt-10">
-                    <PaymentMethodsArea />
+                    <PaymentMethodsArea  />
                   </div>
                 </div>
               </div>
