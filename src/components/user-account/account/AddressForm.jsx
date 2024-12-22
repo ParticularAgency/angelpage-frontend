@@ -4,32 +4,6 @@ import { EditIcon, SaveIcon } from '@/icons';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
-// // Define the shape of an address for type safety
-// interface Address {
-//   _id?: string;
-//   tempId?: number;
-//   type: 'Shipping from' | 'Shipping to';
-//   name: string;
-//   address: string;
-//   city: string;
-//   country: string;
-//   postcode: string;
-//   isEditing: boolean;
-// }
-// interface AddressAPIResponse {
-//   addresses: Address[];
-// }
-// // Define the structure of the user profile response
-// interface UserProfileResponse {
-//   user?: {
-//     addresses: Address[];
-//   };
-// }
-
-// // Define the expected structure of session data
-// interface SessionData {
-//   token: string;
-// }
 
 const AddressForm  = () => {
   const { data: session, status } = useSession() || {};
@@ -149,7 +123,7 @@ const AddressForm  = () => {
          );
        } else {
          // Add new address
-         const response = await axios.post<AddressAPIResponse>(
+         const response = await axios.post(
            `${process.env.NEXT_PUBLIC_API_URL}/users/profile/addresses`,
            address,
            {

@@ -137,7 +137,7 @@ const MiniCart = () => {
               className="drawer-button btn !bg-transparent !p-0 !border-none"
             >
               {cartItems.length > 0 && (
-                <span className="absolute top-[3px] w-5 h-5  right-[-19px] sm:right-[-8px] bg-red-500 text-white text-[11px]  flex items-center justify-center rounded-full p-1">
+                <span className="absolute top-[1px] w-5 h-5  right-[-19px] sm:right-[-8px] bg-red-500 text-white text-[11px]  flex items-center justify-center rounded-full p-1">
                   {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
                 </span>
               )}

@@ -7,7 +7,7 @@ import ProductsListsSec from '@/components/product/ProductsListsSec';
 const ProductsPage = () => {
   const searchParams = useSearchParams();
 
-  // Use optional chaining and explicitly convert null to undefined
+
   const category = searchParams?.get('category') || 'All Products';
   const subcategory = searchParams?.get('subcategory') || undefined;
 
