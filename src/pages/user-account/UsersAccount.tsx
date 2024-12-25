@@ -64,7 +64,7 @@ if (loading) {
                 <ul className="tabs-btn-items flex items-center sm:overflow-hidden sm:pb-6 sm:overflow-x-auto  gap-6 md:gap-y-4 sm:gap-3">
                   {/* Tab buttons */}
                   <li
-                    className={`tabs-btn-list body-small whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer ${
+                    className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
                       activeTab === 0
                         ? 'bg-[#FCF2FF] text-primary-color-100'
                         : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
@@ -74,7 +74,7 @@ if (loading) {
                     Analytics
                   </li>
                   <li
-                    className={`tabs-btn-list body-small whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer ${
+                    className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
                       activeTab === 1
                         ? 'bg-[#FCF2FF] text-primary-color-100'
                         : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
@@ -84,7 +84,7 @@ if (loading) {
                     Account
                   </li>
                   <li
-                    className={`tabs-btn-list body-small relative whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer ${
+                    className={`tabs-btn-list body-small relative whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
                       activeTab === 2
                         ? 'bg-[#FCF2FF] text-primary-color-100'
                         : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
@@ -94,7 +94,7 @@ if (loading) {
                     Listings {productsCount && (<span className='absolute -top-3 -right-[14px] w-[17px] h-6 flex items-center justify-center bg-error forms-bold font-medium text-mono-0 rounded-[8px] '>{productsCount}</span>)}
                   </li>
                   <li
-                    className={`tabs-btn-list body-small whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer ${
+                    className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
                       activeTab === 3
                         ? 'bg-[#FCF2FF] text-primary-color-100'
                         : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
@@ -104,7 +104,7 @@ if (loading) {
                     Sold
                   </li>
                   <li
-                    className={`tabs-btn-list body-small whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer ${
+                    className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
                       activeTab === 4
                         ? 'bg-[#FCF2FF] text-primary-color-100'
                         : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
@@ -114,7 +114,7 @@ if (loading) {
                     Bought
                   </li>
                   <li
-                    className={`tabs-btn-list body-small whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer ${
+                    className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
                       activeTab === 5
                         ? 'bg-[#FCF2FF] text-primary-color-100'
                         : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
@@ -124,7 +124,7 @@ if (loading) {
                     Delete account
                   </li>
                 <li
-                    className="tabs-btn-list body-small whitespace-nowrap px-[11px] py-2 rounded-[24px] cursor-pointer" >
+                    className="tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer" >
                     <LogoutButton />
                   </li>
                 </ul>

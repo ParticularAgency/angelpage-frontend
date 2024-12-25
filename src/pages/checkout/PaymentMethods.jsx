@@ -5,53 +5,16 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
 
-// interface UserResponse {
-//   user: {
-//     payments: PaymentMethod[];
-//     addresses: Address[];
-//   };
-// }
 
-// interface PaymentMethod {
-//   id: string;
-//   type: string;
-//   details: string; 
-// }
-
-// interface Address {
-//   id: string;
-//   street: string;
-//   city: string;
-//   zipCode: string; 
-// }
-
-
-// interface Address {
-//   _id?: string;
-//   name: string;
-//   address: string;
-//   city: string;
-//   country: string;
-//   postCode: string;
-// }
-
-// interface PaymentMethod {
-//   _id?: string;
-//   nameAccountHolder: string;
-//   accountNumber: string;
-//   expiryDate: string;
-//   cvvNumber: string;
-//   billingAddress: Address;
-// }
-
-const PaymentInfoForm = () => {
+const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
   const { data: session, status } = useSession() || {};
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
   const [useShippingAsBilling, setUseShippingAsBilling] = useState(false);
-  const [selectedShippingAddressId, setSelectedShippingAddressId] = useState(null);
+  const [selectedShippingAddressId, setSelectedShippingAddressId] =
+    useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [paymentToDelete, setPaymentToDelete] = useState(null);
   const [selectedPaymentIndex, setSelectedPaymentIndex] = useState(0);
@@ -82,6 +45,12 @@ const PaymentInfoForm = () => {
           });
           setPaymentMethods(response.data.user?.payments || []);
           setAddresses(response.data.user?.addresses || []);
+
+          // Default to the first payment method if available
+          if (response.data.user?.payments?.length) {
+            setSelectedPaymentIndex(0);
+            setSelectedPaymentMethod(response.data.user.payments[0]); // Set the first method as selected
+          }
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
@@ -91,9 +60,10 @@ const PaymentInfoForm = () => {
     fetchUserData();
   }, [session, status]);
 
-  const handlePaymentSelection = (index) => {
-    setSelectedPaymentIndex(index);
-  };
+    const handlePaymentSelection = index => {
+      setSelectedPaymentIndex(index);
+      setSelectedPaymentMethod(paymentMethods[index]);
+    };
 
   const handleAddNewClick = () => {
     setNewPayment({
@@ -115,7 +85,7 @@ const PaymentInfoForm = () => {
     setSelectedShippingAddressId(null);
   };
 
-  const handleEditClick = (index) => {
+  const handleEditClick = index => {
     setNewPayment(paymentMethods[index]);
     setEditingIndex(index);
     setIsAdding(true);
@@ -215,7 +185,7 @@ const PaymentInfoForm = () => {
     });
   };
 
-  const handleDeleteConfirmation = (id) => {
+  const handleDeleteConfirmation = id => {
     setPaymentToDelete(id);
     setIsConfirmOpen(true);
   };
@@ -227,11 +197,11 @@ const PaymentInfoForm = () => {
     }
   };
 
-  const handleShippingAddressSelect = (e) => {
+  const handleShippingAddressSelect = e => {
     setSelectedShippingAddressId(e.target.value);
   };
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     if (name in newPayment.billingAddress) {
       setNewPayment({
@@ -313,12 +283,12 @@ const PaymentInfoForm = () => {
             {useShippingAsBilling ? (
               <Select
                 id="userShippingAddressSelect"
-                name="shippingAddress" 
+                name="shippingAddress"
                 label="Select Shipping Address"
                 value={selectedShippingAddressId || ''}
                 onChange={handleShippingAddressSelect}
                 options={[
-                  { label: 'Select an address', value: '' }, 
+                  { label: 'Select an address', value: '' },
                   ...addresses.map(address => ({
                     label: `${address.name}, ${address.address}, ${address.city}, ${address.country}, ${address.postCode}`,
                     value: address._id,

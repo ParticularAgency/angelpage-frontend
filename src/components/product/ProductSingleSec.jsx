@@ -111,8 +111,10 @@ const ProductSinglepage = () => {
     }
   };
 
-  const handleShareProduct = () => {
-    const productUrl = window.location.href;
+const handleShareProduct = () => {
+  const productUrl = window.location.href;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard
       .writeText(productUrl)
       .then(() => {
@@ -121,7 +123,22 @@ const ProductSinglepage = () => {
       .catch(() => {
         ToastService.error('Failed to copy URL.');
       });
-  };
+  } else {
+    // Fallback: use an input element to copy text
+    const tempInput = document.createElement('input');
+    tempInput.value = productUrl;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    try {
+      document.execCommand('copy');
+      ToastService.success('Product link copied to clipboard!');
+    } catch (err) {
+      ToastService.error('Failed to copy URL.');
+    }
+    document.body.removeChild(tempInput);
+  }
+};
+
 
   if (loading) {
     return <PreLoader />;
