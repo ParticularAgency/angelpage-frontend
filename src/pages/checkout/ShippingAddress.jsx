@@ -17,12 +17,10 @@ import axios from 'axios';
 //   isEditing?: boolean;
 // }
 
-const ShippingAddress = () => {
+const ShippingAddress = ({ setSelectedAddress }) => {
   const { data: session, status } = useSession() || {};
   const [addresses, setAddresses] = useState([]);
-  const [selectedAddressId, setSelectedAddressId] = useState(
-    null
-  );
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [newAddress, setNewAddress] = useState({
     type: 'Shipping to',
     name: '',
@@ -47,7 +45,7 @@ const ShippingAddress = () => {
             headers: { Authorization: `Bearer ${session.token}` },
           });
           const shippingAddresses = response.data.user?.addresses.filter(
-            (addr) => addr.type === 'Shipping to'
+            addr => addr.type === 'Shipping to'
           );
           setAddresses(shippingAddresses || []);
         } catch (error) {
@@ -85,9 +83,7 @@ const ShippingAddress = () => {
           }
         );
         setAddresses(
-          response.data.addresses.filter(
-            (addr) => addr.type === 'Shipping to'
-          )
+          response.data.addresses.filter(addr => addr.type === 'Shipping to')
         );
       } else if (isEditingAddress) {
         const response = await axios.put(
@@ -96,9 +92,7 @@ const ShippingAddress = () => {
           { headers: { Authorization: `Bearer ${session?.token}` } }
         );
         setAddresses(
-          response.data.addresses.filter(
-            (addr) => addr.type === 'Shipping to'
-          )
+          response.data.addresses.filter(addr => addr.type === 'Shipping to')
         );
       }
 
@@ -118,7 +112,7 @@ const ShippingAddress = () => {
   };
 
   // Edit address
-  const handleEditAddress = (address) => {
+  const handleEditAddress = address => {
     setNewAddress(address);
     setIsEditingAddress(true);
     setIsAddingNewAddress(false);
@@ -133,9 +127,7 @@ const ShippingAddress = () => {
           { headers: { Authorization: `Bearer ${session?.token}` } }
         );
         setAddresses(
-          response.data.addresses.filter(
-            (addr) => addr.type === 'Shipping to'
-          )
+          response.data.addresses.filter(addr => addr.type === 'Shipping to')
         );
         setAddressToDelete(null);
         setIsConfirmOpen(false);
@@ -146,9 +138,11 @@ const ShippingAddress = () => {
   };
 
   // Select address
-  const handleAddressSelection = (id) => {
-    setSelectedAddressId(id);
-  };
+const handleAddressSelection = id => {
+  const selected = addresses.find(address => address._id === id);
+  setSelectedAddressId(id);
+  setSelectedAddress(selected); // Pass the full address object to the parent
+};
 
   return (
     <div className="address-info-wrapper pt-10">

@@ -41,7 +41,9 @@ const userRole = session?.user?.role;
 
   // Check if current page is '/product/post-product'
   const isPostProductPage = pathname === '/product/post-product';
-  const isCheckoutPage = pathname === '/checkout';
+  const isCheckoutPage =
+    pathname === '/checkout' || pathname === '/checkout/confirmation';
+
   const isTempLogin = pathname === '/internal-home';
 
    const [isDropdownOpen, setIsDropdownOpen] = useState(false);

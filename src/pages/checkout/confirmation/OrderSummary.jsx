@@ -1,51 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Button } from '@/components/elements';
+import React, {  useState } from 'react';
 import { ArrowDownIcon } from '@/icons';
-interface Product {
-  brand: string;
-  name: string;
-  price: number;
-}
-interface CartItem {
-  quantity: number;
-  productId: Product;
-}
-interface BasketAreaProps {
-  onPay: () => void;
-  cartItems: CartItem[];
-  isLoading: boolean;
-}
+import Image from 'next/image';
 
-const BasketArea: React.FC<BasketAreaProps> = ({
-  onPay,
-  cartItems = [],
-  isLoading,
-}) => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-  const [loading, setLoading] = useState(false);
-  // Total calculations
-  const totalProductPrice = (cartItems || []).reduce(
-    (sum, item) => sum + item.quantity * item.productId.price,
-    0
-  );
-  const charityProfit = totalProductPrice * 0.9; // 90% for charity
-  const adminFee = totalProductPrice * 0.1; // 10% for admin fee
-
-  const handlePayClick = async () => {
-    setLoading(true);
-    await onPay(); // Triggers payment handler
-    setLoading(false);
-  };
+const OrderSummary  = ({order}) => {
+   const [isCollapsed, setIsCollapsed] = useState(true);
 
   return (
-    <div className="basket-page-right-cont col-span-5 md:col-span-6 sm:col-span-full">
-      <div className="basket-page-right-cont-wrapper border py-6 bg-[#F1F1F7]">
-        <div className="flex justify-between items-end px-6">
+    <div className="basket-page-right-cont">
+      <div className="basket-page-right-cont-wrapper border py-6 bg-[#F1F1F7] relative">
+        <div className="paid-mark-imaage absolute top-[-30px] left-[-40px]">
+          <Image
+            src="/images/paid-mark.svg"
+            alt="paid mark image"
+            width={72}
+            height={72}
+          />
+        </div>
+        <div className="flex justify-between items-end px-6 pl-7"> 
           <h3 className="body-bold-medium mb-4">Order summary</h3>
           <p className="font-semibold product-total-price">
-            £{totalProductPrice.toFixed(2)}
+            £{order?.totalAmount.toFixed(2)}
           </p>
         </div>
 
@@ -59,7 +35,7 @@ const BasketArea: React.FC<BasketAreaProps> = ({
           >
             Order details{' '}
             <span className="number-of-product-for-price">
-              ({cartItems.length} items)
+              ({order?.products.length} item)
             </span>{' '}
             <span className="arrow-down">
               <ArrowDownIcon />
@@ -67,19 +43,17 @@ const BasketArea: React.FC<BasketAreaProps> = ({
           </p>
           {!isCollapsed && (
             <div className="product-list px-6">
-              {cartItems.map((item, index) => {
-                const productCharityProfit =
-                  item.quantity * item.productId.price * 0.9; // 90% for charity
+              {order?.products.map((item, index) => {
                 return (
                   <div className="mb-6" key={index}>
-                    <p className="eyebrow-medium">{item.productId.brand}</p>
+                    <p className="eyebrow-medium">{item.name || ''}</p>
                     <p className="caption-bold text-mono-80">
-                      {item.productId.name}
+                      {item?.productId.brand || ''}
                     </p>
                     <div className="flex justify-between caption-bold pl-[21px]">
                       <p className="caption text-mono-80">Price</p>
                       <p className="caption text-mono-100 mt-1">
-                        £{(item.quantity * item.productId.price).toFixed(2)}
+                        £{item?.price.toFixed(2) || ''}
                       </p>
                     </div>
                     <div className="flex justify-between caption-bold pl-[21px]">
@@ -87,7 +61,7 @@ const BasketArea: React.FC<BasketAreaProps> = ({
                         Charity profit (90%)
                       </p>
                       <p className="caption text-mono-100 mt-1">
-                        £{productCharityProfit.toFixed(2)}
+                        £{item?.charityProfit.toFixed(2) || ''}
                       </p>
                     </div>
                   </div>
@@ -101,11 +75,21 @@ const BasketArea: React.FC<BasketAreaProps> = ({
         <div className="summary-foot border-t pt-6 px-6">
           <div className="flex justify-between mb-2">
             <p className="caption text-mono-80">Angelpage admin fee</p>
-            <p className="caption text-mono-100">£{adminFee.toFixed(2)}</p>
+            <p className="caption text-mono-100">
+              £
+              {order?.products
+                .reduce((sum, item) => sum + item.adminFee, 0)
+                .toFixed(2)}
+            </p>
           </div>
           <div className="flex justify-between mb-2">
             <p className="caption text-mono-80">Charity profit (90%)</p>
-            <p className="caption text-mono-100">£{charityProfit.toFixed(2)}</p>
+            <p className="caption text-mono-100">
+              £
+              {order?.products
+                .reduce((sum, item) => sum + item.charityProfit, 0)
+                .toFixed(2)}
+            </p>
           </div>
         </div>
 
@@ -113,24 +97,13 @@ const BasketArea: React.FC<BasketAreaProps> = ({
         <div className="flex justify-between font-bold px-6 border-t pt-4 mt-4">
           <p className="body-bold-medium product-total-price">Total</p>
           <p className="body-bold-medium text-mono-100">
-            £{totalProductPrice.toFixed(2)}
+            £{order?.totalAmount.toFixed(2) || ''}
           </p>
-        </div>
-
-        {/* Pay Now Button */}
-        <div className="pay px-6 mt-3">
-          <Button
-            className="w-full"
-            variant="primary"
-            onClick={handlePayClick}
-            disabled={loading || isLoading}
-          >
-            {loading || isLoading ? 'Processing...' : 'Pay Now'}
-          </Button>
         </div>
       </div>
     </div>
   );
 };
 
-export default BasketArea;
+export default OrderSummary;
+
