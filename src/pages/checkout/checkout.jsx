@@ -76,7 +76,7 @@ const BasketPage = () => {
 
     try {
       setIsCartLoading(true);
-      const response = await axios.get<CartResponse>(
+      const response = await axios.get(
         `${API_BASE_URL}/cart/${userId}`,
         {
           headers: {
