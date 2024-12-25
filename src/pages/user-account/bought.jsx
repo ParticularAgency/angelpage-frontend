@@ -9,43 +9,56 @@ const BoughtItems = () => {
     const { data: session, status } = useSession() || {};
     const [purchaseItems, setPurchaseItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null); // Default to item 1 (Hollister)
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
  
-   useEffect(() => {
-     if (status === 'authenticated') {
-       fetchPurchaseItems();
-     }
-   }, [status]);
+    const fetchPurchaseItems = async () => {
+      if (!session?.user?.id || !session?.token) {
+        console.error('Session is not available.');
+        setLoading(false);
+        return;
+      }
 
-   const fetchPurchaseItems = async () => {
-     if (!session?.user?.id || !session?.token) {
-       console.error('Session is not available.');
-       return;
-     }
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/order/buyer/${session.user.id}/orders`,
+          {
+            headers: {
+              Authorization: `Bearer ${session.token}`,
+            },
+          }
+        );
 
-     try {
-       const response = await fetch(
-         `${process.env.NEXT_PUBLIC_API_URL}/order/seller/${session.user.id}/sold`,
-         {
-           headers: {
-             Authorization: `Bearer ${session.token}`,
-           },
-         }
-       );
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
 
-       if (!response.ok) {
-         throw new Error(await response.text());
-       }
+        const { purchaseItems } = await response.json(); // Expecting `purchaseItems` from API
+        if (!Array.isArray(purchaseItems)) {
+          throw new Error('Invalid data format received. Expected an array.');
+        }
 
-       const { soldItems } = await response.json();
-       setPurchaseItems(soldItems);
-       setSelectedItem(soldItems[0] || null); // Select the first item by default
-     } catch (error) {
-       console.error('Error fetching sold items:', error);
-     } finally {
-       setLoading(false);
-     }
-   };
+        setPurchaseItems(purchaseItems);
+        setSelectedItem(purchaseItems[0] || null); // Select the first item by default
+      } catch (error) {
+        console.error('Error fetching purchase items:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    useEffect(() => {
+      if (status === 'authenticated') {
+        fetchPurchaseItems();
+      }
+    }, [status]);
+
+    if (loading) {
+      return <p>Loading...</p>;
+    }
+
+    if (!purchaseItems.length) {
+      return <p>No items found.</p>;
+    }
 
  const handleConfirmDelivery = async () => {
    if (!selectedItem?.orderId) {
@@ -155,7 +168,7 @@ const BoughtItems = () => {
             <>
               <h3 className="caption">Purchase date</h3>
               <div className="mt-1">
-                <p> {new Date(selectedItem.orderDate).toLocaleDateString()}</p>
+                <p> {new Date(selectedItem.createdAt).toLocaleDateString()}</p>
               </div>
 
               <div className="relative mt-[15px]">
@@ -169,7 +182,7 @@ const BoughtItems = () => {
                       <p className="body-bold-small">Payment sent</p>
                       <p className="forms text-mono-70 mt-1">
                         {' '}
-                        {new Date(selectedItem.orderDate).toLocaleDateString()}
+                        {new Date(selectedItem.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -184,7 +197,12 @@ const BoughtItems = () => {
                       ></div>
                       <div>
                         <p className="text-body-bold-small">Item dispatched</p>
-                        <p className="forms text-mono-70 mt-1">23 Aug 2024</p>
+                        <p className="forms text-mono-70 mt-1">
+                          {' '}
+                          {new Date(
+                            selectedItem.updatedAt
+                          ).toLocaleDateString()}
+                        </p>
                         <p className="body-bold-small mt-1">
                           Tracking:{' '}
                           <span className="text-purple-600">
@@ -225,7 +243,11 @@ const BoughtItems = () => {
                       ></div>
                       <div>
                         <p className="body-bold-small">Item received</p>
-                        <p className="forms text-mono-70 mt-1">27 Aug 2024</p>
+                        <p className="forms text-mono-70 mt-1">
+                          {new Date(
+                            selectedItem.updatedAt
+                          ).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
                   ) : (
@@ -251,7 +273,11 @@ const BoughtItems = () => {
                         <p className="body-bold-small">
                           Sale proceeds sent to {selectedItem.charityName}
                         </p>
-                        <p className="forms text-mono-70 mt-1">27 Aug 2024</p>
+                        <p className="forms text-mono-70 mt-1">
+                          {new Date(
+                            selectedItem.updatedAt
+                          ).toLocaleDateString()}
+                        </p>
 
                         {/* Display dynamic charity and admin fee calculation */}
                         <div>
