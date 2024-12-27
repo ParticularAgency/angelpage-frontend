@@ -2,13 +2,13 @@
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState, useRef } from 'react';
+import React, { useState} from 'react';
 import { Button } from '../elements';
 import { UserIcon } from '@/icons';
 import TopNavList from './topNavList';
 import MobileViewOffcanvas from './mobileViewOffcanvas';
 import MiniCart from '../cart/miniCart';
-import FavoritesAlert, { FavoritesAlertRef } from './favoritesAlert';
+import FavoritesAlert from './favoritesAlert';
 import GlobalSearch from '../elements/search/globalSearch';
 import BottomNavMegamenu from './bottomNavMegamenu';
 import StickyNavMenu from './stickyNavMenu';
@@ -23,13 +23,7 @@ const Header = () => {
   console.log('Session:', session);
   console.log('Session Status:', status);
 
- const favoritesAlertRef = useRef<FavoritesAlertRef>(null);
 
-//  const handleFavoriteAction = () => {
-//    if (favoritesAlertRef.current) {
-//      favoritesAlertRef.current.reloadFavorites();
-//    }
-//  };
   const pathname = usePathname();
 const userId = session?.user?.id;
 const userRole = session?.user?.role;
@@ -108,7 +102,6 @@ const userRole = session?.user?.role;
                           <>
                             <FavoritesAlert
                               className="sm:hidden"
-                              ref={favoritesAlertRef}
                             />
 
                             <div className="notification-dropdown-area relative sm:static">

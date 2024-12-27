@@ -19,7 +19,7 @@ interface BusinessOverviewData {
 }
 
 interface BusinessOverviewProps {
-  data: BusinessOverviewData;
+  data: Partial<BusinessOverviewData>; // Allow partial data to handle missing properties
 }
 
 const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
@@ -35,21 +35,32 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
       ? 'text-[#00C700] bg-[rgba(165,255,187,.60)]'
       : 'text-[#FF0000] bg-[rgba(255,187,187,.60)]';
 
+  // Provide default values using destructuring
+  const {
+    totalUsers = 0,
+    returningUsers = 0,
+    returningUsersChange = 0,
+    itemsSold = 0,
+    itemsSoldChange = 0,
+    sessions = 0,
+    sessionsChange = 0,
+  } = data;
+
   return (
     <div className="grid grid-cols-12 sm:grid-cols-6 gap-5 business-overview-area">
       {/* Total Users */}
       <div className="col-span-3 sm:col-span-full md:col-span-6 px-4 pt-[21px] pb-[23px] border border-[#cdd3da] analytics-card-items">
         <h4 className="body-bold-small">Total Users</h4>
         <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
-          {data.totalUsers.toLocaleString()}
+          {totalUsers.toLocaleString()}
         </p>
         <p className="body-bold-small mt-2">
           <span
             className={`px-2 py-[2px] forms-bold ${getBadgeStyle(
-              data.revenueChange
+              returningUsersChange
             )} rounded-full`}
           >
-            {formatChange(data.revenueChange)}
+            {formatChange(returningUsersChange)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last month</span>
         </p>
@@ -59,15 +70,15 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
       <div className="col-span-3 sm:col-span-full md:col-span-6 px-4 pt-[21px] pb-[23px] border border-[#cdd3da] analytics-card-items">
         <h4 className="body-bold-small">Returning Users</h4>
         <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
-          {data.returningUsers.toLocaleString()}
+          {returningUsers.toLocaleString()}
         </p>
         <p className="body-bold-small mt-2">
           <span
             className={`px-2 py-[2px] forms-bold ${getBadgeStyle(
-              data.returningUsersChange
+              returningUsersChange
             )} rounded-full`}
           >
-            {formatChange(data.returningUsersChange)}
+            {formatChange(returningUsersChange)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last week</span>
         </p>
@@ -77,15 +88,15 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
       <div className="col-span-3 sm:col-span-full md:col-span-6 px-4 pt-[21px] pb-[23px] border border-[#cdd3da] analytics-card-items">
         <h4 className="body-bold-small">No. of Items Sold</h4>
         <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
-          {data.itemsSold.toLocaleString()}
+          {itemsSold.toLocaleString()}
         </p>
         <p className="body-bold-small mt-2">
           <span
             className={`px-2 py-[2px] forms-bold ${getBadgeStyle(
-              data.itemsSoldChange
+              itemsSoldChange
             )} rounded-full`}
           >
-            {formatChange(data.itemsSoldChange)}
+            {formatChange(itemsSoldChange)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last week</span>
         </p>
@@ -95,15 +106,15 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
       <div className="col-span-3 sm:col-span-full md:col-span-6 px-4 pt-[21px] pb-[23px] border border-[#cdd3da] analytics-card-items">
         <h4 className="body-bold-small">Sessions</h4>
         <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
-          {data.sessions.toLocaleString()}
+          {sessions.toLocaleString()}
         </p>
         <p className="body-bold-small mt-2">
           <span
             className={`px-2 py-[2px] forms-bold ${getBadgeStyle(
-              data.sessionsChange
+              sessionsChange
             )} rounded-full`}
           >
-            {formatChange(data.sessionsChange)}
+            {formatChange(sessionsChange)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last week</span>
         </p>

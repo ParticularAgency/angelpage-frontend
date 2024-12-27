@@ -9,10 +9,8 @@ interface Charity {
   charityName?: string;
   charityNumber?: string;
   description?: string;
-  contact?: {
-    phone?: string;
-    website?: string;
-  };
+  phoneNumber?: string;
+  websiteLink?: string;
 }
 const CharityDetails = () => {
   const params = useParams(); // Retrieve parameters from the route
@@ -21,7 +19,6 @@ const CharityDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only fetch details if `charityid` is available
     if (charityid) {
       const fetchCharityDetails = async () => {
         try {
@@ -100,7 +97,7 @@ const CharityDetails = () => {
                 height={16}
               />
               <span className="text-[#000]">
-                {charity.contact?.phone || 'N/A'}
+                {charity.phoneNumber || 'N/A'}
               </span>
             </div>
             <div className="flex items-center space-x-2">
@@ -110,14 +107,14 @@ const CharityDetails = () => {
                 width={16}
                 height={16}
               />
-              {charity.contact?.website ? (
+              {charity.websiteLink ? (
                 <a
-                  href={charity.contact.website}
+                  href={charity.websiteLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#000]"
                 >
-                  {charity.contact.website}
+                  {charity.websiteLink}
                 </a>
               ) : (
                 <span className="text-[#000]">N/A</span>

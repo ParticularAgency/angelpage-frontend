@@ -12,23 +12,20 @@ interface RevenueStatisticsProps {
     month?: string;
     year?: string;
   }[]; // Structure of data array
+  totalRevenue: number;
 }
 
 const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
-  // period,
-  // setPeriod,
+ totalRevenue,
   data,
 }) => {
   if (!data || data.length === 0) {
     return <div>Loading...</div>; // Or any fallback UI
   }
 
-  // Helper function to calculate total revenue
-  const getTotalRevenue = () => {
-    return data.reduce((total, entry) => total + entry.revenue, 0);
-  };
 
-  const totalRevenue = getTotalRevenue();
+
+  // const totalRevenue = getTotalRevenue();
   const charityProfit = (totalRevenue * 0.9).toFixed(2); // 90% to charity
   const salesCommission = (totalRevenue * 0.1).toFixed(2); // 10% commission
 
@@ -49,7 +46,7 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
         </div>
         <div className="card-body-wrapper">
           <h3 className="body-bold-large text-[#0d0113] font-medium font-secondary mb-6">
-            £{totalRevenue.toFixed(2)} Total Platform Sales
+             ${totalRevenue ? totalRevenue.toFixed(2) : '0.00'} Total Platform Sales
           </h3>
           <h5 className="body-bold-medium underline mb-3 text-[#0d0113] font-medium font-secondary">
             Total Breakdown
@@ -61,7 +58,7 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
                 Gross Value
               </p>
               <span className="revenue-updates caption-bold text-[#677788] font-medium font-secondary">
-                £{totalRevenue.toFixed(2)}
+                 ${totalRevenue ? totalRevenue.toFixed(2) : '0.00'}
               </span>
             </li>
             <li className="revenue-status-lists-item flex items-center gap-4 py-[15px]">

@@ -11,48 +11,47 @@ interface AdminProfile {
   userName?: string;
   profileImage?: string;
 }
-
-const BannerSection = () => {
+interface BannerSectionProps {
+  soldItemsCount: number; // Define the type of soldItemsCount
+}
+const BannerSection: React.FC<BannerSectionProps> = ({ soldItemsCount }) => {
   const { data: session, status } = useSession() || {};
   const [adminData, setAdminData] = useState<AdminProfile | null>(null);
   const [liveProductsCount, setLiveProductsCount] = useState<number>(0);
 
   // Fetch admin data
-  useEffect(() => {
-    const fetchData = async () => {
-      if (status === 'authenticated' && session?.token) {
-        try {
-          const data = await fetchAdminData(session.token);
-          setAdminData(data as AdminProfile);
-        } catch (error) {
-          console.error('Failed to fetch admin data:', error);
-        }
+  const fetchData = async () => {
+    if (status === 'authenticated' && session?.token) {
+      try {
+        const data = await fetchAdminData(session.token);
+        setAdminData(data as AdminProfile);
+      } catch (error) {
+        console.error('Failed to fetch admin data:', error);
       }
-    };
-
-    fetchData();
-  }, [session, status]);
+    }
+  };
 
   // Fetch live products count
-  useEffect(() => {
-    const fetchLiveProductsData = async () => {
-      if (session?.token) {
-        try {
-          const response = await fetchLiveProducts(session.token);
-          if (response && response.products) {
-            const liveProducts = response.products.filter(
-              (product: { status: string }) => product.status === 'LIVE'
-            );
-            setLiveProductsCount(liveProducts.length);
-          }
-        } catch (error) {
-          console.error('Failed to fetch live products:', error);
+  const fetchLiveProductsData = async () => {
+    if (session?.token) {
+      try {
+        const response = await fetchLiveProducts(session.token);
+        if (response && response.products) {
+          const liveProducts = response.products.filter(
+            (product: { status: string }) => product.status === 'LIVE'
+          );
+          setLiveProductsCount(liveProducts.length);
         }
+      } catch (error) {
+        console.error('Failed to fetch live products:', error);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchLiveProductsData();
-  }, [session]);
+    fetchData();
+  }, [session, status]);
 
   return (
     <section className="users-account-banner-section relative pt-0 pb-[50px] sm:pb-9">
@@ -92,7 +91,7 @@ const BannerSection = () => {
               </li>
               <li className="body-small text-mono-80 font-secondary font-normal leading-[150%]">
                 <span className="body-small text-mono-80 font-secondary leading-[150%] font-bold">
-                  0
+                  {soldItemsCount}
                 </span>{' '}
                 items sold on platform
               </li>

@@ -1,3 +1,4 @@
+'use client'
 import LoadingModal from '@/icons/loadingModal';
 import React from 'react';
 

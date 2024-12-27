@@ -12,7 +12,11 @@ import { EffectFade, FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
+
+import { useSelector, useDispatch } from 'react-redux';
+import { addOrUpdateProduct } from '@/store/cartSlice';
 import { useSession } from 'next-auth/react';
+
 import axios from 'axios';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
@@ -30,16 +34,25 @@ import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
 
 const ProductSinglepage = () => {
+  const dispatch = useDispatch();
   const { data: session } = useSession() || {};
+  const userId = session?.user?.id;
+  const token = session?.token;
+  const cartItems = useSelector(state => state.cart.items);
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
   const params = useParams();
 
   // Safely parse product ID
   const productid = params?.productid;
- const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [product, setProduct] = useState(null);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // Sync local state with Redux store on mount and when cartItems change
+  useEffect(() => {
+    const productInCart = cartItems.some(item => item.productId === productid);
+    setIsAddedToCart(productInCart);
+  }, [cartItems, productid]);
 
   useEffect(() => {
     if (!productid) return;
@@ -63,7 +76,7 @@ const ProductSinglepage = () => {
 
         setProduct(response.data.product);
       } catch (err) {
-          setError('Failed to load product details.');
+        setError('Failed to load product details.');
       } finally {
         setLoading(false);
       }
@@ -73,72 +86,55 @@ const ProductSinglepage = () => {
   }, [productid, session]);
 
   const handleAddToCart = async () => {
-    if (!session?.token) {
-      ToastService.error(
-        'You need to be logged in to add products to the cart.'
-      );
+    if (!token) {
+      ToastService.error('Please log in to add products to your cart.');
       return;
     }
 
-      if (!product?.id) {
-        ToastService.error('Product information is missing.');
-        return;
-      }
-
-      setIsAddedToCart(true);
-
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/cart/add-product-to-cart`,
-        {
-          userId: session.user.id,
-          productId: product.id,
-          quantity: 1,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-        }
+      // Dispatch Redux action to add or update product in the cart
+      await dispatch(
+        addOrUpdateProduct({
+          userId,
+          productId: productid,
+          token,
+        })
       );
-      console.log();
-      ToastService.success('Product added to cart successfully!');
+      ToastService.success('Product added to cart!');
+      setIsAddedToCart(true);
     } catch (error) {
-      ToastService.error(
-        'Failed to add product to cart. Please try again later.'
-      );
-      setIsAddedToCart(false);
+      ToastService.error('Failed to add product to cart.');
+      console.error('Error adding product to cart:', error);
     }
   };
 
-const handleShareProduct = () => {
-  const productUrl = window.location.href;
+  const handleShareProduct = () => {
+    const productUrl = window.location.href;
 
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard
-      .writeText(productUrl)
-      .then(() => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(productUrl)
+        .then(() => {
+          ToastService.success('Product link copied to clipboard!');
+        })
+        .catch(() => {
+          ToastService.error('Failed to copy URL.');
+        });
+    } else {
+      // Fallback: use an input element to copy text
+      const tempInput = document.createElement('input');
+      tempInput.value = productUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
         ToastService.success('Product link copied to clipboard!');
-      })
-      .catch(() => {
+      } catch (err) {
         ToastService.error('Failed to copy URL.');
-      });
-  } else {
-    // Fallback: use an input element to copy text
-    const tempInput = document.createElement('input');
-    tempInput.value = productUrl;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    try {
-      document.execCommand('copy');
-      ToastService.success('Product link copied to clipboard!');
-    } catch (err) {
-      ToastService.error('Failed to copy URL.');
+      }
+      document.body.removeChild(tempInput);
     }
-    document.body.removeChild(tempInput);
-  }
-};
-
+  };
 
   if (loading) {
     return <PreLoader />;
@@ -156,11 +152,10 @@ const handleShareProduct = () => {
   const countryCode = sellerAddress?.country
     ? countries.getAlpha2Code(sellerAddresses.country, 'en') || 'N/A'
     : 'N/A';
- 
+
   const location = sellerAddress
     ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
     : 'Location Not Available';
-
 
   return (
     <section className="product-singlepage-section">
@@ -422,7 +417,7 @@ const handleShareProduct = () => {
           </div>
         </div>
       </div>
-     
+
       <RelatedCategoryProducts
         secClassName="bg-[#f1f1f7] pt-[35px] pb-5"
         category={product.category}

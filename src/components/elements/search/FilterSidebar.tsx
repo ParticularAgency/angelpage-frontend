@@ -124,7 +124,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <ul className="pb-[14px] pl-3 sm:pl-1 flex flex-col gap-2">
             {categories.map(category => (
               <li key={category.category}>
-                <label className="flex items-center gap-2 caption">
+                <label className="flex items-center gap-2 capitalize caption">
                   {/* <input /> */}
                   <Checkbox
                     checked={selectedFilters.category.includes(
@@ -167,10 +167,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <ul className="pb-[14px] pl-3 flex  sm:pl-1 flex-col gap-2">
             {categories.map(category => (
               <li key={category.category}>
-                <ul>
+                <ul className="flex flex-col gap-2">
                   {category.subCategories.map(subCategory => (
                     <li key={subCategory}>
-                      <label className="flex items-center gap-2 caption">
+                      <label className="flex items-center capitalize gap-2 caption">
                         {/* <input type="checkbox" className="!bg-[#fff]" /> */}
                         <Checkbox
                           checked={selectedFilters.subCategory.includes(
@@ -214,7 +214,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <ul className="pb-[14px] pl-3 flex  sm:pl-1 flex-col gap-2">
             {brands.map(brand => (
               <li key={brand}>
-                <label className="flex items-center gap-2 caption">
+                <label className="flex items-center capitalize gap-2 caption">
                   {/* <input type="checkbox" className="!bg-[#fff]" /> */}
                   <Checkbox
                     checked={selectedFilters.brand.includes(brand)}
@@ -254,16 +254,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <ul className="pb-[14px] pl-3 flex  sm:pl-1 flex-col gap-2">
             {conditions.map(condition => (
               <li key={condition}>
-                <label className="flex items-center gap-2 caption">
-                  <input
-                    type="checkbox"
-                    className="!bg-[#fff]"
-                    checked={selectedFilters.condition.includes(
-                      condition
-                    )}
-                    onChange={() =>
-                      handleFilterChange('condition', condition)
-                    }
+                <label className="flex items-center capitalize gap-2 caption">
+                  <Checkbox
+                    checked={selectedFilters.condition.includes(condition)}
+                    onChange={() => handleFilterChange('condition', condition)}
                   />
                   {condition || 'Unknown'}
                 </label>

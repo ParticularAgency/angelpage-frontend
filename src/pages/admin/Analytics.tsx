@@ -80,7 +80,16 @@ const mockData = {
   sessions: 8500,
   sessionsChange: 8,
 };
-const AnalyticsPage: React.FC = () => {
+interface AnalyticsPageProps {
+  totalRevenue: number;
+  salesChange: number;
+  soldItemsCount: number;
+}
+const AnalyticsPage: React.FC<AnalyticsPageProps> = ({  
+  totalRevenue,
+  salesChange,
+  soldItemsCount,
+ }) => {
   // Specify the type for period state
   const [period, setPeriod] = useState<'Day' | 'Month' | 'Year'>('Year');
 
@@ -97,7 +106,6 @@ const AnalyticsPage: React.FC = () => {
     }
   };
 
-
   // Data for BusinessOverview and RevenueStatistics
   const data = getData();
 
@@ -107,7 +115,11 @@ const AnalyticsPage: React.FC = () => {
       <div className="max-w-7xl mx-auto bg-white">
         {/* <h2 className="h5 font-primary mb-6">Business Overview</h2> */}
         {/* Pass overviewData to BusinessOverview */}
-        <BusinessOverview data={mockData} />
+        <BusinessOverview data={{
+            ...mockData,
+            itemsSold: soldItemsCount,
+            itemsSoldChange: salesChange,
+          }} />
       </div>
 
       {/* Revenue Statistics Section */}
@@ -115,6 +127,7 @@ const AnalyticsPage: React.FC = () => {
         <div className="col-span-5 sm:col-span-full h-full">
           {/* Pass data and period state to RevenueStatistics */}
           <RevenueStatistics
+            totalRevenue={totalRevenue}
             period={period}
             setPeriod={setPeriod}
             data={data}
@@ -124,7 +137,7 @@ const AnalyticsPage: React.FC = () => {
           <CustomerAcquisition />
         </div>
       </div>
-  
+
       <UsersTable />
     </div>
   );

@@ -1,48 +1,18 @@
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
+
+import React, {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Checkmark, LocationIcon } from '@/icons';
-import { useSession } from 'next-auth/react';
 import { Button } from '@/components/elements';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
 import { ToastService } from '@/components/elements/notifications/ToastService';
-import axios from 'axios';
+import {useSelector,  useDispatch } from 'react-redux';
+import { addOrUpdateProduct } from '@/store/cartSlice';
+import { useSession } from 'next-auth/react';
 
-interface CartItem {
-  productId: string;
-  quantity: number;
-}
 
-interface CartResponse {
-  cart: {
-    items: CartItem[];
-  };
-}
-
-interface AddToCartResponse {
-  cart: {
-    items: CartItem[];
-  };
-}
-
-interface ProductCardProps {
-  id: string;
-  charityImageSrc?: string;
-  charityImageAlt?: string;
-  images: Array<{ url: string; altText?: string }>;
-  brand?: string;
-  name?: string;
-  size?: string;
-  price?: string;
-  location?: string;
-  isLoggedIn?: boolean;
-  dimensionHeight?: string;
-  dimensionWidth?: string;
-  status?: string;
-}
-
-const ProductCard: React.FC<ProductCardProps> = ({
+const ProductCard  = ({
   id,
   charityImageSrc = '/images/icons/elisp-profile-default-img.svg',
   charityImageAlt = 'Charity Image',
@@ -56,70 +26,43 @@ const ProductCard: React.FC<ProductCardProps> = ({
   dimensionWidth = '',
   isLoggedIn = false,
 }) => {
+  const dispatch = useDispatch();
   const { data: session } = useSession() || {};
   const userId = session?.user?.id;
   const token = session?.token;
-  const [isAddedToCart, setIsAddedToCart] = useState<boolean>(false);
+ const cartItems = useSelector(state => state.cart.items);
+  // Local state for "Added to Cart" button
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
 
-  const fetchCartCount = useCallback(async () => {
-   if (!userId || !token) return;
-
-    try {
-      const response = await axios.get<CartResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/cart/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const cartItems = response.data.cart.items || [];
-      setIsAddedToCart(cartItems.some(item => item.productId === id));
-    } catch (error) {
-      
-    }
-  }, [session, id]);
-
+  // Sync local state with Redux store on mount and when cartItems change
+  useEffect(() => {
+    const productInCart = cartItems.some(item => item.productId === id);
+    setIsAddedToCart(productInCart);
+  }, [cartItems, id]);
+  // Check if the product is already in the cart
+  // const isAddedToCart = cartItems.some(item => item.productId === id);
   const handleAddToCart = async () => {
-    if (!session?.token) {
-      ToastService.error(
-        'You need to be logged in to add products to the cart.'
-      );
+    if (!token) {
+      ToastService.error('Please log in to add products to your cart.');
       return;
     }
 
-    setIsAddedToCart(true);
-
     try {
-      await axios.post<AddToCartResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/cart/add-product-to-cart`,
-        {
-          userId: session.user.id,
+      // Dispatch Redux action to add or update product in the cart
+      await dispatch(
+        addOrUpdateProduct({
+          userId,
           productId: id,
-          quantity: 1,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-        }
+          token,
+        })
       );
-      ToastService.success('Product added to cart successfully!');
+      ToastService.success('Product added to cart!');
+      setIsAddedToCart(true);
     } catch (error) {
-      ToastService.error(
-        'Failed to add product to cart. Please try again later.'
-      );
-      setIsAddedToCart(false);
+      ToastService.error('Failed to add product to cart.');
+      console.error('Error adding product to cart:', error);
     }
   };
-
-  useEffect(() => {
-    if (isLoggedIn && session) {
-      fetchCartCount();
-    }
-  }, [isLoggedIn, session, fetchCartCount]);
-
-  // Validate and set default image URLs
   const validatedImageSrc =
     images[0]?.url &&
     (images[0].url.startsWith('/') || images[0].url.startsWith('http'))
@@ -225,3 +168,4 @@ const ProductCard: React.FC<ProductCardProps> = ({
 };
 
 export default ProductCard;
+

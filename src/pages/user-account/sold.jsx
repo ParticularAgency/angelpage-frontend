@@ -9,6 +9,7 @@ const SoldItemsPage = () => {
   const { data: session, status } = useSession() || {};
   const [soldItems, setSoldItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [setCountSoldItem] = useState(null);
   const [inputTrackingNumber, setInputTrackingNumber] = useState('');
   const [trackingError, setTrackingError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -42,6 +43,7 @@ const SoldItemsPage = () => {
       const { soldItems } = await response.json();
       setSoldItems(soldItems);
       setSelectedItem(soldItems[0] || null); // Select the first item by default
+      setCountSoldItem(soldItems.length);
     } catch (error) {
       console.error('Error fetching sold items:', error);
     } finally {
@@ -97,20 +99,6 @@ const SoldItemsPage = () => {
  };
 
 
-  // const handleConfirmShipment = () => {
-  //   if (!inputTrackingNumber) {
-  //     setTrackingError('Please enter a tracking number.');
-  //     return;
-  //   }
-
-  //   setTrackingError('');
-  //   setSelectedItem({
-  //     ...selectedItem,
-  //     status: 'Shipped',
-  //     trackingNumber: inputTrackingNumber,
-  //   });
-  // };
-
   const handleTrackingChange = e => {
     setInputTrackingNumber(e.target.value);
   };
@@ -124,17 +112,7 @@ const SoldItemsPage = () => {
       <div className="sold-item-wrapper-head py-4 flex items-center justify-between">
         <h3 className="body-bold-regular text-mono-100">Sold Items</h3>
         <div className="sold-item-sort-box flex items-center gap-[14px]">
-          {/* <p className="body-small">Sort by</p>
-          <select
-            value={sortFilter}
-            onChange={e => handleSortChange(e.target.value)}
-            className="caption py-1 px-2 !bg-mono-0 rounded"
-          >
-            <option value="Most recent">Most recent</option>
-            <option value="Awaiting shipping">Awaiting shipping</option>
-            <option value="Shipped">Shipped</option>
-            <option value="Delivered">Delivered</option>
-          </select> */}
+         
         </div>
       </div>
       <div className="sold-item-wrapper-cont-box pl-5 pr-9 grid grid-cols-12 gap-0 sm:grid-cols-6 md:px-0">

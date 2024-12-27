@@ -521,7 +521,9 @@
         .table-user-info-bottom{
           border-top: 1px solid #ccd3db;
         }
-        /* .users-info-table-overview .user-info-table  */
+        .offcanvas-main.footer-mini-cart-area .cart-footer-area {
+            border-top: 1px solid var(--Mono-60, #AAA7AC);
+        }
   }
 
   @layer utilities {}

@@ -307,7 +307,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
           </div>
 
           <div className="products-lists-main-cont flex items-start md:flex-col gap-6">
-            <div className="products-list-main-left-cont h-[100vh] sticky md:relative md:h-auto top-9 max-w-[220px] md:max-w-[160px] w-full md:hidden">
+            <div className="products-list-main-left-cont overflow-hidden overflow-y-scroll h-[100vh] sticky md:relative md:h-auto top-9 max-w-[220px] md:max-w-[160px] w-full md:hidden">
               <FilterSidebar
                 availableProducts={products.map(product => ({
                   ...product,
