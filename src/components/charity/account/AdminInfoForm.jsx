@@ -27,6 +27,8 @@ const ProfileInfoForm = () => {
             charityNumber: data.charityNumber || '',
             charityID: data.charityID || '',
             description: data.description || '',
+            phoneNumber: data.phoneNumber || '',
+            websiteLink: data.websiteLink || '',
           });
         } else {
           console.error('Failed to fetch user data');
@@ -56,6 +58,8 @@ const ProfileInfoForm = () => {
           charityNumber: charityInfo.charityNumber,
           charityID: charityInfo.charityID,
           description: charityInfo.description,
+          websiteLink: charityInfo.websiteLink,
+          phoneNumber: charityInfo.phoneNumber,
         },
         {
           headers: {
@@ -160,6 +164,30 @@ const ProfileInfoForm = () => {
                 )}
               </span>
             </p>
+            <p className="charity-info-item body-small">
+              <span className="inline-block whitespace-nowrap text-right">
+                Phone number
+              </span>{' '}
+              <span className="inline-block">
+                {charityInfo ? (
+                  charityInfo.phoneNumber
+                ) : (
+                  <div className="skeleton bg-mono-50 h-3 w-20"></div>
+                )}
+              </span>
+            </p>
+            <p className="charity-info-item body-small">
+              <span className="inline-block whitespace-nowrap text-right">
+                Charity website
+              </span>{' '}
+              <span className="inline-block">
+                {charityInfo ? (
+                  charityInfo.websiteLink
+                ) : (
+                  <div className="skeleton bg-mono-50 h-3 w-20"></div>
+                )}
+              </span>
+            </p>
           </>
         ) : (
           <>
@@ -213,6 +241,32 @@ const ProfileInfoForm = () => {
                 onChange={handleTextChange}
                 placeholder="Write about you..."
                 maxLength={200}
+                className="max-w-[257px] w-full h-auto body-small"
+              />
+            </p>
+            <p className="charity-info-item body-small h-full">
+              <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
+                Phone number
+              </span>
+              <Input
+                type="text"
+                name="phoneNumber"
+                value={charityInfo.phoneNumber}
+                onChange={handleChange}
+                placeholder="charity phone number"
+                className="max-w-[257px] w-full h-10 body-small"
+              />
+            </p>
+            <p className="charity-info-item body-small h-full">
+              <span className="whitespace-nowrap w-full text-right flex items-center justify-end">
+                Website link
+              </span>
+              <Input
+                type="text"
+                name="websiteLink"
+                value={charityInfo.websiteLink}
+                onChange={handleChange}
+                placeholder="charity website link"
                 className="max-w-[257px] w-full h-10 body-small"
               />
             </p>

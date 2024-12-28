@@ -36,7 +36,7 @@ const BoughtItems = () => {
         if (!Array.isArray(purchaseItems)) {
           throw new Error('Invalid data format received. Expected an array.');
         }
-
+        console.log(purchaseItems)
         setPurchaseItems(purchaseItems);
         setSelectedItem(purchaseItems[0] || null); // Select the first item by default
       } catch (error) {
@@ -140,7 +140,7 @@ const BoughtItems = () => {
                           {item.productName}
                         </span>
                         <span className="body-bold-small text-mono-100">
-                          {item.productPrice}
+                          £{item.productPrice}
                         </span>
                       </div>
                     </div>

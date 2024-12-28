@@ -2,161 +2,90 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import {  useDispatch } from 'react-redux';
 import { MinusIcon, PlusIcon } from '@/icons';
+import { updateItemQuantity, removeItem } from '../../store/cartSlice';
 
-interface Seller {
-  firstName: string;
-  lastName: string;
-  profileImage: string;
-  addresses: { city: string; country: string }[]; 
-}
-interface Charity {
-  charityName: string;
-  charityID: string;
-  profileImage: string;
-  addresses: { city: string; country: string }[];
-}
-interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  brand: string;
-  size?: string;
-  condition?: string;
-  images: Array<{ url: string; altText?: string }>;
-  location?: string;
-  charity: Charity;
-  dimensions?: {
-    height?: string;
-    width?: string;
-  };
-  seller: Seller;
-}
-
-interface CartItem {
-  productId: Product;
-  quantity: number;
-}
-
-interface CheckoutProductItemProps {
-  cartItems: CartItem[] | undefined;
-  setCartItems: (items: CartItem[]) => void;
-  isLoading: boolean;
-}
 
 const CheckoutProductItem = ({
   cartItems = [],
-  setCartItems,
-  isLoading,
-}: CheckoutProductItemProps) => {
+}) => {
   const { data: session } = useSession() || {};
   const userId = session?.user?.id;
   const token = session?.token;
 
-  const [isPriceSplitOpen, setIsPriceSplitOpen] = useState(false);
+  const dispatch = useDispatch();
 
-  const updateCart = async (productId: string, quantityChange: number) => {
-    try {
-     
-      const updatedCart: CartItem[] = cartItems
-        .map(item => {
-          if (item.productId._id === productId) {
-            const newQuantity = item.quantity + quantityChange;
-            return newQuantity > 0 ? { ...item, quantity: newQuantity } : null;
-          }
-          return item;
-        })
-        .filter((item): item is CartItem => item !== null); 
 
-   
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/cart/add-product-to-cart`,
-        { userId, productId, quantity: quantityChange },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    const [loadingItems] = useState([]);
+    const [isPriceSplitOpen, setIsPriceSplitOpen] = useState(false);
 
-      setCartItems(updatedCart);
-    } catch (error) {
-      console.error('Error updating cart:', error);
-    }
-  };
+      const handleUpdateQuantity = (productId, quantityChange) => {
+        dispatch(
+          updateItemQuantity({ userId, productId, quantityChange, token })
+        );
+      };
 
-  const handleRemoveItem = async (productId: string) => {
-    try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/cart/remove`,
-        { userId, productId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCartItems(cartItems.filter(item => item.productId._id !== productId));
-    } catch (error) {
-      console.error('Error removing item:', error);
-    }
-  };
+      const handleRemoveItem = productId => {
+        dispatch(removeItem({ userId, productId, token }));
+      };
+
+
 
   // Handlers for Price Split Modal
   const handlePriceSplitClick = () => setIsPriceSplitOpen(true);
   const handleClosePriceSplit = () => setIsPriceSplitOpen(false);
 
-  if (isLoading) {
-    return (
-      <>
-        <div className="skeleton-basket-product-item basket-product-items">
-          <div className="skeleton bg-mono-40 block h-2 w-10 mb-4"></div>
-          <div className="basket-added-product-items">
-            <div className="basket-added-product-item">
-              <div className="basket-product-item-head gap-[23px] flex items-center">
-                <div className="seller-info-box flex items-center gap-[13px] pb-4">
-                  <div className="skeleton bg-mono-40 block h-8 w-8 rounded-full mt-0"></div>
-                  <div className="seller-info-cont">
-                    <div className="skeleton bg-mono-40 block h-2 w-10 mb-2"></div>
-                    <div className="skeleton bg-mono-40 block h-2 w-10 mt-0"></div>
-                  </div>
-                </div>
-                <div className="delivery-timeline">
-                  <div className="skeleton bg-mono-40 block h-2 w-24 mt-0"></div>
+if (!cartItems.length) {
+  return (
+    <>
+      <div className="skeleton-basket-product-item basket-product-items">
+        <div className="skeleton bg-mono-40 block h-2 w-10 mb-4"></div>
+        <div className="basket-added-product-items">
+          <div className="basket-added-product-item">
+            <div className="basket-product-item-head gap-[23px] flex items-center">
+              <div className="seller-info-box flex items-center gap-[13px] pb-4">
+                <div className="skeleton bg-mono-40 block h-8 w-8 rounded-full mt-0"></div>
+                <div className="seller-info-cont">
+                  <div className="skeleton bg-mono-40 block h-2 w-10 mb-2"></div>
+                  <div className="skeleton bg-mono-40 block h-2 w-10 mt-0"></div>
                 </div>
               </div>
-              <div className="added-product-item-info-box flex items-center gap-5 justify-between py-8">
-                <div className="added-product-item-left-cont flex items-start gap-[18px]">
-                  <div className="skeleton bg-mono-40 block h-[70px] w-[74px] rounded-[4px] max-w-10 mt-0"></div>
-                  <div className="added-product-info">
-                    <div className="skeleton bg-mono-40 block h-2 w-16 mt-0]"></div>
-                    <div className="skeleton bg-mono-40 block h-2 w-16 mt-[3px]"></div>
-                    <div className="skeleton bg-mono-40 block h-2 w-16 mt-2"></div>
-                    <div className="skeleton bg-mono-40 block h-2 w-16 mt-[13px]"></div>
-                  </div>
+              <div className="delivery-timeline">
+                <div className="skeleton bg-mono-40 block h-2 w-24 mt-0"></div>
+              </div>
+            </div>
+            <div className="added-product-item-info-box flex items-center gap-5 justify-between py-8">
+              <div className="added-product-item-left-cont flex items-start gap-[18px]">
+                <div className="skeleton bg-mono-40 block h-[70px] w-[74px] rounded-[4px] max-w-10 mt-0"></div>
+                <div className="added-product-info">
+                  <div className="skeleton bg-mono-40 block h-2 w-16 mt-0]"></div>
+                  <div className="skeleton bg-mono-40 block h-2 w-16 mt-[3px]"></div>
+                  <div className="skeleton bg-mono-40 block h-2 w-16 mt-2"></div>
+                  <div className="skeleton bg-mono-40 block h-2 w-16 mt-[13px]"></div>
                 </div>
-                <div className="skeleton bg-mono-40 block h-8 w-24 mt-2"></div>
-                <div className="added-product-item-right-cont text-right">
-                  <div className="skeleton bg-mono-40 block h-2 w-8 mt-2"></div>
-                  <div className="skeleton bg-mono-40 block h-2 w-8 mt-2"></div>
-                  <div className="skeleton bg-mono-40 block h-2 w-8 mt-2"></div>
-                </div>
+              </div>
+              <div className="skeleton bg-mono-40 block h-8 w-24 mt-2"></div>
+              <div className="added-product-item-right-cont text-right">
+                <div className="skeleton bg-mono-40 block h-2 w-8 mt-2"></div>
+                <div className="skeleton bg-mono-40 block h-2 w-8 mt-2"></div>
+                <div className="skeleton bg-mono-40 block h-2 w-8 mt-2"></div>
               </div>
             </div>
           </div>
         </div>
-      </>
-    );
-  }
+      </div>
+    </>
+  );
+}
   return (
     <>
       <div className="basket-product-items">
         <h2 className="h5 font-primary text-mono-100 mb-4">Items</h2>
         {cartItems.length > 0 ? (
           <div className="basket-added-product-items">
-            {cartItems.map((item: CartItem) => (
+            {cartItems.map((item) => (
               <div
                 className="basket-added-product-item"
                 key={item.productId._id}
@@ -273,11 +202,20 @@ const CheckoutProductItem = ({
                     </div>
                   </div>
                   <div className="product-quantity-area w-full flex gap-[4px] items-center justify-between max-w-[90px] h-[26px] p-[6px] border border-mono-100">
-                    <button onClick={() => updateCart(item.productId._id, -1)}>
+                    <button
+                      onClick={() =>
+                        handleUpdateQuantity(item.productId._id, -1)
+                      }
+                      disabled={item.quantity <= 1}
+                    >
                       <MinusIcon />
                     </button>
                     <span className="text-[14px]">{item.quantity}</span>
-                    <button onClick={() => updateCart(item.productId._id, 1)}>
+                    <button
+                      onClick={() =>
+                        handleUpdateQuantity(item.productId._id, 1)
+                      }
+                    >
                       <PlusIcon />
                     </button>
                   </div>
@@ -294,6 +232,7 @@ const CheckoutProductItem = ({
                     <button
                       className="caption block ml-auto btn-styles !px-0 accent-btn  text-primary-color-100 !underline"
                       onClick={() => handleRemoveItem(item.productId._id)}
+                      disabled={loadingItems.includes(item.productId._id)}
                     >
                       Remove
                     </button>

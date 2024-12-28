@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSelector, useDispatch } from 'react-redux';
 import BannerSection from './Banner';
 import BasketArea from './BasketArea';
 import CheckoutProductItem from './CheckoutProductItem';
@@ -11,95 +12,43 @@ import CheckoutLoaderScreen from './loader/Loader';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { ToastService } from '@/components/elements/notifications/ToastService';
-
-// interface Seller {
-//   firstName: string;
-//   lastName: string;
-//   profileImage: string;
-//   addresses: { city: string; country: string }[];
-// }
-// interface Charity {
-//   charityName: string;
-//   charityID: string;
-//   profileImage: string;
-//   addresses: { city: string; country: string }[];
-// }
-// interface Product {
-//   _id: string;
-//   name: string;
-//   price: number;
-//   brand: string;
-//   size?: string;
-//   condition?: string;
-//   images: Array<{ url: string; altText?: string }>;
-//   location?: string;
-//   charity: Charity;
-//   dimensions?: {
-//     height?: string;
-//     width?: string;
-//   };
-//   seller: Seller;
-// }
-
-// interface CartItem {
-//   productId: Product; // Refers to the actual Product object
-//   quantity: number;
-// }
-
-// interface CartResponse {
-//   cart: {
-//     items: CartItem[];
-//   };
-// }
+import { fetchCart } from '../../store/cartSlice';
 
 const BasketPage = () => {
   const { data: session } = useSession() || {};
   const userId = session?.user?.id;
   const token = session?.token;
 
+  const dispatch = useDispatch();
+  const cartItems = useSelector(state => state.cart.items);
+  const cartStatus = useSelector(state => state.cart.status);
+
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
-  const [cartItems, setCartItems] = useState([]);
   const [loading] = useState(false);
-  const [isCartLoading, setIsCartLoading] = useState(true);
 
-  //  const [carriers, setCarriers] = useState([]);
-  //  const [services, setServices] = useState([]);
-  //  const [selectedCarrier, setSelectedCarrier] = useState('');
-  //  const [selectedService, setSelectedService] = useState('');
+//   const [carriers, setCarriers] = useState([]);
+//   const [selectedCarrier, setSelectedCarrier] = useState('');
+// const [services, setServices] = useState([]);
+// const [packages, setPackages] = useState([]);
+// const [selectedService, setSelectedService] = useState('');
+// const [selectedPackage, setSelectedPackage] = useState('');
+
 
   const router = useRouter();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchCartItems = async () => {
-    if (!userId || !token) return;
-
-    try {
-      setIsCartLoading(true);
-      const response = await axios.get(
-        `${API_BASE_URL}/cart/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCartItems(response.data.cart.items || []);
-    } catch (error) {
-      console.error('Failed to load cart.', error);
-    } finally {
-      setIsCartLoading(false);
+  // Fetch cart on component mount
+  useEffect(() => {
+    if (userId && token) {
+      dispatch(fetchCart({ userId, token }));
     }
-  };
+  }, [userId, token, dispatch]);
 
 
   const handlePayment = async () => {
     try {
-      if (
-        !selectedAddress ||
-        !selectedPaymentMethod
-
-      ) {
+      if (!selectedAddress || !selectedPaymentMethod) {
         alert('Please complete all selections.');
         return;
       }
@@ -136,7 +85,7 @@ const BasketPage = () => {
         shippingAddress: selectedAddress,
         paymentMethod: selectedPaymentMethod,
         // carrierCode: selectedCarrier,
-        // serviceCode: selectedService, 
+        // serviceCode: selectedService,
       };
 
       const response = await axios.post(
@@ -148,10 +97,9 @@ const BasketPage = () => {
       );
 
       if (response.status === 201) {
-          const { order } = response.data; // Extract the order object from the response
-          ToastService.success('Order placed successfully!');
-          router.push(`/checkout/confirmation/${order._id}`);
-
+        const { order } = response.data; // Extract the order object from the response
+        ToastService.success('Order placed successfully!');
+        router.push(`/checkout/confirmation/${order._id}`);
       }
     } catch (error) {
       console.error(
@@ -161,18 +109,79 @@ const BasketPage = () => {
       alert('Failed to create order.');
     }
   };
-  // Use Effects
-  useEffect(() => {
-    if (session) {
-      fetchCartItems();
-      // fetchCarriers();
-    }
-  }, [session]);
+  const isCartLoading = cartStatus === 'loading';
 
+//   // Fetch available carriers from ShipStation
+//    const fetchCarriers = async () => {
+//      try {
+//        const response = await axios.get(`${API_BASE_URL}/order/carrier`, {
+//          headers: {
+//            Authorization: `Bearer ${token}`,
+//          },
+//        });
+//        setCarriers(response.data.carriers || []);
+//      } catch (error) {
+//        console.error('Failed to fetch carriers:', error);
+//      }
+//    };
+// const fetchServices = async carrierCode => {
+//   try {
+//     const response = await axios.get(
+//       `${API_BASE_URL}/order/carriers/${carrierCode}/services`,
+//       {
+//         headers: { Authorization: `Bearer ${token}` },
+//       }
+//     );
+//     setServices(response.data.services || []);
+//   } catch (error) {
+//     console.error(
+//       'Failed to fetch services:',
+//       error.response?.data || error.message
+//     );
+//     ToastService.error('Failed to fetch services.');
+//   }
+// };
+
+
+// const fetchPackages = async carrierCode => {
+//   try {
+//     const response = await axios.get(
+//       `${API_BASE_URL}/order/carriers/${carrierCode}/packages`,
+//       {
+//         headers: { Authorization: `Bearer ${token}` },
+//       }
+//     );
+//     setPackages(response.data.packages || []);
+//   } catch (error) {
+//     console.error(
+//       'Failed to fetch packages:',
+//       error.response?.data || error.message
+//     );
+//     ToastService.error('Failed to fetch packages.');
+//   }
+// };
+
+//    useEffect(() => {
+//      fetchCarriers();
+//      fetchServices();
+//    }, [session]);
+//   const handleCarrierChange = e => {
+//     const carrierCode = e.target.value;
+//     setSelectedCarrier(carrierCode);
+//   setSelectedCarrier(carrierCode);
+
+//   if (carrierCode) {
+//     fetchServices(carrierCode);
+//     fetchPackages(carrierCode);
+//   } else {
+//     setServices([]);
+//     setPackages([]);
+//   }
+// };
   return (
     <div className="basket-page-main-wrapper">
       <div className="custom-container max-w-[1008px]">
-        {loading ? (
+        {isCartLoading ? (
           <div className="loader-page-screen h-[80vh]">
             <BannerSection />
             <CheckoutLoaderScreen loading={loading} />
@@ -185,7 +194,6 @@ const BasketPage = () => {
                 <CheckoutProductItem
                   isLoading={isCartLoading}
                   cartItems={cartItems}
-                  setCartItems={setCartItems}
                 />
                 <div className="shipping-and-payment-information">
                   <ShippingAddress setSelectedAddress={setSelectedAddress} />
@@ -195,18 +203,16 @@ const BasketPage = () => {
                 </div>
               </div>
 
-              <BasketArea
-                cartItems={cartItems}
-                onPay={handlePayment}
-                isLoading={isCartLoading}
-              />
+              <BasketArea cartItems={cartItems} onPay={handlePayment} />
 
-              {/* <div className="carrier-selection col-span-6">
-                <h3>Select Carrier</h3>
-                <select onChange={handleCarrierChange} value={selectedCarrier}>
-                  <option value="" disabled>
-                    Select a carrier
-                  </option>
+              {/* <div className="carrier-selection col-span-4">
+                <label htmlFor="carrier">Select Carrier</label>
+                <select
+                  id="carrier"
+                  onChange={handleCarrierChange}
+                  value={selectedCarrier}
+                >
+                  <option value="">Select Carrier</option>
                   {carriers.map(carrier => (
                     <option key={carrier.code} value={carrier.code}>
                       {carrier.name}
@@ -215,19 +221,34 @@ const BasketPage = () => {
                 </select>
               </div>
 
-              <div className="service-selection col-span-6">
-                <h3>Select Service</h3>
+              <div className="service-selection col-span-4">
+                <label htmlFor="service">Select Service</label>
                 <select
-                  onChange={handleServiceChange}
+                  id="service"
+                  onChange={e => setSelectedService(e.target.value)}
                   value={selectedService}
                   disabled={!services.length}
                 >
-                  <option value="" disabled>
-                    Select a service
-                  </option>
+                  <option value="">Select Service</option>
                   {services.map(service => (
                     <option key={service.code} value={service.code}>
                       {service.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="package-selection col-span-4">
+                <label htmlFor="package">Select Package</label>
+                <select
+                  id="package"
+                  onChange={e => setSelectedPackage(e.target.value)}
+                  value={selectedPackage}
+                  disabled={!packages.length}
+                >
+                  <option value="">Select Package</option>
+                  {packages.map(pkg => (
+                    <option key={pkg.code} value={pkg.code}>
+                      {pkg.name}
                     </option>
                   ))}
                 </select>
@@ -241,3 +262,4 @@ const BasketPage = () => {
 };
 
 export default BasketPage;
+
