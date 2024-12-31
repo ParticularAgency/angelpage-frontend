@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCart, updateItemQuantity, removeItem } from '../../store/store';
+import { fetchCart, updateItemQuantity, removeItem } from '@/store/cartSlice';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { CartIcon, MinusIcon, PlusIcon, CloseIcon } from '@/icons';
@@ -34,11 +34,13 @@ const MiniCart = () => {
   const handleRemoveItem = productId => {
     dispatch(removeItem({ userId, productId, token }));
   };
+console.log('cart item response:' , cartItems)
+const totalPrice = cartItems.reduce((acc, item) => {
+  const price = item?.productId?.price || 0; // Use 0 if price is missing
+  const quantity = item?.quantity || 0; // Use 0 if quantity is missing
+  return acc + price * quantity;
+}, 0);
 
-  const totalPrice = cartItems.reduce(
-    (acc, item) => acc + item.productId.price * item.quantity,
-    0
-  );
 
   return (
     <div className="cart-box flex items-center">
@@ -90,12 +92,12 @@ const MiniCart = () => {
                     cartItems.map(item => (
                       <div
                         className="cart-add-product-item-wrapper"
-                        key={item.productId._id}
+                        key={item?.productId?._id}
                       >
                         <div className="cart-add-product-item flex items-center gap-5 py-5">
                           <Image
                             src={
-                              item.productId.images?.[0]?.url ||
+                              item?.productId?.images?.[0]?.url ||
                               '/placeholder.png'
                             }
                             width={116}
@@ -105,10 +107,15 @@ const MiniCart = () => {
                           />
                           <div className="minicart-product-info w-full">
                             <h5 className="body-medium sm:!text-[16px]">
-                              {item.productId.brand}
+                              {item?.productId?.brand}
                             </h5>
                             <p className="body-small text-mono-100">
-                              {item.productId.name}
+                              {item?.productId?.name}
+                            </p>
+                            <p className="body-small text-mono-100">
+                              Charity:{' '}
+                              {item?.productId?.selectedCharityName ||
+                                item?.productId?.charity?.charityName}
                             </p>
                             <div className="minicart-states mt-[23px] flex items-center justify-between gap-2">
                               <div className="minicart-states-group flex items-center gap-3">
@@ -117,7 +124,7 @@ const MiniCart = () => {
                                     className="dsc-btn"
                                     onClick={() =>
                                       handleUpdateQuantity(
-                                        item.productId._id,
+                                        item?.productId?._id,
                                         -1
                                       )
                                     }
@@ -135,7 +142,7 @@ const MiniCart = () => {
                                     className="inc-btn"
                                     onClick={() =>
                                       handleUpdateQuantity(
-                                        item.productId._id,
+                                        item?.productId?._id,
                                         1
                                       )
                                     }
@@ -144,14 +151,14 @@ const MiniCart = () => {
                                   </button>
                                 </div>
                                 <p className="product-current-price caption">
-                                  £{item.productId.price}
+                                  £{item?.productId?.price}
                                 </p>
                               </div>
                               <Button
                                 variant="accend-link"
                                 className="!underline !px-0"
                                 onClick={() =>
-                                  handleRemoveItem(item.productId._id)
+                                  handleRemoveItem(item?.productId?._id)
                                 }
                               >
                                 Remove

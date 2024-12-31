@@ -8,7 +8,7 @@ import { toggleFavorite } from '../../../store/favoritesSlice';
 
 
 const FavoriteButton = ({ itemId, type }) => {
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const dispatch = useDispatch();
   const isFavorite = useSelector(state =>
     state.favorites.items.includes(itemId)

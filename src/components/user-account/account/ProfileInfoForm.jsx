@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { EditIcon, SaveIcon } from '@/icons';
 import { Input } from '@/components/elements';
@@ -35,7 +36,7 @@ const ProfileInfoForm = () => {
   }, [session, status]);
 
   // Handle input changes
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setPersonalInfo({ ...personalInfo, [name]: value });
   };
@@ -67,7 +68,7 @@ const ProfileInfoForm = () => {
       }
     } catch (error) {
       console.error('Error updating user info:', error);
-        console.error('Response data:', error); // Log the server's response
+      console.error('Response data:', error); // Log the server's response
     }
   };
 

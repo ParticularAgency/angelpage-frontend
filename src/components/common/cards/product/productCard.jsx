@@ -8,8 +8,8 @@ import { Button } from '@/components/elements';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
 import { ToastService } from '@/components/elements/notifications/ToastService';
 import {useSelector,  useDispatch } from 'react-redux';
-import { addOrUpdateProduct } from '@/store/cartSlice';
 import { useSession } from 'next-auth/react';
+import { addOrUpdateProduct } from '@/store/cartSlice';
 
 
 const ProductCard  = ({

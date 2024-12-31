@@ -1,3 +1,4 @@
+'use client';
 import BlogList from '@/components/common/cards/blog/blogCards';
 import { blogData } from '@/libs/blogs';
 import React from 'react';

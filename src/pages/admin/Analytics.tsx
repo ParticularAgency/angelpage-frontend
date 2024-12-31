@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import BusinessOverview from './BusinessOverview';
 import RevenueStatistics from './RevenueStatistics';
@@ -84,12 +85,24 @@ interface AnalyticsPageProps {
   totalRevenue: number;
   salesChange: number;
   soldItemsCount: number;
+  totalUsersLength: number;
+  userChangePerchent: number;
+  totalReturningUsers: number;
+  returningUserPercent: number;
+  totalUserSessions: number;
+  sessionsUserPercent: number;
 }
-const AnalyticsPage: React.FC<AnalyticsPageProps> = ({  
+const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
   totalRevenue,
   salesChange,
   soldItemsCount,
- }) => {
+  totalUsersLength,
+  userChangePerchent,
+  totalReturningUsers,
+  returningUserPercent,
+  totalUserSessions,
+  sessionsUserPercent,
+}) => {
   // Specify the type for period state
   const [period, setPeriod] = useState<'Day' | 'Month' | 'Year'>('Year');
 
@@ -115,11 +128,19 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
       <div className="max-w-7xl mx-auto bg-white">
         {/* <h2 className="h5 font-primary mb-6">Business Overview</h2> */}
         {/* Pass overviewData to BusinessOverview */}
-        <BusinessOverview data={{
+        <BusinessOverview
+          data={{
             ...mockData,
+            totalUsers: totalUsersLength,
+            userChange: userChangePerchent,
             itemsSold: soldItemsCount,
             itemsSoldChange: salesChange,
-          }} />
+            totalReturningUsers: totalReturningUsers,
+            returningUserPercent: returningUserPercent,
+            totalUserSessions: totalUserSessions,
+            sessionsUserPercent: sessionsUserPercent,
+          }}
+        />
       </div>
 
       {/* Revenue Statistics Section */}

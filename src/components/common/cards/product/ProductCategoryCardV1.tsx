@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/elements';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -42,6 +43,6 @@ const ProductCategoryCardV1: React.FC<ProductCategoryCardV1Props> = ({
       </p>
     </div>
   );
-}; 
+};
 
 export default ProductCategoryCardV1;

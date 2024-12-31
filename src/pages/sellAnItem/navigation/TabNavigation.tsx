@@ -1,9 +1,12 @@
+'use client';
 import React from 'react';
 import { CheckmarkBlack } from '@/icons';
 
 interface TabNavigationProps {
   activeTab: 'details' | 'photos' | 'price';
-  setActiveTab: React.Dispatch<React.SetStateAction<'details' | 'photos' | 'price'>>;
+  setActiveTab: React.Dispatch<
+    React.SetStateAction<'details' | 'photos' | 'price'>
+  >;
   stepCompletion?: { details: boolean; photos: boolean; price: boolean }; // Made optional
   extraClass?: string; // New prop for additional classes
 }
@@ -62,4 +65,3 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
 };
 
 export default TabNavigation;
-

@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import FavoritePage from '@/pages/favorite-page/Favorite';
 import ProtectedRoute from '@/utils/ProtectedRoute';

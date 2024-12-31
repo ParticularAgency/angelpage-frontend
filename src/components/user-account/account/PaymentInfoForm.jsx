@@ -1,9 +1,9 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { EditIcon, SaveIcon } from '@/icons';
 import { Button, Checkbox, Input, Select } from '@/components/elements';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-
 
 const PaymentInfoForm = () => {
   const { data: session, status } = useSession() || {};
@@ -12,7 +12,8 @@ const PaymentInfoForm = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
   const [useShippingAsBilling, setUseShippingAsBilling] = useState(false);
-  const [selectedShippingAddressId, setSelectedShippingAddressId] = useState(null);
+  const [selectedShippingAddressId, setSelectedShippingAddressId] =
+    useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [paymentToDelete, setPaymentToDelete] = useState(null);
 
@@ -33,13 +34,16 @@ const PaymentInfoForm = () => {
   // Fetch payment methods and addresses on component mount
   useEffect(() => {
     const fetchUserData = async () => {
-      if (status === 'authenticated' && (session)?.token) {
+      if (status === 'authenticated' && session?.token) {
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
-            headers: {
-              Authorization: `Bearer ${session.token}`,
-            },
-          });
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${session.token}`,
+              },
+            }
+          );
           setPaymentMethods(response.data.user?.payments || []);
           setAddresses(response.data.user?.addresses || []);
         } catch (error) {
@@ -70,7 +74,7 @@ const PaymentInfoForm = () => {
     setSelectedShippingAddressId(null);
   };
 
-  const handleEditClick = (index) => {
+  const handleEditClick = index => {
     setNewPayment(paymentMethods[index]);
     setEditingIndex(index);
     setIsAdding(true);
@@ -79,10 +83,10 @@ const PaymentInfoForm = () => {
   };
 
   const handleSave = async () => {
-     if (!newPayment.billingAddress.postCode) {
-       alert('Please provide a postal code for the billing address.');
-       return;
-     }
+    if (!newPayment.billingAddress.postCode) {
+      alert('Please provide a postal code for the billing address.');
+      return;
+    }
     try {
       let billingAddress = { ...newPayment.billingAddress };
 
@@ -187,7 +191,7 @@ const PaymentInfoForm = () => {
     }
   };
 
-  const handleDeleteConfirmation = (id) => {
+  const handleDeleteConfirmation = id => {
     setPaymentToDelete(id);
     setIsConfirmOpen(true);
   };
@@ -197,7 +201,7 @@ const PaymentInfoForm = () => {
     setPaymentToDelete(null);
   };
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     if (name in newPayment.billingAddress) {
       setNewPayment({
@@ -216,7 +220,7 @@ const PaymentInfoForm = () => {
     }
   };
 
-  const handleShippingAddressSelect = (e) => {
+  const handleShippingAddressSelect = e => {
     setSelectedShippingAddressId(e.target.value);
   };
 

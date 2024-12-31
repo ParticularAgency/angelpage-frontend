@@ -166,7 +166,7 @@ const Login = () => {
             >
               {isSubmitting ? 'Logging in...' : 'Login'}
             </Button>
-            <p className="text-body-small">
+            {/* <p className="text-body-small">
               New here?{' '}
               <a
                 href="/admin/register"
@@ -174,7 +174,7 @@ const Login = () => {
               >
                 Create an account
               </a>
-            </p>
+            </p> */}
           </form>
         </div>
       </div>

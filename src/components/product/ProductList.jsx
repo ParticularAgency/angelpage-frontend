@@ -1,18 +1,18 @@
+'use client';
 import React from 'react';
-import ProductCard from '@/components/common/cards/product/productCard'; 
+import ProductCard from '@/components/common/cards/product/productCard';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
-
 
 const ProductList = ({ products, isLoggedIn }) => {
   return (
     <div className="product-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {products && products.length > 0 ? (
         products.map((product, index) => {
-           if (!product) {
-             return null; 
-           }
+          if (!product) {
+            return null;
+          }
           // Safely extract location
           const sellerUserAddress = product.seller?.address;
           const sellerCharityAddress = product.charity?.address;

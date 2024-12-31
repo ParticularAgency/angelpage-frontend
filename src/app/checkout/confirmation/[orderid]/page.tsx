@@ -1,5 +1,6 @@
-import ConfirmationPage from '@/pages/checkout/confirmation/ConfirmationPage'
-import React from 'react'
+'use client';
+import ConfirmationPage from '@/components/checkout/confirmation/ConfirmationPage';
+import React from 'react';
 import ProtectedRoute from '@/utils/ProtectedRoute';
 
 const OrderConfirmationPage = () => {
@@ -10,6 +11,6 @@ const OrderConfirmationPage = () => {
       </div>
     </ProtectedRoute>
   );
-}
+};
 
-export default OrderConfirmationPage
+export default OrderConfirmationPage;

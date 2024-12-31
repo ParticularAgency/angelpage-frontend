@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -18,7 +18,7 @@ interface BlogListProps {
 const BlogList: React.FC<BlogListProps> = ({ blogData }) => {
   return (
     <div className="grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 gap-8">
-      {blogData.map((blog: any) => (
+      {blogData.map((blog: BlogDataProps) => (
         <div
           className="w-[358px] sm:w-full overflow-hidden relative"
           key={blog.id}

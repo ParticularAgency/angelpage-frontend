@@ -1,9 +1,9 @@
+'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { DeleteIcon,  LocationIcon } from '@/icons';
+import { LocationIcon } from '@/icons';
 import { Button } from '@/components/elements';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
-
 
 interface ProductCardProps {
   productId: string;
@@ -22,7 +22,7 @@ interface ProductCardProps {
   onArchive?: () => void;
   // isArchived: boolean;
   status: 'DRAFT' | 'LIVE' | 'REMOVED';
- averageDeliveryTime?: number;
+  averageDeliveryTime?: number;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -36,10 +36,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   productSize = 'One Size',
   productPrice = 'N/A',
   location = 'No Location',
-    onDelete,
-    // onEdit,
-    onArchive,
-    status,
+  onDelete,
+  // onEdit,
+  onArchive,
+  status,
   //averageDeliveryTime,
 }) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -93,7 +93,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <h6 className="product-brand-title eyebrow-medium">
                 {productBrand ?? ''}
               </h6>
-              <p className="product-price sm:hidden body-bold">
+              <p className="product-price sm:hidden  body-bold-small">
                 £{productPrice || 'N/A'}
               </p>
             </div>
@@ -119,36 +119,40 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="product-card-btn-box mt-3 flex items-center sm:items-start sm:flex-col-reverse sm:w-full gap-4 sm:gap-2">
           {status === 'DRAFT' && (
             <>
-              <Button
+              {/* <Button
                 variant="primary"
                 className="product-states-btn sm:w-full block max-w-full"
               >
                 Continue
-              </Button>
+              </Button> */}
               <Button
-                variant="accend-link"
-                className="p-4 w-12 h-10"
+                // variant="accend-link"
+                variant="primary"
+                className="p-4 w-full h-10"
                 onClick={handleDeleteClick}
               >
-                <DeleteIcon width={14} height={14} color="#611192" />
+                {/* <DeleteIcon width={14} height={14} color="#611192" /> */}
+                Delete
               </Button>
             </>
           )}
           {status === 'LIVE' && (
             <>
-              <Button
+              {/* <Button
                 variant="primary"
                 className="product-states-btn sm:w-full block max-w-full"
                 // onClick={}
               >
                 Edit listing
-              </Button>
+              </Button> */}
               <Button
-                variant="accend-link"
-                className="p-4 w-12 h-10"
+                // variant="accend-link"
+                variant="primary"
+                className="p-4 w-full h-10"
                 onClick={handleDeleteClick}
               >
-                <DeleteIcon width={14} height={14} color="#611192" />
+                {/* <DeleteIcon width={14} height={14} color="#611192" /> */}
+                Delete
               </Button>
             </>
           )}

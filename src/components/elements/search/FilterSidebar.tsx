@@ -1,3 +1,4 @@
+'use client';
 import { ArrowDownIcon } from '@/icons';
 import React from 'react';
 import Checkbox from '../input-fields/checkbox';

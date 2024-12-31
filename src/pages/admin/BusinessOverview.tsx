@@ -12,10 +12,12 @@ interface BusinessOverviewData {
   moneySpent: number;
   moneySpentChange: number; // Percentage change in money spent
   totalUsers: number;
+  userChange: number;
   returningUsers: number;
-  returningUsersChange: number; // Percentage change in returning users
-  sessions: number;
-  sessionsChange: number; // Percentage change in sessions
+  totalReturningUsers: number;
+  returningUserPercent: number; // Percentage change in returning users
+  totalUserSessions: number;
+  sessionsUserPercent: number; // Percentage change in sessions
 }
 
 interface BusinessOverviewProps {
@@ -38,12 +40,15 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
   // Provide default values using destructuring
   const {
     totalUsers = 0,
-    returningUsers = 0,
-    returningUsersChange = 0,
+    userChange = 0,
+    // returningUsers = 0,
+    // returningUsersChange = 0,
     itemsSold = 0,
     itemsSoldChange = 0,
-    sessions = 0,
-    sessionsChange = 0,
+    totalUserSessions = 0,
+    sessionsUserPercent = 0,
+    totalReturningUsers = 0,
+    returningUserPercent = 0,
   } = data;
 
   return (
@@ -57,10 +62,10 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
         <p className="body-bold-small mt-2">
           <span
             className={`px-2 py-[2px] forms-bold ${getBadgeStyle(
-              returningUsersChange
+              userChange
             )} rounded-full`}
           >
-            {formatChange(returningUsersChange)}
+            {formatChange(userChange)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last month</span>
         </p>
@@ -70,15 +75,15 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
       <div className="col-span-3 sm:col-span-full md:col-span-6 px-4 pt-[21px] pb-[23px] border border-[#cdd3da] analytics-card-items">
         <h4 className="body-bold-small">Returning Users</h4>
         <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
-          {returningUsers.toLocaleString()}
+          {totalReturningUsers.toLocaleString()}
         </p>
         <p className="body-bold-small mt-2">
           <span
             className={`px-2 py-[2px] forms-bold ${getBadgeStyle(
-              returningUsersChange
+              returningUserPercent
             )} rounded-full`}
           >
-            {formatChange(returningUsersChange)}
+            {formatChange(returningUserPercent)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last week</span>
         </p>
@@ -106,15 +111,15 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
       <div className="col-span-3 sm:col-span-full md:col-span-6 px-4 pt-[21px] pb-[23px] border border-[#cdd3da] analytics-card-items">
         <h4 className="body-bold-small">Sessions</h4>
         <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
-          {sessions.toLocaleString()}
+          {totalUserSessions.toLocaleString()}
         </p>
         <p className="body-bold-small mt-2">
           <span
             className={`px-2 py-[2px] forms-bold ${getBadgeStyle(
-              sessionsChange
+              sessionsUserPercent
             )} rounded-full`}
           >
-            {formatChange(sessionsChange)}
+            {formatChange(sessionsUserPercent)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last week</span>
         </p>

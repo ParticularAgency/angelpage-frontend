@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { EditIcon, SaveIcon } from '@/icons';
 import { Input } from '@/components/elements';
@@ -5,9 +6,7 @@ import { fetchUserData } from '@utils/api';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
-
 const AccountInfoForm = () => {
-
   const [isEditing, setIsEditing] = useState(false);
   const [accountInfo, setAccountInfo] = useState({
     email: '',
@@ -75,18 +74,15 @@ const AccountInfoForm = () => {
       console.error('Error updating account info:', error);
 
       // Check if the error matches the structure of ErrorWithResponse
-      if (error instanceof Error && (error).response) {
-        console.error(
-          'Response data:',
-          (error).response?.data
-        );
+      if (error instanceof Error && error.response) {
+        console.error('Response data:', error.response?.data);
       } else {
         console.error('An unknown error occurred');
       }
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setAccountInfo({ ...accountInfo, [name]: value });
   };

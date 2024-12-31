@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import React from 'react';
 
@@ -52,13 +53,18 @@ const RadioButton: React.FC<RadioButtonProps> = ({
             border: `1px solid ${getStatusBorderColor()}`,
           }}
         />
-           {checked && ( 
-          <div className='absolute top-0 left-0 w-4 h-4 bg-primary-color-100'>
-               <Image src="/images/radio-checked.svg" alt='checkmark icon' width={16} height={16} />
+        {checked && (
+          <div className="absolute top-0 left-0 w-4 h-4 bg-primary-color-100">
+            <Image
+              src="/images/radio-checked.svg"
+              alt="checkmark icon"
+              width={16}
+              height={16}
+            />
           </div>
         )}
         {label && (
-          <span className='text-body-caption font-normal font-secondary text-left leading-[150%] text-mono-100 ml-2'>
+          <span className="text-body-caption font-normal font-secondary text-left leading-[150%] text-mono-100 ml-2">
             {label}
           </span>
         )}

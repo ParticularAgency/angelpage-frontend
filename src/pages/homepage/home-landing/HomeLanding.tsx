@@ -1,3 +1,4 @@
+'use client';
 import HomeLandingBanner from '@/components/banner/HomeLandingBanner';
 import AboutSection from '@/components/homepage/AboutSection';
 import AngelPageInfoSection from '@/components/homepage/AngelPageInfoSection';

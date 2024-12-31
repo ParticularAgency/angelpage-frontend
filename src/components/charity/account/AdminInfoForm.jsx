@@ -1,10 +1,11 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { EditIcon, SaveIcon } from '@/icons';
-import { Input, Textarea} from '@/components/elements';
+import { Input, Textarea } from '@/components/elements';
 import { fetchAdminInfo } from '@utils/api';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import  { ToastService } from '@/components/elements/notifications/ToastService';
+import { ToastService } from '@/components/elements/notifications/ToastService';
 
 const ProfileInfoForm = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -39,11 +40,11 @@ const ProfileInfoForm = () => {
   }, [session, status]);
 
   // Handle input changes
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setCharityInfo({ ...charityInfo, [name]: value });
   };
-  const handleTextChange = (e) => {
+  const handleTextChange = e => {
     const { name, value } = e.target;
     setCharityInfo({ ...charityInfo, [name]: value });
   };

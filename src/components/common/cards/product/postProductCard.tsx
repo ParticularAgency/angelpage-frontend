@@ -1,9 +1,9 @@
+'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
-import {   LocationIcon } from '@/icons';
+import { LocationIcon } from '@/icons';
 import { Button } from '@/components/elements';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
-
 
 interface ProductCardProps {
   productId: string;
@@ -36,10 +36,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   productSize = 'One Size',
   productPrice = 'N/A',
   location = 'No Location',
-    onDelete,
-    // onEdit,
-    onArchive,
-    status,
+  onDelete,
+  // onEdit,
+  onArchive,
+  status,
   // averageDeliveryTime,
 }) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -93,7 +93,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <h6 className="product-brand-title eyebrow-medium">
                 {productBrand ?? ''}
               </h6>
-              <p className="product-price sm:hidden body-bold">
+              <p className="product-price sm:hidden  body-bold-small">
                 £{productPrice || 'N/A'}
               </p>
             </div>

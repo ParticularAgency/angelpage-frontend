@@ -9,11 +9,11 @@ import { useSession } from 'next-auth/react';
 
 const FavoritesAlert = ({ className }) => {
   const dispatch = useDispatch();
-  const { data: session } = useSession();
+  const { data: session } = useSession() || {};
   const favoriteCount = useSelector(state => state.favorites.count);
   const loading = useSelector(state => state.favorites.status === 'loading');
 
-  useEffect(() => {
+  useEffect(() => { 
     if (session?.token) {
       dispatch(fetchFavorites(session.token));
     }
