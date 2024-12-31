@@ -1,10 +1,9 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { EditIcon, SaveIcon } from '@/icons';
 import { Button, Checkbox, Input, Select } from '@/components/elements';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-
-
 
 const PaymentInfoForm = () => {
   const { data: session, status } = useSession() || {};
@@ -13,7 +12,8 @@ const PaymentInfoForm = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
   const [useShippingAsBilling, setUseShippingAsBilling] = useState(false);
-  const [selectedShippingAddressId, setSelectedShippingAddressId] = useState(null);
+  const [selectedShippingAddressId, setSelectedShippingAddressId] =
+    useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [paymentToDelete, setPaymentToDelete] = useState(null);
 
@@ -36,11 +36,14 @@ const PaymentInfoForm = () => {
     const fetchUserData = async () => {
       if (status === 'authenticated' && session?.token) {
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/charity/profile`, {
-            headers: {
-              Authorization: `Bearer ${session.token}`,
-            },
-          });
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/charity/profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${session.token}`,
+              },
+            }
+          );
           setPaymentMethods(response.data.user?.payments || []);
           setAddresses(response.data.user?.addresses || []);
         } catch (error) {
@@ -71,7 +74,7 @@ const PaymentInfoForm = () => {
     setSelectedShippingAddressId(null);
   };
 
-  const handleEditClick = (index) => {
+  const handleEditClick = index => {
     setNewPayment(paymentMethods[index]);
     setEditingIndex(index);
     setIsAdding(true);
@@ -184,7 +187,7 @@ const PaymentInfoForm = () => {
     }
   };
 
-  const handleDeleteConfirmation = (id) => {
+  const handleDeleteConfirmation = id => {
     setPaymentToDelete(id);
     setIsConfirmOpen(true);
   };
@@ -194,7 +197,7 @@ const PaymentInfoForm = () => {
     setPaymentToDelete(null);
   };
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     if (name in newPayment.billingAddress) {
       setNewPayment({
@@ -213,9 +216,7 @@ const PaymentInfoForm = () => {
     }
   };
 
-  const handleShippingAddressSelect = (
-    e
-  ) => {
+  const handleShippingAddressSelect = e => {
     setSelectedShippingAddressId(e.target.value);
   };
 
@@ -366,11 +367,21 @@ const PaymentInfoForm = () => {
               **** **** **** {method.accountNumber.slice(-4)}
             </p>
             <p className="forms-bold text-mono-80 mb-2">Billing address</p>
-            <p className="body-small text-mono-100">{method.billingAddress.name}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.address}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.city}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.country}</p>
-            <p className="body-small text-mono-100">{method.billingAddress.postCode}</p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.name}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.address}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.city}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.country}
+            </p>
+            <p className="body-small text-mono-100">
+              {method.billingAddress.postCode}
+            </p>
             <button
               onClick={() => handleDeleteConfirmation(method._id)}
               className="flex items-center body-small mt-4 gap-1 text-primary-color-100"

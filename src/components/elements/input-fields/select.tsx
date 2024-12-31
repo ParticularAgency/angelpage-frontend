@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 
 interface Option {
@@ -35,27 +36,27 @@ const Select: React.FC<SelectProps> = ({
   const [isFocused, setIsFocused] = useState(false);
 
   // Define border colors based on status and if the field is focused
- const getStatusBorderColor = () => {
-   // 1. If the input is focused, return the focus color
-   if (isFocused) {
-     return '#0B0112'; // Focus color
-   }
+  const getStatusBorderColor = () => {
+    // 1. If the input is focused, return the focus color
+    if (isFocused) {
+      return '#0B0112'; // Focus color
+    }
 
-   // 2. If the input has a value (not just spaces), return the filled color
-   if (typeof value === 'string' && value.trim() !== '') {
-     return '#0B0112'; // Change border color to black if field is filled
-   }
+    // 2. If the input has a value (not just spaces), return the filled color
+    if (typeof value === 'string' && value.trim() !== '') {
+      return '#0B0112'; // Change border color to black if field is filled
+    }
 
-   // 3. Return color based on status
-   switch (status) {
-     case 'error':
-       return '#D10C3B'; // Red for error
-     case 'success':
-       return '#1FC430'; // Green for success
-     default:
-       return '#C9C8CA'; // Default gray color
-   }
- };
+    // 3. Return color based on status
+    switch (status) {
+      case 'error':
+        return '#D10C3B'; // Red for error
+      case 'success':
+        return '#1FC430'; // Green for success
+      default:
+        return '#C9C8CA'; // Default gray color
+    }
+  };
 
   // Handle focus and blur events
   const handleFocus = () => setIsFocused(true);
@@ -101,7 +102,7 @@ const Select: React.FC<SelectProps> = ({
           }
           // If it's a string, just use the string value for both value and label
           return (
-            <option key={index} value={option.toLowerCase()} >
+            <option key={index} value={option.toLowerCase()}>
               {option}
             </option>
           );

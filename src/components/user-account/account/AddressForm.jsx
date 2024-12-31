@@ -1,11 +1,11 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Select } from '@/components/elements';
 import { EditIcon, SaveIcon } from '@/icons';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
-
-const AddressForm  = () => {
+const AddressForm = () => {
   const { data: session, status } = useSession() || {};
   const [addresses, setAddresses] = useState([]);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -47,7 +47,7 @@ const AddressForm  = () => {
     setAddresses([...addresses, newAddress]);
   };
 
-  const handleEditClick = (id) => {
+  const handleEditClick = id => {
     setAddresses(
       addresses.map(address =>
         address._id === id || address.tempId === id
@@ -57,10 +57,7 @@ const AddressForm  = () => {
     );
   };
 
-  const handleChange = (
-    id,
-    e
-  ) => {
+  const handleChange = (id, e) => {
     const { name, value } = e.target;
     setAddresses(
       addresses.map(address =>
@@ -71,7 +68,7 @@ const AddressForm  = () => {
     );
   };
 
-  const handleDeleteConfirmation = (id) => {
+  const handleDeleteConfirmation = id => {
     setAddressToDelete(id);
     setIsConfirmOpen(true);
   };
@@ -98,63 +95,62 @@ const AddressForm  = () => {
     setAddressToDelete(null);
   };
 
- const handleSave = async (id) => {
-   const address = addresses.find(
-     addr => addr._id === id || addr.tempId === id
-   );
+  const handleSave = async id => {
+    const address = addresses.find(
+      addr => addr._id === id || addr.tempId === id
+    );
 
-   if (address) {
-     try {
-       if (address._id) {
-         // Update existing address
-         await axios.put(
-           `${process.env.NEXT_PUBLIC_API_URL}/users/profile/addresses/${address._id}`,
-           address,
-           {
-             headers: {
-               Authorization: `Bearer ${session?.token}`,
-             },
-           }
-         );
-         setAddresses(
-           addresses.map(addr =>
-             addr._id === id ? { ...addr, isEditing: false } : addr
-           )
-         );
-       } else {
-         // Add new address
-         const response = await axios.post(
-           `${process.env.NEXT_PUBLIC_API_URL}/users/profile/addresses`,
-           address,
-           {
-             headers: {
-               Authorization: `Bearer ${session?.token}`,
-             },
-           }
-         );
+    if (address) {
+      try {
+        if (address._id) {
+          // Update existing address
+          await axios.put(
+            `${process.env.NEXT_PUBLIC_API_URL}/users/profile/addresses/${address._id}`,
+            address,
+            {
+              headers: {
+                Authorization: `Bearer ${session?.token}`,
+              },
+            }
+          );
+          setAddresses(
+            addresses.map(addr =>
+              addr._id === id ? { ...addr, isEditing: false } : addr
+            )
+          );
+        } else {
+          // Add new address
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/users/profile/addresses`,
+            address,
+            {
+              headers: {
+                Authorization: `Bearer ${session?.token}`,
+              },
+            }
+          );
 
-         // Check if addresses are returned in the response
-         if (response.data.addresses) {
-           // Update state with the full array of addresses returned from the server
-           setAddresses(
-             response.data.addresses.map(addr => ({
-               ...addr,
-               isEditing: false,
-             }))
-           );
-         } else {
-           console.error('Unexpected response structure:', response.data);
-         }
-       }
-     } catch (error) {
-       console.error(
-         'Error saving address:',
-         error.response?.data ||
-           error.message
-       );
-     }
-   }
- };
+          // Check if addresses are returned in the response
+          if (response.data.addresses) {
+            // Update state with the full array of addresses returned from the server
+            setAddresses(
+              response.data.addresses.map(addr => ({
+                ...addr,
+                isEditing: false,
+              }))
+            );
+          } else {
+            console.error('Unexpected response structure:', response.data);
+          }
+        }
+      } catch (error) {
+        console.error(
+          'Error saving address:',
+          error.response?.data || error.message
+        );
+      }
+    }
+  };
 
   return (
     <div className="address-section pt-[23px] pb-0">

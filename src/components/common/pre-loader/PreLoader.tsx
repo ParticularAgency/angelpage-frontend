@@ -1,4 +1,5 @@
-import React from 'react'
+'use client';
+import React from 'react';
 import LoadingModal from '@/icons/loadingModal';
 
 const PreLoader = () => {
@@ -13,6 +14,6 @@ const PreLoader = () => {
       </div>
     </div>
   );
-}
+};
 
-export default PreLoader
+export default PreLoader;

@@ -1,5 +1,6 @@
-import AdminAccount from '@/pages/admin/AdminPage'
-import React from 'react'
+'use client';
+import AdminAccount from '@/pages/admin/AdminPage';
+import React from 'react';
 import ProtectedRoute from '@/utils/ProtectedRoute';
 
 const Adminpage = () => {
@@ -10,6 +11,6 @@ const Adminpage = () => {
       </div>
     </ProtectedRoute>
   );
-}
+};
 
-export default Adminpage
+export default Adminpage;

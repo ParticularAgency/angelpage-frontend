@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/elements';
 import React from 'react';
 
@@ -25,11 +26,7 @@ const ConfirmationModal: React.FC<ModalProps> = ({
           Would you like to sell another product?
         </p>
         <div className="flex justify-end gap-2">
-          <Button
-            variant="secondary"
-            className=""
-            onClick={onClose}
-          >
+          <Button variant="secondary" className="" onClick={onClose}>
             No, thanks
           </Button>
           <Button variant="primary" className="" onClick={onConfirm}>

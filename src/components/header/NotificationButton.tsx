@@ -1,5 +1,7 @@
-import { NotificationIcon } from '@/icons';
+'use client';
+
 import React from 'react';
+import { NotificationIcon } from '@/icons';
 
 interface NotificationButtonProps {
   toggleDropdown: () => void;
@@ -12,6 +14,7 @@ const NotificationButton: React.FC<NotificationButtonProps> = ({
 }) => {
   return (
     <button
+      aria-label="Toggle Notifications Dropdown"
       className={`alert-btn flex items-center ${notificationBtnClass}`}
       onClick={toggleDropdown}
     >

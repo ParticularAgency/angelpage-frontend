@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import NotificationButton from './NotificationButton';
 import NotificationDropdown from './NotificationDropdown';
 
-const NotificationAlert: React.FC = () => {
+const NotificationAlert = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -10,8 +9,8 @@ const NotificationAlert: React.FC = () => {
   };
 
   return (
-    <div className="notification-alert-box">
-      <NotificationButton toggleDropdown={toggleDropdown} />
+    <div>
+      <button onClick={toggleDropdown}>Notifications</button>
       <NotificationDropdown
         isDropdownOpen={isDropdownOpen}
         toggleDropdown={toggleDropdown}

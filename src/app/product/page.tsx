@@ -1,3 +1,4 @@
+'use client';
 import ProductsPage from '@/pages/products/ProductsPage';
 import React from 'react';
 

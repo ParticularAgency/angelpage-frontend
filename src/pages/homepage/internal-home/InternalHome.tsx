@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import HomePageMainBanner from '@/components/banner/HomePageMainBanner';
 import IntHomeCtaSec from '@/components/homepage/IntHomeCtaSec';

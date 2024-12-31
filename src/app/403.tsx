@@ -1,4 +1,5 @@
-import React from 'react'
+'use client';
+import React from 'react';
 
 export default function Forbidden() {
   return (
@@ -7,6 +8,4 @@ export default function Forbidden() {
       <p>You do not have permission to access this page.</p>
     </div>
   );
-};
-
-
+}

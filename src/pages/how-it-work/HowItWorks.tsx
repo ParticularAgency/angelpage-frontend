@@ -1,3 +1,4 @@
+'use client';
 import HowItWorkBanner from '@/components/banner/HowItWorkBanner';
 import AboutSection from '@/components/howItWorkPage/AboutSection';
 import OurFeaturedSection from '@/components/howItWorkPage/OurFeaturedSection';

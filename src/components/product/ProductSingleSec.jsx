@@ -9,9 +9,7 @@ import { Button } from '../elements';
 import RelatedCategoryProducts from './RelatedProductCategory';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectFade, FreeMode, Navigation, Thumbs } from 'swiper/modules';
-import {
-  ToastService,
-} from '@/components/elements/notifications/ToastService';
+import { ToastService } from '@/components/elements/notifications/ToastService';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { addOrUpdateProduct } from '@/store/cartSlice';

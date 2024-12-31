@@ -1,8 +1,8 @@
-'use client'; // Enable client-side rendering
-import { blogData } from '@/libs/blogs'; // Import your blog data
-import Image from 'next/image'; // Import Next.js Image component
-import Link from 'next/link'; // Import Next.js Link component
-import { useParams } from 'next/navigation'; // Import useParams from next/navigation
+'use client'; 
+import { blogData } from '@/libs/blogs';
+import Image from 'next/image'; 
+import Link from 'next/link';
+import { useParams } from 'next/navigation'; 
 
 // Define a type for the params
 interface Params {

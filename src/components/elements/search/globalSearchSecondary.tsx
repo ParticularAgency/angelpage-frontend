@@ -102,7 +102,7 @@ const GlobalSearchSecondary: React.FC = () => {
           />
           <label
             htmlFor="searchid1"
-            className="searchbtn absolute top-[17px] right-0"
+            className="searchbtn absolute top-[17px] right-[17px]"
           >
             <Image
               src="/images/Search-default-icon.svg"

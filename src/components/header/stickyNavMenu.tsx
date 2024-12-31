@@ -1,11 +1,14 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { 
-  // FavoriteIcon, 
+import { useSession } from 'next-auth/react';
+import {
+  // FavoriteIcon,
   // NotificationIcon,
-   UserIcon } from '@/icons';
+  UserIcon,
+} from '@/icons';
 // import NotificationAlert from './notificationAlert';
 import NotificationButton from './NotificationButton';
 import FavoritesAlert from './favoritesAlert';
@@ -14,10 +17,15 @@ interface StickyNavbar {
   toggleDropdown: () => void;
   session: object;
 }
-const StickyNavMenu: React.FC<StickyNavbar> = ({ toggleDropdown, session }) => {
+const StickyNavMenu: React.FC<StickyNavbar> = ({ toggleDropdown}) => {
+  const { data: session, status } = useSession();
+  // Log session details for debugging
+  console.log('Session:', session);
+  console.log('Session Status:', status);
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
+  const userId = session?.user?.id;
+  const userRole = session?.user?.role;
   const handleScroll = () => {
     if (typeof window !== 'undefined') {
       if (window.scrollY > lastScrollY) {
@@ -104,7 +112,7 @@ const StickyNavMenu: React.FC<StickyNavbar> = ({ toggleDropdown, session }) => {
             </li>
             <li className="sticky-mobilenav-list">
               <Link
-                href="/register"
+                href="/auth/register"
                 className="text-center flex items-center justify-center flex-col gap-[13px]"
               >
                 <div className="icons-box">
@@ -162,7 +170,7 @@ const StickyNavMenu: React.FC<StickyNavbar> = ({ toggleDropdown, session }) => {
             </li>
             <li className="sticky-mobilenav-list">
               <Link
-                href="/account"
+                href={`/${userRole?.toLowerCase()}/account/${userId}`}
                 className="text-center flex items-center justify-center flex-col gap-[13px]"
               >
                 <div className="icons-box">

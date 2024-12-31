@@ -162,25 +162,28 @@ const UsersTable: React.FC = () => {
     <div className="grid grid-cols-12 gap-0 mt-10">
       <div className="users-info-table-overview col-span-full">
         <div className="user-info-table-wrapper">
-          <div className="user-info-table-top-head flex gap-4 items-center justify-between px-[30px] py-5">
-            <h3 className="title body-bold-large max-w-[320px] w-full font-secondary text-mono-100">
+          <div className="user-info-table-top-head flex gap-4 sm:gap-2 items-center justify-between px-[30px] sm:px-5 py-5">
+            <h3 className="title body-bold-large sm:body-bold-small max-w-[320px] sm:max-w-[60px] w-full font-secondary text-mono-100">
               Users
             </h3>
-            <div className="right-content-list w-full flex items-center justify-between gap-3">
+            <div className="right-content-list w-full flex items-center justify-between gap-3 sm:gap-2">
               <div className="table-item-selection-status flex items-center gap-5">
-                <p className="forms-bold font-secondary font-medium leading-[150%] text-[#677788]">
+                <p className="forms-bold sm:hidden font-secondary font-medium leading-[150%] text-[#677788]"> 
                   {selectedUsers.length} Selected
                 </p>
                 <button
                   type="button"
-                  className="px-[17px] h-[24px] flex items-center justify-center rounded-[24px] text-[#D10C3B] table-item-delet-btn forms-bold font-secondary font-medium leading-[150%]"
+                  className="px-[17px] sm:px-2 h-[24px] gap-2 flex items-center justify-center rounded-[24px] text-[#D10C3B] table-item-delet-btn forms-bold font-secondary font-medium leading-[150%]"
                   onClick={handleDeleteUsers}
                 >
+                  <span className="hidden sm:block text-[#D10C3B]">
+                    {selectedUsers.length}
+                  </span>{' '}
                   Delete
                 </button>
               </div>
-              <div className="table-item-user-status-filter flex items-center gap-5">
-                <p className="forms-bold font-secondary font-medium leading-[150%] text-[#677788]">
+              <div className="table-item-user-status-filter sm:flex-col flex items-center gap-5 sm:gap-1">
+                <p className="forms-bold sm:text-[10px] sm:hidden font-secondary font-medium leading-[150%] text-[#677788]">
                   Status:
                 </p>
                 <select
@@ -200,8 +203,8 @@ const UsersTable: React.FC = () => {
                   </option>
                 </select>
               </div>
-              <div className="table-item-user-session-filter flex items-center gap-5">
-                <p className="forms-bold whitespace-nowrap font-secondary font-medium leading-[150%] text-[#677788]">
+              <div className="table-item-user-session-filter sm:flex-col flex items-center gap-5 sm:gap-1">
+                <p className="forms-bold sm:text-[10px] sm:hidden whitespace-nowrap font-secondary font-medium leading-[150%] text-[#677788]">
                   Signed Up:
                 </p>
                 <select
@@ -221,7 +224,7 @@ const UsersTable: React.FC = () => {
                   </option>
                 </select>
               </div>
-              <div className="table-item-user-search max-w-[200px]">
+              <div className="table-item-user-search sm:hidden max-w-[200px]">
                 <form action="" className="search-form relative">
                   <input
                     id="searchTableItem"

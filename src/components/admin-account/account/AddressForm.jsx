@@ -1,9 +1,9 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Select } from '@/components/elements';
 import { EditIcon, SaveIcon } from '@/icons';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-
 
 const AddressForm = () => {
   const { data: session, status } = useSession() || {};

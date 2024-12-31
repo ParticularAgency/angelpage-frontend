@@ -16,8 +16,44 @@ const AdminAccount = () => {
   const [soldItemsCount, setSoldItemsCount] = useState<number>(0);
 const [totalRevenue, setTotalRevenue] = useState<number>(0);
 const [salesChange, setSalesChange] = useState<number>(0);
+const [totalReturningUser, setTotalReturningUser] = useState<number>(0);
+const [returningUserPercent, setReturningUserPercent] =
+  useState<number>(0);
+  const [totalUserSessions, setTotalUserSessions] = useState<number>(0);
+  const [sessionsUserPercent, setSessionsUserPercent] = useState<number>(0);
+ const [totalUsers, setTotalUsers] = useState<number>(0);
+ const [userChangePercent, setUserChangePercent] = useState<number>(0);
 
   const [loading, setLoading] = useState(true);
+const fetchUserStats = async () => {
+  try {
+    if (!session?.token) return;
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/users/analytics`,
+      {
+        headers: { Authorization: `Bearer ${session.token}` },
+      }
+    );
+
+    if (!response.ok) throw new Error(await response.text());
+
+    const data = await response.json(); 
+    console.log('users total response:' , data)
+    if (data.success) {
+      setTotalUsers(data.totalPlatformUsers || 0);
+      setUserChangePercent(data.percentageChange || 0);
+    }
+  } catch (error) {
+    console.error('Error fetching user stats:', error); 
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  if (status === 'authenticated') fetchUserStats();
+}, [status, session]);
 
   const fetchSalesStats = async () => {
     try {
@@ -46,7 +82,7 @@ const [salesChange, setSalesChange] = useState<number>(0);
         setSoldItemsCount(data.totalProductsSold || 0);
         setTotalRevenue(data.totalRevenue || 0);
          const orders: Order[] = data.productDetails;
-        console.log(orders);
+        console.log('order sold item count total' , orders);
 
           // Get current and previous week's revenue
       const now = new Date();
@@ -88,11 +124,95 @@ const [salesChange, setSalesChange] = useState<number>(0);
       fetchSalesStats();
     }
   }, [status, session]);
+const fetchReturningUserStats = async () => {
+  try {
+       if (!session?.token) {
+         console.error('Session token is missing.');
+         setLoading(false);
+         return;
+       }
+    console.log('Fetching returning user analytics...');
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/analytics/returning-users-weekly`,
+      {
+        headers: {
+          Authorization: `Bearer ${session.token}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error Response Text:', errorText);
+      throw new Error('Failed to fetch returning user analytics');
+    }
+
+    const data = await response.json();
+    console.log('Returning user analytics:', data);
+
+    if (data.success) {
+      setTotalReturningUser(data.data.totalReturningUsers || 0);
+      setReturningUserPercent(data.data.percentageChange || 0);
+    }
+  } catch (error) {
+    console.error('Error fetching returning user analytics:', error);
+  }
+};
+
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchReturningUserStats();
+    }
+  }, [status, session]);
+
+const fetchUserSessionsStats = async () => {
+  try {
+    if (!session?.token) {
+      console.error('Session token is missing.');
+      setLoading(false);
+      return;
+    }
+    console.log('Fetching returning user analytics...');
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/analytics/user-sessions-weekly`,
+      {
+        headers: {
+          Authorization: `Bearer ${session.token}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error Response Text:', errorText);
+      throw new Error('Failed to fetch returning user analytics');
+    }
+
+    const data = await response.json();
+    console.log('Sessions user analytics:', data);
+
+    if (data.success) {
+      setTotalUserSessions(data.data.totalPlatformSessions || 0);
+      setSessionsUserPercent(data.data.percentageChange || 0);
+    }
+  } catch (error) {
+    console.error('Error fetching returning user analytics:', error);
+  }
+};
+
+useEffect(() => {
+  if (status === 'authenticated') {
+    fetchUserSessionsStats();
+  }
+}, [status, session]);
 
   if (loading) {
     return <p>Loading...</p>;
   }
+
  console.log(totalRevenue);
+
   return (
     <div className="charity-account-main-wrapper">
       <BannerSection soldItemsCount={soldItemsCount} />
@@ -135,7 +255,17 @@ const [salesChange, setSalesChange] = useState<number>(0);
               <ul className="tabs-content-area">
                 {activeTab === 0 && (
                   <li className="tabs-cont-item">
-                    <AnalyticsPage soldItemsCount={soldItemsCount} totalRevenue={totalRevenue} salesChange={salesChange}  />
+                    <AnalyticsPage
+                      totalUsersLength={totalUsers}
+                      userChangePerchent={userChangePercent}
+                      soldItemsCount={soldItemsCount}
+                      totalRevenue={totalRevenue}
+                      salesChange={salesChange}
+                      totalReturningUsers={totalReturningUser}
+                      returningUserPercent={returningUserPercent}
+                      totalUserSessions={totalUserSessions}
+                      sessionsUserPercent={sessionsUserPercent}
+                    />
                   </li>
                 )}
                 {activeTab === 1 && (

@@ -1,9 +1,9 @@
 'use client';
-import React from 'react';
-import BasketPage from '@/pages/checkout/checkout';
+
+import BasketPage from '@/components/checkout/checkout';
 import ProtectedRoute from '@/utils/ProtectedRoute';
 
-const CheckoutPage = () => {
+export default function CheckoutPage(){
   return (
     <ProtectedRoute allowedRoles={['CHARITY', 'USER']}>
       <div className="checkout-page-main-wrapper">
@@ -13,4 +13,3 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage;

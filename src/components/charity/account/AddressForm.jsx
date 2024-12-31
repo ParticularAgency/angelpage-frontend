@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Select } from '@/components/elements';
 import { EditIcon, SaveIcon } from '@/icons';
@@ -46,7 +47,7 @@ const AddressForm = () => {
     setAddresses([...addresses, newAddress]);
   };
 
-  const handleEditClick = (id) => {
+  const handleEditClick = id => {
     setAddresses(
       addresses.map(address =>
         address._id === id || address.tempId === id
@@ -56,10 +57,7 @@ const AddressForm = () => {
     );
   };
 
-  const handleChange = (
-    id,
-    e
-  ) => {
+  const handleChange = (id, e) => {
     const { name, value } = e.target;
     setAddresses(
       addresses.map(address =>
@@ -70,7 +68,7 @@ const AddressForm = () => {
     );
   };
 
-  const handleDeleteConfirmation = (id) => {
+  const handleDeleteConfirmation = id => {
     setAddressToDelete(id);
     setIsConfirmOpen(true);
   };
@@ -97,70 +95,71 @@ const AddressForm = () => {
     setAddressToDelete(null);
   };
 
-const handleSave = async (id) => {
-  const address = addresses.find(addr => addr._id === id || addr.tempId === id);
+  const handleSave = async id => {
+    const address = addresses.find(
+      addr => addr._id === id || addr.tempId === id
+    );
 
-  if (address) {
-    try {
-      if (address._id) {
-        // Update existing address
-        await axios.put(
-          `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/addresses/${address._id}`,
-          address,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token}`,
-            },
-          }
-        );
-        setAddresses(
-          addresses.map(addr =>
-            addr._id === id ? { ...addr, isEditing: false } : addr
-          )
-        );
-      } else {
-        // Add new address
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/addresses`,
-          address,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token}`,
-            },
-          }
-        );
-
-        // Handle wrapped response structure
-        if (response.data.addresses) {
-          const newAddressData = response.data.addresses.slice(-1)[0];
-          if (newAddressData && newAddressData._id) {
-            // Replace the temporary address with the new one from backend
-            setAddresses(
-              addresses.map(addr =>
-                addr.tempId === id
-                  ? { ...newAddressData, isEditing: false }
-                  : addr
-              )
-            );
-          } else {
-            console.error(
-              'Unexpected address data in response:',
-              response.data
-            );
-          }
+    if (address) {
+      try {
+        if (address._id) {
+          // Update existing address
+          await axios.put(
+            `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/addresses/${address._id}`,
+            address,
+            {
+              headers: {
+                Authorization: `Bearer ${session?.token}`,
+              },
+            }
+          );
+          setAddresses(
+            addresses.map(addr =>
+              addr._id === id ? { ...addr, isEditing: false } : addr
+            )
+          );
         } else {
-          console.error('Unexpected response structure:', response.data);
+          // Add new address
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/charity/profile/addresses`,
+            address,
+            {
+              headers: {
+                Authorization: `Bearer ${session?.token}`,
+              },
+            }
+          );
+
+          // Handle wrapped response structure
+          if (response.data.addresses) {
+            const newAddressData = response.data.addresses.slice(-1)[0];
+            if (newAddressData && newAddressData._id) {
+              // Replace the temporary address with the new one from backend
+              setAddresses(
+                addresses.map(addr =>
+                  addr.tempId === id
+                    ? { ...newAddressData, isEditing: false }
+                    : addr
+                )
+              );
+            } else {
+              console.error(
+                'Unexpected address data in response:',
+                response.data
+              );
+            }
+          } else {
+            console.error('Unexpected response structure:', response.data);
+          }
         }
+      } catch (error) {
+        console.error(
+          'Error saving address:',
+          error.response?.data || error.message
+        );
       }
-    } catch (error) {
-      console.error(
-        'Error saving address:',
-        error.response?.data ||
-          error.message
-      );
     }
-  }
-};
+  };
 
   return (
     <div className="address-section pt-[23px] pb-0">

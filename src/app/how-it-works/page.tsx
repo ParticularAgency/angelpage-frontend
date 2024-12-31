@@ -1,3 +1,4 @@
+'use client';
 import HowItWorksPage from '@/pages/how-it-work/HowItWorks';
 import React from 'react';
 
