@@ -8,7 +8,7 @@ import BasketArea from './BasketArea';
 import CheckoutProductItem from './CheckoutProductItem';
 import ShippingAddress from './ShippingAddress';
 import PaymentMethodsArea from './PaymentMethods';
-import CheckoutLoaderScreen from './loader/Loader';
+// import CheckoutLoaderScreen from './loader/Loader';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { ToastService } from '@/components/elements/notifications/ToastService';
@@ -26,7 +26,7 @@ const BasketPage = () => {
 
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
-  const [loading] = useState(false);
+  // const [loading] = useState(false);
 
   const [carriers, setCarriers] = useState([]);
   const [tempSelectedCarrier, setTempSelectedCarrier] = useState('');
@@ -216,16 +216,11 @@ const BasketPage = () => {
   return (
     <div className="basket-page-main-wrapper">
       <div className="custom-container max-w-[1008px]">
-        {isCartLoading ? (
-          <div className="loader-page-screen h-[80vh]">
-            <BannerSection />
-            <CheckoutLoaderScreen loading={loading} />
-          </div>
-        ) : (
+        {(
           <>
             <BannerSection />
-            <section className="basket-page-main-content-grid grid grid-cols-12 gap-5">
-              <div className="basket-page-left-cont col-span-7 md:col-span-6 sm:col-span-full">
+            <section className="basket-page-main-content-grid grid grid-cols-12 gap-5 sm:gap-y-10">
+              <div className="basket-page-left-cont col-span-7 sm:order-2 md:col-span-6 sm:col-span-full">
                 <CheckoutProductItem
                   isLoading={isCartLoading}
                   cartItems={cartItems}
@@ -252,7 +247,7 @@ const BasketPage = () => {
                   />
                 </div>
               </div>
-
+             
               <BasketArea
                 cartItems={cartItems}
                 shipmentCost={shipmentCost}

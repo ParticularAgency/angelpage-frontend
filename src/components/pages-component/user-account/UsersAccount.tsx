@@ -90,7 +90,12 @@ const fetchUserProducts = async () => {
                     }`}
                     onClick={() => setActiveTab(2)} // Set active tab to "Listings"
                   >
-                    Listings {productsCount && (<span className='absolute -top-3 -right-[14px] w-[17px] h-6 flex items-center justify-center bg-error forms-bold font-medium text-mono-0 rounded-[8px] '>{productsCount}</span>)}
+                    Listings{' '}
+                    {productsCount && (
+                      <span className="absolute -top-3 sm:top-0 -right-[14px] sm:-right-2 w-[17px] h-6 flex items-center justify-center bg-error forms-bold font-medium text-mono-0 rounded-[8px] ">
+                        {productsCount}
+                      </span>
+                    )}
                   </li>
                   <li
                     className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
@@ -122,8 +127,7 @@ const fetchUserProducts = async () => {
                   >
                     Delete account
                   </li>
-                <li
-                    className="tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer" >
+                  <li className="tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer">
                     <LogoutButton />
                   </li>
                 </ul>

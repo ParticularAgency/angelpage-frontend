@@ -13,7 +13,7 @@ const HomePageMainBanner = () => {
               Start selling on AngelPage
             </h1>
             <p className="body-small text-mono-0">
-              Add items to any Charity storefront to become a donor
+              Add items to any charity storefront to become a donor
             </p>
             <Link href="/product/post-product" className="block">
               <Button

@@ -188,7 +188,7 @@ const UsersTable: React.FC = () => {
                 </p>
                 <select
                   id="sort-select"
-                  className="filter-dropdown !border-0 select bg-transparent focus:outline-0 w-full max-w-[160px] pr-8 !pl-2"
+                  className="filter-dropdown text-center !border-0 select bg-transparent focus:outline-0 w-full max-w-[160px] pr-8 !pl-2"
                   value={statusFilter}
                   onChange={e => setStatusFilter(e.target.value)}
                 >
@@ -209,7 +209,7 @@ const UsersTable: React.FC = () => {
                 </p>
                 <select
                   id="sort-select"
-                  className="filter-dropdown select !border-0 bg-transparent focus:outline-0 w-full max-w-[160px] pr-8 !pl-2"
+                  className="filter-dropdown text-center select !border-0 bg-transparent focus:outline-0 w-full max-w-[160px] pr-8 !pl-2"
                   value={sessionFilter}
                   onChange={handleSessionFilterChange}
                 >

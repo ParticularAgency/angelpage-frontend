@@ -127,7 +127,7 @@ const userRole = session?.user?.role;
             </div>
 
             {!shouldHideBottomNav && !isPostProductPage && !isCheckoutPage && (
-              <div className="header-bottom-cont pt-[19px] pb-[22px] sm:hidden">
+              <div className="header-bottom-cont pt-[15px] pb-[16px] sm:hidden">
                 <BottomNavMegamenu />
               </div>
             )}
@@ -228,7 +228,7 @@ const userRole = session?.user?.role;
             </div>
 
             {!shouldHideBottomNav && !isPostProductPage && !isCheckoutPage && (
-              <div className="header-bottom-cont pt-[19px] pb-[22px] sm:hidden">
+              <div className="header-bottom-cont pt-[15px] pb-[16px] sm:hidden">
                 <BottomNavMegamenu />
               </div>
             )}

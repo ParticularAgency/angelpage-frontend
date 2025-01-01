@@ -14,125 +14,125 @@ const NotificationDropdown = ({
   isDropdownOpen,
   toggleDropdown,
 }) => {
- const [activeTab, setActiveTab] = useState(
-   'messages'
- );
- const { data: session, status } = useSession();
- const [notifications, setNotifications] = useState([]);
- const [messages] = useState([]);
- const [setError] = useState(null);
- const dropdownRef = useRef(null);
-
- const fetchNotifications = async () => {
-   if (status !== 'authenticated' || !session?.user) {
-     setError('User is not authenticated.');
-     return;
-   }
-
-   try {
-     const response = await axios.get(
-       `${process.env.NEXT_PUBLIC_API_URL}/notification/alert`,
-       {
-         headers: {
-           Authorization: `Bearer ${session.token}`,
-         },
-       }
-     );
-     console.log(response.data)
-     if (response.data.success) {
-       setNotifications(response.data.notifications || []);
-     } else {
-       setError(response.data.error || 'Failed to fetch notifications.');
-     }
-   } catch (error) {
-     console.error('Error fetching notifications:', error.message);
-     setError('Failed to fetch notifications.');
-   }
- };
-
- const markAllNotificationAsRead = async () => {
-   if (status !== 'authenticated' || !session?.user) {
-     setError('User is not authenticated.');
-     return;
-   }
-
-   try {
-     const response = await axios.patch(
-       `${process.env.NEXT_PUBLIC_API_URL}/notification/read-all`,
-       {},
-       {
-         headers: {
-           Authorization: `Bearer ${session.token}`,
-         },
-       }
-     );
-
-     console.log(response.data.message);
-     setNotifications(prevNotifications =>
-       prevNotifications.map(notification => ({
-         ...notification,
-         isRead: true,
-       })),
-       ToastService.success(response?.data?.notifications?.message)
-     );
-   } catch (error) {
-     console.error('Failed to mark all notifications as read:', error.message);
-   }
- };
-
-const handleRemoveNotification = async (notificationId) => {
-  if (status !== 'authenticated' || !session?.user) {
-    setError('User is not authenticated.');
-    return;
-  }
-
-  try {
-    await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/notification/${notificationId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${session.token}`,
-        },
+  const [activeTab, setActiveTab] = useState('messages');
+  const { data: session, status } = useSession();
+  const [notifications, setNotifications] = useState([]);
+  const [notificationsCount, setNotificationsCount] = useState([]);
+  const [loading, setLoading] = useState(false)
+  const [messages] = useState([]);
+  const [setError] = useState(null);
+  const dropdownRef = useRef(null);
+  
+  const fetchNotifications = async () => {
+    if (status !== 'authenticated' || !session?.user) {
+      setError('User is not authenticated.');
+      return;
+    }
+    try {
+    setLoading(true);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/notification/alert`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+          },
+        }
+      );
+      console.log(response?.data?.notifications?.length);
+      setNotificationsCount(response?.data?.notifications?.length);
+      if (response.data.success) {
+        setNotifications(response.data.notifications || []);
+      } else {
+        setError(response.data.error || 'Failed to fetch notifications.');
       }
-    );
+    } catch (error) {
+      console.error('Error fetching notifications:', error.message);
+      setError('Failed to fetch notifications.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Update the state to remove the notification locally
-    setNotifications(prevNotifications =>
-      prevNotifications.filter(
-        notification => notification._id !== notificationId
-      )
-    );
-  } catch (error) {
-    console.error('Failed to remove notification:', error.message);
-  }
-};
- useEffect(() => {
-   if (isDropdownOpen) {
-     fetchNotifications();
-   }
- }, [isDropdownOpen, session, status]);
+  const markAllNotificationAsRead = async () => {
+    if (status !== 'authenticated' || !session?.user) {
+      setError('User is not authenticated.');
+      return;
+    }
 
- const handleClickOutside = (event) => {
-   if (
-     dropdownRef.current &&
-     !dropdownRef.current.contains(event.target)
-   ) {
-     toggleDropdown();
-   }
- };
+    try {
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/notification/read-all`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+          },
+        }
+      );
 
- useEffect(() => {
-   if (isDropdownOpen) {
-     document.addEventListener('mousedown', handleClickOutside);
-   }
-   return () => {
-     document.removeEventListener('mousedown', handleClickOutside);
-   };
- }, [isDropdownOpen]);
+      setNotifications(
+        prevNotifications =>
+          prevNotifications.map(notification => ({
+            ...notification,
+            isRead: true,
+          })),
+        ToastService.success(response?.data?.notifications?.message)
+      );
+    } catch (error) {
+      console.error('Failed to mark all notifications as read:', error.message);
+    }
+  };
 
- const handleTabChange = (tab) => {
-   setActiveTab(tab);
- };
+  const handleRemoveNotification = async notificationId => {
+    if (status !== 'authenticated' || !session?.user) {
+      setError('User is not authenticated.');
+      return;
+    }
+
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/notification/${notificationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+          },
+        }
+      );
+
+      // Update the state to remove the notification locally
+      setNotifications(prevNotifications =>
+        prevNotifications.filter(
+          notification => notification._id !== notificationId
+        )
+      );
+    } catch (error) {
+      console.error('Failed to remove notification:', error.message);
+    }
+  };
+  useEffect(() => {
+    if (isDropdownOpen) {
+      fetchNotifications();
+    }
+  }, [isDropdownOpen, session, status]);
+
+  const handleClickOutside = event => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      toggleDropdown();
+    }
+  };
+
+  useEffect(() => {
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+  const handleTabChange = tab => {
+    setActiveTab(tab);
+  };
 
   return (
     <div ref={dropdownRef}>
@@ -147,7 +147,7 @@ const handleRemoveNotification = async (notificationId) => {
               <span className="body-small text-mono-100">Close</span>
             </button>
             <button
-              className={`tab-button w-1/2 py-[18px] px-5 body-small sm:py-3 text-center ${
+              className={`tab-button w-1/2 py-[18px] flex items-center gap-2 px-5 relative body-small sm:py-3 text-center ${
                 activeTab === 'messages'
                   ? 'active text-mono-100'
                   : 'text-mono-70'
@@ -155,9 +155,12 @@ const handleRemoveNotification = async (notificationId) => {
               onClick={() => handleTabChange('messages')}
             >
               Messages
+              <span class="relative left-auto w-5 h-5 bg-red-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
+               0
+              </span>
             </button>
             <button
-              className={`tab-button w-1/2 py-[18px] px-5 body-small sm:py-3 text-center ${
+              className={`tab-button w-1/2 py-[18px] flex items-center gap-2 px-5 relative body-small sm:py-3 text-center ${
                 activeTab === 'notifications'
                   ? 'active text-mono-100'
                   : 'text-mono-70'
@@ -165,6 +168,15 @@ const handleRemoveNotification = async (notificationId) => {
               onClick={() => handleTabChange('notifications')}
             >
               Notifications
+              {loading ? (
+                <span class="relative left-auto w-5 h-5 bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
+                  ...
+                </span>
+              ) : notificationsCount > 0 ? (
+                <span class="relative left-auto w-5 h-5 bg-red-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
+                  {notificationsCount}
+                </span>
+              ) : null}
             </button>
           </div>
           <div className="tab-content">

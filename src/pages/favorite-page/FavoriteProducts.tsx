@@ -124,7 +124,7 @@ const FavoriteProductListing: React.FC<FavoriteProductListingProps> = ({
                       startIndex + productsPerPage,
                       filteredProducts.length
                     )}{' '}
-                    of
+                    of{'  '}
                   </span>
                   <span className="caption-bold">
                     {filteredProducts.length} products
