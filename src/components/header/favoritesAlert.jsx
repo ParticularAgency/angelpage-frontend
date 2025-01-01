@@ -21,7 +21,7 @@ const FavoritesAlert = ({ className }) => {
 
   return (
     <div className={`user-saveitem flex items-center relative ${className}`}>
-      <Link href="/favorites" aria-label="Go to favorites">
+      <Link href="/favourite" aria-label="Go to favorites">
         {loading ? (
           <span className="absolute top-[-8px] w-5 h-5 right-[-8px] bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
             ...

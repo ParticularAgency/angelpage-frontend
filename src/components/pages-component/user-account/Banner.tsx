@@ -100,7 +100,7 @@ const BannerSection = () => {
 
           {/* Profile Completion Progress */}
           {profileData.profileCompleted ? (
-            <p className="text-success text-center pt-3 mb-2 body-small">
+            <p className="text-success text-center pt-10 mb-0 body-small">
               Your profile is 100% complete!
             </p>
           ) : (
@@ -145,7 +145,7 @@ const BannerSection = () => {
               </p>
             </div>
           </div>
-          <div className="users-account-right-cont flex flex-col items-end sm:items-start">
+          <div className="users-account-right-cont hidden  flex-col items-end sm:items-start">
             <Button variant="primary" className="body-small ">
               Turn on holiday mode
             </Button>

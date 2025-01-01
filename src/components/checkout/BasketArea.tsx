@@ -48,7 +48,7 @@ const BasketArea: React.FC<BasketAreaProps> = ({
   };
 
   return (
-    <div className="basket-page-right-cont col-span-5 md:col-span-6 sm:col-span-full">
+    <div className="basket-page-right-cont sm:order-1 col-span-5 md:col-span-6 sm:col-span-full">
       <div className="basket-page-right-cont-wrapper border py-6 bg-[#F1F1F7]">
         <div className="flex justify-between items-end px-6">
           <h3 className="body-bold-medium mb-4">Order summary</h3>
@@ -81,16 +81,16 @@ const BasketArea: React.FC<BasketAreaProps> = ({
                 return (
                   <div className="mb-6" key={index}>
                     <p className="eyebrow-medium">{item.productId.brand}</p>
-                    <p className="caption-bold text-mono-80">
+                    <p className="caption-bold sm:text-[14px] mt-1 text-mono-80">
                       {item.productId.name}
                     </p>
-                    <div className="flex justify-between caption-bold pl-[21px]">
+                    <div className="flex justify-between mt-2 caption-bold">
                       <p className="caption text-mono-80">Price</p>
                       <p className="caption text-mono-100 mt-1">
                         £{(item.quantity * item.productId.price).toFixed(2)}
                       </p>
                     </div>
-                    <div className="flex justify-between caption-bold pl-[21px]">
+                    <div className="flex justify-between caption-bold">
                       <p className="caption text-mono-80">
                         Charity profit (90%)
                       </p>
@@ -124,7 +124,7 @@ const BasketArea: React.FC<BasketAreaProps> = ({
         {/* Total Amount */}
         <div className="flex justify-between font-bold px-6 border-t pt-4 mt-4">
           <p className="body-bold-medium product-total-price">Total</p>
-          <p className="body-bold-medium text-mono-100">
+          <p className="body-bold-medium sm:text-[16px] text-mono-100">
             £{grandTotal.toFixed(2)}
           </p>
         </div>

@@ -80,9 +80,7 @@ const totalPrice = cartItems.reduce((acc, item) => {
                   </div>
                 </div>
                 <div className="minicart-body-product-info px-6">
-                  {status === 'loading' ? (
-                    <p>Loading...</p>
-                  ) : cartItems.length === 0 ? (
+                  {cartItems.length === 0 ? (
                     <div className="empty-cart-message my-auto py-12">
                       <p className="font-secondary font-medium text-body-caption text-center text-mono-100">
                         Your cart is empty.
@@ -94,7 +92,7 @@ const totalPrice = cartItems.reduce((acc, item) => {
                         className="cart-add-product-item-wrapper"
                         key={item?.productId?._id}
                       >
-                        <div className="cart-add-product-item flex items-center gap-5 py-5">
+                        <div className="cart-add-product-item flex items-start gap-5 py-5">
                           <Image
                             src={
                               item?.productId?.images?.[0]?.url ||
@@ -109,15 +107,15 @@ const totalPrice = cartItems.reduce((acc, item) => {
                             <h5 className="body-medium sm:!text-[16px]">
                               {item?.productId?.brand}
                             </h5>
-                            <p className="body-small text-mono-100">
+                            <p className="body-small text-mono-100 mt-1">
                               {item?.productId?.name}
                             </p>
-                            <p className="body-small text-mono-100">
+                            <p className="body-small text-mono-100 mt-1">
                               Charity:{' '}
                               {item?.productId?.selectedCharityName ||
                                 item?.productId?.charity?.charityName}
                             </p>
-                            <div className="minicart-states mt-[23px] flex items-center justify-between gap-2">
+                            <div className="minicart-states mt-4 flex items-center justify-between gap-2">
                               <div className="minicart-states-group flex items-center gap-3">
                                 <div className="product-inc-dsc-states relative p-[6px] max-w-[90px] w-full h-[26px] border border-mono-100 flex items-center justify-between">
                                   <button
@@ -132,12 +130,21 @@ const totalPrice = cartItems.reduce((acc, item) => {
                                   >
                                     <MinusIcon />
                                   </button>
-                                  <input
-                                    value={item.quantity}
-                                    type="text"
-                                    readOnly
-                                    className="max-w-[90px] px-2 w-full text-center"
-                                  />
+                                  {status === 'loading' ? (
+                                    <>
+                                      <div className="skeleton h-2 w-[45px] px-2 bg-mono-40"></div>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <input
+                                        value={item.quantity}
+                                        type="text"
+                                        readOnly
+                                        className="max-w-[90px] px-2 w-full text-center"
+                                      />
+                                    </>
+                                  )}
+
                                   <button
                                     className="inc-btn"
                                     onClick={() =>
@@ -151,7 +158,7 @@ const totalPrice = cartItems.reduce((acc, item) => {
                                   </button>
                                 </div>
                                 <p className="product-current-price caption">
-                                  £{item?.productId?.price}
+                                  Price: <br /> £{item?.productId?.price}
                                 </p>
                               </div>
                               <Button
@@ -175,7 +182,15 @@ const totalPrice = cartItems.reduce((acc, item) => {
                 <div className="cart-footer-area px-6 pt-[46px] pb-12 sm:py-7">
                   <div className="totat-price flex items-center justify-between">
                     <p className="body-bold-small">Total</p>
-                    <p className="body-small">£{totalPrice.toFixed(2)}</p>
+                    <p className="body-small">
+                      {status === 'loading' ? (
+                        <>
+                          <div className="skeleton h-2 w-20 px-2 bg-mono-40"></div>
+                        </>
+                      ) : (
+                        <>£{totalPrice.toFixed(2)}</>
+                      )}
+                    </p>
                   </div>
                   <p className="info-text forms-bold mt-[9px]">
                     Tax and shipping are calculated at checkout.

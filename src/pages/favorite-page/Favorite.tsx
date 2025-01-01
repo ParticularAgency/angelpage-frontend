@@ -12,6 +12,7 @@ import { Button } from '@/components/elements';
 import Link from 'next/link';
 import PreLoader from '@/components/common/pre-loader/PreLoader';
 
+
 interface Charity {
   id: string;
   charityName: string;

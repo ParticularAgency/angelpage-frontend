@@ -231,13 +231,15 @@ const DetailsForm = ({
   const filteredSubCategories =
     categories.find(cat => cat.id === selectedCategory)?.subCategories || [];
 
-  const isClothingOrShoes = [
+  const isClothing = [
     'women',
     'men',
     'children',
     'clothing',
-    'shoes',
   ].includes(selectedCategory);
+    const isShoes = [
+      'shoes',
+    ].includes(selectedCategory);
   const isBagsFurnitureElectronicsAccessories = [
     'bags',
     'homeware',
@@ -381,7 +383,7 @@ const DetailsForm = ({
           className="flex-col"
         />
 
-        {isClothingOrShoes && (
+        {isClothing && (
           <>
             <p className="text-body-small">For clothes and shoes</p>
             <Select
@@ -400,7 +402,35 @@ const DetailsForm = ({
             />
           </>
         )}
-
+        {isShoes && (
+          <>
+            <p className="text-body-small">For clothes and shoes</p>
+            <Select
+              label="Size"
+              name="size"
+              id="size"
+              value={size}
+              onChange={e => setSize(e.target.value)}
+              options={[
+                { value: '', label: 'Select' },
+                { value: 'UK 1', label: 'UK 1' },
+                { value: 'UK 2', label: 'UK 2' },
+                { value: 'UK 3', label: 'UK 3' },
+                { value: 'UK 4', label: 'UK 4' },
+                { value: 'UK 5', label: 'UK 5' },
+                { value: 'UK 6', label: 'UK 6' },
+                { value: 'UK 7', label: 'UK 7' },
+                { value: 'UK 8', label: 'UK 8' },
+                { value: 'UK 9', label: 'UK 9' },
+                { value: 'UK 10', label: 'UK 10' },
+                { value: 'UK 11', label: 'UK 11' },
+                { value: 'UK 12', label: 'UK 12' },
+                { value: 'UK 13', label: 'UK 13' },
+                { value: 'UK 14', label: 'UK 14' },
+              ]}
+            />
+          </>
+        )}
         {isBagsFurnitureElectronicsAccessories && (
           <>
             <p className="text-body-small">
@@ -471,7 +501,6 @@ const DetailsForm = ({
           </Button>
         </div>
       </form>
-      
     </>
   );
 };

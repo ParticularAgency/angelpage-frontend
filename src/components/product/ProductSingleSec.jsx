@@ -161,14 +161,14 @@ const ProductSinglepage = () => {
         <div className="product-breadcrumb-area pt-4 pb-10 sm:pb-4">
           <ul className="breadcrumb-area flex items-center justify-center gap-[10px]">
             <li className="breadcrumb-item body-caption prev-pages flex items-center gap-[10px]">
-              <Link className="body-caption text-mono-100" href="/">
+              <Link className="body-caption capitalize text-mono-100" href="/">
                 Home
               </Link>
               <span className="angle">{'>'}</span>
             </li>
             <li className="breadcrumb-item body-caption prev-pages flex items-center gap-[10px]">
               <Link
-                className="body-caption text-mono-100"
+                className="body-caption capitalize text-mono-100"
                 href={`/category/${product.category}`}
               >
                 {product.category}

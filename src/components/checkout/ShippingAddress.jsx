@@ -157,105 +157,186 @@ const handleAddressSelection = id => {
         </Button>
       </div>
       <div className="address-item-area">
-        {addresses.map(address => (
-          <div className="address-wrapper-box-item pb-10" key={address._id}>
+        {isAddingNewAddress && (
+          <div className="address-wrapper-box-item pb-10">
             <div className="address-wrapper-box-head flex items-center justify-between pt-3 pr-2 pb-[7px] pl-[25px]">
-              <div className="select-address-checkbox">
-                <input
-                  type="radio"
-                  name="shippingAddress"
-                  checked={selectedAddressId === address._id}
-                  onChange={() => handleAddressSelection(address._id)}
-                  className="radio w-4 h-4 focus:rounded-full selecting-checkbox-item "
-                />
-              </div>
+              <div className="select-address-checkbox"></div>
               <div className="btn-states">
-                <Button
-                  variant="accend-link"
-                  className="!underline !text-primary-color-100 flex items-center gap-2"
-                  onClick={() => handleEditAddress(address)}
-                >
-                  Edit <EditIcon />
-                </Button>
-                <Button
-                  variant="accend-link"
-                  className="!underline !text-primary-color-100 flex items-center gap-2"
-                  onClick={() => {
-                    setAddressToDelete(address._id || null);
-                    setIsConfirmOpen(true);
-                  }}
-                >
-                  Delete
-                </Button>
+                <div className="flex justify-end gap-4">
+                  <Button
+                    variant="accend-link"
+                    className="!text-primary-color-100"
+                    onClick={() => setIsAddingNewAddress(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="accend-link"
+                    className="!text-primary-color-100"
+                    onClick={handleSaveAddress}
+                  >
+                    Save <SaveIcon />
+                  </Button>
+                </div>
               </div>
             </div>
             <div className="address-cont-wrapper-box-area px-[25px] pt-[17px] pb-[21px]">
-              <p className="!text-mono-80 forms-bold mb-1">Shipping to</p>
-              <p className="body-bold-small">{address.name}</p>
-              <p className="body-small block">{address.address}</p>
-              <p className="body-small block">{address.city}</p>
-              <p className="body-small block">{address.country}</p>
-              <p className="body-small block">{address.postcode}</p>
+              <Input
+                className="flex flex-col py-2"
+                label="Name"
+                value={newAddress.name}
+                onChange={e =>
+                  setNewAddress({ ...newAddress, name: e.target.value })
+                }
+              />
+              <Input
+                className="flex flex-col py-2"
+                label="Address"
+                value={newAddress.address}
+                onChange={e =>
+                  setNewAddress({ ...newAddress, address: e.target.value })
+                }
+              />
+              <Input
+                className="flex flex-col py-2"
+                label="City"
+                value={newAddress.city}
+                onChange={e =>
+                  setNewAddress({ ...newAddress, city: e.target.value })
+                }
+              />
+              <Input
+                className="flex flex-col py-2"
+                label="Country"
+                value={newAddress.country}
+                onChange={e =>
+                  setNewAddress({ ...newAddress, country: e.target.value })
+                }
+              />
+              <Input
+                className="flex flex-col py-2"
+                label="Postcode"
+                value={newAddress.postcode}
+                onChange={e =>
+                  setNewAddress({ ...newAddress, postcode: e.target.value })
+                }
+              />
             </div>
           </div>
-        ))}
-      </div>
-
-      {(isAddingNewAddress || isEditingAddress) && (
-        <div className="address-edit-form">
-          <Input
-            className="flex flex-col"
-            label="Name"
-            value={newAddress.name}
-            onChange={e =>
-              setNewAddress({ ...newAddress, name: e.target.value })
-            }
-          />
-          <Input
-            className="flex flex-col"
-            label="Address"
-            value={newAddress.address}
-            onChange={e =>
-              setNewAddress({ ...newAddress, address: e.target.value })
-            }
-          />
-          <Input
-            className="flex flex-col"
-            label="City"
-            value={newAddress.city}
-            onChange={e =>
-              setNewAddress({ ...newAddress, city: e.target.value })
-            }
-          />
-          <Input
-            className="flex flex-col"
-            label="Country"
-            value={newAddress.country}
-            onChange={e =>
-              setNewAddress({ ...newAddress, country: e.target.value })
-            }
-          />
-          <Input
-            className="flex flex-col"
-            label="Postcode"
-            value={newAddress.postcode}
-            onChange={e =>
-              setNewAddress({ ...newAddress, postcode: e.target.value })
-            }
-          />
-          <div className="flex justify-end gap-4">
-            <Button
-              variant="accend-link"
-              onClick={() => setIsAddingNewAddress(false)}
-            >
-              Cancel
-            </Button>
-            <Button variant="accend-link" onClick={handleSaveAddress}>
-              Save <SaveIcon />
-            </Button>
+        )}
+        {isEditingAddress ? (
+          <div className="address-wrapper-box-item pb-10">
+            <div className="address-wrapper-box-head flex items-center justify-between pt-3 pr-2 pb-[7px] pl-[25px]">
+              <div className="select-address-checkbox"></div>
+              <div className="btn-states">
+                <div className="flex justify-end gap-4">
+                  <Button
+                    variant="accend-link"
+                    className="!text-primary-color-100"
+                    onClick={() => setIsEditingAddress(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="!text-primary-color-100"
+                    variant="accend-link"
+                    onClick={handleSaveAddress}
+                  >
+                    Save <SaveIcon />
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className="address-cont-wrapper-box-area px-[25px] pt-[17px] pb-[21px]">
+              <Input
+                className="flex flex-col py-2"
+                label="Name"
+                value={newAddress.name}
+                onChange={e =>
+                  setNewAddress({ ...newAddress, name: e.target.value })
+                }
+              />
+              <Input
+                className="flex flex-col py-2"
+                label="Address"
+                value={newAddress.address}
+                onChange={e =>
+                  setNewAddress({ ...newAddress, address: e.target.value })
+                }
+              />
+              <Input
+                className="flex flex-col py-2"
+                label="City"
+                value={newAddress.city}
+                onChange={e =>
+                  setNewAddress({ ...newAddress, city: e.target.value })
+                }
+              />
+              <Input
+                className="flex flex-col py-2"
+                label="Country"
+                value={newAddress.country}
+                onChange={e =>
+                  setNewAddress({ ...newAddress, country: e.target.value })
+                }
+              />
+              <Input
+                className="flex flex-col py-2"
+                label="Postcode"
+                value={newAddress.postcode}
+                onChange={e =>
+                  setNewAddress({ ...newAddress, postcode: e.target.value })
+                }
+              />
+            </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <>
+            {addresses.map(address => (
+              <div className="address-wrapper-box-item pb-10" key={address._id}>
+                <div className="address-wrapper-box-head flex items-center justify-between pt-3 pr-2 pb-[7px] pl-[25px]">
+                  <div className="select-address-checkbox">
+                    <input
+                      type="radio"
+                      name="shippingAddress"
+                      checked={selectedAddressId === address._id}
+                      onChange={() => handleAddressSelection(address._id)}
+                      className="radio w-4 h-4 focus:rounded-full selecting-checkbox-item "
+                    />
+                  </div>
+                  <div className="btn-states">
+                    <Button
+                      variant="accend-link"
+                      className="!underline !text-primary-color-100 flex items-center gap-2"
+                      onClick={() => handleEditAddress(address)}
+                    >
+                      Edit <EditIcon />
+                    </Button>
+                    <Button
+                      variant="accend-link"
+                      className="!underline !text-primary-color-100 flex items-center gap-2"
+                      onClick={() => {
+                        setAddressToDelete(address._id || null);
+                        setIsConfirmOpen(true);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+                <div className="address-cont-wrapper-box-area px-[25px] pt-[17px] pb-[21px]">
+                  <p className="!text-mono-80 forms-bold mb-1">Shipping to</p>
+                  <p className="body-bold-small">{address.name}</p>
+                  <p className="body-small block">{address.address}</p>
+                  <p className="body-small block">{address.city}</p>
+                  <p className="body-small block">{address.country}</p>
+                  <p className="body-small block">{address.postcode}</p>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
 
       {isConfirmOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">

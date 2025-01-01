@@ -13,7 +13,7 @@ const HomeLandingBanner = () => {
   const slides = [
     {
       eyebrow: "Giving has never been easier",
-      title: "90% of purchase proceedings go straight to your chosen Charity",
+      title: "90% of purchase proceedings go straight to your chosen charity",
       imageSrc: "/images/home/home-banner-modal-1.jpg",
       alt: "banner slides modal image 1"
     },

@@ -5,6 +5,7 @@ import { FavoriteOutlineIcon } from '@/icons';
 import { useSession } from 'next-auth/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleFavorite } from '../../../store/favoritesSlice';
+import { ToastService } from '../notifications/ToastService';
 
 
 const FavoriteButton = ({ itemId, type }) => {
@@ -16,9 +17,10 @@ const FavoriteButton = ({ itemId, type }) => {
 
   const handleFavoriteToggle = () => {
     if (!session?.user?.id) {
-      console.error('User must be logged in to favorite an item.');
+        ToastService.error('User must be logged in to favorite an item');
       return;
     }
+        ToastService.success('Favorite toggled successfully');
 
     dispatch(
       toggleFavorite({

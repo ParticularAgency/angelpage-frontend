@@ -351,7 +351,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
                       filteredProducts.length
                     )}{' '}
                     of
-                  </span>{' '}
+                  </span>{'  '}
                   <span className="caption-bold">
                     {filteredProducts.length} products
                   </span>

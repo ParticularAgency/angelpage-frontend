@@ -8,7 +8,7 @@ import { MinusIcon, PlusIcon } from '@/icons';
 import { updateItemQuantity, removeItem } from '../../store/cartSlice';
 
 const CheckoutProductItem = ({
-
+isLoading,
   cartItems = [],
 }) => {
   const dispatch = useDispatch();
@@ -85,13 +85,13 @@ if (!cartItems.length) {
         <h2 className="h5 font-primary text-mono-100 mb-4">Items</h2>
         {cartItems.length > 0 ? (
           <div className="basket-added-product-items">
-            {cartItems.map((item) => (
+            {cartItems.map(item => (
               <div
                 className="basket-added-product-item"
                 key={item.productId._id}
               >
-                <div className="basket-product-item-head gap-[23px] flex items-center">
-                  <div className="seller-info-box flex items-center gap-[13px] pb-4">
+                <div className="basket-product-item-head gap-[23px] flex  items-center">
+                  <div className="seller-info-box flex items-center gap-[13px] sm:gap-2 pb-4">
                     {item.productId?.seller ? (
                       <>
                         <Image
@@ -102,7 +102,7 @@ if (!cartItems.length) {
                           alt="Seller"
                           width={74}
                           height={70}
-                          className="w-8 h-8 rounded-full object-cover"
+                          className="w-8 h-8 sm:min-w-7 sm:min-h-7 sm:max-h-7 sm:h-7 rounded-full object-cover"
                         />
                         <div className="seller-info-cont">
                           <p className="caption mb-[2px]">Donated by</p>
@@ -121,25 +121,25 @@ if (!cartItems.length) {
                           alt="Seller"
                           width={74}
                           height={70}
-                          className="w-8 h-8 rounded-full object-cover"
+                          className="w-8 h-8 sm:min-w-8 sm:min-h-8 sm:max-h-8 sm:h-8 rounded-full object-cover"
                         />
                         <div className="seller-info-cont">
                           <p className="caption mb-[2px]">Seller</p>
-                          <p className="eyebrow-medium text-black">
+                          <p className="eyebrow-medium sm:eyebrow-small text-black">
                             {item.productId?.charity?.charityName || ''}
                           </p>
                         </div>
                       </>
                     )}
                   </div>
-                  <div className="delivery-timeline">
-                    <span className="p-2 body-bold-small bg-[#FCF2FF] text-primary-color-100 rounded-[24px]">
+                  <div className="delivery-timeline  pb-4">
+                    <span className="p-2 body-bold-small sm:text-[12px] whitespace-nowrap bg-[#FCF2FF] text-primary-color-100 rounded-[24px]">
                       5-7 business days
                     </span>
                   </div>
                 </div>
-                <div className="added-product-item-info-box flex items-center gap-5 justify-between py-8">
-                  <div className="added-product-item-left-cont flex items-start gap-[18px]">
+                <div className="added-product-item-info-box  flex items-center sm:items-start gap-5 sm:gap-3 justify-between py-8">
+                  <div className="added-product-item-left-cont  flex items-start gap-[18px] sm:gap-3">
                     <Image
                       src={
                         item.productId?.images?.[0]?.url ||
@@ -148,16 +148,16 @@ if (!cartItems.length) {
                       alt={item.productId?.name || 'Product Image'}
                       width={74}
                       height={70}
-                      className="w-[74px] h-[70px] object-cover"
+                      className="w-[74px] h-[70px] sm:w-16 sm:h-16  object-cover"
                     />
                     <div className="added-product-info">
-                      <p className="product-brand eyebrow-medium text-mono-100">
+                      <p className="product-brand sm:whitespace-nowrap eyebrow-medium text-mono-100">
                         {item.productId?.brand || 'Unknown Brand'}
                       </p>
-                      <p className="product-title caption-bold mt-[3px] text-mono-70">
+                      <p className="product-title sm:whitespace-nowrap !h-auto caption-bold mt-[3px] text-mono-70">
                         {item.productId.name || 'Product Name'}
                       </p>
-                      <p className="product-specification caption mt-2">
+                      <p className="product-specification sm:whitespace-nowrap caption mt-2">
                         {item.productId?.size
                           ? `Size: ${item.productId?.size}`
                           : `Height: ${item.productId?.dimensions?.height || 'N/A'} | Width: ${item.productId?.dimensions?.width || 'N/A'}`}
@@ -201,7 +201,7 @@ if (!cartItems.length) {
                       </p>
                     </div>
                   </div>
-                  <div className="product-quantity-area w-full flex gap-[4px] items-center justify-between max-w-[90px] h-[26px] p-[6px] border border-mono-100">
+                  <div className="product-quantity-area w-full sm:hidden  flex gap-[4px] items-center justify-between max-w-[90px] h-[26px] p-[6px] border border-mono-100">
                     <button
                       onClick={() =>
                         handleUpdateQuantity(item.productId._id, -1)
@@ -210,7 +210,15 @@ if (!cartItems.length) {
                     >
                       <MinusIcon />
                     </button>
-                    <span className="text-[14px]">{item.quantity}</span>
+                    <span className="text-[14px]">
+                      {isLoading ? (
+                        <>
+                          <div className="skeleton h-2 w-8 px-2 bg-mono-40"></div>
+                        </>
+                      ) : (
+                        <>{item.quantity}</>
+                      )}
+                    </span>
                     <button
                       onClick={() =>
                         handleUpdateQuantity(item.productId._id, 1)
@@ -219,9 +227,44 @@ if (!cartItems.length) {
                       <PlusIcon />
                     </button>
                   </div>
-                  <div className="added-product-item-right-cont text-right">
-                    <p className="body-bold-medium text-mono-100">
-                      £{(item.quantity * item.productId?.price).toFixed(2)}
+                  <div className="added-product-item-right-cont sm:w-full sm:max-w-20  text-right">
+                    <div className="product-quantity-area w-full   gap-[4px] items-center hidden sm:flex mb-3 justify-between max-w-[90px] h-[26px] p-[6px] border border-mono-100">
+                      <button
+                        onClick={() =>
+                          handleUpdateQuantity(item.productId._id, -1)
+                        }
+                        disabled={item.quantity <= 1}
+                      >
+                        <MinusIcon />
+                      </button>
+                      <span className="text-[14px]">
+                        {isLoading ? (
+                          <>
+                            <div className="skeleton h-2 w-6 px-2 bg-mono-40"></div>
+                          </>
+                        ) : (
+                          <>{item.quantity}</>
+                        )}
+                      </span>
+                      <button
+                        onClick={() =>
+                          handleUpdateQuantity(item.productId._id, 1)
+                        }
+                      >
+                        <PlusIcon />
+                      </button>
+                    </div>
+                    <p className="body-bold-medium text-mono-100 sm:body-bold-small">
+                      {isLoading ? (
+                        <>
+                          <div className="skeleton h-4 w-20 px-2 bg-mono-40"></div>
+                        </>
+                      ) : (
+                        <>
+                          {' '}
+                          £{(item.quantity * item.productId?.price).toFixed(2)}
+                        </>
+                      )}
                     </p>
                     <button
                       className="caption mt-2 block ml-auto text-primary-color-100 !underline"
