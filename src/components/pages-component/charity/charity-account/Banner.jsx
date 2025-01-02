@@ -180,7 +180,7 @@ const BannerSection = () => {
                   Your profile is 100% complete!
                 </p>
               ) : (
-                <div className="mb-6 pt-4">
+                <div className="mb-0 pt-10">
                   <p className="text-mono-100 mb-2 text-center body-small">
                     Complete your profile to 100%.
                   </p>

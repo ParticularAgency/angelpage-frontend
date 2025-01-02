@@ -39,6 +39,7 @@ const userRole = session?.user?.role;
     pathname === '/checkout' || pathname === '/checkout/confirmation/';
 
   const isTempLogin = pathname === '/internal-home';
+  const isSellNowPage = pathname === '/product/post-product';
 
    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -100,9 +101,7 @@ const userRole = session?.user?.role;
                         </div>
                         {isTempLogin && (
                           <>
-                            <FavoritesAlert
-                              className="sm:hidden"
-                            />
+                            <FavoritesAlert className="sm:hidden" />
 
                             <div className="notification-dropdown-area relative sm:static">
                               <NotificationButton
@@ -235,8 +234,11 @@ const userRole = session?.user?.role;
           </header>
         </>
       )}
-
-      <StickyNavMenu session={{ session }} toggleDropdown={toggleDropdown} />
+      {isSellNowPage ? (
+        ''
+      ) : (
+        <StickyNavMenu session={{ session }} toggleDropdown={toggleDropdown} />
+      )}
     </>
   );
 };

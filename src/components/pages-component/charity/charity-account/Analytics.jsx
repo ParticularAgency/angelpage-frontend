@@ -9,13 +9,19 @@ import CustomerAcquisition from './CustomerAcquisition';
 
 const AnalyticsPage = () => {
   const { data: session } = useSession() || {};
-  const [dashboardData, setDashboardData] = useState(null); // Seller Data
+  const [dashboardData, setDashboardData] = useState({
+    changes: {},
+    totalSold: 0,
+    totalRevenue: 0,
+  });
+
   const [period, setPeriod] = useState('Year');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Fetch Seller Data
   useEffect(() => {
+    if (!session?.token) return;
     if (session?.token) {
       const fetchDashboardData = async () => {
         try {
@@ -41,7 +47,6 @@ const AnalyticsPage = () => {
   }, [session?.token]);
 
 
-
   // Handle loading and error states
   if (loading) {
     return <p>Loading...</p>;
@@ -56,24 +61,26 @@ const AnalyticsPage = () => {
   }
 
   // Helper function to get percentage change based on the period
-  const getPeriodChange = (key) => {
+  const getPeriodChange = key => {
+    const changes = dashboardData?.changes || {};
     switch (period) {
       case 'Week':
-        return dashboardData?.changes.weekly[key];
+        return changes?.weekly?.[key] || 0;
       case 'Month':
-        return dashboardData?.changes.monthly[key];
+        return changes?.monthly?.[key] || 0;
       case 'Year':
       default:
-        return dashboardData?.changes.yearly[key];
+        return changes?.yearly?.[key] || 0;
     }
   };
 
   // Prepare overview data for the UI
   const overviewData = {
-    revenue: dashboardData?.totalRevenue || '0',
+    revenue: dashboardData?.totalRevenue || 0,
     revenueChange: getPeriodChange('revenueChange'),
-    itemsSold: dashboardData?.totalSold || '0',
+    itemsSold: dashboardData?.totalSold || 0,
     itemsSoldChange: getPeriodChange('soldChange'),
+
 
   };
 
@@ -93,8 +100,8 @@ const AnalyticsPage = () => {
             setPeriod={setPeriod}
             data={[
               {
-                orders: dashboardData?.totalSold || '0',
-                revenue: dashboardData?.totalRevenue || '0',
+                orders: dashboardData?.totalSold || 0,
+                revenue: dashboardData?.totalRevenue || 0,
               },
             ]}
             changes={dashboardData?.changes}

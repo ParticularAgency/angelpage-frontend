@@ -93,7 +93,7 @@ const CharityAccount = () => {
                   >
                     Listings{' '}
                     {productsCount && (
-                      <span className="absolute -top-3 -right-[14px] w-[17px] h-6 flex items-center justify-center bg-error forms-bold font-medium text-mono-0 rounded-[8px] ">
+                      <span className="absolute -top-3 -right-[14px] sm:top-0 sm:-right-2 w-[17px] h-6 flex items-center justify-center bg-error forms-bold font-medium text-mono-0 rounded-[8px] ">
                         {productsCount}
                       </span>
                     )}

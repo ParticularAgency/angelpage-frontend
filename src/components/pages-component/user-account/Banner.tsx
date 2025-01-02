@@ -104,7 +104,7 @@ const BannerSection = () => {
               Your profile is 100% complete!
             </p>
           ) : (
-            <div className="mb-6 pt-4">
+            <div className="mb-0 pt-10">
               <p className="text-mono-100 mb-2 text-center body-small">
                 Complete your profile to 100%.
               </p>
@@ -137,7 +137,7 @@ const BannerSection = () => {
               <div className="skeleton bg-mono-40 h-10 w-10 shrink-0 rounded-full"></div>
             )}
             <div className="users-info-cont">
-              <h1 className="h5 font-primary user-profile-name whitespace-nowrap text-mono-100 mb-[2px]">
+              <h1 className="h5 sm:text-[17px]  font-primary user-profile-name whitespace-nowrap text-mono-100 mb-[2px]">
                 {userData?.firstName || 'Unknown'}
               </h1>
               <p className="user-username body-small">
