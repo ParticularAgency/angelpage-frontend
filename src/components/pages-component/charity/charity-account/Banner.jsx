@@ -158,7 +158,7 @@ const BannerSection = () => {
     <section className="charity-account-banner-section bg-mono-100 sm:bg-transparent sm:mt-2">
       <div className="custom-container-full laptop-m:pl-6 sm:px-3">
         {(!profileData.verified || !profileData.profileCompleted) && (
-          <div className="profile-status-area bg-mono-0 pb-2">
+          <div className="profile-status-area bg-mono-0 py-10 sm:py-8">
             <div className="custom-container">
               {!profileData.verified && (
                 <div className="email-verify-area py-2 text-center flex items-center justify-center gap-2">
@@ -176,11 +176,11 @@ const BannerSection = () => {
               )}
 
               {profileData.profileCompleted ? (
-                <p className="text-success text-center pt-3 mb-2 body-small">
+                <p className="text-success text-center body-small">
                   Your profile is 100% complete!
                 </p>
               ) : (
-                <div className="mb-0 pt-10">
+                <div className="mb-0 ">
                   <p className="text-mono-100 mb-2 text-center body-small">
                     Complete your profile to 100%.
                   </p>

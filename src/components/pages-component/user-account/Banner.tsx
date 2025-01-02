@@ -81,10 +81,10 @@ const BannerSection = () => {
 
   return (
     <section className="users-account-banner-section relative pt-0 pb-[50px] sm:pb-9">
-      <div className="profile-status-area">
+      <div className="profile-status-area  pt-10 sm:pt-8">
         <div className="custom-container">
           {!profileData.verified && (
-            <div className="email-verify-area py-2 text-center flex items-center justify-center gap-2">
+            <div className="email-verify-area text-center flex items-center justify-center gap-2">
               <p className="text-error body-small">
                 Your email is not verified. Please verify your email.
               </p>
@@ -100,11 +100,11 @@ const BannerSection = () => {
 
           {/* Profile Completion Progress */}
           {profileData.profileCompleted ? (
-            <p className="text-success text-center pt-10 mb-0 body-small">
+            <p className="text-success text-center body-small">
               Your profile is 100% complete!
             </p>
           ) : (
-            <div className="mb-0 pt-10">
+            <div className="mb-0">
               <p className="text-mono-100 mb-2 text-center body-small">
                 Complete your profile to 100%.
               </p>
@@ -155,7 +155,6 @@ const BannerSection = () => {
             </p>
           </div>
         </div>
-       
       </div>
     </section>
   );
