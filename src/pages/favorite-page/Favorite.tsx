@@ -56,7 +56,7 @@ const FavoritePage = () => {
         setFavoriteCharities([]);
       }
     } catch (error) {
-      console.error('Error fetching favorites:', error);
+      console.error('Error fetching favourites:', error);
       setFavoriteProducts([]);
       setFavoriteCharities([]);
     } finally {
@@ -72,7 +72,7 @@ const FavoritePage = () => {
     return <PreLoader />;
   }
 
-  console.log('Favorite Products:', favoriteProducts);
+  console.log('favourite Products:', favoriteProducts);
 
   return (
     <div className="favorite-page-content-wrapper">

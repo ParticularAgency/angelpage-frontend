@@ -147,7 +147,7 @@ const NotificationDropdown = ({
               <span className="body-small text-mono-100">Close</span>
             </button>
             <button
-              className={`tab-button w-1/2 py-[18px] flex items-center gap-2 px-5 relative body-small sm:py-3 text-center ${
+              className={`tab-button w-1/2 py-[18px] flex justify-center items-center gap-2 px-5 relative body-small sm:py-3 text-center ${
                 activeTab === 'messages'
                   ? 'active text-mono-100'
                   : 'text-mono-70'
@@ -160,7 +160,7 @@ const NotificationDropdown = ({
               </span>
             </button>
             <button
-              className={`tab-button w-1/2 py-[18px] flex items-center gap-2 px-5 relative body-small sm:py-3 text-center ${
+              className={`tab-button w-1/2 py-[18px] flex justify-center items-center gap-2 px-5 relative body-small sm:py-3 text-center ${
                 activeTab === 'notifications'
                   ? 'active text-mono-100'
                   : 'text-mono-70'

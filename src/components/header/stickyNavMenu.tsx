@@ -63,7 +63,7 @@ const StickyNavMenu: React.FC<StickyNavbar> = ({ toggleDropdown}) => {
               >
                 <div className="icons-box">
                   <Image
-                    src="/images/Search-default-icon.svg"
+                    src="/images/info-icon.svg"
                     alt="search icon"
                     width={24}
                     height={24}
@@ -94,7 +94,7 @@ const StickyNavMenu: React.FC<StickyNavbar> = ({ toggleDropdown}) => {
             </li>
             <li className="sticky-mobilenav-list">
               <Link
-                href="/login"
+                href="/auth/login"
                 className="text-center flex items-center justify-center flex-col gap-[13px]"
               >
                 <div className="icons-box">
@@ -133,7 +133,10 @@ const StickyNavMenu: React.FC<StickyNavbar> = ({ toggleDropdown}) => {
             <li className="sticky-mobilenav-list">
               <div className="text-center flex items-center justify-center flex-col gap-[13px]">
                 <div className="icons-box">
-                  <NotificationButton notificationBtnClass="block" toggleDropdown={toggleDropdown} />
+                  <NotificationButton
+                    notificationBtnClass="block"
+                    toggleDropdown={toggleDropdown}
+                  />
                 </div>
                 <p className="link-title font-secondary font-normal text-center text-mono-100 text-body-small xxs:text-[13px] leading-[150%]">
                   Notification

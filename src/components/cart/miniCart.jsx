@@ -50,7 +50,7 @@ const totalPrice = cartItems.reduce((acc, item) => {
           <div className="drawer-content">
             <label
               htmlFor="my-drawer-4"
-              className="drawer-button relative btn !bg-transparent !p-0 !border-none"
+              className="drawer-button -top-[2px] relative btn !bg-transparent !p-0 !border-none"
             >
               {status === 'loading' ? (
                 <span className="absolute top-[1px] w-5 h-5 right-[-10px] sm:right-[-8px] bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">

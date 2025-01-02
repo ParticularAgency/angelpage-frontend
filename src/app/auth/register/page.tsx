@@ -80,25 +80,25 @@ const Register = () => {
   return (
     <div className="flex md:flex-col gap-[143px] lg:gap-14 md:gap-0">
       <div
-        className="w-1/2 md:w-full bg-cover bg-center md:h-[510px]"
+        className="w-1/2 md:w-full sm:order-2 bg-cover bg-center md:h-[510px] sm:h-[250px]"
         style={{ backgroundImage: "url('/images/auth/hero.png')" }}
       >
-        <div className="flex -mt-36 md:-mt-28 justify-center h-full">
+        <div className="flex -mt-36 sm:-mt-16 md:-mt-28 justify-center h-full">
           <Image
             src="/images/auth/logo.svg"
             alt="Logo"
             width={367}
             height={100}
-            className="md:w-72"
+            className="md:w-72 sm:w-56"
           />
         </div>
       </div>
 
-      <div className="w-1/2 md:w-full md:flex md:justify-center md:px-10 pt-[103px] pb-[260px] md:pb-[160px]">
+      <div className="w-1/2 sm:order-1 sm:pt-14 sm:pb-20 md:w-full md:flex md:justify-center md:px-10 pt-[103px] pb-[260px] md:pb-[160px]">
         <div className="w-full max-w-md">
           <h4 className="text-center mb-[18px]">Register</h4>
 
-          <div className="flex space-x-2 justify-center mb-[54px]">
+          <div className="flex space-x-2 justify-center mb-[54px] sm:mb-9"> 
             <button
               className={`p-2 text-body-small rounded-3xl ${activeTab === 'individual' ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold' : 'bg-transparent text-mono-100'}`}
               onClick={() => setActiveTab('individual')}
@@ -241,7 +241,6 @@ const Register = () => {
           </form>
         </div>
       </div>
-    
     </div>
   );
 };

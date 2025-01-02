@@ -167,14 +167,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <p className="text-body-small mt-2">
               {status === 'DRAFT'
                 ? 'This will permanently delete the product.'
-                : 'This will archive the product.'}
+                : 'This will delete the product.'}
             </p>
             <div className="flex justify-end gap-4 mt-6">
               <Button variant="secondary" onClick={handleCancel}>
                 No
               </Button>
               <Button variant="primary" onClick={handleConfirmAction}>
-                Yes, {status === 'DRAFT' ? 'delete' : 'archive'}
+                Yes, {status === 'DRAFT' ? 'delete' : 'delete'}
               </Button>
             </div>
           </div>

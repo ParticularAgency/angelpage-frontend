@@ -227,7 +227,7 @@ const SoldItemsPage = () => {
                               type="text"
                               value={inputTrackingNumber}
                               onChange={handleTrackingChange}
-                              placeholder="Order id number"
+                              placeholder="Tracking number"
                               className="caption h-10 max-w-[184px] sm:max-w-full w-full"
                             />
                             <Button

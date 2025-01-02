@@ -55,8 +55,8 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
           </span>
         </p>
         <p className="body-bold-small mt-2">
-          + £{revenueIncrease}{' '}
-          <span className="text-mono-100">in the past week</span>
+           £{revenueIncrease}{' '}
+          <span className="text-[#8A888C]">in the past week</span>
         </p>
       </div>
 
@@ -77,8 +77,8 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
           </span>
         </p>
         <p className="body-bold-small mt-2">
-          +{itemsSoldIncrease}{' '}
-          <span className="text-mono-100">in the past week</span>
+          {itemsSoldIncrease}{' '}
+          <span className="text-[#8A888C]">in the past week</span>
         </p>
       </div>
 
@@ -99,8 +99,8 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
           </span>
         </p>
         <p className="body-bold-small mt-2">
-          +{itemsBoughtIncrease}{' '}
-          <span className="text-mono-100">in the past week</span>
+          {itemsBoughtIncrease}{' '}
+          <span className="text-[#8A888C]">in the past week</span>
         </p>
       </div>
 
@@ -121,8 +121,8 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
           </span>
         </p>
         <p className="body-bold-small mt-2">
-          + £{moneySpentIncrease}{' '}
-          <span className="text-mono-100">in the past week</span>
+           £{moneySpentIncrease}{' '}
+          <span className="text-[#8A888C]">in the past week</span>
         </p>
       </div>
     </div>

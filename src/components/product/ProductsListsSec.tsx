@@ -171,7 +171,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
   if (error) {
     return (
       <>
-        <div className="not-found-screen-design flex flex-col items-center pt-20 pb-24 custom-container">
+        <div className="not-found-screen-design flex flex-col items-center pt-12 pb-12 custom-container">
           <h5 className="body-bold-medium text-mono-100 font-medium font-secondary mb-2 text-center">
             No products listed!
           </h5>

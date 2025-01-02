@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import React, { forwardRef, useState } from 'react';
 
 interface InputProps {
@@ -45,12 +46,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       status = 'default',
       errorMessage,
       inputClasses,
-      onFocus, // Accept onFocus and onBlur as props
+      onFocus,
       onBlur,
     },
     ref
   ) => {
     const [isFocused, setIsFocused] = useState(false);
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     const getStatusBorderColor = () => {
       if (isFocused) {
@@ -79,6 +81,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       if (onBlur) onBlur(event); // Call onBlur if provided
     };
 
+    const togglePasswordVisibility = () => {
+      setPasswordVisible(prev => !prev);
+    };
+
     return (
       <div className={`input-wrapper flex gap-2 ${className}`}>
         {label && (
@@ -89,26 +95,53 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             {label}
           </label>
         )}
-        <input
-          type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          name={name}
-          id={id}
-          required={required}
-          disabled={disabled}
-          checked={checked}
-          ref={ref}
-          className={`${inputClasses} ${status} input-field h-10 py-[11px] px-[8px] w-full text-body-caption font-normal leading-[150%] font-secondary text-mono-60 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100 ${
-            disabled ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-          style={{
-            border: `1px solid ${getStatusBorderColor()}`,
-          }}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        />
+        <div className="relative w-full">
+          <input
+            type={type === 'password' && passwordVisible ? 'text' : type}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+            name={name}
+            id={id}
+            required={required}
+            disabled={disabled}
+            checked={checked}
+            ref={ref}
+            className={`${inputClasses} ${status} input-field h-10 py-[11px] px-[8px] w-full text-body-caption font-normal leading-[150%] font-secondary text-mono-60 focus:text-mono-100 visited:text-mono-100 focus-visible:text-mono-100 ${
+              disabled ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            style={{
+              border: `1px solid ${getStatusBorderColor()}`,
+            }}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+          />
+          {type === 'password' && (
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-mono-60 hover:text-mono-100 focus:outline-none"
+              onClick={togglePasswordVisibility}
+            >
+              {passwordVisible ? (
+                <Image
+                  src="/images/8666618_eye_icon.png"
+                  alt="eye icons"
+                  width={512}
+                  height={512}
+                  className="w-5 h-5"
+                />
+              ) : (
+                <Image
+                  src="/images/4473003_hide_hide eye_hide password_icon.png"
+                  alt="eye icons"
+                  width={512}
+                  height={512} 
+                  className="w-5 h-5" 
+                />
+              )}
+            </button>
+          )}
+        </div>
         {status === 'error' && errorMessage && (
           <p className="error-message text-body-caption text-error">
             {errorMessage}

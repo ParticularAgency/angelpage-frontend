@@ -22,7 +22,10 @@ const ProductBannerSec = ({
             {subcategory ? (
               <>
                 <li className="breadcrumb-item body-caption current-page text-mono-70 flex items-center gap-[10px]">
-                  <a className="body-caption text-mono-70 capitalize">
+                  <a
+                    href={`/product?category=${category}`}
+                    className="body-caption text-mono-70 capitalize"
+                  >
                     {category}
                   </a>
                   <span className="angle">{'>'}</span>

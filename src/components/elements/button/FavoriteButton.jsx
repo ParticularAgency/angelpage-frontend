@@ -17,10 +17,10 @@ const FavoriteButton = ({ itemId, type }) => {
 
   const handleFavoriteToggle = () => {
     if (!session?.user?.id) {
-        ToastService.error('User must be logged in to favorite an item');
+        ToastService.error('User must be logged in to favourite an item');
       return;
     }
-        ToastService.success('Favorite toggled successfully');
+        ToastService.success('Favourite toggled successfully');
 
     dispatch(
       toggleFavorite({
@@ -36,7 +36,7 @@ const FavoriteButton = ({ itemId, type }) => {
     <div
       className="favorite-btn-item cursor-pointer p-3"
       onClick={handleFavoriteToggle}
-      title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+      title={isFavorite ? 'Remove from favourites' : 'Add to favorites'}
     >
       <FavoriteOutlineIcon
         fillColor={isFavorite ? '#611192' : 'none'}

@@ -241,7 +241,7 @@ input {
 .megamenu-group-items {
     position: absolute;
     width: 100%;
-    top: 47px;
+    top: 40px;
     background: #fff;
     padding: 25px 26px 35px;
     z-index: 999;
