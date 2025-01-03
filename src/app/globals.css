@@ -547,6 +547,13 @@
     .minicart-body-product-info .cart-add-product-item-wrapper:not(:last-child) {
       border-bottom: 1px solid #AAA7AB;
     }
+    .term-info-item{
+        overflow-wrap: break-word; 
+        word-wrap: break-word; 
+        word-break: break-word;
+        hyphens: auto; 
+
+    }
   }
 
   @layer utilities {}
