@@ -468,34 +468,34 @@ console.log(selectedAddress);
                       </label>
                     ))}
                   </div>
-                  {loading ? 
-                  <>
-                  {services.length > 0 && (
-                    <div className="service-selection">
-                      <h5 className="mb-2">Select Service:</h5>
-                      {services.map(service => (
-                        <label
-                          key={service.code}
-                          className="flex items-center gap-2 mb-2"
-                        >
-                          <Checkbox
-                            checked={tempSelectedService === service.code}
-                            onChange={() =>
-                              setTempSelectedService(service.code)
-                            }
-                          />
-                          {service.name}
-                        </label>
-                      ))}
-                    </div>
+                  {loading ? (
+                    <>
+                      <p>Loading...</p>
+                    </>
+                  ) : (
+                    <>
+                      {services.length > 0 && (
+                        <div className="service-selection">
+                          <h5 className="mb-2">Select Service:</h5>
+                          {services.map(service => (
+                            <label
+                              key={service.code}
+                              className="flex items-center gap-2 mb-2"
+                            >
+                              <Checkbox
+                                checked={tempSelectedService === service.code}
+                                onChange={() =>
+                                  setTempSelectedService(service.code)
+                                }
+                              />
+                              {service.name}
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   )}
-                  </>
-                  : 
-                  <>
-                  <p>Loading...</p>
-                  </>
-                }
-                  
+
                   <Button
                     variant="primary"
                     className="mt-4 ml-auto max-w-24 w-full !block "
