@@ -453,6 +453,26 @@ console.log(selectedAddress);
                   <h3 className="h4 text-center font-normal mb-4">
                     Carriers and Services
                   </h3>
+                     {loading ? (
+                    <>
+                      <div className="service-selection">
+                        <h5 className="mb-3">
+                          <p className="skeleton max-w-[140px] w-full h-4 bg-mono-50"></p>
+                        </h5>
+
+                        <label className="flex items-center gap-2 mb-2">
+                          <span className="skeleton max-w-[350px] w-full  h-2 bg-mono-50"></span>
+                        </label>
+                        <label className="flex items-center gap-2 mb-2">
+                          <span className="skeleton max-w-[350px] w-full  h-2 bg-mono-50"></span>
+                        </label>
+                        <label className="flex items-center gap-2 mb-2">
+                          <span className="skeleton max-w-[350px] w-full  h-2 bg-mono-50"></span>
+                        </label>
+                      </div>
+                    </>
+                  ) : (
+                    <>
                   <div className="carrier-selection mb-4">
                     <h5 className="mb-2">Select Carrier:</h5>
                     {carriers.map(carrier => (
@@ -468,9 +488,25 @@ console.log(selectedAddress);
                       </label>
                     ))}
                   </div>
+                  </>
+                  )}
                   {loading ? (
                     <>
-                      <p>Loading...</p>
+                      <div className="service-selection">
+                        <h5 className="mb-3">
+                          <p className="skeleton max-w-[140px] w-full h-4 bg-mono-50"></p>
+                        </h5>
+
+                        <label className="flex items-center gap-2 mb-2">
+                          <span className="skeleton max-w-[350px] w-full  h-2 bg-mono-50"></span>
+                        </label>
+                        <label className="flex items-center gap-2 mb-2">
+                          <span className="skeleton max-w-[350px] w-full  h-2 bg-mono-50"></span>
+                        </label>
+                        <label className="flex items-center gap-2 mb-2">
+                          <span className="skeleton max-w-[350px] w-full  h-2 bg-mono-50"></span>
+                        </label>
+                      </div>
                     </>
                   ) : (
                     <>

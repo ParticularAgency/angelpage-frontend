@@ -1,18 +1,8 @@
 'use client';
 import React from 'react';
 
-interface BusinessOverviewData {
-  revenue: number; // Total revenue
-  revenueChange: number; // Percentage change in revenue
-  itemsSold: number; // Total items sold
-  itemsSoldChange: number; // Percentage change in items sold
-}
 
-interface BusinessOverviewProps {
-  data: BusinessOverviewData; // Use the defined type for data
-}
-
-const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
+const BusinessOverview = ({ data }) => {
   if (!data) {
     return <div>Loading...</div>; // Or any fallback UI
   }
@@ -24,7 +14,9 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
   const itemsSoldIncrease = Math.round(
     data.itemsSold * (data.itemsSoldChange / 100)
   );
-
+  // Format percentage changes
+  const formattedRevenueChange = data.revenueChange.toFixed(2);
+  const formattedItemsSoldChange = data.itemsSoldChange.toFixed(2);
 
   return (
     <div className="grid grid-cols-12 sm:grid-cols-6 gap-6 business-overview-area pb-[45px]">
@@ -40,8 +32,8 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
                 : 'text-[#FF0000] bg-[rgba(255,187,187,.60)]'
             } rounded-full`}
           >
-            {data.revenueChange >= 0 ? '↑' : '↓'} {Math.abs(data.revenueChange)}
-            %
+            {data.revenueChange >= 0 ? '↑' : '↓'}{' '}
+            {Math.abs(formattedRevenueChange)}%
           </span>
         </p>
         <p className="body-bold-small mt-2">
@@ -63,7 +55,7 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
             } rounded-full`}
           >
             {data.itemsSoldChange >= 0 ? '↑' : '↓'}{' '}
-            {Math.abs(data.itemsSoldChange)}%
+            {Math.abs(formattedItemsSoldChange)}%
           </span>
         </p>
         <p className="body-bold-small mt-2">

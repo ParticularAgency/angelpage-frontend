@@ -1,22 +1,22 @@
 'use client';
 import React from 'react';
 
-interface BusinessOverviewData {
-  revenue: number; // Total revenue
-  revenueChange: number; // Percentage change in revenue
-  itemsSold: number; // Total items sold
-  itemsSoldChange: number; // Percentage change in items sold
-  itemsBought: number; // Total items bought
-  itemsBoughtChange: number; // Percentage change in items bought
-  moneySpent: number; // Total money spent
-  moneySpentChange: number; // Percentage change in money spent
-}
+// interface BusinessOverviewData {
+//   revenue: number; // Total revenue
+//   revenueChange: number; // Percentage change in revenue
+//   itemsSold: number; // Total items sold
+//   itemsSoldChange: number; // Percentage change in items sold
+//   itemsBought: number; // Total items bought
+//   itemsBoughtChange: number; // Percentage change in items bought
+//   moneySpent: number; // Total money spent
+//   moneySpentChange: number; // Percentage change in money spent
+// }
 
-interface BusinessOverviewProps {
-  data: BusinessOverviewData; // Use the defined type for data
-}
+// interface BusinessOverviewProps {
+//   data: BusinessOverviewData; // Use the defined type for data
+// }
 
-const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
+const BusinessOverview = ({ data }) => {
   if (!data) {
     return <div>Loading...</div>; // Or any fallback UI
   }
@@ -35,7 +35,7 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
     data.moneySpent *
     (data.moneySpentChange / 100)
   ).toFixed(2);
-
+const formattedMoneySpend = data.moneySpentChange.toFixed(2);
   return (
     <div className="grid grid-cols-12 sm:grid-cols-6 gap-6 business-overview-area pb-[45px]">
       {/* Revenue */}
@@ -55,7 +55,7 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
           </span>
         </p>
         <p className="body-bold-small mt-2">
-           £{revenueIncrease}{' '}
+          £{revenueIncrease}{' '}
           <span className="text-[#8A888C]">in the past week</span>
         </p>
       </div>
@@ -117,11 +117,11 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
             } rounded-full`}
           >
             {data.moneySpentChange >= 0 ? '↑' : '↓'}{' '}
-            {Math.abs(data.moneySpentChange)}%
+            {Math.abs(formattedMoneySpend)}%
           </span>
         </p>
         <p className="body-bold-small mt-2">
-           £{moneySpentIncrease}{' '}
+          £{moneySpentIncrease}{' '}
           <span className="text-[#8A888C]">in the past week</span>
         </p>
       </div>

@@ -23,7 +23,7 @@ const NotificationDropdown = ({
   const [loading, setLoading] = useState(false)
   const [messages, setMessages] = useState([]);
   const [messagesCount, setMessagesCount] = useState(0);
-    const [setError] = useState(null);
+    const [error , setError] = useState(null);
   const dropdownRef = useRef(null);
 useEffect(() => {
   if (session?.user?.id) {
@@ -242,7 +242,7 @@ const fetchUnreadMessages = async (userId) => {
           </div>
           <div className="tab-content">
             {activeTab === 'messages' ? (
-              messages.length === 0 ? (
+              error || messages.length === 0 ? (
                 <div className="not-found-screen-design flex flex-col items-center pt-20 pb-24 custom-container">
                   <Image
                     src="/images/notification/notification-icon.svg"
