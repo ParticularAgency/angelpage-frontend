@@ -38,7 +38,7 @@ const CharityStorefront = ({
         );
 
         setCharityData(response.data.charity);
-        console.log(response.data.charity);
+        console.log('charity response data' , response.data.charity);
       } catch (error) {
         ToastService.error('Error fetching charity data:', error);
       }
