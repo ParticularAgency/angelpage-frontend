@@ -198,6 +198,7 @@ console.log(selectedAddress);
 
   const fetchServices = async carrierCode => {
     if (!carrierCode) return;
+    setLoading(true);
     try {
       const response = await axios.get(
         `${API_BASE_URL}/order/carriers/${carrierCode}/services`,
@@ -213,6 +214,8 @@ console.log(selectedAddress);
       );
       ToastService.error('Failed to fetch services.');
       setServices([]);
+    }finally{
+       setLoading(false);
     }
   };
 
@@ -465,6 +468,8 @@ console.log(selectedAddress);
                       </label>
                     ))}
                   </div>
+                  {loading ? 
+                  <>
                   {services.length > 0 && (
                     <div className="service-selection">
                       <h5 className="mb-2">Select Service:</h5>
@@ -484,6 +489,13 @@ console.log(selectedAddress);
                       ))}
                     </div>
                   )}
+                  </>
+                  : 
+                  <>
+                  <p>Loading...</p>
+                  </>
+                }
+                  
                   <Button
                     variant="primary"
                     className="mt-4 ml-auto max-w-24 w-full !block "

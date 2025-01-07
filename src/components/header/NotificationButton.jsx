@@ -14,7 +14,7 @@ const NotificationButton = ({
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [messagesCount, setMessagesCount] = useState(0);
   const [loading, setLoading] = useState(false);
-   const [error, setError] = useState(null);
+   const [setError] = useState(null);
   const fetchNotifications = async () => {
     if (status !== 'authenticated' || !session?.user) {
       setError('User is not authenticated.');
@@ -65,7 +65,6 @@ const NotificationButton = ({
     }
 
     setLoading(true);
-    setError(null);
 
     try {
       console.log('Fetching unread messages for user ID:', userId);
@@ -99,10 +98,10 @@ const NotificationButton = ({
       setLoading(false);
     }
   };
-   if (status === 'loading') return <p>Loading session...</p>;
-   if (!session) return <p>Please log in to view your messages.</p>;
-   if (loading) return <p>Loading messages...</p>;
-   if (error) return <p>{error}</p>;
+  //  if (status === 'loading') return <p>Loading session...</p>;
+  //  if (!session) return <p>Please log in to view your messages.</p>;
+  //  if (loading) return <p>Loading messages...</p>;
+  //  if (error) return <p>{error}</p>;
 const totalNumber = messagesCount + notificationsCount;
   return (
     <button
