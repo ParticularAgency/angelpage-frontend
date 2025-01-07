@@ -27,7 +27,7 @@ import PreLoader from '../common/pre-loader/PreLoader';
 import countries from 'i18n-iso-countries';
 import FavoriteButton from '../elements/button/FavoriteButton';
 import enLocale from 'i18n-iso-countries/langs/en.json';
-import MessageButton from '@/app/messaging/chat/startChat';
+// import MessageButton from '@/app/messaging/chat/startChat';
 // import type { Swiper as SwiperInstance } from 'swiper';
 
 countries.registerLocale(enLocale);
@@ -292,10 +292,10 @@ const ProductSinglepage = () => {
                 )}
               </div>
               <div className="product-states flex items-center gap-2">
-                <MessageButton
+                {/* <MessageButton
                   sellerId={product.seller?.id || product.charity?.id}
                   sellerType={product.sellerType}
-                />
+                /> */}
 
                 <div className="product-favorite-btn cursor-pointer">
                   <FavoriteButton 

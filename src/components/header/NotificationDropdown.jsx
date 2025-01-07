@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import Image from 'next/image';
@@ -17,12 +17,12 @@ const NotificationDropdown = ({
 }) => {
   const [activeTab, setActiveTab] = useState('messages');
   const { data: session, status } = useSession() || '';
-  const router = useRouter();
+  // const router = useRouter();
   const [notifications, setNotifications] = useState([]);
   const [notificationsCount, setNotificationsCount] = useState([]);
   const [loading, setLoading] = useState(false)
   const [messages, setMessages] = useState([]);
-  const [messagesCount, setMessagesCount] = useState(0);
+  // const [messagesCount, setMessagesCount] = useState(0);
     const [error , setError] = useState(null);
   const dropdownRef = useRef(null);
 useEffect(() => {
@@ -210,7 +210,7 @@ const fetchUnreadMessages = async (userId) => {
               onClick={() => handleTabChange('messages')}
             >
               Messages
-              {loading ? (
+              {/* {loading ? (
                 <span class="relative left-auto w-5 h-5 bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
                   ...
                 </span>
@@ -218,7 +218,7 @@ const fetchUnreadMessages = async (userId) => {
                 <span class="relative left-auto w-5 h-5 bg-red-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
                   {messagesCount}
                 </span>
-              ) : null}
+              ) : null} */}
             </button>
             <button
               className={`tab-button w-1/2 py-[18px] flex justify-center items-center gap-2 px-5 relative body-small sm:py-3 text-center ${
@@ -259,41 +259,56 @@ const fetchUnreadMessages = async (userId) => {
                   </p>
                 </div>
               ) : (
-                <div className="notification-alert-area">
-                  <div className="notification-alert-area-content pt-0 px-0">
-                    <ul className="notification-alert-list">
-                      {messages.map(message => (
-                        <li
-                          key={message._id}
-                          className="notification-alert-list-item flex items-center justify-between gap-3 px-7 pt-4 pb-4"
-                        >
-                        
-                          <div className="alert-content relative">
-                            <p className="alert-text font-secondary caption text-mono-100 mb-[6px]">
-                              {message.content}
-                            </p>
-                            <div className="alert-time text-mono-100 eyebrow-small">
-                              {new Date(message.createdAt).toLocaleString()}
-                            </div>
-                          </div>
-                          <Button
-                            variant="accend-link"
-                            className="link-btn-msg-area text-[10px] !p-0 !underline !text-primary-color-100"
-                            onClick={() =>
-                              router.push(
-                                `/messaging/chat/${message.conversationId}`
-                              )
-                            }
-                          >
-                            View
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
+                // <div className="notification-alert-area">
+                //   <div className="notification-alert-area-content pt-0 px-0">
+                //     <ul className="notification-alert-list">
+                //       {messages.map(message => (
+                //         <li
+                //           key={message._id}
+                //           className="notification-alert-list-item flex items-center justify-between gap-3 px-7 pt-4 pb-4"
+                //         >
+
+                //           <div className="alert-content relative">
+                //             <p className="alert-text font-secondary caption text-mono-100 mb-[6px]">
+                //               {message.content}
+                //             </p>
+                //             <div className="alert-time text-mono-100 eyebrow-small">
+                //               {new Date(message.createdAt).toLocaleString()}
+                //             </div>
+                //           </div>
+                //           <Button
+                //             variant="accend-link"
+                //             className="link-btn-msg-area text-[10px] !p-0 !underline !text-primary-color-100"
+                //             onClick={() =>
+                //               router.push(
+                //                 `/messaging/chat/${message.conversationId}`
+                //               )
+                //             }
+                //           >
+                //             View
+                //           </Button>
+                //         </li>
+                //       ))}
+                //     </ul>
+                //   </div>
+                // </div>
+                <>
+                  <div className="not-found-screen-design flex flex-col items-center pt-20 pb-24 custom-container">
+                    <Image
+                      src="/images/notification/notification-icon.svg"
+                      width={80}
+                      height={80}
+                      className="w-[34px] h-10 mb-5"
+                      alt="notify icon"
+                    />
+                    <h5 className="body-bold-small text-mono-100 font-medium font-secondary mb-2 text-center">
+                      No messages yet
+                    </h5>
+                    <p className="body-small text-center font-secondary font-regular text-mono-90 max-w-[227px] w-full mx-auto">
+                      This is where you’ll receive your messages
+                    </p>
                   </div>
-                  
-                </div>
-                
+                </>
               )
             ) : notifications.length === 0 ? (
               <div className="not-found-screen-design flex flex-col items-center pt-20 pb-24 custom-container">

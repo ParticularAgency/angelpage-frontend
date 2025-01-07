@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import BusinessOverview from './BusinessOverview';
 import RevenueStatistics from './RevenueStatistics';
-import CustomerAcquisition from './CustomerAcquisition';
+// import CustomerAcquisition from './CustomerAcquisition';
 
 const AnalyticsPage = () => {
   const { data: session } = useSession() || {};
@@ -152,7 +152,7 @@ const AnalyticsPage = () => {
           />
         </div>
         <div className="col-span-6 h-full">
-          <CustomerAcquisition />
+          {/* <CustomerAcquisition /> */}
         </div>
       </div>
     </div>

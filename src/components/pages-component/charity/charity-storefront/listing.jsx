@@ -8,7 +8,7 @@ import SearchBar from '@/components/elements/search/SearchBar';
 // import { Product } from '@/types/productTypes';
 import { CloseIcon, FilterIcon } from '@/icons';
 import Loading from '@/app/loading'; // Import your Loading component
-import { ToastService } from '@/components/elements/notifications/ToastService';
+// import { ToastService } from '@/components/elements/notifications/ToastService';
 
 const CharityStoreListing = ({
   storefrontid,
@@ -43,10 +43,10 @@ const CharityStoreListing = ({
         const data = await response.json();
         setProducts(data.charity.listedProducts);
         setFilteredProducts(data.charity.listedProducts);
-        ToastService.success('Products loaded successfully.');
+        // ToastService.success('Products loaded successfully.');
       } catch (error) {
         console.error('Error fetching products:', error);
-        ToastService.error('Error loading products.');
+        // ToastService.error('Error loading products.');
       } finally {
         setLoading(false);
       }

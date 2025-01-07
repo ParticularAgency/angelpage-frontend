@@ -74,7 +74,7 @@ const Login = () => {
   useEffect(() => {
     if (session?.user?.role && session?.user?.id) {
       const userRole = session.user.role;
-      ToastService.success('Login successful! Redirecting to account...');
+      // ToastService.success('Login successful! Redirecting to account...');
       setTimeout(() => {
         if (userRole === 'USER') {
           router.push(`/`);

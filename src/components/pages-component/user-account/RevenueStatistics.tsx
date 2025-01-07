@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+// import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface RevenueStatisticsProps {
   period: 'Week' | 'Month' | 'Year'; // Selected time period
@@ -20,7 +20,7 @@ interface RevenueStatisticsProps {
 
 const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
   period,
-  setPeriod,
+  // setPeriod,
   data,
   changes,
 }) => {
@@ -58,17 +58,17 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
   const isRevenueIncrease = revenueChange >= 0;
 
   // Determine X-axis data key based on the period
-  const getXAxisKey = () => {
-    switch (period) {
-      case 'Week':
-        return 'week';
-      case 'Month':
-        return 'month';
-      case 'Year':
-      default:
-        return 'year';
-    }
-  };
+  // const getXAxisKey = () => {
+  //   switch (period) {
+  //     case 'Week':
+  //       return 'week';
+  //     case 'Month':
+  //       return 'month';
+  //     case 'Year':
+  //     default:
+  //       return 'year';
+  //   }
+  // };
 
   return (
     <div className="revenue-statistics flex flex-col justify-between h-full">
@@ -95,7 +95,7 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
         </div>
 
         {/* Period Selection Buttons */}
-        <div className="bg-gray-200 flex items-center rounded">
+        {/* <div className="bg-gray-200 flex items-center rounded">
           {['Week', 'Month', 'Year'].map(p => (
             <button
               key={p}
@@ -107,18 +107,18 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
               {p}
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Bar Chart */}
-      <ResponsiveContainer width="100%" height={300}>
+      {/* <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
           <XAxis dataKey={getXAxisKey()} />
           <Tooltip formatter={value => `£${value.toLocaleString()}`} />
           <Bar dataKey="orders" stackId="a" fill="#6A0398" />
           <Bar dataKey="revenue" stackId="a" fill="#C9C8CA" />
         </BarChart>
-      </ResponsiveContainer>
+      </ResponsiveContainer> */}
     </div>
   );
 };
