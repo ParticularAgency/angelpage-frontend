@@ -6,7 +6,7 @@ import StoreFrontBanner from './banner';
 import AboutInfoComponent from './about';
 import CharityStoreListing from './listing';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
-import { ToastService } from '@/components/elements/notifications/ToastService';
+// import { ToastService } from '@/components/elements/notifications/ToastService';
 import Loading from '@/app/loading';
 
 
@@ -32,15 +32,15 @@ const CharityStorefront = ({
           `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}`
         );
 
-        ToastService.success(
-          'Charity Data fetched successfully:',
-          response.data
-        );
+        // ToastService.success(
+        //   'Charity Data fetched successfully:',
+        //   response.data
+        // );
 
         setCharityData(response.data.charity);
         console.log('charity response data' , response.data.charity);
       } catch (error) {
-        ToastService.error('Error fetching charity data:', error);
+        console.log('Error fetching charity data:', error);
       }
     };
 
@@ -58,10 +58,10 @@ const CharityStorefront = ({
         setProductCount(data.charity.listedProducts?.length || 0);
         console.log('list product:', data.charity.listedProducts);
         console.log('total product:', data.charity.listedProducts?.length || 0);
-        ToastService.success('Products loaded successfully.');
+        // ToastService.success('Products loaded successfully.');
       } catch (error) {
         console.error('Error fetching products:', error);
-        ToastService.error('Error loading products.');
+        // ToastService.error('Error loading products.');
       } finally {
         setLoading(false);
       }
