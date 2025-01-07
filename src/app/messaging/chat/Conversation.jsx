@@ -10,7 +10,7 @@ import Image from 'next/image';
 
 
 const ConversationPage = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const params = useParams();
   const conversationId = params?.conversationId; // Explicitly cast to string
 
@@ -30,7 +30,7 @@ const ConversationPage = () => {
       console.error('User is not authenticated.');
       return;
     }
-
+     setLoading(true);
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/message/conversations/${conversationId}`,
@@ -101,9 +101,9 @@ const ConversationPage = () => {
     }
   };
 
-  if (status === 'loading') return <p>Loading session...</p>;
-  if (!session) return <p>Please log in to access this page.</p>;
-  if (loading) return <p>Loading messages...</p>;
+  // if (status === 'loading') return <p>Loading session...</p>;
+  // if (!session) return <p>Please log in to access this page.</p>;
+  // if (loading) return <p>Loading messages...</p>;
 
   console.log('current user message', messages);
 
@@ -211,69 +211,79 @@ const ConversationPage = () => {
                     className="w-[111px] h-[34px] mx-auto mb-6"
                   />
                   <div className="chat-conversion-area">
-                    <div className="conversion-sessions">
-                      <div className="conversion-session-time">
-                        {/* per 24 hour it take new date with conversion */}
-                        <p className="time-temps-per-day text-center eyebrow-small text-mono-90 uppercase mb-6">
-                          TODAY, 05TH January
-                        </p>
-                      </div>
-                      {messages.map(message => (
-                        <div
-                          key={message?._id}
-                          className={
-                            message?.sender?._id === session.user.id
-                              ? 'sender-message mb-6 max-w-[550px] ml-auto'
-                              : 'recipient-message mb-6  max-w-[550px] mr-auto'
-                          }
-                        >
-                          <div
-                            className={`user-info flex items-center ${
-                              message?.sender?._id === session.user.id
-                                ? 'flex-row-reverse'
-                                : ''
-                            } gap-[11px]`}
-                          >
-                            <div className="user-image">
-                              <Image
-                                src="/images/icons/elisp-profile-default-img.svg"
-                                alt="mes-user-img"
-                                width={24}
-                                height={24}
-                                className="w-6 h-6 object-cover"
-                              />
-                            </div>
-                            <div
-                              className={`user-info flex items-center gap-2 ${
-                                message?.sender?._id === session.user.id
-                                  ? 'flex-row-reverse'
-                                  : ''
-                              }`}
-                            >
-                              <p className="name forms-bold text-mono-100">
-                                {message?.sender?._id === session.user.id
-                                  ? 'You'
-                                  : 'Other User'}
-                              </p>
-                              <p className="msg-time forms-bold text-mono-70">
-                                {new Date(message?.createdAt).toLocaleString()}
-                              </p>
-                            </div>
-                          </div>
-                          <div
-                            className={`message-cont-box ${
-                              message?.sender?._id === session.user.id
-                                ? 'pr-[35px]'
-                                : 'pl-[35px]'
-                            }`}
-                          >
-                            <p className="message-content pt-[15px] text-mono-100 forms-bold pr-[26px] pb-7 pl-[25px] bg-[#F6F8FA]">
-                              {message?.content}
+                    {loading ? (
+                      <>
+                        <p>Loading...</p>
+                      </>
+                    ) : (
+                      <>
+                        <div className="conversion-sessions">
+                          <div className="conversion-session-time">
+                            {/* per 24 hour it take new date with conversion */}
+                            <p className="time-temps-per-day text-center eyebrow-small text-mono-90 uppercase mb-6">
+                              TODAY, 05TH January
                             </p>
                           </div>
+                          {messages.map(message => (
+                            <div
+                              key={message?._id}
+                              className={
+                                message?.sender?._id === session.user.id
+                                  ? 'sender-message mb-6 max-w-[550px] ml-auto'
+                                  : 'recipient-message mb-6  max-w-[550px] mr-auto'
+                              }
+                            >
+                              <div
+                                className={`user-info flex items-center ${
+                                  message?.sender?._id === session.user.id
+                                    ? 'flex-row-reverse'
+                                    : ''
+                                } gap-[11px]`}
+                              >
+                                <div className="user-image">
+                                  <Image
+                                    src="/images/icons/elisp-profile-default-img.svg"
+                                    alt="mes-user-img"
+                                    width={24}
+                                    height={24}
+                                    className="w-6 h-6 object-cover"
+                                  />
+                                </div>
+                                <div
+                                  className={`user-info flex items-center gap-2 ${
+                                    message?.sender?._id === session.user.id
+                                      ? 'flex-row-reverse'
+                                      : ''
+                                  }`}
+                                >
+                                  <p className="name forms-bold text-mono-100">
+                                    {message?.sender?._id === session.user.id
+                                      ? 'You'
+                                      : 'Other User'}
+                                  </p>
+                                  <p className="msg-time forms-bold text-mono-70">
+                                    {new Date(
+                                      message?.createdAt
+                                    ).toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                              <div
+                                className={`message-cont-box ${
+                                  message?.sender?._id === session.user.id
+                                    ? 'pr-[35px]'
+                                    : 'pl-[35px]'
+                                }`}
+                              >
+                                <p className="message-content pt-[15px] text-mono-100 forms-bold pr-[26px] pb-7 pl-[25px] bg-[#F6F8FA]">
+                                  {message?.content}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </>
+                    )}
                   </div>
 
                   <div className="message-input-are relative mt-auto">
