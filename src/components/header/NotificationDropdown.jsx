@@ -166,7 +166,6 @@ const fetchUnreadMessages = async (userId) => {
   useEffect(() => {
     if (isDropdownOpen) {
       fetchNotifications();
-      // fetchUnreadMessages();
     }
   }, [isDropdownOpen, session, status]);
 
@@ -188,8 +187,8 @@ const fetchUnreadMessages = async (userId) => {
   const handleTabChange = tab => {
     setActiveTab(tab);
   };
- if (status === 'loading') return <p>Loading session...</p>;
- if (error) return <p>{error}</p>;
+//  if (status === 'loading') return <p>Loading session...</p>;
+//  if (error) return <p>{error}</p>;
   return (
     <div ref={dropdownRef}>
       {isDropdownOpen && (
@@ -268,13 +267,7 @@ const fetchUnreadMessages = async (userId) => {
                           key={message._id}
                           className="notification-alert-list-item flex items-center justify-between gap-3 px-7 pt-4 pb-4"
                         >
-                          {/* <Image
-                            src="/images/icons/elisp-profile-default-img.svg"
-                            alt='msg image'
-                            width={48}
-                            height={48}
-                            className="w-12 min-w-12 h-auto object-fill"
-                          /> */}
+                        
                           <div className="alert-content relative">
                             <p className="alert-text font-secondary caption text-mono-100 mb-[6px]">
                               {message.content}
@@ -298,45 +291,9 @@ const fetchUnreadMessages = async (userId) => {
                       ))}
                     </ul>
                   </div>
-                  {/* <div className="notification-alert-area-footer w-full flex justify-center py-3 px-5 sm:py-2">
-                    <Button
-                      variant="accend-link"
-                      className="caption text-center !p-0 !h-auto text-[#575757]"
-                      onClick={markAllNotificationAsRead}
-                    >
-                      Mark all as read
-                    </Button>
-                  </div> */}
+                  
                 </div>
-                // <div className="notification-massage-area">
-                //   <ul className="notification-msg-list">
-                //     {messages.map(message => (
-                //       <li key={message._id} className="message-item">
-                //         <div className="message-sender">
-                //           {/* <h3>
-                //             {message.sender?.firstName ||
-                //               message.sender?.charityName}{' '}
-                //             {message.sender?.lastName || ''}
-                //           </h3> */}
-                //           <p>{message.content}</p>
-                //           <small>
-                //             {new Date(message.createdAt).toLocaleString()}
-                //           </small>
-                //           <button
-                //             className="view-message-btn bg-blue-500 text-white px-3 py-1 rounded mt-2"
-                //             onClick={() =>
-                //               router.push(
-                //                 `/messaging/chat/${message.conversationId}`
-                //               )
-                //             }
-                //           >
-                //             View Message
-                //           </button>
-                //         </div>
-                //       </li>
-                //     ))}
-                //   </ul>
-                // </div>
+                
               )
             ) : notifications.length === 0 ? (
               <div className="not-found-screen-design flex flex-col items-center pt-20 pb-24 custom-container">

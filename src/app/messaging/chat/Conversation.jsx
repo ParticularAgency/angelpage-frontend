@@ -114,9 +114,9 @@ const ConversationPage = () => {
           <BannerSection />
         </div> */}
         <div className="message-content-area pb-20">
-          <div className="custom-container max-w-[960px]">
+          <div className="custom-container">
             <div className="message-area-wrapper pt-10 grid grid-cols-12 gap-6">
-              <div className="message-left-area hidden sticky h-[60vh] overflow-hidden col-span-5 sm:col-span-full">
+              <div className="message-left-area sticky h-[60vh] overflow-hidden col-span-5 sm:col-span-full">
                 <div className="conversation-list-header pt-[15px]">
                   <div className="converation-title-box flex justify-between items-center mb-4">
                     <h2 className="eyebrow-large font-secondary text-mono-100 uppercase">
@@ -201,7 +201,7 @@ const ConversationPage = () => {
                     ))}
                 </ul>
               </div>
-              <div className="message-right-area col-span-12 sm:col-span-full">
+              <div className="message-right-area col-span-7 sm:col-span-full">
                 <div className="message-main-content-wrapper h-full w-full pt-[17px] pb-[22px] px-12">
                   <Image
                     src="/images/logo-message.svg"
