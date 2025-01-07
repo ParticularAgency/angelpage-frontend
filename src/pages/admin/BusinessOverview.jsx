@@ -2,37 +2,37 @@
 
 import React from 'react';
 
-interface BusinessOverviewData {
-  revenue: number;
-  revenueChange: number; // Percentage change in revenue
-  itemsSold: number;
-  itemsSoldChange: number; // Percentage change in items sold
-  itemsBought: number;
-  itemsBoughtChange: number; // Percentage change in items bought
-  moneySpent: number;
-  moneySpentChange: number; // Percentage change in money spent
-  totalUsers: number;
-  userChange: number;
-  returningUsers: number;
-  totalReturningUsers: number;
-  returningUserPercent: number; // Percentage change in returning users
-  totalUserSessions: number;
-  sessionsUserPercent: number; // Percentage change in sessions
-}
+// interface BusinessOverviewData {
+//   revenue: number;
+//   revenueChange: number; // Percentage change in revenue
+//   itemsSold: number;
+//   itemsSoldChange: number; // Percentage change in items sold
+//   itemsBought: number;
+//   itemsBoughtChange: number; // Percentage change in items bought
+//   moneySpent: number;
+//   moneySpentChange: number; // Percentage change in money spent
+//   totalUsers: number;
+//   userChange: number;
+//   returningUsers: number;
+//   totalReturningUsers: number;
+//   returningUserPercent: number; // Percentage change in returning users
+//   totalUserSessions: number;
+//   sessionsUserPercent: number; // Percentage change in sessions
+// }
 
-interface BusinessOverviewProps {
-  data: Partial<BusinessOverviewData>; // Allow partial data to handle missing properties
-}
+// interface BusinessOverviewProps {
+//   data: Partial<BusinessOverviewData>; // Allow partial data to handle missing properties
+// }
 
-const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
+const BusinessOverview = ({ data }) => {
   if (!data) {
     return <div>Loading...</div>;
   }
 
-  const formatChange = (value: number) =>
+  const formatChange = (value) =>
     value >= 0 ? `↑ ${Math.abs(value)}%` : `↓ ${Math.abs(value)}%`;
 
-  const getBadgeStyle = (value: number) =>
+  const getBadgeStyle = (value) =>
     value >= 0
       ? 'text-[#00C700] bg-[rgba(165,255,187,.60)]'
       : 'text-[#FF0000] bg-[rgba(255,187,187,.60)]';
@@ -50,6 +50,10 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
     totalReturningUsers = 0,
     returningUserPercent = 0,
   } = data;
+const formattedItemsSold = Number(itemsSoldChange).toFixed(2);
+const formattedItemSession = Number(sessionsUserPercent).toFixed(2);
+const formattedTotalUser = Number(userChange).toFixed(2);
+const formattedReturningUser = Number(returningUserPercent).toFixed(2);
 
   return (
     <div className="grid grid-cols-12 sm:grid-cols-6 gap-5 business-overview-area">
@@ -65,7 +69,7 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
               userChange
             )} rounded-full`}
           >
-            {formatChange(userChange)}
+            {formatChange(formattedTotalUser)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last month</span>
         </p>
@@ -83,7 +87,7 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
               returningUserPercent
             )} rounded-full`}
           >
-            {formatChange(returningUserPercent)}
+            {formatChange(formattedReturningUser)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last week</span>
         </p>
@@ -101,7 +105,7 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
               itemsSoldChange
             )} rounded-full`}
           >
-            {formatChange(itemsSoldChange)}
+            {formatChange(formattedItemsSold)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last week</span>
         </p>
@@ -119,7 +123,7 @@ const BusinessOverview: React.FC<BusinessOverviewProps> = ({ data }) => {
               sessionsUserPercent
             )} rounded-full`}
           >
-            {formatChange(sessionsUserPercent)}
+            {formatChange(formattedItemSession)}
           </span>{' '}
           <span className="text-[#677788] caption-bold">from last week</span>
         </p>
