@@ -137,7 +137,7 @@ const BasketArea: React.FC<BasketAreaProps> = ({
             onClick={handlePayClick}
             disabled={loading || isLoading}
           >
-            {loading || isLoading ? 'Processing...' : 'Pay Now'}
+            {loading || isLoading ? 'Processing...' : 'Payment proceed '}
           </Button>
         </div>
       </div>

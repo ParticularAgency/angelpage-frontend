@@ -14,6 +14,7 @@ const Register = () => {
     userName: '',
     firstName: '',
     lastName: '',
+    charityNumber: '',
     email: '',
     password: '',
   });
@@ -98,7 +99,7 @@ const Register = () => {
         <div className="w-full max-w-md">
           <h4 className="text-center mb-[18px]">Register</h4>
 
-          <div className="flex space-x-2 justify-center mb-[54px] sm:mb-9"> 
+          <div className="flex space-x-2 justify-center mb-[54px] sm:mb-9">
             <button
               className={`p-2 text-body-small rounded-3xl ${activeTab === 'individual' ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold' : 'bg-transparent text-mono-100'}`}
               onClick={() => setActiveTab('individual')}
@@ -207,7 +208,7 @@ const Register = () => {
               />
             </div>
 
-            <div className="w-full">
+            <div className="w-full my-2">
               <Input
                 label="Password"
                 name="password"
@@ -219,7 +220,19 @@ const Register = () => {
                 onChange={handleChange}
               />
             </div>
-
+              {activeTab === 'individual' ? '' : (
+            <div className="w-full">
+              <Input
+                label="Charity Number"
+                name="charityNumber"
+                placeholder="000 000 00"
+                id="charityNumber"
+                className="flex-col"
+                value={formData.charityNumber}
+                onChange={handleChange}
+              />
+            </div>
+              ) }
             <Button
               type="submit"
               variant="tertiary"

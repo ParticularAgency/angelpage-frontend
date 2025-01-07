@@ -34,35 +34,41 @@ const FavoritePage = () => {
   const [loading, setLoading] = useState(true);
   const { data: session } = useSession() || {};
 
-  const fetchFavorites = async () => {
-    if (!session?.token) return;
+const fetchFavorites = async () => {
+  if (!session?.token) return;
 
-    setLoading(true);
-    try {
-      const response = await axios.get<FavoriteResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/favorites/added`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-        }
+  setLoading(true);
+  try {
+    const response = await axios.get<FavoriteResponse>(
+      `${process.env.NEXT_PUBLIC_API_URL}/favorites/added`,
+      {
+        headers: {
+          Authorization: `Bearer ${session.token}`,
+        },
+      }
+    );
+
+    if (response.data) {
+      // Filter out products with status === "REMOVED"
+      const filteredProducts = response.data.favoriteProducts?.filter(
+        product => product.status !== 'REMOVED'
       );
 
-      if (response.data) {
-        setFavoriteProducts(response.data.favoriteProducts || []);
-        setFavoriteCharities(response.data.favoriteCharities || []);
-      } else {
-        setFavoriteProducts([]);
-        setFavoriteCharities([]);
-      }
-    } catch (error) {
-      console.error('Error fetching favourites:', error);
+      setFavoriteProducts(filteredProducts || []);
+      setFavoriteCharities(response.data.favoriteCharities || []);
+    } else {
       setFavoriteProducts([]);
       setFavoriteCharities([]);
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching favourites:', error);
+    setFavoriteProducts([]);
+    setFavoriteCharities([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchFavorites();

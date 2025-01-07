@@ -27,7 +27,6 @@ const BoughtItems = () => {
             },
           }
         );
-
         if (!response.ok) {
           throw new Error(await response.text());
         }
@@ -36,7 +35,7 @@ const BoughtItems = () => {
         if (!Array.isArray(purchaseItems)) {
           throw new Error('Invalid data format received. Expected an array.');
         }
-        console.log(purchaseItems)
+        console.log('bought response' , purchaseItems)
         setPurchaseItems(purchaseItems);
         setSelectedItem(purchaseItems[0] || null); // Select the first item by default
       } catch (error) {
@@ -147,13 +146,15 @@ const BoughtItems = () => {
                     <span
                       className={`forms-bold bg-[#FAF2FF] inline-block whitespace-nowrap py-1 px-[6px] ${item.status === 'Complete' ? 'text-[#1FC430]' : 'text-[#D10C3B]'}`}
                     >
-                      {item.status === 'OrderPlaced'
+                      {item.status === 'OrderConfirmed'
                         ? 'Item shipped?'
-                        : item.status === 'InTransit'
-                          ? 'Item received?'
-                          : item.status === 'Delivered'
-                            ? 'Complete'
-                            : ''}
+                        : item.status === 'OrderPlaced'
+                          ? 'Awaiting payment'
+                          : item.status === 'InTransit'
+                            ? 'Item received?'
+                            : item.status === 'Delivered'
+                              ? 'Complete'
+                              : ''}
                     </span>
                   </div>
                 </div>
@@ -179,10 +180,30 @@ const BoughtItems = () => {
                       className={`w-[18px] h-[18px] rounded-full absolute dots-item-indicator left-[-36px] top-0 ${selectedItem.status ? 'bg-[#6A0398]' : 'states-not-complete'}`}
                     ></div>
                     <div>
-                      <p className="body-bold-small">Payment sent</p>
+                      <p className="body-bold-small">
+                        {selectedItem.status === 'OrderConfirmed'
+                          ? 'Payment sent'
+                          : selectedItem.status === 'OrderPlaced'
+                            ? 'Payment fail'
+                            : ''}
+                      </p>
                       <p className="forms text-mono-70 mt-1">
-                        {' '}
-                        {new Date(selectedItem.createdAt).toLocaleDateString()}
+                        {selectedItem.status === 'OrderConfirmed' ? (
+                          <>
+                            {new Date(
+                              selectedItem.paymentConfirmedAt
+                            ).toLocaleString()}
+                          </>
+                        ) : selectedItem.status === 'OrderPlaced' ? (
+                          <>
+                            {' '}
+                            {new Date(
+                              selectedItem.createdAt
+                            ).toLocaleString()}
+                          </>
+                        ) : (
+                          ''
+                        )}{' '}
                       </p>
                     </div>
                   </div>

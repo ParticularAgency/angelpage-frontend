@@ -50,7 +50,7 @@ const ConfirmationPage = () => {
      setOrderAddressinfo(order);
    } catch (error) {
      console.error('Error fetching order details:', error);
-     setError(error.message || 'An unexpected error occurred.');
+    //  setError(error.message || 'An unexpected error occurred.');
    } finally {
      setLoading(false);
    }

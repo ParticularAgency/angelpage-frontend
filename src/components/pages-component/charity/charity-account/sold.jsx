@@ -159,13 +159,15 @@ const SoldItemsPage = () => {
                           : 'text-[#D10C3B]'
                       }`}
                     >
-                      {item.status === 'OrderPlaced'
+                      {item.status === 'OrderConfirmed'
                         ? 'Item shipped?'
-                        : item.status === 'InTransit'
-                          ? 'On the way'
-                          : item.status === 'Delivered'
-                            ? 'Complete'
-                            : ''}
+                        : item.status === 'OrderPlaced'
+                          ? 'Awaiting payment'
+                          : item.status === 'InTransit'
+                            ? 'On the way'
+                            : item.status === 'Delivered'
+                              ? 'Complete'
+                              : ''}
                     </span>
                   </div>
                 </div>
@@ -194,7 +196,20 @@ const SoldItemsPage = () => {
                     ></div>
                     <p className="body-bold-small">Purchase Confirmed</p>
                     <p className="purchase-confirmed-date-time forms text-mono-80">
-                      {new Date(selectedItem.orderDate).toLocaleDateString()}
+                      {selectedItem.status === 'OrderConfirmed' ? (
+                        <>
+                          {new Date(
+                            selectedItem.paymentConfirmedAt
+                          ).toLocaleString()}
+                        </>
+                      ) : selectedItem.status === 'OrderPlaced' ? (
+                        <>
+                          {' '}
+                          {new Date(selectedItem.orderDate).toLocaleString()}
+                        </>
+                      ) : (
+                        ''
+                      )}{' '}
                     </p>
                   </div>
 

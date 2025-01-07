@@ -554,6 +554,12 @@
         hyphens: auto; 
 
     }
+    .chat-box .message.received {
+    text-align: right;
+}
+.message-banner-area{
+  border-bottom: 1px solid #E6E3E7;
+}
   }
 
   @layer utilities {}

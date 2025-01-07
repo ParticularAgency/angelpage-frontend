@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import Image from 'next/image';
@@ -15,14 +16,67 @@ const NotificationDropdown = ({
   toggleDropdown,
 }) => {
   const [activeTab, setActiveTab] = useState('messages');
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || '';
+  const router = useRouter();
   const [notifications, setNotifications] = useState([]);
   const [notificationsCount, setNotificationsCount] = useState([]);
   const [loading, setLoading] = useState(false)
-  const [messages] = useState([]);
-  const [setError] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [messagesCount, setMessagesCount] = useState(0);
+    const [error, setError] = useState(null);
   const dropdownRef = useRef(null);
-  
+useEffect(() => {
+  if (session?.user?.id) {
+    console.log('Fetching messages for user ID:', session.user.id);
+    fetchUnreadMessages(session.user.id);
+  }
+}, [session]);
+
+const fetchUnreadMessages = async (userId) => {
+  if (!userId) {
+    console.error('User ID is missing. Cannot fetch unread messages.');
+    setError('User ID is missing.');
+    return;
+  }
+
+  setLoading(true);
+  setError(null);
+
+  try {
+    console.log('Fetching unread messages for user ID:', userId);
+
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/message/messages/recipient/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${session.token}`,
+        },
+      }
+    );
+
+    console.log('Fetched messages:', response.data);
+
+    if (response.data.success) {
+      setMessages(response.data.messages || []);
+      setMessagesCount(response.data.messages.length || []);
+    } else {
+      setMessages([]);
+    }
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+
+    if (error.response?.status === 404) {
+      setMessages([]);
+      setError('No messages found for this user.');
+    } else {
+      setError('Failed to load messages.');
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   const fetchNotifications = async () => {
     if (status !== 'authenticated' || !session?.user) {
       setError('User is not authenticated.');
@@ -38,7 +92,7 @@ const NotificationDropdown = ({
           },
         }
       );
-      console.log(response?.data?.notifications?.length);
+      console.log(response?.data?.notifications);
       setNotificationsCount(response?.data?.notifications?.length);
       if (response.data.success) {
         setNotifications(response.data.notifications || []);
@@ -112,6 +166,7 @@ const NotificationDropdown = ({
   useEffect(() => {
     if (isDropdownOpen) {
       fetchNotifications();
+      // fetchUnreadMessages();
     }
   }, [isDropdownOpen, session, status]);
 
@@ -133,7 +188,8 @@ const NotificationDropdown = ({
   const handleTabChange = tab => {
     setActiveTab(tab);
   };
-
+ if (status === 'loading') return <p>Loading session...</p>;
+ if (error) return <p>{error}</p>;
   return (
     <div ref={dropdownRef}>
       {isDropdownOpen && (
@@ -155,9 +211,15 @@ const NotificationDropdown = ({
               onClick={() => handleTabChange('messages')}
             >
               Messages
-              <span class="relative left-auto w-5 h-5 bg-red-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
-               0
-              </span>
+              {loading ? (
+                <span class="relative left-auto w-5 h-5 bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
+                  ...
+                </span>
+              ) : messagesCount > 0 ? (
+                <span class="relative left-auto w-5 h-5 bg-red-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
+                  {messagesCount}
+                </span>
+              ) : null}
             </button>
             <button
               className={`tab-button w-1/2 py-[18px] flex justify-center items-center gap-2 px-5 relative body-small sm:py-3 text-center ${
@@ -198,32 +260,83 @@ const NotificationDropdown = ({
                   </p>
                 </div>
               ) : (
-                <div className="notification-massage-area">
-                  <ul className="notification-msg-list">
-                    {messages.map(message => (
-                      <li
-                        key={message.id}
-                        className="notification-msg-list-item flex items-start gap-3 px-7 pt-4 pb-4"
-                      >
-                        <Image
-                          src={message.image}
-                          alt="notification message image"
-                          width={48}
-                          height={48}
-                          className="w-12 h-12 object-cover rounded-full min-w-12 min-h-12"
-                        />
-                        <div className="massage-content relative">
-                          <p className="massage-text font-secondary caption text-mono-100 mb-[6px] text-left">
-                            {message.text}
-                          </p>
-                          <div className="massage-time text-mono-100 eyebrow-small text-left">
-                            {message.time}
+                <div className="notification-alert-area">
+                  <div className="notification-alert-area-content pt-0 px-0">
+                    <ul className="notification-alert-list">
+                      {messages.map(message => (
+                        <li
+                          key={message._id}
+                          className="notification-alert-list-item flex items-center justify-between gap-3 px-7 pt-4 pb-4"
+                        >
+                          {/* <Image
+                            src="/images/icons/elisp-profile-default-img.svg"
+                            alt='msg image'
+                            width={48}
+                            height={48}
+                            className="w-12 min-w-12 h-auto object-fill"
+                          /> */}
+                          <div className="alert-content relative">
+                            <p className="alert-text font-secondary caption text-mono-100 mb-[6px]">
+                              {message.content}
+                            </p>
+                            <div className="alert-time text-mono-100 eyebrow-small">
+                              {new Date(message.createdAt).toLocaleString()}
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                          <Button
+                            variant="accend-link"
+                            className="link-btn-msg-area text-[10px] !p-0 !underline !text-primary-color-100"
+                            onClick={() =>
+                              router.push(
+                                `/messaging/chat/${message.conversationId}`
+                              )
+                            }
+                          >
+                            View
+                          </Button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  {/* <div className="notification-alert-area-footer w-full flex justify-center py-3 px-5 sm:py-2">
+                    <Button
+                      variant="accend-link"
+                      className="caption text-center !p-0 !h-auto text-[#575757]"
+                      onClick={markAllNotificationAsRead}
+                    >
+                      Mark all as read
+                    </Button>
+                  </div> */}
                 </div>
+                // <div className="notification-massage-area">
+                //   <ul className="notification-msg-list">
+                //     {messages.map(message => (
+                //       <li key={message._id} className="message-item">
+                //         <div className="message-sender">
+                //           {/* <h3>
+                //             {message.sender?.firstName ||
+                //               message.sender?.charityName}{' '}
+                //             {message.sender?.lastName || ''}
+                //           </h3> */}
+                //           <p>{message.content}</p>
+                //           <small>
+                //             {new Date(message.createdAt).toLocaleString()}
+                //           </small>
+                //           <button
+                //             className="view-message-btn bg-blue-500 text-white px-3 py-1 rounded mt-2"
+                //             onClick={() =>
+                //               router.push(
+                //                 `/messaging/chat/${message.conversationId}`
+                //               )
+                //             }
+                //           >
+                //             View Message
+                //           </button>
+                //         </div>
+                //       </li>
+                //     ))}
+                //   </ul>
+                // </div>
               )
             ) : notifications.length === 0 ? (
               <div className="not-found-screen-design flex flex-col items-center pt-20 pb-24 custom-container">
@@ -255,11 +368,11 @@ const NotificationDropdown = ({
                         <Image
                           src={
                             notification?.metadata?.productImage?.url ||
-                            'product image'
+                            notification?.metadata?.profileImage
                           }
                           alt={
                             notification?.metadata?.productImage?.altText ||
-                            'Product Image'
+                            notification?.metadata?.charityName
                           }
                           width={48}
                           height={48}

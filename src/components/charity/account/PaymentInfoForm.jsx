@@ -219,18 +219,44 @@ const PaymentInfoForm = () => {
   const handleShippingAddressSelect = e => {
     setSelectedShippingAddressId(e.target.value);
   };
+ const handleConnectStripe = async () => {
+   // Generate the Stripe OAuth URL (You need to handle this in the backend)
+   const response = await fetch(
+     `${process.env.NEXT_PUBLIC_API_URL}/charity/stripe/connect-url`,
+     {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+     }
+   );
+
+   const { url } = await response.json();
+
+   // Redirect the user to the Stripe Connect OAuth URL
+   window.location.href = url;
+ };
 
   return (
     <div className="payment-section pt-6 pb-0">
-      <div className="title-line-area-section flex pb-[13px] justify-between items-center gap-3 w-full !border-0">
-        <p className="body-bold-regular">Payment Methods</p>
-        <Button
-          variant="accend-link"
-          className="underline !text-primary-color-100"
-          onClick={handleAddNewClick}
-        >
-          Add new payment method
-        </Button>
+      <div className="title-line-area-section flex pb-[13px] items-center gap-3 w-full !border-0">
+        <p className="body-bold-regular whitespace-nowrap w-full">
+          Payment Methods
+        </p>
+        <div className="btn-box flex flex-col items-end">
+          <Button
+            variant="accend-link"
+            className="underline !text-primary-color-100"
+            onClick={handleAddNewClick}
+          >
+            Add new payment method
+          </Button>
+          <Button
+            onClick={handleConnectStripe}
+            variant="accend-link"
+            className="underline !text-primary-color-100"
+          >
+            Connect you business account <span className="text-error">*</span>
+          </Button>
+        </div>
       </div>
 
       {isAdding && (
