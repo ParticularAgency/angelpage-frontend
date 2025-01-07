@@ -35,6 +35,7 @@ const BasketPage = () => {
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [loadingCarrier, setLoadingCarrier] = useState(false);
   const [carriers, setCarriers] = useState([]);
   const [tempSelectedCarrier, setTempSelectedCarrier] = useState('');
   const [selectedCarrier, setSelectedCarrier] = useState('');
@@ -184,6 +185,7 @@ console.log(selectedAddress);
   const isCartLoading = cartStatus === 'loading';
 
   const fetchCarriers = async () => {
+    setLoadingCarrier(true);
     try {
       const response = await axios.get(`${API_BASE_URL}/order/carrier`, {
         headers: {
@@ -193,6 +195,8 @@ console.log(selectedAddress);
       setCarriers(response.data.carriers || []);
     } catch (error) {
       console.error('Failed to fetch carriers:', error);
+    }finally{
+      setLoadingCarrier(false);
     }
   };
 
@@ -453,7 +457,7 @@ console.log(selectedAddress);
                   <h3 className="h4 text-center font-normal mb-4">
                     Carriers and Services
                   </h3>
-                     {loading ? (
+                     {loadingCarrier ? (
                     <>
                       <div className="service-selection">
                         <h5 className="mb-3">
