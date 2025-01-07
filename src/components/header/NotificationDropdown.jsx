@@ -23,7 +23,7 @@ const NotificationDropdown = ({
   const [loading, setLoading] = useState(false)
   const [messages, setMessages] = useState([]);
   const [messagesCount, setMessagesCount] = useState(0);
-    const [error, setError] = useState(null);
+    const [ setError] = useState(null);
   const dropdownRef = useRef(null);
 useEffect(() => {
   if (session?.user?.id) {
