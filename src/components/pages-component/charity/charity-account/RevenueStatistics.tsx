@@ -90,7 +90,7 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
           </p>
           <p className="body-bold-small mt-2">
             + £{revenueIncrease}{' '}
-            <span className="text-[#C9C8CA]">in the past week</span>
+            <span className="text-[#8A888C]">in the past week</span>
           </p>
         </div>
 

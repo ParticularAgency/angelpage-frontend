@@ -34,6 +34,7 @@ interface FormData {
   material: string;
   color: string;
   size: string;
+  weight: string;
   additionalInfo: string;
   images: UploadedImage[];
   dimensions: Dimensions[];
@@ -55,6 +56,7 @@ interface DetailsData {
   brand?: string;
   material?: string;
   size?: string;
+  weight?: string;
   additionalInfo?: string;
   color?: string;
   selectedCategory?: string;
@@ -83,6 +85,7 @@ const SellAnItem: React.FC = () => {
     brand: '',
     material: '',
     size: '',
+    weight: '',
     dimensions: [],
     additionalInfo: '',
     color: '',
@@ -144,6 +147,7 @@ const SellAnItem: React.FC = () => {
       formData.append('material', finalData.material || '');
       formData.append('color', finalData.color || '');
       formData.append('size', finalData.size || '');
+      formData.append('weight', finalData.weight || '');
       formData.append('dimensions', JSON.stringify(finalData.dimensions || []));
       formData.append('additionalInfo', finalData.additionalInfo || '');
       formData.append('selectedCharityName', finalData.charityName || '');
@@ -215,6 +219,7 @@ const SellAnItem: React.FC = () => {
       formData.append('material', finalData.material || '');
       formData.append('color', finalData.color || '');
       formData.append('size', finalData.size || '');
+      formData.append('weight', finalData.weight || '');
       formData.append('dimensions', JSON.stringify(finalData.dimensions || []));
       formData.append('additionalInfo', finalData.additionalInfo || '');
       formData.append('selectedCharityName', finalData.charityName || '');

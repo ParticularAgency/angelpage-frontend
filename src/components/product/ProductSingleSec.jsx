@@ -27,7 +27,7 @@ import PreLoader from '../common/pre-loader/PreLoader';
 import countries from 'i18n-iso-countries';
 import FavoriteButton from '../elements/button/FavoriteButton';
 import enLocale from 'i18n-iso-countries/langs/en.json';
-// import MessageButton from '@/app/messaging/chat/startChat';
+import MessageButton from '@/app/messaging/chat/startChat';
 // import type { Swiper as SwiperInstance } from 'swiper';
 
 countries.registerLocale(enLocale);
@@ -47,7 +47,7 @@ const ProductSinglepage = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Sync local state with Redux store on mount and when cartItems change
+  // const router = useRouter();
   useEffect(() => {
     const productInCart = cartItems.some(item => item.productId === productid);
     setIsAddedToCart(productInCart);
@@ -256,9 +256,7 @@ const ProductSinglepage = () => {
           <div className="product-singlepage-right-cont max-w-[388px] w-full">
             <div className="product-info-header flex mb-6 items-center gap-3 justify-between">
               <div className="product-posted-user-info flex items-center gap-[13px]">
-                {product.seller?.profileImage ||
-                product.seller?.firstName ||
-                product.seller?.lastName ? (
+                {product.sellerType === "USER" ? (
                   <>
                     <div className="seller-peofile-image w-8 h-8 rounded-full">
                       <Image
@@ -285,20 +283,22 @@ const ProductSinglepage = () => {
                         <span className="caption text-mono-90 block">
                           Sold by
                         </span>
-                        {`${product.charity?.charityName}`}
+                        {`${product.seller?.charityName}`}
                       </p>
                     </div>
                   </>
                 )}
               </div>
               <div className="product-states flex items-center gap-2">
-                {/* <MessageButton
+                {!!session?.token && (
+                <MessageButton
                   sellerId={product.seller?.id || product.charity?.id}
                   sellerType={product.sellerType}
-                /> */}
+                />
+                )}
 
                 <div className="product-favorite-btn cursor-pointer">
-                  <FavoriteButton 
+                  <FavoriteButton
                     itemId={product.id.toString()}
                     type="Product"
                   />

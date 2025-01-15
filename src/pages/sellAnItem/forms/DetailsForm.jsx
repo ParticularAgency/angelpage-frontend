@@ -65,6 +65,7 @@ const DetailsForm = ({
   const [material, setMaterial] = useState(formData.material || '');
   const [color, setColor] = useState(formData.color || '');
   const [size, setSize] = useState(formData.size || '');
+  const [weight, setWeight] = useState(formData.weight || '');
   const [additionalInfo, setAdditionalInfo] = useState(
     formData.additionalInfo || ''
   );
@@ -106,6 +107,7 @@ const DetailsForm = ({
       material,
       color,
       size,
+      weight,
       selectedCategory,
       selectedSubCategory,
       additionalInfo,
@@ -240,12 +242,12 @@ const DetailsForm = ({
     const isShoes = [
       'shoes',
     ].includes(selectedCategory);
-  const isBagsFurnitureElectronicsAccessories = [
-    'bags',
-    'homeware',
-    'electronics',
-    'accessories',
-  ].includes(selectedCategory);
+  // const isBagsFurnitureElectronicsAccessories = [
+  //   'bags',
+  //   'homeware',
+  //   'electronics',
+  //   'accessories',
+  // ].includes(selectedCategory);
 
   const inputRef = useRef(null);
   return (
@@ -359,7 +361,7 @@ const DetailsForm = ({
           className="flex-col"
         />
 
-        <Select
+        {/* <Select
           label="Material"
           name="material"
           id="material"
@@ -371,8 +373,16 @@ const DetailsForm = ({
             { value: 'Textile', label: 'Textile' },
             { value: 'Synthetic', label: 'Synthetic' },
           ]}
+        /> */}
+        <Input
+          label="Material"
+          name="material"
+          id="material"
+          value={material}
+          onChange={e => setMaterial(e.target.value)}
+          placeholder="Set product material..."
+          className="flex-col"
         />
-
         <Input
           label="Colour"
           name="colour"
@@ -431,11 +441,23 @@ const DetailsForm = ({
             />
           </>
         )}
-        {isBagsFurnitureElectronicsAccessories && (
-          <>
-            <p className="text-body-small">
-              For bags, furniture, electronics, and accessories
-            </p>
+        {/* {isBagsFurnitureElectronicsAccessories && ( */}
+        <>
+          <p className="text-body-small">For package info</p>
+          <div className="flex items-center gap-2">
+            <div className="flex gap-2">
+              <Input
+                label="Weight"
+                name="weight"
+                id="weight"
+                type="number"
+                value={weight}
+                onChange={e => setWeight(e.target.value)}
+                placeholder="Set weight (ounces)..."
+                className="flex-col w-full"
+              />
+            </div>
+
             <div className="flex gap-2">
               <Input
                 label="Height"
@@ -445,11 +467,12 @@ const DetailsForm = ({
                 type="number"
                 value={dimensions.height || ''}
                 onChange={e => handleDimensionChange(e, 'height')}
-                className="flex-col w-11/12"
+                className="flex-col w-full"
               />
               <UnitButton unit={unit} handleUnitChange={setUnit} />
             </div>
-
+          </div>
+          <div className="flex items-center gap-2">
             <div className="flex gap-2">
               <Input
                 label="Width"
@@ -459,9 +482,9 @@ const DetailsForm = ({
                 type="number"
                 value={dimensions.width || ''}
                 onChange={e => handleDimensionChange(e, 'width')}
-                className="flex-col w-11/12"
+                className="flex-col w-full"
               />
-              <UnitButton unit={unit} handleUnitChange={setUnit} />
+              {/* <UnitButton unit={unit} handleUnitChange={setUnit} /> */}
             </div>
 
             <div className="flex gap-2">
@@ -473,13 +496,12 @@ const DetailsForm = ({
                 type="number"
                 value={dimensions.depth || ''}
                 onChange={e => handleDimensionChange(e, 'depth')}
-                className="flex-col w-11/12"
+                className="flex-col w-full"
               />
               <UnitButton unit={unit} handleUnitChange={setUnit} />
             </div>
-          </>
-        )}
-
+          </div>
+        </>
         <Textarea
           label="Additional Information"
           name="additionalInfo"

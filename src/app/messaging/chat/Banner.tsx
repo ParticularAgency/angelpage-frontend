@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import { Button } from '@/components/elements';
+// import { Button } from '@/components/elements';
 // import { fetchUserData, fetchUserProfileData } from '@utils/api';
 // import { useRouter } from 'next/navigation';
 // import { useSession } from 'next-auth/react';
@@ -37,15 +37,7 @@ const BannerSection = () => {
               <p className="user-username body-small">@wilson293763</p>
             </div>
           </div>
-          <div className="users-account-right-cont hidden  flex-col items-end sm:items-start">
-            <Button variant="primary" className="body-small ">
-              Turn on holiday mode
-            </Button>
-            <p className="forms text-mono-100 mt-2 md:max-w-[375px]">
-              In Holiday Mode, your active listings will be temporarily hidden
-              in the database.
-            </p>
-          </div>
+          
         </div>
       </div>
     </section>

@@ -3,6 +3,8 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { Button} from '@/components/elements';
 import { useSession } from 'next-auth/react';
+// import { ToastService } from '@/components/elements/notifications/ToastService';
+import Link from 'next/link';
 
 
 const BoughtItems = () => {
@@ -96,6 +98,39 @@ const BoughtItems = () => {
    }
  };
 
+//  const handleTrackOrder = async orderId => {
+//    try {
+//      const response = await fetch(
+//        `${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/track`,
+//        {
+//          method: 'GET',
+//          headers: {
+//            Authorization: `Bearer ${session.token}`,
+//          },
+//        }
+//      );
+
+//      if (!response.ok) {
+//        const errorData = await response.json();
+//        throw new Error(
+//          errorData.error || 'Failed to fetch tracking information.'
+//        );
+//      }
+
+//      const { trackingDetails } = await response.json();
+
+//      // Display the tracking information (adjust based on your UI)
+//      console.log('Tracking Details:', trackingDetails);
+//      ToastService.success('Tracking information fetched successfully!');
+//    } catch (error) {
+//      console.error('Error tracking order:', error);
+//      ToastService.error(
+//        error.message ||
+//          'Failed to fetch tracking information. Please try again.'
+//      );
+//    }
+//  };
+
   
   return (
     <div className="bought-items-wrapper-area">
@@ -152,9 +187,11 @@ const BoughtItems = () => {
                           ? 'Awaiting payment'
                           : item.status === 'InTransit'
                             ? 'Item received?'
-                            : item.status === 'Delivered'
-                              ? 'Complete'
-                              : ''}
+                            : item.status === 'ItemShipped'
+                              ? 'Item received?'
+                              : item.status === 'Delivered'
+                                ? 'Complete'
+                                : ''}
                     </span>
                   </div>
                 </div>
@@ -181,28 +218,22 @@ const BoughtItems = () => {
                     ></div>
                     <div>
                       <p className="body-bold-small">
-                        {selectedItem.status === 'OrderConfirmed'
-                          ? 'Payment sent'
-                          : selectedItem.status === 'OrderPlaced'
-                            ? 'Payment fail'
-                            : ''}
+                        {selectedItem.status === 'OrderPlaced'
+                          ? 'Payment fail'
+                          : 'Payment sent'}
                       </p>
                       <p className="forms text-mono-70 mt-1">
-                        {selectedItem.status === 'OrderConfirmed' ? (
+                        {selectedItem.status === 'OrderPlaced' ? (
+                          <>
+                            {' '}
+                            {new Date(selectedItem.createdAt).toLocaleString()}
+                          </>
+                        ) : (
                           <>
                             {new Date(
                               selectedItem.paymentConfirmedAt
                             ).toLocaleString()}
                           </>
-                        ) : selectedItem.status === 'OrderPlaced' ? (
-                          <>
-                            {' '}
-                            {new Date(
-                              selectedItem.createdAt
-                            ).toLocaleString()}
-                          </>
-                        ) : (
-                          ''
                         )}{' '}
                       </p>
                     </div>
@@ -227,9 +258,25 @@ const BoughtItems = () => {
                         <p className="body-bold-small mt-1">
                           Tracking:{' '}
                           <span className="text-purple-600">
-                            DV38474905867352
+                            {selectedItem.trackingNumber}
                           </span>
                         </p>
+
+                     
+                        {selectedItem.tracking_url ? (
+                          <Link target="_blank" href={selectedItem.tracking_url}>
+                            <Button
+                              variant="primary"
+                              className="mt-2"
+                            >
+                              Track order
+                            </Button>
+                          </Link>
+                        ) : (
+                          <Button variant="secondary" className='mt-2' disabled>
+                            No tracking available
+                          </Button>
+                        )}
                       </div>
                     </div>
                   ) : (

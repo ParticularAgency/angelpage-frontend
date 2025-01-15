@@ -19,7 +19,9 @@ const OrderSummary  = ({order}) => {
           />
         </div>
         <div className="flex justify-between items-end px-6 pl-7">
-          <h3 className="body-bold-medium mb-4">Order summary</h3>
+          <div className="group-details">
+            <h3 className="body-bold-medium mb-2">Order summary</h3>
+          </div>
           <p className="font-semibold product-total-price">
             £{order?.totalAmount.toFixed(2)}
           </p>
@@ -93,7 +95,9 @@ const OrderSummary  = ({order}) => {
           </div>
           <div className="flex justify-between mb-2">
             <p className="caption text-mono-80">Shipping cost</p>
-            <p className="caption text-mono-100">£{order?.shipmentCost.toFixed(2)}</p>
+            <p className="caption text-mono-100">
+              £{order?.shipmentCost.toFixed(2)}{' '}
+            </p>
           </div>
         </div>
 
@@ -104,6 +108,7 @@ const OrderSummary  = ({order}) => {
             £{order?.grandTotal.toFixed(2) || ''}
           </p>
         </div>
+        {/* <p className="body-small !text-[11px] text-center px-6 mt-1">NOTE: Shipping cost can be recalculate, it can be increased the total cost</p> */}
       </div>
     </div>
   );

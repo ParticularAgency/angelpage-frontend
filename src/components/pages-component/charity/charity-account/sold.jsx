@@ -3,6 +3,7 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { Button, Input } from '@/components/elements';
 import { useSession } from 'next-auth/react';
+// import ConfirmPackageInfo from './UpdateOackageInfo';
 
 const SoldItemsPage = () => {
   const { data: session, status } = useSession() || {};
@@ -211,6 +212,7 @@ const SoldItemsPage = () => {
                         ''
                       )}{' '}
                     </p>
+                    {/* <ConfirmPackageInfo orderId={selectedItem.orderId} /> */}
                   </div>
 
                   {/* Item Shipped */}

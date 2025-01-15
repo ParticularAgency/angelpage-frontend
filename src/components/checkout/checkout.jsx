@@ -15,6 +15,7 @@ import { ToastService } from '@/components/elements/notifications/ToastService';
 import { fetchCart } from '../../store/cartSlice';
 import { Button, Checkbox } from '../elements';
 import { ArrowDownIcon } from '@/icons';
+// import Image from 'next/image';
 
 const BasketPage = () => {
   const dispatch = useDispatch();
@@ -83,7 +84,40 @@ console.log(selectedAddress);
        alert('Please complete all selections.');
        return;
      }
+     // Calculate total weight
+     const totalWeight = cartItems.reduce((sum, item) => {
+       const product = item.productId;
+       const productWeight = parseFloat(product.weight) || 0; // Default to 0 if weight is missing
+       return sum + productWeight * item.quantity;
+     }, 0);
+     // Calculate combined dimensions
+  const combinedDimensions = cartItems.reduce(
+    (acc, item) => {
+      const product = item.productId;
+      const productDimensions = product.dimensions || {};
+      const length = parseFloat(productDimensions.depth || 0); 
+      const width = parseFloat(productDimensions.width || 0);
+      const height = parseFloat(productDimensions.height || 0) * item.quantity; // Multiply height by quantity
 
+      return {
+        length: Math.max(acc.length, length), // Use the largest length
+        width: Math.max(acc.width, width), // Use the largest width
+        height: acc.height + height, // Sum up all heights
+      };
+    },
+    { length: 0, width: 0, height: 0 } // Initial dimensions
+  );
+
+  // Validate combined dimensions
+  if (
+    combinedDimensions.length === 0 ||
+    combinedDimensions.width === 0 ||
+    combinedDimensions.height === 0
+  ) {
+    throw new Error(
+      'Invalid combined dimensions: Ensure all products have valid dimensions.'
+    );
+  }
      // Prepare the order payload
      const orderPayload = {
        buyerId: userId,
@@ -104,6 +138,8 @@ console.log(selectedAddress);
            price: product.price,
            seller: sellerId,
            charity: charityId,
+           weight: product.weight,
+           dimensions: product.dimensions,
            quantity: item.quantity,
            totalProductCost: totalCost,
            charityProfit: totalCost * 0.9,
@@ -113,6 +149,8 @@ console.log(selectedAddress);
        totalAmount: grandTotal - shipmentCost,
        shipmentCost,
        grandTotal,
+       combinedDimensions,
+       totalWeight,
        shippingAddress: selectedAddress,
        paymentMethod: selectedPaymentMethod,
        carrierCode: selectedCarrier,
@@ -145,7 +183,7 @@ console.log(selectedAddress);
            },
          },
        });
-          
+
        if (result.error) {
          await axios.post(`${API_BASE_URL}/order/update-order-status`, {
            orderId: order._id,
@@ -169,8 +207,8 @@ console.log(selectedAddress);
            paymentConfirmed: true,
          });
          ToastService.success('Payment successful!');
-         router.push(`/checkout/confirmation/${order._id}`);
        }
+       router.push(`/checkout/confirmation/${order._id}`);
      }
    } catch (error) {
      console.error(
@@ -192,7 +230,9 @@ console.log(selectedAddress);
           Authorization: `Bearer ${token}`,
         },
       });
-      setCarriers(response.data.carriers || []);
+      console.log('carrier', response.data.carriers.carriers);
+      setCarriers(response.data.carriers.carriers || []);
+      
     } catch (error) {
       console.error('Failed to fetch carriers:', error);
     }finally{
@@ -210,6 +250,7 @@ console.log(selectedAddress);
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      //  console.log('services', response.data);
       setServices(response.data.services || []);
     } catch (error) {
       console.error(
@@ -223,38 +264,58 @@ console.log(selectedAddress);
     }
   };
 
-  const fetchShippingRate = async () => {
-    if (!selectedCarrier || !selectedService) return;
+ const fetchShippingRate = async () => {
+   if (!selectedCarrier || !selectedService) return;
 
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/order/orders/get-shipping-rate`,
-        {
-          carrierCode: selectedCarrier,
-          serviceCode: selectedService,
-          fromPostalCode: 'DA16 2PE',
-          toPostalCode: selectedAddress?.postcode,
-          toCountry: selectedAddress?.country,
-          weight: { value: 5, units: 'pounds' },
-          dimensions: { units: 'inches', length: 10, width: 6, height: 4 },
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+   try {
+     // Construct the products array from cartItems
+     const products = cartItems.map(item => {
+       const product = item.productId;
+       return {
+         name: product.name,
+         quantity: item.quantity,
+         weight: parseFloat(product.weight) || 0, // Default to 0 if weight is missing
+         dimensions: {
+           depth: parseFloat(product.dimensions?.depth || 0), // Use depth as length
+           width: parseFloat(product.dimensions?.width || 0),
+           height: parseFloat(product.dimensions?.height || 0),
+         },
+       };
+     });
 
-      if (response.data.success && response.data.rates.length > 0) {
-        const rate = response.data.rates[0];
-        setshipmentCost(rate.shipmentCost || 0);
-      }
-    } catch (error) {
-      console.error(
-        'Error fetching shipping rate:',
-        error.response?.data || error.message
-      );
-      ToastService.error('No shipping rates found for the given details.');
-    }
-  };
+     // Validate the constructed products array
+     if (!products || products.length === 0) {
+       throw new Error('Products array is empty or invalid.');
+     }
+
+     const response = await axios.post(
+       `${API_BASE_URL}/order/orders/get-shipping-rate`,
+       {
+         carrierCode: selectedCarrier,
+         serviceCode: selectedService,
+         fromPostalCode: 'DA16 2PE',
+         toPostalCode: selectedAddress?.postcode,
+         toCountry: selectedAddress?.country,
+         products, // Send products array to backend
+       },
+       {
+         headers: { Authorization: `Bearer ${token}` },
+       }
+     );
+      console.log('shipping rate', response.data.rates);
+     if (response.data.success && response.data.rates.length > 0) {
+       const rate = response.data.rates[0];
+       setshipmentCost(rate.shipmentCost + rate.otherCost || 0);
+     }
+   } catch (error) {
+     console.error(
+       'Error fetching shipping rate:',
+       error.response?.data || error.message
+     );
+     ToastService.error('No shipping rates found for the given details.');
+   }
+ };
+
 
   useEffect(() => {
     const productTotal = cartItems.reduce(
@@ -411,8 +472,17 @@ console.log(selectedAddress);
                     </div>
                     <div className="flex justify-between mb-2">
                       <p className="caption text-mono-80">Shipping cost</p>
-                      <p className="caption text-mono-100">
-                        £{shipmentCost.toFixed(2)}
+                      <p className="caption flex gap-1 items-center text-mono-100">
+                        <span>£{shipmentCost.toFixed(2)}</span>
+                        {/* <Button variant='accend-link' className="block !p-0 !h-auto cursor-pointer">
+                          <Image
+                            src="/images/icons8-info.gif"
+                            alt="info text"
+                            width={50}
+                            height={50}
+                            className="w-4 h-4"
+                          />
+                        </Button> */}
                       </p>
                     </div>
                   </div>
@@ -457,7 +527,7 @@ console.log(selectedAddress);
                   <h3 className="h4 text-center font-normal mb-4">
                     Carriers and Services
                   </h3>
-                     {loadingCarrier ? (
+                  {loadingCarrier ? (
                     <>
                       <div className="service-selection">
                         <h5 className="mb-3">
@@ -477,22 +547,26 @@ console.log(selectedAddress);
                     </>
                   ) : (
                     <>
-                  <div className="carrier-selection mb-4">
-                    <h5 className="mb-2">Select Carrier:</h5>
-                    {carriers.map(carrier => (
-                      <label
-                        key={carrier.code}
-                        className="flex items-center gap-2 mb-2"
-                      >
-                        <Checkbox
-                          checked={tempSelectedCarrier === carrier.code}
-                          onChange={() => setTempSelectedCarrier(carrier.code)}
-                        />
-                        {carrier.name}
-                      </label>
-                    ))}
-                  </div>
-                  </>
+                      <div className="carrier-selection mb-4">
+                        <h5 className="mb-2">Select Carrier:</h5>
+                        {carriers.map(carrier => (
+                          <label
+                            key={carrier.carrier_id}
+                            className="flex items-center gap-2 mb-2"
+                          >
+                            <Checkbox
+                              checked={
+                                tempSelectedCarrier === carrier.carrier_code
+                              }
+                              onChange={() =>
+                                setTempSelectedCarrier(carrier.carrier_code)
+                              }
+                            />
+                            {carrier.friendly_name}
+                          </label>
+                        ))}
+                      </div>
+                    </>
                   )}
                   {loading ? (
                     <>
