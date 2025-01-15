@@ -560,6 +560,11 @@
 .message-banner-area{
   border-bottom: 1px solid #E6E3E7;
 }
+.chat-conversion-area {
+    height: 460px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
   }
 
   @layer utilities {}

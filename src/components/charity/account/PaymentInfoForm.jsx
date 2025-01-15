@@ -254,7 +254,7 @@ const PaymentInfoForm = () => {
             variant="accend-link"
             className="underline !text-primary-color-100"
           >
-            Connect you business account <span className="text-error">*</span>
+            Connect your business account <span className="text-error">*</span>
           </Button>
         </div>
       </div>
