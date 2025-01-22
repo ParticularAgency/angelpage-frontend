@@ -32,10 +32,7 @@ const CharityStorefront = ({
           `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}`
         );
 
-        // ToastService.success(
-        //   'Charity Data fetched successfully:',
-        //   response.data
-        // );
+       
 
         setCharityData(response.data.charity);
         console.log('charity response data' , response.data.charity);
