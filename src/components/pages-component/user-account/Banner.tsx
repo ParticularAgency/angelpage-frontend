@@ -71,9 +71,7 @@ const BannerSection = () => {
     fetchProfile();
   }, [session, status, router]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+
 
   if (!profileData) {
     return <p>Failed to load profile data.</p>;
@@ -122,7 +120,7 @@ const BannerSection = () => {
       <div className="custom-container">
         <div className="users-account-banner-wrapper pt-10 flex items-center justify-between sm:flex-col sm:items-start sm:gap-8">
           <div className="users-account-left-cont flex items-center gap-4">
-            {userData ? (
+            {!loading && userData ? (
               <Image
                 src={
                   userData.profileImage ||

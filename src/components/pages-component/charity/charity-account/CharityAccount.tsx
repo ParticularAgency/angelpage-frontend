@@ -7,7 +7,7 @@ import CharityAccountInfoMain from './account';
 import DeleteAccount from './delete-account';
 import CharityProductListingArea from './listing';
 // import { productData } from '@/libs/postProductData';
-import {Product} from '@/types/productTypes'
+import { Product } from '@/types/productTypes';
 import SoldItems from './sold';
 import AnalyticsPage from './Analytics';
 import LogoutButton from '@/components/elements/button/LogoutButton';
@@ -50,7 +50,7 @@ const CharityAccount = () => {
     return <p>Please log in to view your account listing products.</p>;
   }
   if (loading) {
-    return <p>loading...</p>;
+    return <p>Loading...</p>;
   }
 
   return (
@@ -143,7 +143,7 @@ const CharityAccount = () => {
                 )}
                 {activeTab === 2 && (
                   <li className="tabs-cont-item">
-                    <CharityProductListingArea  />
+                    <CharityProductListingArea />
                   </li>
                 )}
                 {activeTab === 3 && (

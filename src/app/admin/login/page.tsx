@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ToastService } from '@/components/elements/notifications/ToastService';
 
 const Login = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession() || {};
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -51,8 +51,8 @@ const Login = () => {
         ToastService.success('Login successful! Redirecting...');
         setTimeout(() => {
           if (userRole === 'ADMIN') {
-            router.push(`/admin/`); 
-          } 
+            router.push(`/admin/`);
+          }
           setIsSubmitting(false);
         }, 2000);
       } else {
@@ -73,12 +73,16 @@ const Login = () => {
       ToastService.success('Login successful! Redirecting to account...');
       setTimeout(() => {
         if (userRole === 'ADMIN') {
-          router.push(`/admin/`); 
-        } 
+          router.push(`/admin/`);
+        }
       }, 2000);
     }
-  }, [session, router]);
+  }, [session, status, router]);
 
+  if (status === 'loading') {
+    // If session is still loading, you can return a loading indicator
+    return <div>Loading...</div>;
+  }
   return (
     <div className="flex md:flex-col gap-[143px] lg:gap-14 md:gap-0">
       <div

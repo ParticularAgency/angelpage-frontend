@@ -26,60 +26,62 @@ const DeleteAccount = () => {
     console.log('Session data:', session);
   }, [session]);
 
-  const handleDeleteAccount = async () => {
-    if (!session) {
-      setMessage('You need to be logged in to delete your account.');
-      return;
+const handleDeleteAccount = async () => {
+  if (!session) {
+    setMessage('You need to be logged in to delete your account.');
+    return;
+  }
+
+  const userId = session.user?.id || '';
+  const role = session.user?.role || '';
+
+  // Log to verify the session data
+  console.log('User ID:', userId, 'Role:', role);
+
+  if (!userId || !role) {
+    setMessage('User ID or role is missing. Please log in again.');
+    return;
+  }
+
+  try {
+    const response = await axios.delete(`${API_URL}/auth/delete-account`, {
+      headers: {
+        Authorization: `Bearer ${session.token}`,
+        'Content-Type': 'application/json', // Changed to 'application/json'
+      },
+      data: {
+        userId,
+        role,
+      },
+    });
+
+    if (response.data?.message) {
+      setMessage(response.data.message);
+      await signOut();
+      router.push('/');
+    } else {
+      console.error('Invalid response structure:', response.data);
+      setMessage('Failed to delete account. Please try again.');
     }
-
-    try {
-      const formData = new FormData();
-      const userId = session.user?.id || '';
-      const role = session.user?.role || '';
-
-      if (!userId || !role) {
-        throw new Error('Invalid user session: Missing userId or role.');
-      }
-
-      formData.append('userId', userId);
-      formData.append('role', role);
-
-      const response = await axios.request({
-        url: `${API_URL}/auth/delete-account`,
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${session.token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-        data: formData,
-      });
-
-      if (response.data?.message) {
-        setMessage(response.data.message);
-        await signOut();
-        router.push('/');
-      } else {
-        console.error('Invalid response structure:', response.data);
-        setMessage('Failed to delete account. Please try again.');
-      }
-    } catch (error) {
-      if (isAxiosError(error)) {
-        console.error(
-          'Error deleting account:',
-          error.response?.data || error.message
-        );
-        setMessage(
-          error.response?.data?.message ||
-            'Failed to delete the account. Please try again.'
-        );
-      } else {
-        console.error('Unexpected error:', error);
-        setMessage('An unexpected error occurred. Please try again.');
-      }
-    } finally {
-      setIsConfirmOpen(false);
+  } catch (error) {
+    if (isAxiosError(error)) {
+      console.error(
+        'Error deleting account:',
+        error.response?.data || error.message
+      );
+      setMessage(
+        error.response?.data?.message ||
+          'Failed to delete the account. Please try again.'
+      );
+    } else {
+      console.error('Unexpected error:', error);
+      setMessage('An unexpected error occurred. Please try again.');
     }
-  };
+  } finally {
+    setIsConfirmOpen(false);
+  }
+};
+
 
   const openConfirmation = () => {
     setIsConfirmOpen(true);

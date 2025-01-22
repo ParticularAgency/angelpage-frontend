@@ -5,15 +5,18 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Checkbox } from '@/components/elements';
+import Pagination from '@/components/elements/Pagination';
 
 interface User {
   id: string;
   fullName: string;
   email: string;
   signedUp: string;
-  userId?: string; // Allow undefined
+  userId?: string;
   profileImage: string;
   type: 'USER' | 'CHARITY';
+  totalPages?: string;
+  totalRecords?: string;
 }
 
 interface UserResponse {
@@ -24,17 +27,24 @@ interface UserResponse {
   profileImage: string;
   userId?: string;
   charityId?: string;
+
   role: 'USER' | 'CHARITY';
 }
-
+interface UserApiResponse {
+  users: UserResponse[];
+  totalPages: number;
+  totalRecords: number;
+}
 const UsersTable: React.FC = () => {
   const { data: session } = useSession() || {};
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]); // Store all users (combined list)
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sessionFilter, setSessionFilter] = useState<string>('all');
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]); // Store selected users
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalFilteredRecords, setTotalFilteredRecords] = useState(0); // Total filtered users count
   const usersPerPage = 10;
 
   useEffect(() => {
@@ -42,11 +52,18 @@ const UsersTable: React.FC = () => {
       if (!session?.token) return;
 
       try {
-        const response = await axios.get<{ users: UserResponse[] }>(
+        const response = await axios.get<UserApiResponse>(
           `${process.env.NEXT_PUBLIC_API_URL}/admin/users/overview`,
           {
             headers: {
               Authorization: `Bearer ${session.token}`,
+            },
+            params: {
+              page: currentPage,
+              limit: usersPerPage,
+              searchTerm,
+              statusFilter,
+              sessionFilter,
             },
           }
         );
@@ -57,18 +74,20 @@ const UsersTable: React.FC = () => {
           email: user.email,
           signedUp: user.duration,
           profileImage: user.profileImage,
-          userId: user.userId || user.charityId || 'N/A', // Provide fallback
+          userId: user.userId || user.charityId || 'N/A',
           type: user.role,
         }));
 
         setUsers(formattedUsers);
+        setTotalPages(response.data?.totalPages);
+        setTotalFilteredRecords(response.data?.totalRecords);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
     };
 
     fetchUsers();
-  }, [session?.token]);
+  }, [session?.token, currentPage, searchTerm, statusFilter, sessionFilter]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -80,23 +99,33 @@ const UsersTable: React.FC = () => {
     setSessionFilter(e.target.value);
   };
 
+  const handleStatusFilterChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setStatusFilter(e.target.value);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    setSelectedUsers([]); // Reset selected users on page change
+  };
+
+  // Updated handleSelectAll function
   const handleSelectAll = () => {
-    if (selectedUsers.length === filteredUsers.length) {
-      setSelectedUsers([]);
+    if (selectedUsers.length === users.length) {
+      setSelectedUsers([]); // Deselect all
     } else {
-      setSelectedUsers(filteredUsers.map(user => user.id));
+      setSelectedUsers(users.map(user => user.id)); // Select only users on the current page
     }
   };
 
   const filteredUsers = useMemo(() => {
     let filtered = users;
 
-    // Filter by status
     if (statusFilter !== 'all') {
       filtered = filtered.filter(user => user.type === statusFilter);
     }
 
-    // Filter by session duration
     if (sessionFilter !== 'all') {
       filtered = filtered.filter(user => {
         if (sessionFilter === 'last7days') {
@@ -112,12 +141,11 @@ const UsersTable: React.FC = () => {
       });
     }
 
-    // Search across multiple fields
     if (searchTerm) {
       const lowerSearchTerm = searchTerm.toLowerCase();
       filtered = filtered.filter(
         user =>
-          user.fullName?.toLowerCase().includes(lowerSearchTerm) || // Check for existence before calling toLowerCase
+          user.fullName?.toLowerCase().includes(lowerSearchTerm) ||
           user.email?.toLowerCase().includes(lowerSearchTerm) ||
           user.id?.toLowerCase().includes(lowerSearchTerm) ||
           user.signedUp?.toLowerCase().includes(lowerSearchTerm)
@@ -127,11 +155,11 @@ const UsersTable: React.FC = () => {
     return filtered;
   }, [users, statusFilter, sessionFilter, searchTerm]);
 
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-  const currentUsers = filteredUsers.slice(
-    (currentPage - 1) * usersPerPage,
-    currentPage * usersPerPage
-  );
+  // Slice the filtered users for the current page
+  // const currentUsers = filteredUsers.slice(
+  //   (currentPage - 1) * usersPerPage,
+  //   currentPage * usersPerPage
+  // );
 
   const startCount = (currentPage - 1) * usersPerPage + 1;
   const endCount = Math.min(currentPage * usersPerPage, filteredUsers.length);
@@ -158,6 +186,7 @@ const UsersTable: React.FC = () => {
       console.error('Error deleting users:', error);
     }
   };
+
   return (
     <div className="grid grid-cols-12 gap-0 mt-10">
       <div className="users-info-table-overview col-span-full">
@@ -168,7 +197,7 @@ const UsersTable: React.FC = () => {
             </h3>
             <div className="right-content-list w-full flex items-center justify-between gap-3 sm:gap-2">
               <div className="table-item-selection-status flex items-center gap-5">
-                <p className="forms-bold sm:hidden font-secondary font-medium leading-[150%] text-[#677788]"> 
+                <p className="forms-bold sm:hidden font-secondary font-medium leading-[150%] text-[#677788]">
                   {selectedUsers.length} Selected
                 </p>
                 <button
@@ -190,7 +219,7 @@ const UsersTable: React.FC = () => {
                   id="sort-select"
                   className="filter-dropdown text-center !border-0 select bg-transparent focus:outline-0 w-full max-w-[160px] pr-8 !pl-2"
                   value={statusFilter}
-                  onChange={e => setStatusFilter(e.target.value)}
+                  onChange={handleStatusFilterChange}
                 >
                   <option className="bg-[#FCF2FF] caption" value="all">
                     All
@@ -251,7 +280,7 @@ const UsersTable: React.FC = () => {
                 <tr>
                   <th className="px-4 py-3 caption-bold text-[#677788] font-secondary font-medium">
                     <Checkbox
-                      checked={selectedUsers.length === currentUsers.length}
+                      checked={selectedUsers.length === users.length}
                       onChange={handleSelectAll}
                     />
                   </th>
@@ -270,7 +299,7 @@ const UsersTable: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentUsers.map(user => (
+                {users.map(user => (
                   <tr key={user.id} className="border-b hover:bg-gray-100">
                     <td className="pl-4 py-4 caption-bold text-[#677788] font-secondary font-medium">
                       <Checkbox
@@ -314,37 +343,14 @@ const UsersTable: React.FC = () => {
             </table>
             <div className="px-4 py-5 flex items-center table-user-info-list-bottom mt-6 justify-between bg-gray-50">
               <span className="caption-bold">
-                Showing {startCount}–{endCount} of {filteredUsers.length}
+                Showing {startCount}–{endCount} of {totalFilteredRecords}
               </span>
-              <div className="flex items-center space-x-2">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(prev => prev - 1)}
-                  className="px-3 py-1 bg-white border caption-bold rounded hover:bg-gray-100 disabled:opacity-50"
-                >
-                  Prev
-                </button>
-                {[...Array(totalPages)].map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentPage(index + 1)}
-                    className={`px-3 py-1 ${
-                      currentPage === index + 1
-                        ? 'bg-mono-100 text-white'
-                        : 'hover:bg-gray-100'
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
-                <button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(prev => prev + 1)}
-                  className="px-3 py-1 bg-white border caption-bold rounded hover:bg-gray-100 disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
+
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             </div>
           </div>
         </div>

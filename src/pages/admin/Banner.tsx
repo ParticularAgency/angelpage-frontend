@@ -12,9 +12,13 @@ interface AdminProfile {
   profileImage?: string;
 }
 interface BannerSectionProps {
-  soldItemsCount: number; // Define the type of soldItemsCount
+  soldItemsCount: number;
+  loading: boolean;
 }
-const BannerSection: React.FC<BannerSectionProps> = ({ soldItemsCount }) => {
+const BannerSection: React.FC<BannerSectionProps> = ({
+  soldItemsCount,
+  loading,
+}) => {
   const { data: session, status } = useSession() || {};
   const [adminData, setAdminData] = useState<AdminProfile | null>(null);
   const [liveProductsCount, setLiveProductsCount] = useState<number>(0);
@@ -58,7 +62,7 @@ const BannerSection: React.FC<BannerSectionProps> = ({ soldItemsCount }) => {
       <div className="custom-container">
         <div className="users-account-banner-wrapper pt-10 flex flex-col gap-2 items-start gap-8">
           <div className="users-account-left-cont flex items-center gap-4">
-            {adminData ? (
+            {!loading && adminData ? (
               <Image
                 src={
                   adminData.profileImage ||
@@ -74,10 +78,18 @@ const BannerSection: React.FC<BannerSectionProps> = ({ soldItemsCount }) => {
             )}
             <div className="users-info-cont">
               <h1 className="h5 font-primary user-profile-name whitespace-nowrap text-mono-100 mb-[2px]">
-                {adminData?.firstName || 'Unknown'}
+                {!loading && adminData ? (
+                  <>{adminData?.firstName || 'Unknown'}</>
+                ) : (
+                  <div className="skeleton bg-mono-40 h-3 w-[120px] shrink-0 rounded-full"></div>
+                )}
               </h1>
               <p className="user-username body-small">
-                {adminData?.userName || 'Unknown'}
+                {!loading && adminData ? (
+                  <> {adminData?.userName || 'Unknown'}</>
+                ) : (
+                  <span className="skeleton bg-mono-40 h-3 w-[120px] block rounded-full"></span>
+                )}
               </p>
             </div>
           </div>

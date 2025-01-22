@@ -10,12 +10,15 @@ import RevenueStatistics from './RevenueStatistics';
 const AnalyticsPage = () => {
   const { data: session } = useSession() || {};
   const [dashboardData, setDashboardData] = useState({
+    weeklyData: [],
+    monthlyData: [],
+    yearlyData: [],
     changes: {},
     totalSold: 0,
     totalRevenue: 0,
   });
 
-  const [period, setPeriod] = useState('Year');
+  const [period, setPeriod] = useState('Week');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -46,11 +49,10 @@ const AnalyticsPage = () => {
     }
   }, [session?.token]);
 
-
   // Handle loading and error states
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  // if (loading) {
+  //   return <p>Loading...</p>;
+  // }
 
   if (error) {
     return <p>{error}</p>;
@@ -80,16 +82,26 @@ const AnalyticsPage = () => {
     revenueChange: getPeriodChange('revenueChange'),
     itemsSold: dashboardData?.totalSold || 0,
     itemsSoldChange: getPeriodChange('soldChange'),
-
-
   };
-
+  const getChartData = () => {
+    switch (period) {
+      case 'Week':
+        return dashboardData.weeklyData;
+      case 'Month':
+        return dashboardData.monthlyData;
+      case 'Year':
+        return dashboardData.yearlyData;
+      default:
+        return [];
+    }
+  };
+  const chartData = getChartData();
   return (
     <div className="analytics-page py-8">
       {/* Business Overview Section */}
       <div className="max-w-7xl mx-auto bg-white">
         <h2 className="h5 font-primary mb-6">Business Overview</h2>
-        <BusinessOverview data={overviewData} />
+        <BusinessOverview loading={loading} data={overviewData} />
       </div>
 
       {/* Revenue Statistics Section */}
@@ -98,18 +110,12 @@ const AnalyticsPage = () => {
           <RevenueStatistics
             period={period}
             setPeriod={setPeriod}
-            data={[
-              {
-                orders: dashboardData?.totalSold || 0,
-                revenue: dashboardData?.totalRevenue || 0,
-              },
-            ]}
+            data={chartData}
+            loading={loading}
             changes={dashboardData?.changes}
           />
         </div>
-        <div className="col-span-6 h-full">
-          {/* <CustomerAcquisition /> */}
-        </div>
+        <div className="col-span-6 h-full">{/* <CustomerAcquisition /> */}</div>
       </div>
     </div>
   );

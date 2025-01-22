@@ -4,39 +4,8 @@ import { useDebounce } from 'use-debounce';
 import { Button, Input, Select, Textarea } from '@/components/elements';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import {
-  ToastService,
-} from '@/components/elements/notifications/ToastService';
+import { ToastService } from '@/components/elements/notifications/ToastService';
 import { categoriesData } from '@/libs/categoriesData';
-
-// interface Dimensions {
-//   height?: `${number}${'in' | 'cm'}` | '';
-//   width?: `${number}${'in' | 'cm'}` | '';
-//   depth?: `${number}${'in' | 'cm'}` | '';
-// }
-
-// interface DetailsData {
-//   charityId?: string; // Adding charityId to the details data
-//   charityName?: string; // Adding charityName to the details data
-//   itemTitle?: string;
-//   condition?: string;
-//   brand?: string;
-//   material?: string;
-//   color?: string;
-//   size?: string;
-//   dimensions?: Dimensions[];
-//   selectedCategory?: string;
-//   selectedSubCategory?: string;
-//   additionalInfo?: string;
-// }
-
-// interface FormProps {
-//   setActiveTab: (tabName: 'details' | 'photos' | 'price') => void;
-//   onSubmit: (detailsData: DetailsData) => void;
-//   formData: DetailsData;
-//   onSaveAsDraft: () => void;
-//   hideCharitySelection?: boolean;
-// }
 
 const DetailsForm = ({
   setActiveTab,
@@ -50,9 +19,7 @@ const DetailsForm = ({
 
   // Separate states for charityId and charityName
   const [charityName, setCharityName] = useState(formData.charityName || '');
-  const [charityId, setCharityId] = useState(
-    formData.charityId || null
-  );
+  const [charityId, setCharityId] = useState(formData.charityId || null);
   const [charityList, setCharityList] = useState([]);
   const [filteredCharities, setFilteredCharities] = useState([]);
   const [loadingCharities, setLoadingCharities] = useState(false);
@@ -122,63 +89,60 @@ const DetailsForm = ({
     setActiveTab('photos');
   };
 
-  // Fetch charity list from API
-  useEffect(() => {
-    const fetchCharityList = async () => {
-      if (!session?.token) {
-        console.warn('No session token available, cannot fetch charities.');
-        return;
-      }
-
-      setLoadingCharities(true);
-      try {
-        console.log('Fetching charities with session token:', session.token);
-
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/charity/charities`,
-          {
-            headers: {
-              Authorization: `Bearer ${session.token}`,
-            },
-          }
-        );
-
-        // Log the entire response to understand its structure
-        console.log('Full API response:', response);
-
-        // Check if the response has the correct structure
-        if (response.data && Array.isArray(response.data.charities)) {
-          setCharityList(response.data.charities);
-          setFilteredCharities(response.data.charities);
-        } else {
-          console.warn('Unexpected response format:', response);
-          ToastService.error(
-            'Failed to load charity list. Unexpected response format.'
-          );
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          if (error.response?.status === 400) {
-            ToastService.error(
-              'Bad request. Please verify the request parameters.'
-            );
-          } else if (error.response?.status === 401) {
-            ToastService.error('Unauthorized access. Please log in again.');
-          } else {
-            ToastService.error('Failed to load charity list.');
-          }
-        } else {
-          console.error('Unexpected error:', error);
-        }
-      } finally {
-        setLoadingCharities(false);
-      }
-    };
-
-    if (session) {
-      fetchCharityList();
+  // Fetch charity list from the backend
+  const fetchCharityList = async () => {
+    if (!session?.token) {
+      console.warn('No session token available, cannot fetch charities.');
+      return;
     }
-  }, [session]);
+
+    setLoadingCharities(true);
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/charity/charities`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+          },
+          params: {
+            search: debouncedSearchTerm, // Pass search term to backend
+          },
+        }
+      );
+
+      if (response.data && Array.isArray(response.data.charities)) {
+        setCharityList(response.data.charities);
+        setFilteredCharities(response.data.charities);
+      } else {
+        console.warn('Unexpected response format:', response);
+        ToastService.error(
+          'Failed to load charity list. Unexpected response format.'
+        );
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          ToastService.error(
+            'Bad request. Please verify the request parameters.'
+          );
+        } else if (error.response?.status === 401) {
+          ToastService.error('Unauthorized access. Please log in again.');
+        } else {
+          ToastService.error('Failed to load charity list.');
+        }
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    } finally {
+      setLoadingCharities(false);
+    }
+  };
+
+  useEffect(() => {
+    if (session) {
+      fetchCharityList(); // Fetch charity list when session is available
+    }
+  }, [session, debouncedSearchTerm]); // Re-fetch charities when the search term changes
 
   // Update charity dropdown when search term changes
   useEffect(() => {
@@ -201,7 +165,7 @@ const DetailsForm = ({
     setShowDropdown(value.length > 0);
   };
 
-  const handleCharitySelect = (charity) => {
+  const handleCharitySelect = charity => {
     setCharityName(charity.charityName);
     setCharityId(charity._id); // Save the charityId when a charity is selected
     setSearchTerm(charity.charityName);
@@ -214,15 +178,12 @@ const DetailsForm = ({
     }, 200);
   };
 
-  const handleCategoryChange = (categoryId) => {
+  const handleCategoryChange = categoryId => {
     setSelectedCategory(categoryId);
     setSelectedSubCategory('Select');
   };
 
-  const handleDimensionChange = (
-    e,
-    key
-  ) => {
+  const handleDimensionChange = (e, key) => {
     const value = e.target.value;
     setDimensions(prev => ({
       ...prev,
@@ -233,15 +194,10 @@ const DetailsForm = ({
   const filteredSubCategories =
     categories.find(cat => cat.id === selectedCategory)?.subCategories || [];
 
-  const isClothing = [
-    'women',
-    'men',
-    'children',
-    'clothing',
-  ].includes(selectedCategory);
-    const isShoes = [
-      'shoes',
-    ].includes(selectedCategory);
+  const isClothing = ['women', 'men', 'children', 'clothing'].includes(
+    selectedCategory
+  );
+  const isShoes = ['shoes'].includes(selectedCategory);
   // const isBagsFurnitureElectronicsAccessories = [
   //   'bags',
   //   'homeware',

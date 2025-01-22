@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -100,7 +99,7 @@ const NotificationButton = ({ toggleDropdown, notificationBtnClass }) => {
       className={`alert-btn relative flex items-center ${notificationBtnClass}`}
       onClick={toggleDropdown}
     >
-      <p>{console.log(error)}</p>;
+      <p>{console.log(error)}</p>
       {notificationsStatus === 'loading' ? (
         <span className="absolute top-[-8px] w-5 h-5 right-[-8px] bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
           ...

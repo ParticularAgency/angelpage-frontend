@@ -2,7 +2,7 @@
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { Button } from '../elements';
 import { UserIcon } from '@/icons';
 import TopNavList from './topNavList';
@@ -14,7 +14,7 @@ import BottomNavMegamenu from './bottomNavMegamenu';
 import StickyNavMenu from './stickyNavMenu';
 import NotificationButton from './NotificationButton';
 import NotificationDropdown from './NotificationDropdown';
-import { useSession} from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 const Header = () => {
   const { data: session, status } = useSession();
@@ -23,10 +23,9 @@ const Header = () => {
   console.log('Session:', session);
   console.log('Session Status:', status);
 
-
   const pathname = usePathname();
-const userId = session?.user?.id;
-const userRole = session?.user?.role;
+  const userId = session?.user?.id;
+  const userRole = session?.user?.role;
   // Define paths where BottomNavMegamenu should not appear
   const hideBottomNavPaths = ['/auth/login', '/auth/register'];
 
@@ -41,14 +40,14 @@ const userRole = session?.user?.role;
   const isTempLogin = pathname === '/internal-home';
   const isSellNowPage = pathname === '/product/post-product';
 
-   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev);
+    setIsDropdownOpen(prev => !prev);
   };
-   const accountPath = session
-     ? `/${userRole?.toLowerCase()}/account/${userId}`
-     : '/auth/login';
+  const accountPath = session
+    ? `/${userRole?.toLowerCase()}/account/${userId}`
+    : '/auth/login';
   return (
     <>
       {isTempLogin ? (
@@ -56,6 +55,11 @@ const userRole = session?.user?.role;
           <header
             className={`${isPostProductPage || isCheckoutPage ? 'bg-mono-100' : ''} header-section relative z-[9999]`}
           >
+            <div className="notice-banner bg-mono-100 py-1">
+              <p className="body-bold-small text-center text-mono-0">
+                Demo Mode, Launching soon!
+              </p>
+            </div>
             <div className="header-top-cont relative">
               <div className="custom-container">
                 <div className="header-top-wrapper py-4 grid grid-cols-12 sm:grid-cols-6 gap-6">
@@ -137,6 +141,11 @@ const userRole = session?.user?.role;
           <header
             className={`${isPostProductPage || isCheckoutPage ? 'bg-mono-100' : ''} header-section`}
           >
+            <div className="notice-banner bg-mono-100 py-1">
+              <p className="body-bold-small text-center text-mono-0">
+                Test Mode
+              </p>
+            </div>
             <div className="header-top-cont relative">
               <div className="custom-container">
                 <div className="header-top-wrapper py-4 grid grid-cols-12 sm:grid-cols-6 gap-6">

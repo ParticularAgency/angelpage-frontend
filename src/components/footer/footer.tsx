@@ -14,40 +14,39 @@ import { Button, Input } from '../elements';
 import { ToastService } from '@/components/elements/notifications/ToastService'; // Toast for notifications
 
 const Footer = () => {
-   const [email, setEmail] = useState('');
-   const [loading, setLoading] = useState(false);
-const [isSubscribed, setIsSubscribed] = useState(false);
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      if (!email) {
-        ToastService.error('Please enter an email address.');
-        return;
-      }
+    if (!email) {
+      ToastService.error('Please enter an email address.');
+      return;
+    }
 
-      setLoading(true);
+    setLoading(true);
 
-      try {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/email/subscribe`,
-          { email }
-        );
-        console.log('email subscribed' , response)
-        if (response.status === 200) {
-          ToastService.success(`Subscription successful! Check your inbox.`);
-          setIsSubscribed(true);
-          setEmail(''); 
-        } else {
-          ToastService.error('Email already subscribed');
-        }
-       
-      } catch (error) {
-        console.error('Error subscribing:', error);
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/email/subscribe`,
+        { email }
+      );
+      console.log('email subscribed', response);
+      if (response.status === 200) {
+        ToastService.success(`Subscription successful! Check your inbox.`);
+        setIsSubscribed(true);
+        setEmail('');
+      } else {
         ToastService.error('Email already subscribed');
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error('Error subscribing:', error);
+      ToastService.error('Email already subscribed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <footer className="footer-section pt-[120px] pb-20 md:pt-20 sm:pb-[127px] sm:pt-[54px] bg-mono-0">
@@ -56,16 +55,16 @@ const [isSubscribed, setIsSubscribed] = useState(false);
           <div className="grid grid-cols-12 sm:grid-cols-6 gap-6 sm:gap-0">
             <div className="col-span-3 md:col-span-2 sm:col-span-6 sm:order-2">
               <ul className="quick-link-lists flex flex-col gap-6 sm:gap-0">
-                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption">
+                {/* <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption">
                   <Link href="/">about us</Link>
-                </li>
+                </li> */}
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption">
                   <Link href="/how-it-works">HOW IT WORKS</Link>
                 </li>
                 {/* <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption"><Link href="/find-a-charity">Find a charity</Link></li> */}
-                <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption">
+                {/* <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption">
                   <Link href="/blog">blog</Link>
-                </li>
+                </li> */}
                 <li className="quick-list-item sm:py-6 sm:text-center sm:font-bold  text-mono-100 font-secondary font-normal leading-[150%] uppercase text-body-caption">
                   <Link href="/product">PRODUCTs</Link>
                 </li>
@@ -165,4 +164,3 @@ const [isSubscribed, setIsSubscribed] = useState(false);
 };
 
 export default Footer;
-

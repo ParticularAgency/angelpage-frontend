@@ -8,20 +8,13 @@ import 'swiper/css/navigation';
 import ProductCard from '../common/cards/product/productCard';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-// import { Product } from '@/types/productTypes';
 import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json'; // Importing JSON correctly
 
-// Load English language data
 countries.registerLocale(enLocale);
 
-// interface GiftFeaturedCategoryProductsProps {
-//   secClassName?: string;
-// }
-// interface GiftsCategoryResponse {
-//   products: Product[];
-// }
+
 const GiftFeaturedCategoryProducts = ({ secClassName }) => {
   const { data: session } = useSession() || {};
   const [productData, setProductData] = useState([]);
@@ -119,8 +112,8 @@ const GiftFeaturedCategoryProducts = ({ secClassName }) => {
                       charityImageAlt={
                         item.charity?.charityName || 'Charity Image'
                       }
-                      dimensionHeight={item.dimensionHeight || '0in'}
-                      dimensionWidth={item.dimensionWidth || '0in'}
+                      dimensionHeight={item.dimensions?.height || '0in'}
+                      dimensionWidth={item.dimensions?.width || '0in'}
                       location={location}
                       isLoggedIn={!!session?.token}
                       status={item.status}

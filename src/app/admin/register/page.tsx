@@ -2,9 +2,7 @@
 import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import { useState } from 'react';
-import {
-  ToastService,
-} from '@/components/elements/notifications/ToastService';
+import { ToastService } from '@/components/elements/notifications/ToastService';
 
 const Register = () => {
   const [activeTab, setActiveTab] = useState<'individual' | 'charity'>(
@@ -33,7 +31,7 @@ const Register = () => {
     setError('');
     setIsSubmitting(true);
 
-    const endpoint = `${process.env.NEXT_PUBLIC_API_URL || ''}/auth/register`;
+    const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/auth/register`;
     const userRole = activeTab === 'individual' ? 'ADMIN' : 'CHARITY';
 
     const payload = {
@@ -56,7 +54,7 @@ const Register = () => {
       }
 
       const responseData = await response.json();
-      // console.log('Registration successful:', responseData);
+      console.log('Registration successful:', responseData);
       ToastService.success(
         'Registration successful! Redirecting to login...',
         responseData
