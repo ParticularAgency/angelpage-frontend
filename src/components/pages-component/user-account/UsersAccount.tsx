@@ -11,35 +11,34 @@ import UsersProductListingArea from './listing';
 import SoldItemsPage from './sold';
 import BoughtItemsPage from './bought';
 import LogoutButton from '@/components/elements/button/LogoutButton';
-// import Loading from '@/app/loading';
 interface ProductResponse {
   products: Product[]; // Adjust the product structure as needed
 }
 const UsersAccount = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
-const { data: session } = useSession() || {};
-const [productsCount, setProductsCount] = useState<number>(0);
-const [loading, setLoading] = useState<boolean>(true);
+  const { data: session } = useSession() || {};
+  const [productsCount, setProductsCount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
 
-const fetchUserProducts = async () => {
-  try {
-    setLoading(true);
-    const response = await axios.get<ProductResponse>(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/listings`,
-      {
-        params: { role: 'USER' },
-        headers: {
-          Authorization: `Bearer ${session?.token}`,
-        },
-      }
-    );
-    setProductsCount(response.data.products.length);
-  } catch (error) {
-    console.error('Error fetching user products:', error);
-  } finally {
-    setLoading(false);
-  }
-};
+  const fetchUserProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get<ProductResponse>(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/listings`,
+        {
+          params: { role: 'USER' },
+          headers: {
+            Authorization: `Bearer ${session?.token}`,
+          },
+        }
+      );
+      setProductsCount(response.data.products.length);
+    } catch (error) {
+      console.error('Error fetching user products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     if (session?.token) {
       fetchUserProducts();
@@ -50,7 +49,7 @@ const fetchUserProducts = async () => {
     return <p>Please log in to view your account listing products.</p>;
   }
   if (loading) {
-    return <p>loading...</p>;
+    return <p>Loading...</p>;
   }
   return (
     <div className="charity-account-main-wrapper">

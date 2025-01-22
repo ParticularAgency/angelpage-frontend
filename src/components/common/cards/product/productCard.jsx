@@ -1,18 +1,18 @@
 'use client';
 
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Checkmark, LocationIcon } from '@/icons';
 import { Button } from '@/components/elements';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
 import { ToastService } from '@/components/elements/notifications/ToastService';
-import {useSelector,  useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useSession } from 'next-auth/react';
 import { addOrUpdateProduct } from '@/store/cartSlice';
 
-
-const ProductCard  = ({
+const ProductCard = ({
   id,
   charityImageSrc = '/images/icons/elisp-profile-default-img.svg',
   charityImageAlt = 'Charity Image',
@@ -24,13 +24,14 @@ const ProductCard  = ({
   location = '',
   dimensionHeight = '',
   dimensionWidth = '',
-  isLoggedIn = false,
+  // isLoggedIn = false,
 }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { data: session } = useSession() || {};
   const userId = session?.user?.id;
   const token = session?.token;
- const cartItems = useSelector(state => state.cart.items);
+  const cartItems = useSelector(state => state.cart.items);
   // Local state for "Added to Cart" button
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
@@ -44,6 +45,7 @@ const ProductCard  = ({
   const handleAddToCart = async () => {
     if (!token) {
       ToastService.error('Please log in to add products to your cart.');
+      router.push('/auth/login');
       return;
     }
 
@@ -141,31 +143,30 @@ const ProductCard  = ({
         </div>
 
         {/* Add to Basket Button */}
-        {isLoggedIn && (
-          <div className="product-card-btn-states">
-            {isAddedToCart ? (
-              <Button
-                variant="primary"
-                className="w-full mt-3 flex items-center justify-center"
-                disabled
-              >
-                <Checkmark /> Added
-              </Button>
-            ) : (
-              <Button
-                variant="primary"
-                className="w-full mt-3"
-                onClick={handleAddToCart}
-              >
-                Add to basket
-              </Button>
-            )}
-          </div>
-        )}
+        {/* {isLoggedIn && ( */}
+        <div className="product-card-btn-states">
+          {isAddedToCart ? (
+            <Button
+              variant="primary"
+              className="w-full mt-3 flex items-center justify-center"
+              disabled
+            >
+              <Checkmark /> Added
+            </Button>
+          ) : (
+            <Button
+              variant="primary"
+              className="w-full mt-3"
+              onClick={handleAddToCart}
+            >
+              Add to basket
+            </Button>
+          )}
+        </div>
+        {/* )} */}
       </div>
     </div>
   );
 };
 
 export default ProductCard;
-

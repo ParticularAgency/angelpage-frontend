@@ -5,6 +5,7 @@ import { Button} from '@/components/elements';
 import { useSession } from 'next-auth/react';
 // import { ToastService } from '@/components/elements/notifications/ToastService';
 import Link from 'next/link';
+import LoadingModal from '@/icons/loadingModal';
 
 
 const BoughtItems = () => {
@@ -53,13 +54,6 @@ const BoughtItems = () => {
       }
     }, [status]);
 
-    if (loading) {
-      return <p>Loading...</p>;
-    }
-
-    if (!purchaseItems.length) {
-      return <p>No items found.</p>;
-    }
 
  const handleConfirmDelivery = async () => {
    if (!selectedItem?.orderId) {
@@ -98,40 +92,113 @@ const BoughtItems = () => {
    }
  };
 
-//  const handleTrackOrder = async orderId => {
-//    try {
-//      const response = await fetch(
-//        `${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/track`,
-//        {
-//          method: 'GET',
-//          headers: {
-//            Authorization: `Bearer ${session.token}`,
-//          },
-//        }
-//      );
 
-//      if (!response.ok) {
-//        const errorData = await response.json();
-//        throw new Error(
-//          errorData.error || 'Failed to fetch tracking information.'
-//        );
-//      }
+  if (loading) {
+    return (
+      <div className="sold-item-wrapper-area">
+        <div className="sold-item-wrapper-head py-4 flex items-center justify-between">
+          <h3 className="body-bold-regular text-mono-100">Sold Items</h3>
+          <div className="sold-item-sort-box flex items-center gap-[14px]"></div>
+        </div>
+        <div className="sold-item-wrapper-cont-box pl-5 pr-9 grid grid-cols-12 gap-0 sm:grid-cols-6 md:px-0">
+          <div className="col-span-4 md:col-span-5 sm:col-span-full sold-product-states-items">
+            <ul className="space-y-0">
+              {loading && (
+                <>
+                  <li
+                    className={`p-4  sm:px-2 sold-product-states-item border cursor-pointer hover:bg-[#F1F1F8]`}
+                  >
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-3 md:gap-[6px] justify-between w-full">
+                        <div className="sold-item-info-box flex items-center gap-[20px] md:gap-4">
+                          <div className="sold-item-img w-[70px] h-[65px] skeleton bg-mono-40 rounded-[4px]"></div>
+                          <div className="sold-item-info-cont flex flex-col gap-1">
+                            <span className="eyebrow-medium skeleton w-[140px] bg-mono-40 h-3 text-mono-100">
+                              {/* {item.productBrand} */}
+                            </span>
+                            <span className="caption-bold skeleton w-[140px] bg-mono-40 h-2 text-mono-70">
+                              {/* {item.productName} */}
+                            </span>
+                            <span className="body-bold-small skeleton w-[90px] bg-mono-40 h-2 text-mono-100">
+                              {/* £{item.productPrice} */}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="states-box flex flex-col-reverse justify-between items-end">
+                          <span
+                            className={`forms-bold skeleton w-[70px] h-1 bg-[#FCF2FF] inline-block py-1 whitespace-nowrap px-[6px]`}
+                          ></span>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li
+                    className={`p-4  sm:px-2 sold-product-states-item border cursor-pointer hover:bg-[#F1F1F8]`}
+                  >
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-3 md:gap-[6px] justify-between w-full">
+                        <div className="sold-item-info-box flex items-center gap-[20px] md:gap-4">
+                          <div className="sold-item-img w-[70px] h-[65px] skeleton bg-mono-40 rounded-[4px]"></div>
+                          <div className="sold-item-info-cont flex flex-col gap-1">
+                            <span className="eyebrow-medium skeleton w-[140px] bg-mono-40 h-3 text-mono-100">
+                              {/* {item.productBrand} */}
+                            </span>
+                            <span className="caption-bold skeleton w-[140px] bg-mono-40 h-2 text-mono-70">
+                              {/* {item.productName} */}
+                            </span>
+                            <span className="body-bold-small skeleton w-[90px] bg-mono-40 h-2 text-mono-100">
+                              {/* £{item.productPrice} */}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="states-box flex flex-col-reverse justify-between items-end">
+                          <span
+                            className={`forms-bold skeleton w-[70px] h-1 bg-[#FCF2FF] inline-block py-1 whitespace-nowrap px-[6px]`}
+                          ></span>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
 
-//      const { trackingDetails } = await response.json();
-
-//      // Display the tracking information (adjust based on your UI)
-//      console.log('Tracking Details:', trackingDetails);
-//      ToastService.success('Tracking information fetched successfully!');
-//    } catch (error) {
-//      console.error('Error tracking order:', error);
-//      ToastService.error(
-//        error.message ||
-//          'Failed to fetch tracking information. Please try again.'
-//      );
-//    }
-//  };
-
-  
+          <div
+            className={`col-span-8 md:col-span-7 pt-[23px] pr-[45px] md:pr-4 md:pl-4 pb-[50px] bg-[#F1F1F7] pl-5 sm:col-span-full sold-product-states-item-cont sticky sm:relative top-[30px]  ${loading ? 'h-full' : 'h-[65vh]'}`}
+          >
+            {loading && (
+              <>
+                <div className="loading-model py-20">
+                  <LoadingModal />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (purchaseItems.length === 0) {
+    return (
+      <>
+        <div className="not-found-screen-design flex flex-col items-center pt-12 pb-12 custom-container">
+          <h5 className="body-bold-medium !text-[18px] text-mono-100 font-medium font-secondary mb-2 text-center">
+            No items purchased yet.
+          </h5>
+          <p className="body-bold-small font-secondary font-regular text-mono-90 text-center max-w-[420px] w-full mx-auto">
+            Currently, there are no purchase data available. Please return to
+            the homepage for more options.
+          </p>
+          {/* <Link href="/">
+            <Button variant="primary" className="mx-auto mt-6">
+              Return Home
+            </Button>
+          </Link> */}
+        </div>
+      </>
+    );
+  }
   return (
     <div className="bought-items-wrapper-area">
       <div className="bought-item-wrapper-head py-4 flex items-center justify-between">
@@ -143,65 +210,73 @@ const BoughtItems = () => {
         {/* List of bought items */}
         <div className="col-span-4 md:col-span-5 sm:col-span-full bought-product-states-items">
           <ul>
-            {purchaseItems.map(item => (
-              <li
-                key={item.orderId}
-                onClick={() => setSelectedItem(item)}
-                className={`p-4 sm:px-2 bought-product-states-item border cursor-pointer hover:bg-[#F1F1F7] ${item.orderId === selectedItem?.orderId ? 'bg-[#F1F1F7]' : ''}`}
-              >
-                <div className="flex items-center">
-                  <div className="flex items-center gap-3 md:gap-[6px] justify-between w-full">
-                    <div className="bought-item-info-box flex items-center gap-[33px]  md:gap-4">
-                      <div className="bought-item-img">
-                        <Image
-                          src={
-                            item.productImages?.[0]?.url ||
-                            '/images/placeholder-image.png'
-                          }
-                          alt={
-                            item.productImages?.[0]?.altText || 'Product image'
-                          }
-                          className="h-[65px] object-cover"
-                          width={70}
-                          height={65}
-                        />
-                      </div>
-                      <div className="bought-item-info-cont flex flex-col gap-1">
-                        <span className="eyebrow-medium text-mono-100">
-                          {item.productBrand}
-                        </span>
-                        <span className="caption-bold text-mono-70">
-                          {item.productName}
-                        </span>
-                        <span className="body-bold-small text-mono-100">
-                          £{item.productPrice}
+            {!loading && (
+              <>
+                {purchaseItems.map(item => (
+                  <li
+                    key={item.orderId}
+                    onClick={() => setSelectedItem(item)}
+                    className={`p-4 sm:px-2 bought-product-states-item border cursor-pointer hover:bg-[#F1F1F7] ${item.orderId === selectedItem?.orderId ? 'bg-[#F1F1F7]' : ''}`}
+                  >
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-3 md:gap-[6px] justify-between w-full">
+                        <div className="bought-item-info-box flex items-center gap-[33px]  md:gap-4">
+                          <div className="bought-item-img">
+                            <Image
+                              src={
+                                item.productImages?.[0]?.url ||
+                                '/images/placeholder-image.png'
+                              }
+                              alt={
+                                item.productImages?.[0]?.altText ||
+                                'Product image'
+                              }
+                              className="h-[65px] object-cover"
+                              width={70}
+                              height={65}
+                            />
+                          </div>
+                          <div className="bought-item-info-cont flex flex-col gap-1">
+                            <span className="eyebrow-medium text-mono-100">
+                              {item.productBrand}
+                            </span>
+                            <span className="caption-bold text-mono-70">
+                              {item.productName}
+                            </span>
+                            <span className="body-bold-small text-mono-100">
+                              £{item.productPrice}
+                            </span>
+                          </div>
+                        </div>
+                        <span
+                          className={`forms-bold bg-[#FAF2FF] inline-block whitespace-nowrap py-1 px-[6px] ${item.status === 'Complete' ? 'text-[#1FC430]' : 'text-[#D10C3B]'}`}
+                        >
+                          {item.status === 'OrderConfirmed'
+                            ? 'Item shipped?'
+                            : item.status === 'OrderPlaced'
+                              ? 'Awaiting payment'
+                              : item.status === 'InTransit'
+                                ? 'Item received?'
+                                : item.status === 'ItemShipped'
+                                  ? 'Item received?'
+                                  : item.status === 'Delivered'
+                                    ? 'Complete'
+                                    : ''}
                         </span>
                       </div>
                     </div>
-                    <span
-                      className={`forms-bold bg-[#FAF2FF] inline-block whitespace-nowrap py-1 px-[6px] ${item.status === 'Complete' ? 'text-[#1FC430]' : 'text-[#D10C3B]'}`}
-                    >
-                      {item.status === 'OrderConfirmed'
-                        ? 'Item shipped?'
-                        : item.status === 'OrderPlaced'
-                          ? 'Awaiting payment'
-                          : item.status === 'InTransit'
-                            ? 'Item received?'
-                            : item.status === 'ItemShipped'
-                              ? 'Item received?'
-                              : item.status === 'Delivered'
-                                ? 'Complete'
-                                : ''}
-                    </span>
-                  </div>
-                </div>
-              </li>
-            ))}
+                  </li>
+                ))}
+              </>
+            )}
           </ul>
         </div>
 
         {/* Details for the selected item */}
-        <div className="col-span-8 md:col-span-7 pt-[23px] pr-[45px] md:pr-4 md:pl-4 pb-[50px] bg-[#F1F1F7] pl-5 sm:col-span-full sold-product-states-item-cont  sticky sm:relative top-[30px] h-[65vh]">
+        <div 
+         className={`col-span-8 md:col-span-7 pt-[23px] pr-[45px] md:pr-4 md:pl-4 pb-[50px] bg-[#F1F1F7] pl-5 sm:col-span-full sold-product-states-item-cont sticky sm:relative top-[30px]  ${loading ? 'h-full' : 'h-[65vh]'}`} >
+       {!loading && (
+         <>
           {selectedItem && (
             <>
               <h3 className="caption">Purchase date</h3>
@@ -262,18 +337,17 @@ const BoughtItems = () => {
                           </span>
                         </p>
 
-                     
                         {selectedItem.tracking_url ? (
-                          <Link target="_blank" href={selectedItem.tracking_url}>
-                            <Button
-                              variant="primary"
-                              className="mt-2"
-                            >
+                          <Link
+                            target="_blank"
+                            href={selectedItem.tracking_url}
+                          >
+                            <Button variant="primary" className="mt-2">
                               Track order
                             </Button>
                           </Link>
                         ) : (
-                          <Button variant="secondary" className='mt-2' disabled>
+                          <Button variant="secondary" className="mt-2" disabled>
                             No tracking available
                           </Button>
                         )}
@@ -367,6 +441,8 @@ const BoughtItems = () => {
                   </p>
                 </div>
               )}
+            </>
+          )}
             </>
           )}
         </div>

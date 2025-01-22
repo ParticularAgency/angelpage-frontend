@@ -219,21 +219,33 @@ const PaymentInfoForm = () => {
   const handleShippingAddressSelect = e => {
     setSelectedShippingAddressId(e.target.value);
   };
- const handleConnectStripe = async () => {
-   // Generate the Stripe OAuth URL (You need to handle this in the backend)
-   const response = await fetch(
-     `${process.env.NEXT_PUBLIC_API_URL}/charity/stripe/connect-url`,
-     {
-       method: 'POST',
-       headers: { 'Content-Type': 'application/json' },
-     }
-   );
+  const handleConnectStripe = async () => {
+    const code = queryParams.get('code');
 
-   const { url } = await response.json();
+    if (code) {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/charity/stripe/connect-url`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session.token}`,
+            },
+            body: JSON.stringify({ code }),
+          }
+        );
 
-   // Redirect the user to the Stripe Connect OAuth URL
-   window.location.href = url;
- };
+        const { url } = await response.json();
+        console.log('Stripe Connect URL:', url);
+
+        // Redirect the user to the Stripe Connect URL
+        window.location.href = url;
+      } catch (error) {
+        console.error('Error generating Stripe OAuth URL:', error);
+      }
+    }
+  };
 
   return (
     <div className="payment-section pt-6 pb-0">

@@ -5,11 +5,15 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import BusinessOverview from './BusinessOverview';
 import RevenueStatistics from './RevenueStatistics';
+import { ToastService } from '@/components/elements/notifications/ToastService';
 // import CustomerAcquisition from './CustomerAcquisition';
 
 const AnalyticsPage = () => {
   const { data: session } = useSession() || {};
   const [dashboardData, setDashboardData] = useState({
+    weeklyData: [],
+    monthlyData: [],
+    yearlyData: [],
     changes: {},
     totalSold: 0,
     totalRevenue: 0,
@@ -19,24 +23,24 @@ const AnalyticsPage = () => {
     totalPurchaseItems: 0,
     totalSpend: 0,
   });
-  const [period, setPeriod] = useState('Year');
+  const [period, setPeriod] = useState('Week');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Fetch Seller Data
   useEffect(() => {
-     if (!session?.token) return;
+    if (!session?.token) return;
     if (session?.token) {
       const fetchDashboardData = async () => {
-        try {
           setLoading(true);
+        try {
           const response = await axios.get(
             `${process.env.NEXT_PUBLIC_API_URL}/order/seller/${session.user.id}/sold`,
             {
               headers: { Authorization: `Bearer ${session.token}` },
             }
           );
-          console.log(response.data)
+          console.log('sells analytics', response.data);
           setDashboardData(response.data);
         } catch (err) {
           console.error('Error fetching seller dashboard data:', err);
@@ -52,22 +56,23 @@ const AnalyticsPage = () => {
 
   // Fetch Buyer Data
   useEffect(() => {
-     if (!session?.token) return;
+    if (!session?.token) return;
     if (session?.token) {
       const fetchDashboardBuyerData = async () => {
-        try {
           setLoading(true);
+        try {
           const response = await axios.get(
             `${process.env.NEXT_PUBLIC_API_URL}/order/buyer/${session.user.id}/orders`,
             {
               headers: { Authorization: `Bearer ${session.token}` },
             }
           );
-          console.log(response.data)
+          console.log(response.data);
           setDashboardPurchaseData(response.data);
         } catch (err) {
           console.error('Error fetching buyer dashboard data:', err);
           setError('Failed to fetch buyer analytics data.');
+          ToastService.error(error);
         } finally {
           setLoading(false);
         }
@@ -78,20 +83,24 @@ const AnalyticsPage = () => {
   }, [session?.token]);
 
   // Handle loading and error states
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  // if (loading) {
+  //   return <p>Loading...</p>;
+  // }
 
-  if (error) {
-    return <p>{error}</p>;
-  }
+  // if (error) {
+  //   return (
+  //     <>
+      
+  //     </>
+  //   );
+  // }
 
   if (!dashboardData || !dashboardPurchaseData) {
     return <p>No data available.</p>;
   }
 
   // Helper function to get percentage change based on the period
-  const getPeriodChange = (key) => {
+  const getPeriodChange = key => {
     const changes = dashboardData?.changes || {};
     switch (period) {
       case 'Week':
@@ -103,7 +112,7 @@ const AnalyticsPage = () => {
         return changes?.yearly?.[key] || 0;
     }
   };
-  const getPeriodPurchaseChange = (key) => {
+  const getPeriodPurchaseChange = key => {
     const changes = dashboardPurchaseData?.changes || {};
     switch (period) {
       case 'Week':
@@ -121,40 +130,50 @@ const AnalyticsPage = () => {
     revenueChange: getPeriodChange('revenueChange'),
     itemsSold: dashboardData?.totalSold || 0,
     itemsSoldChange: getPeriodChange('soldChange'),
-    
+
     itemsBought: dashboardPurchaseData?.totalPurchaseItems || 0,
     itemsBoughtChange: getPeriodPurchaseChange('purchaseChange'),
     moneySpent: dashboardPurchaseData?.totalSpend || 0,
     moneySpentChange: getPeriodPurchaseChange('spendChange'),
   };
-
+  // Determine the data to show based on the selected period
+  const getChartData = () => {
+    switch (period) {
+      case 'Week':
+        return dashboardData.weeklyData;
+      case 'Month':
+        return dashboardData.monthlyData;
+      case 'Year':
+        return dashboardData.yearlyData;
+      default:
+        return [];
+    }
+  };
+  const chartData = getChartData();
   return (
     <div className="analytics-page py-8">
-      {/* Business Overview Section */}
-      <div className="max-w-7xl mx-auto bg-white">
-        <h2 className="h5 font-primary mb-6">Business Overview</h2>
-        <BusinessOverview data={overviewData} />
-      </div>
+          {/* Business Overview Section */}
+          <div className="max-w-7xl mx-auto bg-white">
+            <h2 className="h5 font-primary mb-6">Business Overview</h2>
+            <BusinessOverview loading={loading} data={overviewData} />
+          </div>
 
-      {/* Revenue Statistics Section */}
-      <div className="grid grid-cols-12 sm:grid-cols-6 gap-8 mx-auto mt-8">
-        <div className="col-span-6 h-full">
-          <RevenueStatistics
-            period={period}
-            setPeriod={setPeriod}
-            data={[
-              {
-                orders: dashboardData?.totalSold || 0,
-                revenue: dashboardData?.totalRevenue || 0,
-              },
-            ]}
-            changes={dashboardData?.changes}
-          />
-        </div>
-        <div className="col-span-6 h-full">
-          {/* <CustomerAcquisition /> */}
-        </div>
-      </div>
+          {/* Revenue Statistics Section */}
+          <div className="grid grid-cols-12 sm:grid-cols-6 gap-8 mx-auto mt-8">
+            <div className="col-span-6 h-full">
+              <RevenueStatistics
+                period={period}
+                setPeriod={setPeriod}
+                data={chartData}
+                loading={loading}
+                changes={dashboardData?.changes}
+              />
+            </div>
+            <div className="col-span-6 h-full">
+              {/* <CustomerAcquisition /> */}
+            </div>
+          </div>
+        
     </div>
   );
 };

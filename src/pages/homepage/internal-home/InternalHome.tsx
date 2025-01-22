@@ -3,7 +3,7 @@ import React from 'react';
 import HomePageMainBanner from '@/components/banner/HomePageMainBanner';
 import IntHomeCtaSec from '@/components/homepage/IntHomeCtaSec';
 import JewelleryProductCtaSec from '@/components/homepage/JewelleryProductCtaSec';
-import LatestBlogsSection from '@/components/homepage/LatestBlogsSection';
+// import LatestBlogsSection from '@/components/homepage/LatestBlogsSection';
 import BagsTopCategoryProducts from '@/components/product/BagsCategoryProducts';
 import ElectronicsTopCategoryProducts from '@/components/product/ElectronicsProducts';
 import GiftFeaturedCategoryProducts from '@/components/product/GiftFeatureCategoryProducts';
@@ -25,7 +25,7 @@ const InternalHome = () => {
         <BagsTopCategoryProducts secClassName="" />
         <IntHomeCtaSec />
         <GiftFeaturedCategoryProducts secClassName="" />
-        <LatestBlogsSection />
+        {/* <LatestBlogsSection /> */}
       </div>
     </ProtectedRoute>
   );

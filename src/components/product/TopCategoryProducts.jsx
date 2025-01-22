@@ -9,18 +9,13 @@ import 'swiper/css/navigation';
 import ProductCard from '../common/cards/product/productCard';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-// import { Product } from '@/types/productTypes';
 import Link from 'next/link';
 import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
 import countries from 'i18n-iso-countries';
-// Load English language data
 import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
 
-
-const TopCategoryProducts = ({
-  secClassName,
-}) => {
+const TopCategoryProducts = ({ secClassName }) => {
   const { data: session } = useSession() || {};
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +40,7 @@ const TopCategoryProducts = ({
         );
         setProductData(response.data.products);
       } catch (err) {
-          setError('');
+        setError('');
       } finally {
         setLoading(false);
       }
@@ -103,42 +98,43 @@ const TopCategoryProducts = ({
                   </SwiperSlide>
                 ))
               : productData.map(item => {
-                // Safely extract location
-                const sellerUserAddress = item.seller?.address;
-                const sellerCharityAddress = item.charity?.address;
+                  // Safely extract location
+                  const sellerUserAddress = item.seller?.address;
+                  const sellerCharityAddress = item.charity?.address;
 
-                // Determine which address to use (User or Charity)
-                const sellerAddress = sellerUserAddress || sellerCharityAddress;
+                  // Determine which address to use (User or Charity)
+                  const sellerAddress =
+                    sellerUserAddress || sellerCharityAddress;
 
-                let countryCode = 'N/A';
-                if (sellerAddress?.country) {
-                  countryCode =
-                    countries.getAlpha2Code(sellerAddress.country, 'en') ||
-                    'N/A';
-                }
+                  let countryCode = 'N/A';
+                  if (sellerAddress?.country) {
+                    countryCode =
+                      countries.getAlpha2Code(sellerAddress.country, 'en') ||
+                      'N/A';
+                  }
 
-                const location = sellerAddress
-                  ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
-                  : 'Location Not Available';
+                  const location = sellerAddress
+                    ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
+                    : 'Location Not Available';
 
-                return (
-                  <SwiperSlide key={item.id}>
-                    <ProductCard
-                      {...item}
-                      id={item._id}
-                      charityImageSrc={item.charity?.profileImage}
-                      charityImageAlt={
-                        item.charity?.charityName || 'Charity Image'
-                      }
-                      dimensionHeight={item.dimensionHeight || '0in'}
-                      dimensionWidth={item.dimensionWidth || '0in'}
-                      location={location}
-                      isLoggedIn={!!session?.token}
-                      status={item.status}
-                    />
-                  </SwiperSlide>
-                );
-              })}
+                  return (
+                    <SwiperSlide key={item.id}>
+                      <ProductCard
+                        {...item}
+                        id={item._id}
+                        charityImageSrc={item.charity?.profileImage}
+                        charityImageAlt={
+                          item.charity?.charityName || 'Charity Image'
+                        }
+                        dimensionHeight={item.dimensions?.height || '0in'}
+                        dimensionWidth={item.dimensions?.width || '0in'}
+                        location={location}
+                        isLoggedIn={!!session?.token}
+                        status={item.status}
+                      />
+                    </SwiperSlide>
+                  );
+                })}
           </Swiper>
           <div className="product-btn-box hidden sm:flex justify-center pt-8">
             <Link href="/product">

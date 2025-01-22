@@ -764,17 +764,20 @@ p.account-info-item.editing-view {
     column-gap: 21px;
     row-gap: 14px;
 }
-@media screen and (max-width:767px){
+
+@media screen and (max-width:767px) {
+
     .personal-info-item.editing-view,
-.personal-info-details .personal-info-item,
-.account-info-details .account-info-item,
-p.account-info-item.editing-view {
-    display: grid;
-    grid-template-columns: 100px 1fr;
-    column-gap: 10px;
-    row-gap: 14px;
+    .personal-info-details .personal-info-item,
+    .account-info-details .account-info-item,
+    p.account-info-item.editing-view {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        column-gap: 10px;
+        row-gap: 14px;
+    }
 }
-}
+
 .sold-product-states-item {
     border-bottom: 1px solid #E6E3E7;
 }
@@ -1147,10 +1150,23 @@ button.steps-completed {
     position: relative;
     /* Ensure the lens can render outside the image */
 }
-.product-quantity-area{
+
+.product-quantity-area {
     border: 1px solid #0B0112;
 }
 
-.table-user-info-list-bottom{
-    border-top:1px solid #CCD3DB;
+.table-user-info-list-bottom {
+    border-top: 1px solid #CCD3DB;
+}
+
+.upload-file-area {
+    border: 1px dashed #898989;
+    border-radius: 12px;
+    padding: 12px 18px;
+    height: 100px;
+    max-width: 410px;
+}
+
+.loading-model .loading-modal svg {
+    width: 32px;
 }

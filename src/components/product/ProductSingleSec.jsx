@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Checkmark, ShearIcon } from '@/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,7 +10,6 @@ import RelatedCategoryProducts from './RelatedProductCategory';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectFade, FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { ToastService } from '@/components/elements/notifications/ToastService';
-
 import { useSelector, useDispatch } from 'react-redux';
 import { addOrUpdateProduct } from '@/store/cartSlice';
 import { useSession } from 'next-auth/react';
@@ -34,6 +33,7 @@ countries.registerLocale(enLocale);
 
 const ProductSinglepage = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { data: session } = useSession() || {};
   const userId = session?.user?.id;
   const token = session?.token;
@@ -47,7 +47,7 @@ const ProductSinglepage = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const router = useRouter();
+
   useEffect(() => {
     const productInCart = cartItems.some(item => item.productId === productid);
     setIsAddedToCart(productInCart);
@@ -72,7 +72,7 @@ const ProductSinglepage = () => {
             headers,
           }
         );
-        console.log('product details response' , response.data.product);
+        console.log('product details response', response.data.product);
         setProduct(response.data.product);
       } catch (err) {
         setError('Failed to load product details.');
@@ -87,6 +87,7 @@ const ProductSinglepage = () => {
   const handleAddToCart = async () => {
     if (!token) {
       ToastService.error('Please log in to add products to your cart.');
+      router.push('/auth/login');
       return;
     }
 
@@ -134,7 +135,6 @@ const ProductSinglepage = () => {
       document.body.removeChild(tempInput);
     }
   };
-
 
   if (loading) {
     return <PreLoader />;
@@ -256,7 +256,7 @@ const ProductSinglepage = () => {
           <div className="product-singlepage-right-cont max-w-[388px] w-full">
             <div className="product-info-header flex mb-6 items-center gap-3 justify-between">
               <div className="product-posted-user-info flex items-center gap-[13px]">
-                {product.sellerType === "USER" ? (
+                {product.sellerType === 'USER' ? (
                   <>
                     <div className="seller-peofile-image w-8 h-8 rounded-full">
                       <Image
@@ -291,10 +291,10 @@ const ProductSinglepage = () => {
               </div>
               <div className="product-states flex items-center gap-2">
                 {!!session?.token && (
-                <MessageButton
-                  sellerId={product.seller?.id || product.charity?.id}
-                  sellerType={product.sellerType}
-                />
+                  <MessageButton
+                    sellerId={product.seller?.id || product.charity?.id}
+                    sellerType={product.sellerType}
+                  />
                 )}
 
                 <div className="product-favorite-btn cursor-pointer">
@@ -345,27 +345,27 @@ const ProductSinglepage = () => {
             </div>
 
             <div className="product-cta-box flex flex-col gap-4 mb-6 max-w-[306px] sm:max-w-[375px] w-full">
-              {!!session?.token && (
-                <div className="product-card-btn-states">
-                  {isAddedToCart ? (
-                    <Button
-                      variant="primary"
-                      className="add-to-basket-btn  w-full"
-                      disabled
-                    >
-                      <Checkmark /> Added
-                    </Button>
-                  ) : (
-                    <Button
-                      className="add-to-basket-btn w-full"
-                      variant="primary"
-                      onClick={handleAddToCart}
-                    >
-                      Add to basket
-                    </Button>
-                  )}
-                </div>
-              )}
+              {/* {!!session?.token && ( */}
+              <div className="product-card-btn-states">
+                {isAddedToCart ? (
+                  <Button
+                    variant="primary"
+                    className="add-to-basket-btn  w-full"
+                    disabled
+                  >
+                    <Checkmark /> Added
+                  </Button>
+                ) : (
+                  <Button
+                    className="add-to-basket-btn w-full"
+                    variant="primary"
+                    onClick={handleAddToCart}
+                  >
+                    Add to basket
+                  </Button>
+                )}
+              </div>
+              {/* )} */}
 
               <Link
                 href={`/charity/store/${product.charity?.storefrontId}`}

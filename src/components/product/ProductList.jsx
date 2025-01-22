@@ -47,8 +47,8 @@ const ProductList = ({ products, isLoggedIn }) => {
               size={product.size || ''}
               price={`${product.price || '0.00'}`}
               location={location}
-              dimensionHeight={product.dimensionHeight || '0in'}
-              dimensionWidth={product.dimensionWidth || '0in'}
+              dimensionHeight={product.dimensions?.height || '0in'}
+              dimensionWidth={product.dimensions?.width || '0in'}
               status={product.status}
               isLoggedIn={isLoggedIn}
             />
