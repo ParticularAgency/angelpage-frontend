@@ -66,7 +66,7 @@ const StoreFrontBanner: React.FC<StoreFrontBannerProps> = ({
                 <Image
                   src={
                     charityStore.charityBannerImage ||
-                    '/images/icons/charity-banner-img.png'
+                    '/images/charity-storefront/charity-banner-img1.png'
                   }
                   className="w-full h-full object-cover object-top"
                   alt="storefront charity model image"
@@ -74,7 +74,7 @@ const StoreFrontBanner: React.FC<StoreFrontBannerProps> = ({
                   height={387}
                 />
               ) : (
-                <span className="skeleton bg-mono-40 h-full w-full"></span>
+                <div className="skeleton bg-mono-40 h-full w-full"></div>
               )}
             </div>
           </div>
