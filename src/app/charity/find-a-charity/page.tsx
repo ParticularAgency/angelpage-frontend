@@ -108,20 +108,20 @@ const FindCharity: React.FC = () => {
 
   return (
     <div>
-      <div className="custom-container">
-        <div className="grid grid-cols-6 md:grid-cols-3 sm:grid-cols-2 gap-4">
+      <div className="custom-container overflow-hidden">
+        <div className="flex items-start justify-center flex-nowrap gap-4 sm:gap-2">
           {charityImages.map((image, index) => (
             <div
               key={index}
-              className="overflow-hidden shadow-lg max-w-[237px] w-full h-[299px]"
+              className="overflow-hidden shadow-lg w-[237px] min-w-[237px] sm:min-w-[150px] h-[299px]"
             >
               <Image
-                src={image}
+                src={image} 
                 alt={`Charity ${index + 1}`}
                 width={238}
                 height={299}
                 className="w-full h-full object-cover"
-                loading="lazy" // Lazy load images for better performance
+                loading="lazy"
               />
             </div>
           ))}
