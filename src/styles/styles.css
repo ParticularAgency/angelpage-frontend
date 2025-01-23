@@ -1170,3 +1170,14 @@ button.steps-completed {
 .loading-model .loading-modal svg {
     width: 32px;
 }
+ 
+.storefront-banner-tittle {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    /* Limit the text to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* Hide overflowed text */
+    text-overflow: ellipsis;
+    /* Add the ellipsis (…) */
+}

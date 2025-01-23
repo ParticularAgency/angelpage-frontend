@@ -1,7 +1,6 @@
 'use client';
-import CharityStorefront from '@/components/pages-component/charity/charity-storefront/CharityStorefront';
-// import ProtectedRoute from '@/utils/ProtectedRoute';
 import React from 'react';
+import CharityStorefront from '@/components/pages-component/charity/charity-storefront/CharityStorefront';
 
 const StorefrontPage = ({ params }: { params: { storefrontid: string } }) => {
   return (

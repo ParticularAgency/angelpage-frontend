@@ -101,7 +101,7 @@ const GiftFeaturedCategoryProducts = ({ secClassName }) => {
 
                 const location = sellerAddress
                   ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
-                  : 'Location Not Available';
+                  : 'Not available';
 
                 return (
                   <SwiperSlide key={item.id}>

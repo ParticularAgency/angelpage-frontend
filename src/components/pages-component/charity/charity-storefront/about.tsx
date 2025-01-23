@@ -53,7 +53,7 @@ const AboutInfoComponent: React.FC<AboutInfoComponentProps> = ({
               Charity ID: <span className="body-small">{charityID}</span>
             </li>
             {addresses.length > 0 && (
-              <li className="charity-storefront-info-item flex items-center gap-2 body-bold-small">
+              <li className="charity-storefront-info-item flex items-start gap-2 body-bold-small">
                 Address:{' '}
                 <span className="body-small">
                   {address.address || 'Address Not Available'},{' '}

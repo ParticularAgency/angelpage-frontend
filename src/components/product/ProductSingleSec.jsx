@@ -148,14 +148,21 @@ const ProductSinglepage = () => {
     return <p className="text-gray-500">Product not found.</p>;
   }
 
-  const sellerAddress = product.seller?.addresses;
-  const countryCode = sellerAddress?.country
-    ? countries.getAlpha2Code(sellerAddresses.country, 'en') || 'N/A'
-    : 'N/A';
+  // Safely extract location
+  const sellerUserAddress = product.seller?.address;
+  const sellerCharityAddress = product.charity?.address;
+
+  // Determine which address to use (User or Charity)
+  const sellerAddress = sellerUserAddress || sellerCharityAddress;
+
+  let countryCode = 'N/A';
+  if (sellerAddress?.country) {
+    countryCode = countries.getAlpha2Code(sellerAddress.country, 'en') || 'N/A';
+  }
 
   const location = sellerAddress
     ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
-    : 'Location Not Available';
+    : 'Location not available';
 
   return (
     <section className="product-singlepage-section">

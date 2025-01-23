@@ -106,7 +106,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
           />
           <label
             htmlFor="searchid1"
-            className="searchbtn absolute top-[12px] left-3"
+            className="searchbtn absolute top-[13px] left-3"
           >
             <Image
               src="/images/Search-primary.svg"

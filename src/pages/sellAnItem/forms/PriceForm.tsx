@@ -170,7 +170,7 @@ const PriceForm: React.FC<FormProps> = ({
               />
               Shopping info
             </span>
-            Please note that shipping costs are the responsibility of the seller
+            Please note that shipping costs are the responsibility of the buyer
             and will not be reimbursed by the platform.
           </p>
         </div>
