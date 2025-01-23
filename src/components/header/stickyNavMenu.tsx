@@ -76,7 +76,7 @@ const StickyNavMenu: React.FC<StickyNavbar> = ({ toggleDropdown}) => {
             </li>
             <li className="sticky-mobilenav-list">
               <Link
-                href="/find-a-charity"
+                href="/charity/find-a-charity"
                 className="text-center flex items-center justify-center flex-col gap-[13px]"
               >
                 <div className="icons-box">

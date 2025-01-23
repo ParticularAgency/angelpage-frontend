@@ -158,7 +158,10 @@ const totalPrice = cartItems.reduce((acc, item) => {
                                   </button>
                                 </div>
                                 <p className="product-current-price caption">
-                                  Price: <br /> £{item?.productId?.price}
+                                  Price: <br /> £
+                                  {(
+                                    item.quantity * item.productId?.price
+                                  ).toFixed(2)}
                                 </p>
                               </div>
                               <Button

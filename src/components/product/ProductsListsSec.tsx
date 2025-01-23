@@ -10,7 +10,7 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { CloseIcon, FilterIcon } from '@/icons';
 import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
-import {Product} from '@/types/productTypes';
+import { Product } from '@/types/productTypes';
 import { Button } from '@/components/elements';
 import Link from 'next/link';
 
@@ -34,7 +34,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
   const searchParams = useSearchParams();
   const category = searchParams?.get('category') || '';
   const subcategory = searchParams?.get('subcategory') || '';
-  
+
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -77,7 +77,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
         setTotalPages(Math.ceil(productsData.length / productsPerPage));
         setCurrentPage(1); // Reset to first page
       } catch (err: unknown) {
-          setError( 'Failed to load products. Please try again.' );
+        setError('Failed to load products. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -99,7 +99,6 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
   const handleSortChange = (newSort: string) => {
     setSort(newSort);
   };
-
 
   const removeFilter = (filterType: keyof Filters, value: string) => {
     setFilters(prevFilters => ({
@@ -136,13 +135,11 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
     // Sort logic
     if (sort === 'price-asc') {
       updatedProducts.sort(
-        (a, b) =>
-          parseFloat(a.price || '0') - parseFloat(b.price || '0')
+        (a, b) => parseFloat(a.price || '0') - parseFloat(b.price || '0')
       );
     } else if (sort === 'price-desc') {
       updatedProducts.sort(
-        (a, b) =>
-          parseFloat(b.price || '0') - parseFloat(a.price || '0')
+        (a, b) => parseFloat(b.price || '0') - parseFloat(a.price || '0')
       );
     } else if (sort === 'name-asc') {
       updatedProducts.sort((a, b) =>
@@ -166,7 +163,6 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
     startIndex,
     startIndex + productsPerPage
   );
-
 
   if (error) {
     return (
@@ -269,8 +265,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
                           availableProducts={products.map(product => ({
                             ...product,
                             brand: product.brand || 'Unknown Brand',
-                            name:
-                              product.name || 'Untitled Product',
+                            name: product.name || 'Untitled Product',
                             condition: product.condition || 'Unknown Condition',
                             subcategory: product.subcategory || 'Uncategorized',
                             category: product.category || 'Uncategorized', // Default category
@@ -351,7 +346,8 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
                       filteredProducts.length
                     )}{' '}
                     of
-                  </span>{'  '}
+                  </span>
+                  {'  '}
                   <span className="caption-bold">
                     {filteredProducts.length} products
                   </span>

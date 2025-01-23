@@ -270,10 +270,12 @@ const CharityStoreListing = ({
                         </div>
                       </div>
                     </div>
-                    <SearchBar
-                      filteredProducts={filteredProducts.length}
-                      onSearch={handleSearch}
-                    />
+                    <div className="filter-searchbar-area sm:hidden">
+                      <SearchBar
+                        filteredProducts={filteredProducts.length}
+                        onSearch={handleSearch}
+                      />
+                    </div>
                   </div>
                   <div className="product-selected-category-lists flex flex-wrap items-center gap-2">
                     {Object.keys(filters).map(filterType => {
@@ -295,7 +297,9 @@ const CharityStoreListing = ({
                     })}
                   </div>
                 </div>
-                <Sorting onSortChange={handleSortChange} />
+                <div className="product-sorting sm:w-full">
+                  <Sorting onSortChange={handleSortChange} />
+                </div>
               </div>
 
               <ProductList products={currentProducts} isLoggedIn={true} />
