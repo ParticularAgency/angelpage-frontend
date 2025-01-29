@@ -30,6 +30,9 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
       status === 'unauthenticated' ||
       !allowedRoles.includes(session?.user?.role || '')
     ) {
+      // router.push(
+      //   `/auth/login?callbackUrl=${encodeURIComponent(router.asPath)}`
+      // );
       signOut({ callbackUrl: '/' });
       return;
     }

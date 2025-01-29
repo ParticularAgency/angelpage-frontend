@@ -83,6 +83,9 @@ export const authOptions: NextAuthOptions = {
       session.token = token.jwt as string; // Attach JWT token to session
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
   session: {

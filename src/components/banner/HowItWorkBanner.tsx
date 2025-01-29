@@ -1,51 +1,21 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
 const HowItWorkBanner = () => {
   return (
-    <section className="how-it-work-banner  w-full bg-white">
-      <div className="grid grid-cols-2">
-        {/* Left Side: Grid of Images */}
-        <div className="grid grid-rows-2 h-full grid-cols-2">
-          {/* Top-left image */}
-          <div className="h-full">
-            <Image
-              width={339}
-              height={310}
-              alt="Logo"
-              src="/images/how-it-works/logo.svg"
-              className="w-full max-h-[310px] h-full object-cover"
-            />
-          </div>
-
-          {/* Bottom-right image */}
-          <div className="h-full">
-            <Image
-              width={339}
-              height={310}
-              src="/images/how-it-works/img2.png"
-              alt="Helping people"
-              className="w-full max-h-[310px] h-full object-cover"
-            />
-          </div>
-          <div className="col-span-2 h-full">
-            <Image
-              width={710}
-              height={310}
-              src="/images/how-it-works/img3.png"
-              alt="Dogs in cages"
-              className="w-full max-h-[310px] h-full object-cover"
-            />
+    <section className="how-it-work-banner w-full bg-white">
+      <div className="how-it-work-banner-area min-h-[389px] sm:min-h-[262px]">
+        <div className="custom-container">
+          <div className="how-it-work-banner-wrapper py-[112px] sm:py-16 relative z-50">
+            <h1 className="banner-title h1 text-center text-mono-0">
+              How it works
+            </h1>
+            <p className="desc body-medium sm:body-small  text-center !text-mono-0 mt-6 sm:mt-3 max-w-[820px] mx-auto w-full">
+              AngelPage is an innovative online marketplace designed to enable
+              individuals and charity shops to sell preloved items, with the
+              proceeds supporting UK charities.
+            </p>
           </div>
         </div>
-        {/* Right Side: Logo and Text */}
-        <Image
-          width={730}
-          height={620}
-          src="/images/how-it-works/img4.png"
-          alt="Children playing with water"
-          className="w-full max-h-[620px] h-full object-cover"
-        />
       </div>
     </section>
   );

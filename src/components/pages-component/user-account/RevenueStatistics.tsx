@@ -138,7 +138,7 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
             <BarChart data={data}>
               <XAxis dataKey="label" />
               <YAxis />
-              <Tooltip formatter={value => `£${value.toLocaleString()}`} />
+              <Tooltip formatter={value => `${value.toLocaleString()}`} />
               <Legend />
               <Bar dataKey="orders" stackId="a" fill="#6A0398" />
               <Bar dataKey="revenue" stackId="a" fill="#C9C8CA" />

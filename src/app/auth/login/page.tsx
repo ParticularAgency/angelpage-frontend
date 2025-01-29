@@ -3,7 +3,7 @@ import { signIn, useSession } from 'next-auth/react';
 import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import  {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
@@ -16,6 +16,8 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeRole, setActiveRole] = useState('USER'); // State to manage selected role
   const router = useRouter();
+  const searchParams = useSearchParams();
+ const callbackUrl = searchParams?.get('callbackUrl') || '/';
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,6 +29,7 @@ const Login = () => {
       email,
       password,
       role: activeRole,
+      callbackUrl: callbackUrl || '/',
     });
 
     if (result?.error) {
@@ -47,7 +50,10 @@ const Login = () => {
     );
     const userRole = updatedSession?.user?.role;
     const userId = updatedSession?.user?.id;
-
+    // If login succeeds, redirect to callbackUrl
+    if (result?.url) {
+      router.push(result.url);
+    }
     if (userRole && userId) {
       if (userRole === activeRole) {
         ToastService.success('Login successful! Redirecting...');

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import '@/styles/styles.css';
 import ClientProviders from '@/utils/Provider';
-
+import Head from 'next/head';
 // Metadata export for server-side configuration
 export const metadata: Metadata = {
   title: 'Angelpage Charity Based E-commerce webapp',
@@ -17,6 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Head>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
       <body className="angelpage-body-wrapper-area">
         <main className="angelpage-main-wrapper">
           <ClientProviders>{children}</ClientProviders>

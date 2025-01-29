@@ -4,10 +4,13 @@ import { EditIcon, SaveIcon } from '@/icons';
 import { Button, Checkbox, Input, Select } from '@/components/elements';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
+import Link from 'next/link';
+// import Image from 'next/image';
 
 const PaymentInfoForm = () => {
   const { data: session, status } = useSession() || {};
   const [paymentMethods, setPaymentMethods] = useState([]);
+  const [charityData, setCharityDate] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -16,7 +19,9 @@ const PaymentInfoForm = () => {
     useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [paymentToDelete, setPaymentToDelete] = useState(null);
-
+  const [onboardingUrl, setOnboardingUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [newPayment, setNewPayment] = useState({
     nameAccountHolder: '',
     accountNumber: '',
@@ -44,6 +49,8 @@ const PaymentInfoForm = () => {
               },
             }
           );
+          console.log('charity data', response.data.user);
+          setCharityDate(response.data.user);
           setPaymentMethods(response.data.user?.payments || []);
           setAddresses(response.data.user?.addresses || []);
         } catch (error) {
@@ -219,31 +226,21 @@ const PaymentInfoForm = () => {
   const handleShippingAddressSelect = e => {
     setSelectedShippingAddressId(e.target.value);
   };
-  const handleConnectStripe = async () => {
-    const code = queryParams.get('code');
-
-    if (code) {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/charity/stripe/connect-url`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${session.token}`,
-            },
-            body: JSON.stringify({ code }),
-          }
-        );
-
-        const { url } = await response.json();
-        console.log('Stripe Connect URL:', url);
-
-        // Redirect the user to the Stripe Connect URL
-        window.location.href = url;
-      } catch (error) {
-        console.error('Error generating Stripe OAuth URL:', error);
-      }
+  const handleOnboard = async () => {
+    setLoading(true);
+    setError('');
+     const charityId = charityData?._id; 
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/charity/onboard`,
+        { charityId },
+      );
+      setOnboardingUrl(response.data.onboardingUrl);
+    } catch (err) {
+      setError('Failed to create Stripe account. Please try again.');
+      console.error('Error onboarding charity:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -261,13 +258,30 @@ const PaymentInfoForm = () => {
           >
             Add new payment method
           </Button>
-          <Button
-            onClick={handleConnectStripe}
-            variant="accend-link"
-            className="underline !text-primary-color-100"
-          >
-            Connect your business account <span className="text-error">*</span>
-          </Button>
+          <div className="stripe-onboarding-container">
+            {onboardingUrl ? (
+              <div className="onboarding-link">
+                <Link
+                  href={onboardingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline !text-primary-color-100"
+                >
+                  Complete your Stripe setup
+                </Link>
+              </div>
+            ) : (
+              <Button
+                className="underline !text-primary-color-100"
+                onClick={handleOnboard}
+                disabled={loading}
+              >
+                {loading ? 'Processing...' : 'Start Stripe Onboarding'}
+              </Button>
+            )}
+
+            {error && <p className="error-message">{error}</p>}
+          </div>
         </div>
       </div>
 
