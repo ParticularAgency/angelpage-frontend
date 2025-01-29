@@ -1,51 +1,32 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
 const AboutSection = () => {
   return (
-    <section className="about-section w-full bg-[#F1F1F7] flex sm:flex-col gap-[72px] md:gap-12 mt-20 sm:mt-10">
-      <div className="relative sm:w-full w-2/5">
-        {/* Background Image */}
-        <Image
-          width={530}
-          height={450}
-          src="/images/how-it-works/willson.png"
-          alt="Dr. Wilson Ndasi"
-          className="w-full h-full object-cover"
-        />
-        {/* Text Overlay */}
-        <div className="absolute inset-0  flex items-end">
-          <div className="text-white pl-[55px] pb-[33px] sm:px-[27px] sm:py-[18px] max-w-lg">
-            <h3 className="text-[18px] mb-3 font-bold ml-[7px]">
-              Dr. Wilson Ndasi
-            </h3>
-            <p className="text-white mb-2">
-              PhD in Management (Digital Marketing)
+    <section className="about-section w-full bg-mono-0 py-20 sm:py-16">
+      <div className="custom-container">
+        <div className="about-sec-wrapper grid grid-cols-12 sm:flex sm:flex-col-reverse gap-20 sm:gap-12">
+          <div className="about-sec-left-con flex flex-col justify-center col-span-6">
+            <h5 className="eyebrow-medium mb-4 font-secondary">Who are we</h5>
+            <h2 className="h3 title font-primary">About Angel Page</h2>
+            <p className="desc body-regular max-w-[600px] mt-4 w-full font-secondary whitespace-pre-wrap">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
+              varius faucibus massa sollicitudin amet augue. Nibh metus a semper
+              purus mauris duis. Lorem eu neque, tristique quis duis. Nibh
+              scelerisque ac adipiscing velit non nulla in amet pellentesque.
+              Sit turpis pretium eget maecenas. Vestibulum dolor mattis
+              consectetur eget commodo vitae. Amet pellentesque sit pulvinar
+              lorem mi a, euismod risus rhoncus. Elementum ullamcorper nec,
+              habitasse vulputate. Eget dictum quis est sed egestas tellus, a
+              lectus. Quam ullamcorper in fringilla arcu aliquet fames
+              arcu.Lacinia eget faucibus urna, nam risus nec elementum cras
+              porta. Sed elementum, sed dolor purus dolor dui. Ut dictum nulla
+              pulvinar vulputate sit sagittis in eleifend dignissim. Natoque
+              mauris cras molestie velit. Maecenas eget adipiscing quisque
+              viverra lectus arcu, tincidunt ultrices pellentesque.
             </p>
-            <p className="text-white">Bournemouth University</p>
           </div>
-        </div>
-      </div>
-
-      {/* Text on the right side */}
-      <div className="w-3/5 sm:w-full py-12 pr-10 sm:p-4 flex items-center">
-        <div className="text-left">
-          <h6 className="uppercase text-[10px] font-bold">The Founder</h6>
-          <p className="text-[18px] mt-4 mb-[110px] md:mb-12 sm:mb-8 max-w-[758px] w-full">
-            Dr. Ndasi has contributed extensively to academia and practical
-            applications in digital marketing and non-profit initiatives. His
-            research focuses on cause-related marketing and the strategic use of
-            digital methods to promote environmental stewardship and support the
-            circular economy.
-          </p>
-          <p className="text-[14px]">Dr. Wilson Ndasi</p>
-          <Image
-            width={208}
-            height={95}
-            src="/images/how-it-works/signature.svg"
-            alt="Dr. Wilson Ndasi's signature"
-            className="mt-[7px]"
-          />
+          <div className="about-sec-right-cont col-span-6 h-[640px] sm:h-[280px] bg-mono-40 w-full"></div>
         </div>
       </div>
     </section>

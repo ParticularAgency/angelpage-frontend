@@ -8,6 +8,7 @@ import CustomerAcquisition from './CustomerAcquisition';
 // import { SearchIcon } from '@/icons';
 // import Image from 'next/image';
 import UsersTable from './UserTable';
+import CharityApproval from './CharityApproval';
 
 // Define separate interfaces for the data entries
 interface DailyDataEntry {
@@ -160,6 +161,7 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
       </div>
 
       <UsersTable />
+      <CharityApproval />
     </div>
   );
 };

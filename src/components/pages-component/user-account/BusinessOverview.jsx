@@ -54,7 +54,7 @@ const formattedItemBought = data.itemsBoughtChange.toFixed(2);
           <div className="col-span-3 sm:col-span-full md:col-span-6">
             <h4 className="body-bold-small">Revenue</h4>
             <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
-              £{data.revenue.toFixed(2)}
+              £{data.revenue.toFixed()}
               <span
                 className={`px-2 py-[2px] forms-bold ${
                   data.revenueChange >= 0

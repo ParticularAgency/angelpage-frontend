@@ -307,7 +307,7 @@ const handleConfirmShipment = async () => {
                                 item.productImages?.[0]?.altText ||
                                 'Product image'
                               }
-                              className="h-[65px] object-cover"
+                              className="h-[65px]  max-w-[70px] sm:min-w-14 sm:max-w-14 object-cover"
                               width={70}
                               height={65}
                             />
@@ -352,7 +352,7 @@ const handleConfirmShipment = async () => {
                   </li>
                 ))}
               </>
-            ) }
+            )}
           </ul>
         </div>
 

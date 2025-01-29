@@ -1,8 +1,25 @@
 'use client';
-import React from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { fetchCharityData } from '@utils/api';
 
 const BusinessOverview = ({ data, loading }) => {
+  const { data: session, status } = useSession() || {};
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (status === 'authenticated' && session?.token) {
+        try {
+          const data = await fetchCharityData(session.token);
+          setUserData(data);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [session, status]);
   // if (!data) {
   //   return <div>Loading...</div>; // Or any fallback UI
   // }
@@ -34,7 +51,7 @@ const BusinessOverview = ({ data, loading }) => {
       ) : (
         <>
           {/* Revenue */}
-          <div className="col-span-4 sm:col-span-full md:col-span-6">
+          <div className="col-span-3 sm:col-span-full md:col-span-6">
             <h4 className="body-bold-small">Revenue</h4>
             <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
               £{data.revenue.toFixed(2)}
@@ -70,7 +87,7 @@ const BusinessOverview = ({ data, loading }) => {
       ) : (
         <>
           {/* Number of Items Sold */}
-          <div className="col-span-4 sm:col-span-full md:col-span-6">
+          <div className="col-span-3 sm:col-span-full md:col-span-6">
             <h4 className="body-bold-small">No. of Items Sold</h4>
             <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
               {data.itemsSold}
@@ -106,29 +123,30 @@ const BusinessOverview = ({ data, loading }) => {
       ) : (
         <>
           {/* Number of Items Bought */}
-          <div className="col-span-4 sm:col-span-full md:col-span-6">
+          <div className="col-span-3 sm:col-span-full md:col-span-6">
             <h4 className="body-bold-small">Total Profit Received</h4>
             <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
-              £0.00
-              <span
+              £{userData?.totalEarned.toFixed(2) || ''}
+              {/* <span
                 className={`px-2 py-[2px] forms-bold  text-[#00C700] bg-[rgba(165,255,187,.60)] rounded-full`}
               >
                 0.00%
-              </span>
+              </span>*/}
             </p>
             <p className="body-bold-small mt-2">
-              +£0.00 <span className="text-[#8A888C]">in the past week</span>
+              {/* +£0.00 */}
+              <span className="text-[#8A888C]">Current year</span>
             </p>
           </div>
         </>
       )}
 
       {/* Money Spent */}
-      {/* <div className="col-span-3 sm:col-span-full md:col-span-6">
-        <h4 className="body-bold-small">Money Spent</h4>
+      <div className="col-span-3 sm:col-span-full md:col-span-6">
+        <h4 className="body-bold-small">Treading Profit</h4>
         <p className="body-bold-large sm:body-bold-medium flex items-center gap-2">
-          £{data.moneySpent.toFixed(2)}
-          <span
+          £{userData?.totalHeldFunds.toFixed(2) || ''}
+          {/* <span
             className={`px-2 py-[2px] forms-bold ${
               data.moneySpentChange >= 0
                 ? 'text-[#00C700] bg-[rgba(165,255,187,.60)]'
@@ -137,13 +155,13 @@ const BusinessOverview = ({ data, loading }) => {
           >
             {data.moneySpentChange >= 0 ? '↑' : '↓'}{' '}
             {Math.abs(data.moneySpentChange)}%
-          </span>
+          </span> */}
         </p>
         <p className="body-bold-small mt-2">
-          + £{moneySpentIncrease}{' '}
-          <span className="text-[#C9C8CA]">in the past week</span>
+          {/* + £{moneySpentIncrease}{' '} */}
+          <span className="text-[#8A888C]">Waiting for Admin Approved</span>
         </p>
-      </div> */}
+      </div>
     </div>
   );
 };
