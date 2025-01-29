@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
+import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Checkbox } from '@/components/elements';
@@ -140,7 +141,15 @@ const UsersTable: React.FC = () => {
         return true;
       });
     }
+ if (sessionFilter === 'all') {
+   filtered = filtered.sort((a, b) => {
+     // Parse 'signedUp' using moment.js
+     const dateA = moment(a.signedUp, 'x'); // Parse the relative date string to moment
+     const dateB = moment(b.signedUp, 'x'); // Parse the relative date string to moment
 
+     return dateB.isBefore(dateA) ? -1 : 1; // Sort descending (most recent first)
+   });
+ }
     if (searchTerm) {
       const lowerSearchTerm = searchTerm.toLowerCase();
       filtered = filtered.filter(
@@ -243,7 +252,7 @@ const UsersTable: React.FC = () => {
                   onChange={handleSessionFilterChange}
                 >
                   <option className="bg-[#FCF2FF] caption" value="all">
-                    Most Recent
+                   All
                   </option>
                   <option className="bg-[#FCF2FF] caption" value="last7days">
                     Last 7 Days

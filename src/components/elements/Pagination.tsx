@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 
 interface PaginationProps {
@@ -65,7 +66,7 @@ const Pagination: React.FC<PaginationProps> = ({
         {pageNumbers.map((page, index) => (
           <button
             key={index}
-            className={`${page === currentPage ? 'active' : ''} body-small`}
+            className={`${page === currentPage ? 'active bg-mono-100 text-mono-0' : 'text-[#677788]'} body-small py-1 px-2`}
             onClick={() => typeof page === 'number' && onPageChange(page)}
             disabled={page === '...'}
           >
