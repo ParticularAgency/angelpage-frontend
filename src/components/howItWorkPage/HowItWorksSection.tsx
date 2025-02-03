@@ -26,31 +26,31 @@ const HowItWorksPerUserTypeSection = () => {
       description:
         'Using AngelPage’s intuitive interface, sellers can upload high-quality photographs of their items and provide detailed descriptions, including condition, size, and any unique features.',
     },
+    // {
+    //   step: 3,
+    //   title: 'AI-Powered Assistance',
+    //   description: (
+    //     <>
+    //       <p className="font-secondary mt-0 text-[16px] text-mono-100 max-w-[400px]">
+    //         AngelPage integrates AI tools to streamline the listing process.
+    //         These tools:
+    //       </p>
+    //       <ul className="ml-6">
+    //         <li className="!list-disc font-secondary mt-1 text-[16px] text-mono-100 max-w-[400px]">
+    //           Automatically generate product descriptions.
+    //         </li>
+    //         <li className="!list-disc font-secondary mt-1 text-[16px] text-mono-100 max-w-[400px]">
+    //           Suggest competitive pricing based on similar items.
+    //         </li>
+    //         <li className="!list-disc font-secondary mt-0 text-[16px] text-mono-100 max-w-[400px]">
+    //           Enhance photos for greater visibility in search results.
+    //         </li>
+    //       </ul>
+    //     </>
+    //   ),
+    // },
     {
       step: 3,
-      title: 'AI-Powered Assistance',
-      description: (
-        <>
-          <p className="font-secondary mt-0 text-[16px] text-mono-100 max-w-[400px]">
-            AngelPage integrates AI tools to streamline the listing process.
-            These tools:
-          </p>
-          <ul className="ml-6">
-            <li className="!list-disc font-secondary mt-1 text-[16px] text-mono-100 max-w-[400px]">
-              Automatically generate product descriptions.
-            </li>
-            <li className="!list-disc font-secondary mt-1 text-[16px] text-mono-100 max-w-[400px]">
-              Suggest competitive pricing based on similar items.
-            </li>
-            <li className="!list-disc font-secondary mt-0 text-[16px] text-mono-100 max-w-[400px]">
-              Enhance photos for greater visibility in search results.
-            </li>
-          </ul>
-        </>
-      ),
-    },
-    {
-      step: 4,
       title: 'Visibility on the Marketplace name',
       description:
         'Once listed, items appear in the personalised feeds of potential buyers, curated through AI-powered recommendations.',
@@ -122,7 +122,7 @@ const HowItWorksPerUserTypeSection = () => {
         </div>
       </div>
 
-      <div className="how-it-works-slides-area  sm:px-4">
+      <div className="how-it-works-slides-area px-5 sm:px-4">
         <Swiper
           spaceBetween={50}
           slidesPerView={1}

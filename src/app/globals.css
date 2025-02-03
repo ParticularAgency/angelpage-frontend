@@ -118,6 +118,20 @@
       letter-spacing: 0.18px;
     }
 
+    /* Hide fullscreen button */
+    /* video::-webkit-media-controls-fullscreen-button {
+      display: none !important;
+    } */
+
+    /* Hide three-dot settings menu (Chrome) */
+    /* video::-webkit-media-controls-panel {
+      overflow: hidden !important;
+    } */
+
+    /* video::-webkit-media-controls {
+      overflow: hidden !important;
+    } */
+
     @media screen and (max-width:991px) {
 
       h1,
@@ -547,24 +561,28 @@
     .minicart-body-product-info .cart-add-product-item-wrapper:not(:last-child) {
       border-bottom: 1px solid #AAA7AB;
     }
-    .term-info-item{
-        overflow-wrap: break-word; 
-        word-wrap: break-word; 
-        word-break: break-word;
-        hyphens: auto; 
+
+    .term-info-item {
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
+      hyphens: auto;
 
     }
+
     .chat-box .message.received {
-    text-align: right;
-}
-.message-banner-area{
-  border-bottom: 1px solid #E6E3E7;
-}
-.chat-conversion-area {
-    height: 460px;
-    overflow: hidden;
-    overflow-y: scroll;
-}
+      text-align: right;
+    }
+
+    .message-banner-area {
+      border-bottom: 1px solid #E6E3E7;
+    }
+
+    .chat-conversion-area {
+      height: 460px;
+      overflow: hidden;
+      overflow-y: scroll;
+    }
   }
 
   @layer utilities {}
