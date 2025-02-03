@@ -1,5 +1,5 @@
-import Image from 'next/image'
-import React from 'react'
+import Image from 'next/image';
+import React from 'react';
 
 const TestimonialsSection = () => {
   return (
@@ -55,36 +55,40 @@ const TestimonialsSection = () => {
               </li>
             </ul>
             <p className="body-large sm:body-medium desc review-text text-center max-w-[768px] w-full mx-auto">
-              "A customer testimonial that highlights features and answers
-              potential customer doubts about your product or service. Showcase
-              testimonials from a similar demographic to your customers."
+              "It's a win-win—decluttering my home while supporting
+              sustainability and charity at the same time. Highly recommend for
+              anyone looking to make a difference in a meaningful way"
             </p>
             <div className="reviewer-info flex items-center gap-5 sm:flex-col sm:gap-3 mt-8 sm:mt-6 justify-center">
               <div className="left-cont flex items-center sm:flex-col gap-5 sm:gap-2">
-                <div className="reviewer-image w-[56px] h-[56px] sm:w-9 sm:h-9 rounded-full bg-mono-50"></div>
+                <div className="reviewer-image flex items-center overflow-hidden justify-center w-14 h-14 rounded-full bg-mono-50">
+                  <Image
+                    src="/images/pexels-karolina-grabowska.jpg"
+                    alt="reviewer image beand logo"
+                    width={6720}
+                    height={4480}
+                    className="max-w-[120px] max-h-[120px] h-full mx-auto"
+                  />
+                </div>
                 <div className="info-box">
-                  <p className="reviewer-name sm:text-center caption">Name Surname</p>
+                  <p className="reviewer-name sm:text-center caption">
+                    Jenny Baker
+                  </p>
                   <p className="reviewer-details sm:text-center body-regular sm:body-small">
-                    Position, Company name
+                    Mother of 3
                   </p>
                 </div>
               </div>
-              <div className="divider sm:!my-0 h-[61px] sm:h-[2px] sm:w-14 sm:mx-auto w-[2px] bg-mono-50"></div>
+              {/* <div className="divider sm:!my-0 h-[61px] sm:h-[2px] sm:w-14 sm:mx-auto w-[2px] bg-mono-50"></div>
               <div className="right-cont max-w-[120px] w-full flex items-center justify-center">
-                <Image
-                  src="/images/charity/charity-image.png"
-                  alt="reviewer image beand logo"
-                  width={868}
-                  height={1024}
-                  className="w-12 h-12 sm:w-10 sm:h-10 object-contain"
-                />
-              </div>
+                
+              </div> */}
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default TestimonialsSection
+export default TestimonialsSection;
