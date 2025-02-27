@@ -29,7 +29,7 @@ const AboutSection = () => {
         <div className="about-sec-wrapper grid grid-cols-12 sm:flex sm:flex-col-reverse gap-20 sm:gap-12">
           <div className="about-sec-left-con flex flex-col justify-center col-span-6">
             <h5 className="eyebrow-medium mb-4 font-secondary">Who are we</h5>
-            <h2 className="h3 title font-primary">About Angel Page</h2>
+            <h2 className="h3 title font-primary">About AngelPage</h2>
             <p className="desc body-regular max-w-[600px] mt-4 w-full font-secondary whitespace-pre-wrap">
               AngelPage is reshaping the landscape of charitable giving by
               leveraging the power of digital commerce. We provide a dedicated

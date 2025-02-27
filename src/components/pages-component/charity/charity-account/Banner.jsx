@@ -157,10 +157,11 @@ const BannerSection = () => {
   return (
     <section className="charity-account-banner-section bg-mono-100 sm:bg-transparent sm:mt-2">
       <div className="custom-container-full laptop-m:pl-6 sm:px-3">
-        {(!profileData.verified || !profileData.profileCompleted) && (
+        {(!profileData.verified === 'true' ||
+          !profileData.profileCompleted) && (
           <div className="profile-status-area bg-mono-0 py-10 sm:py-8">
             <div className="custom-container">
-              {!profileData.verified && (
+              {!profileData.verified === 'true' && (
                 <div className="email-verify-area py-2 text-center flex items-center justify-center gap-2">
                   <p className="text-error body-small">
                     Your email is not verified. Please verify your email.

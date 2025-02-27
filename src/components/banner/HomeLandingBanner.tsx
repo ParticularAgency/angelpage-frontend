@@ -70,8 +70,8 @@ const HomeLandingBanner = () => {
                           Start giving
                         </Button>
                         <Button
-                          variant="accend-link"
-                          className="!text-mono-0 !mt-2 !px-0 !hidden sm:!flex sm:items-center sm:gap-2 !border-mono-0 hover:!text-mono-100"
+                          variant="secondary"
+                          className="!text-mono-0 !mt-2 !border-mono-0  !hidden sm:!flex sm:items-center sm:gap-2  hover:!text-mono-100"
                           onClick={() => console.log('Should not click')}
                         >
                           Start giving{' '}

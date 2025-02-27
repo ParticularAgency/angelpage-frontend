@@ -32,26 +32,27 @@ const DeleteAccount = () => {
       return;
     }
 
+    const userId = session.user?.id || '';
+    const role = session.user?.role || '';
+
+    // Log to verify the session data
+    console.log('User ID:', userId, 'Role:', role);
+
+    if (!userId || !role) {
+      setMessage('User ID or role is missing. Please log in again.');
+      return;
+    }
+
     try {
-      const formData = new FormData();
-      const userId = session.user?.id || '';
-      const role = session.user?.role || '';
-
-      if (!userId || !role) {
-        throw new Error('Invalid user session: Missing userId or role.');
-      }
-
-      formData.append('userId', userId);
-      formData.append('role', role);
-
-      const response = await axios.request({
-        url: `${API_URL}/auth/delete-account`,
-        method: 'DELETE',
+      const response = await axios.delete(`${API_URL}/auth/delete-account`, {
         headers: {
           Authorization: `Bearer ${session.token}`,
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json', // Changed to 'application/json'
         },
-        data: formData,
+        data: {
+          userId,
+          role,
+        },
       });
 
       if (response.data?.message) {

@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { EditIcon, SaveIcon } from '@/icons';
+import { CheckmarkBlack, EditIcon, SaveIcon } from '@/icons';
 import { Button, Checkbox, Input, Select } from '@/components/elements';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
@@ -259,28 +259,36 @@ const PaymentInfoForm = () => {
             Add new payment method
           </Button>
           <div className="stripe-onboarding-container">
-            {onboardingUrl ? (
-              <div className="onboarding-link">
-                <Link
-                  href={onboardingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline !text-primary-color-100"
-                >
-                  Complete your Stripe setup
-                </Link>
-              </div>
+            {charityData?.stripeAccountId ? (
+              <>
+               <p className='flex items-center gap-1 body-small whitespace-nowrap'>Completed Strip onboarding <CheckmarkBlack /></p>
+              </>
             ) : (
-              <Button
-                className="underline !text-primary-color-100"
-                onClick={handleOnboard}
-                disabled={loading}
-              >
-                {loading ? 'Processing...' : 'Start Stripe Onboarding'}
-              </Button>
-            )}
+              <> 
+                {onboardingUrl ? (
+                  <div className="onboarding-link">
+                    <Link
+                      href={onboardingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="!underline body-small !text-primary-color-100"
+                    >
+                      Complete your Stripe setup
+                    </Link>
+                  </div>
+                ) : (
+                  <Button
+                    className="!underline !text-primary-color-100"
+                    onClick={handleOnboard}
+                    disabled={loading}
+                  >
+                    {loading ? 'Processing...' : 'Start Stripe Onboarding'}
+                  </Button>
+                )}
 
-            {error && <p className="error-message">{error}</p>}
+                {error && <p className="error-message">{error}</p>}
+              </>
+            )}
           </div>
         </div>
       </div>
