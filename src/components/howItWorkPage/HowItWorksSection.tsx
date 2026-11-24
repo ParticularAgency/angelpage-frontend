@@ -36,13 +36,13 @@ const HowItWorksPerUserTypeSection = () => {
     //         These tools:
     //       </p>
     //       <ul className="ml-6">
-    //         <li className="!list-disc font-secondary mt-1 text-[16px] text-mono-100 max-w-[400px]">
+    //         <li className="list-disc! font-secondary mt-1 text-[16px] text-mono-100 max-w-[400px]">
     //           Automatically generate product descriptions.
     //         </li>
-    //         <li className="!list-disc font-secondary mt-1 text-[16px] text-mono-100 max-w-[400px]">
+    //         <li className="list-disc! font-secondary mt-1 text-[16px] text-mono-100 max-w-[400px]">
     //           Suggest competitive pricing based on similar items.
     //         </li>
-    //         <li className="!list-disc font-secondary mt-0 text-[16px] text-mono-100 max-w-[400px]">
+    //         <li className="list-disc! font-secondary mt-0 text-[16px] text-mono-100 max-w-[400px]">
     //           Enhance photos for greater visibility in search results.
     //         </li>
     //       </ul>
@@ -121,7 +121,7 @@ const HowItWorksPerUserTypeSection = () => {
           </div>
         </div>
       </div>
-
+ 
       <div className="how-it-works-slides-area px-6  sm:px-4">
         <Swiper
           spaceBetween={50}
@@ -162,9 +162,9 @@ const HowItWorksPerUserTypeSection = () => {
           ))}
         </Swiper>
         <div className="slider-indicator-area max-w-[1200px] relative flex items-center justify-between mt-12 sm:mt-7">
-          <div className="swiper-pagination !relative flex gap-[8px]"></div>
-          <div className="swiper-navigation !relative mt-4 gap-4 flex justify-between">
-            <div className="swiper-button-prev !left-0 !right-0 !w-12 !h-12 sm:!w-8 sm:!h-8 !relative text-2xl text-[#9B66C2] cursor-pointer hover:text-[#8a59a8]">
+          <div className="swiper-pagination relative! flex gap-[8px]"></div>
+          <div className="swiper-navigation relative! mt-4 gap-4 flex justify-between">
+            <div className="swiper-button-prev left-0! right-0! w-12! h-12! sm:w-8! sm:h-8! relative! text-2xl text-[#9B66C2] cursor-pointer hover:text-[#8a59a8]">
               <Image
                 src="/images/icons/left-arrow-circle.svg"
                 alt="slider angle arrow"
@@ -173,7 +173,7 @@ const HowItWorksPerUserTypeSection = () => {
                 className="w-12 h-12 object-contain"
               />
             </div>
-            <div className="swiper-button-next !left-0 !right-0 !w-12 !h-12 sm:!w-8 sm:!h-8 !relative text-2xl text-[#9B66C2] cursor-pointer hover:text-[#8a59a8]">
+            <div className="swiper-button-next left-0! right-0! w-12! h-12! sm:w-8! sm:h-8! relative! text-2xl text-[#9B66C2] cursor-pointer hover:text-[#8a59a8]">
               <Image
                 src="/images/icons/right-arrow-circle.svg"
                 alt="slider angle arrow"

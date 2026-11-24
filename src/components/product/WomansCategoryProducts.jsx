@@ -1,55 +1,23 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ProductCard from '../common/cards/product/productCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { useSession } from 'next-auth/react';
-import axios from 'axios';
 import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
-import countries from 'i18n-iso-countries';
-import enLocale from 'i18n-iso-countries/langs/en.json';
-countries.registerLocale(enLocale);
+import { useGetProductsByCategoryPathQuery } from '@/store/api/angelpageApi';
+import { formatProductLocation } from '@/lib/productLocation';
 
 const WomansCategoryProducts = ({ secClassName }) => {
-  const { data: session } = useSession() || {};
-  const [productData, setProductData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: productData = [],
+    isLoading: loading,
+    isError,
+  } = useGetProductsByCategoryPathQuery('women');
+  const error = isError ? 'Failed to load products.' : null;
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const headers = {};
-        if (session?.token) {
-          headers.Authorization = `Bearer ${session.token}`;
-        }
-
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/category/women`,
-          {
-            params: { isArchived: false, status: 'LIVE' },
-            headers,
-          }
-        );
-        console.log(response.data.products);
-        setProductData(response.data.products);
-      } catch (err) {
-        setError('');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [session]);
-
-  // if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
 
   return (
@@ -63,7 +31,7 @@ const WomansCategoryProducts = ({ secClassName }) => {
           </div>
         </div>
       </div>
-      <div className="custom-container md:!pr-0">
+      <div className="custom-container md:pr-0!">
         <div className="product-slides-area pr-[20px] pl-[10px] sm:pr-8 sm:pl-0 overflow-hidden">
           <Swiper
             spaceBetween={20}
@@ -74,7 +42,7 @@ const WomansCategoryProducts = ({ secClassName }) => {
             breakpoints={{
               640: { slidesPerView: 2, spaceBetween: 10 },
               768: { slidesPerView: 3, spaceBetween: 15 },
-              1024: { slidesPerView: 5, spaceBetween: 19 },
+              1024: { slidesPerView: 4.3, spaceBetween: 19 },
             }}
           >
             {loading
@@ -84,40 +52,25 @@ const WomansCategoryProducts = ({ secClassName }) => {
                   </SwiperSlide>
                 ))
               : productData.map(item => {
-                  // Safely extract location
-                  const sellerUserAddress = item.seller?.address;
-                  const sellerCharityAddress = item.charity?.address;
-
-                  // Determine which address to use (User or Charity)
-                  const sellerAddress =
-                    sellerUserAddress || sellerCharityAddress;
-
-                  let countryCode = 'N/A';
-                  if (sellerAddress?.country) {
-                    countryCode =
-                      countries.getAlpha2Code(sellerAddress.country, 'en') ||
-                      'N/A';
-                  }
-
-                  const location = sellerAddress
-                    ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
-                    : 'Not available';
+                  const location = formatProductLocation(item.seller, item.charity);
 
                   return (
-                    <SwiperSlide key={item.id}>
+                    <SwiperSlide key={item.id} className="h-auto!">
+                      <div className="h-full">
                       <ProductCard
                         {...item}
                         id={item._id}
+                        slug={item.slug}
                         charityImageSrc={item.charity?.profileImage}
                         charityImageAlt={
                           item.charity?.charityName || 'Charity Image'
                         }
-                        dimensionHeight={item.dimensions?.height || '0in'}
-                        dimensionWidth={item.dimensions?.width || '0in'}
+                        dimensionHeight={item.dimensions?.height || ''}
+                        dimensionWidth={item.dimensions?.width || ''}
                         location={location}
-                        isLoggedIn={!!session?.token}
                         status={item.status}
                       />
+                      </div>
                     </SwiperSlide>
                   );
                 })}

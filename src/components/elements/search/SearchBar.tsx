@@ -26,7 +26,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <input
         type="text"
         value={query}
-        className="py-[11px] px-2 pl-10  rounded-[24px] bg-[#F4E8F9] forms !text-primary-color-100 placeholder:!text-primary-color-100"
+        className="py-[11px] px-2 pl-10  rounded-[24px] bg-[#F4E8F9] forms text-primary-color-100! placeholder:text-primary-color-100!"
         onChange={e => setQuery(e.target.value)} // Update query state on input change
         placeholder={`Search all ${filteredProducts} items`}
       />

@@ -8,6 +8,8 @@ import axios from 'axios';
 import Link from 'next/link';
 import LoadingModal from '@/icons/loadingModal';
 import { ToastService } from '@/components/elements/notifications/ToastService';
+import DisputeButton from '@/components/orders/DisputeButton';
+import OrderSearchFilter, { matchesOrderSearch } from '@/components/orders/OrderSearchFilter';
 
 
 const BoughtItems = () => {
@@ -16,6 +18,8 @@ const BoughtItems = () => {
   const [selectedItem, setSelectedItem] = useState(null); // Default to item 1 (Hollister)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
     const fetchPurchaseItems = async () => {
       if (!session?.user?.id || !session?.token) {
@@ -195,7 +199,7 @@ const handleConfirmDelivery = async () => {
     return (
       <>
         <div className="not-found-screen-design flex flex-col items-center pt-12 pb-12 custom-container">
-          <h5 className="body-bold-medium !text-[18px] text-mono-100 font-medium font-secondary mb-2 text-center">
+          <h5 className="body-bold-medium text-[18px]! text-mono-100 font-medium font-secondary mb-2 text-center">
             No items purchased yet.
           </h5>
           <p className="body-bold-small font-secondary font-regular text-mono-90 text-center max-w-[420px] w-full mx-auto">
@@ -215,16 +219,33 @@ const handleConfirmDelivery = async () => {
     <div className="bought-items-wrapper-area">
       <div className="bought-item-wrapper-head py-4 flex items-center justify-between">
         <h3 className="body-bold-regular text-mono-100">Bought Items</h3>
-        <div className="bought-item-sort-box flex items-center gap-[14px]"></div>
       </div>
+      <OrderSearchFilter
+        value={searchQuery}
+        onChange={setSearchQuery}
+        statusFilter={statusFilter}
+        onStatusChange={setStatusFilter}
+        placeholder="Search purchases…"
+      />
 
       <div className="bought-item-wrapper-cont-box pl-5 pr-9 grid grid-cols-12 md:px-0 gap-0 sm:grid-cols-6">
-        {/* List of bought items */}
         <div className="col-span-4 md:col-span-5 sm:col-span-full bought-product-states-items">
           <ul>
             {!loading && (
               <>
-                {purchaseItems.map(item => (
+                {purchaseItems
+                  .filter(item =>
+                    matchesOrderSearch(
+                      {
+                        productName: item.productName,
+                        orderId: item.orderId,
+                        status: item.status,
+                      },
+                      searchQuery,
+                      statusFilter
+                    )
+                  )
+                  .map(item => (
                   <li
                     key={item.orderId}
                     onClick={() => setSelectedItem(item)}
@@ -293,11 +314,15 @@ const handleConfirmDelivery = async () => {
               {selectedItem && (
                 <>
                   <h3 className="caption">Purchase date</h3>
-                  <div className="mt-1">
+                  <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
                     <p>
                       {' '}
                       {new Date(selectedItem.createdAt).toLocaleDateString()}
                     </p>
+                    <DisputeButton
+                      orderId={selectedItem.orderId}
+                      disputeStatus={selectedItem.disputeStatus}
+                    />
                   </div>
 
                   <div className="relative mt-[15px]">
@@ -429,7 +454,7 @@ const handleConfirmDelivery = async () => {
                       {selectedItem.status === 'SalesProceeds' && (
                         <div className="flex p-4 bg-mono-0 relative flex-col gap-1 items-start">
                           <div
-                            className={`w-6 h-6 flex justify-center items-center rounded-full absolute dots-item-indicator left-[-38px] bottom-0 ${selectedItem.status === 'SalesProceeds' ? 'bg-[#6A0398]' : 'states-not-complete !left-[-36px]'}`}
+                            className={`w-6 h-6 flex justify-center items-center rounded-full absolute dots-item-indicator left-[-38px] bottom-0 ${selectedItem.status === 'SalesProceeds' ? 'bg-[#6A0398]' : 'states-not-complete left-[-36px]!'}`}
                           >
                             {selectedItem.status === 'SalesProceeds' && (
                               <Image

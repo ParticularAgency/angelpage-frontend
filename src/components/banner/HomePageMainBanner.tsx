@@ -17,17 +17,12 @@ const HomePageMainBanner = () => {
               Add items to any charity storefront to become a donor
             </p>
             <Link href="/product/post-product" className="block">
-              <Button
-                variant="secondary"
-                className="!text-mono-0 sm:!hidden !border-mono-0 mt-4 hover:!text-mono-100"
-                onClick={() => console.log('Should not click')}
-              >
+              <Button variant="primary" className="sm:hidden! mt-4">
                 Start giving
               </Button>
               <Button
-                variant="secondary"
-                className="!text-mono-0 !hidden  !border-mono-0 !mt-3 sm:!flex sm:items-center sm:gap-2 hover:!text-mono-100"
-                onClick={() => console.log('Should not click')}
+                variant="primary"
+                className="hidden! mt-3! sm:flex! sm:items-center sm:gap-2"
               >
                 Start giving{' '}
                 <Image

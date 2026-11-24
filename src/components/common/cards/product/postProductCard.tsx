@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { LocationIcon } from '@/icons';
-import { Button } from '@/components/elements';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
+import SocialPostingPanel from '@/components/product/SocialPostingPanel';
+import type { SocialPostingPrefs } from '@/components/product/SocialPostingToggles';
+import { Archive, Pencil, RotateCcw, Trash2 } from 'lucide-react';
 
 interface ProductCardProps {
   productId: string;
@@ -19,10 +21,13 @@ interface ProductCardProps {
   onDelete?: () => void;
   onEdit?: () => void;
   onArchive?: () => void;
-  // isArchived: boolean;
-  status: 'DRAFT' | 'LIVE' | 'REMOVED';
+  onRelist?: () => void;
+  status: 'DRAFT' | 'LIVE' | 'REMOVED' | 'PENDING_REVIEW';
   averageDeliveryTime?: number;
   isArchived?: boolean;
+  socialPosting?: SocialPostingPrefs;
+  listingVideoUrl?: string;
+  authToken?: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -37,9 +42,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   productPrice = 'N/A',
   location = 'No Location',
   onDelete,
-  // onEdit,
+  onEdit,
   onArchive,
+  onRelist,
   status,
+  socialPosting,
+  listingVideoUrl,
+  authToken,
   // averageDeliveryTime,
 }) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -47,13 +56,39 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleDeleteClick = () => setIsConfirmOpen(true);
   const handleCancel = () => setIsConfirmOpen(false);
   const handleConfirmAction = () => {
-    if (status === 'DRAFT' && onDelete) {
+    if ((status === 'DRAFT' || status === 'PENDING_REVIEW' || status === 'REMOVED') && onDelete) {
       onDelete();
     } else if (status === 'LIVE' && onArchive) {
       onArchive();
     }
     setIsConfirmOpen(false);
   };
+
+  const ActionIconButton = ({
+    label,
+    onClick,
+    icon,
+    danger = false,
+  }: {
+    label: string;
+    onClick?: () => void;
+    icon: React.ReactNode;
+    danger?: boolean;
+  }) => (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+      className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition ${
+        danger
+          ? 'border-[#F2D6D6] bg-white text-red-600 hover:bg-red-50'
+          : 'border-[#E6E3E7] bg-white text-[#611192] hover:bg-[#FCF2FF]'
+      }`}
+    >
+      {icon}
+    </button>
+  );
 
   return (
     <div
@@ -116,66 +151,119 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <span className="location-text caption">{location ?? ''}</span>
         </div>
 
-        <div className="product-card-btn-box mt-3 flex items-center sm:items-start sm:flex-col-reverse sm:w-full gap-4 sm:gap-2">
+        <div className="product-card-btn-box mt-3 flex items-center justify-end gap-2">
           {status === 'DRAFT' && (
             <>
-              {/* <Button
-                variant="primary"
-                className="product-states-btn sm:w-full block max-w-full"
-              >
-                Continue
-              </Button> */}
-              <Button
-                // variant="accend-link"
-                variant="primary"
-                className="p-4 w-full h-10"
-                onClick={handleDeleteClick}
-              >
-                {/* <DeleteIcon width={14} height={14} color="#611192" /> */}
-                Delete
-              </Button>
+              {onEdit && (
+                <ActionIconButton
+                  label="Edit"
+                  onClick={onEdit}
+                  icon={<Pencil className="h-4 w-4" aria-hidden />}
+                />
+              )}
+              {onDelete && (
+                <ActionIconButton
+                  label="Delete"
+                  onClick={handleDeleteClick}
+                  icon={<Trash2 className="h-4 w-4" aria-hidden />}
+                  danger
+                />
+              )}
+            </>
+          )}
+          {status === 'PENDING_REVIEW' && (
+            <>
+              {onEdit && (
+                <ActionIconButton
+                  label="Edit"
+                  onClick={onEdit}
+                  icon={<Pencil className="h-4 w-4" aria-hidden />}
+                />
+              )}
+              {onDelete && (
+                <ActionIconButton
+                  label="Delete"
+                  onClick={handleDeleteClick}
+                  icon={<Trash2 className="h-4 w-4" aria-hidden />}
+                  danger
+                />
+              )}
             </>
           )}
           {status === 'LIVE' && (
             <>
-              {/* <Button
-                variant="primary"
-                className="product-states-btn sm:w-full block max-w-full"
-                // onClick={}
-              >
-                Edit listing
-              </Button> */}
-              <Button
-                // variant="accend-link"
-                variant="primary"
-                className="p-4 w-full h-10"
-                onClick={handleDeleteClick}
-              >
-                {/* <DeleteIcon width={14} height={14} color="#611192" /> */}
-                Delete
-              </Button>
+              {onEdit && (
+                <ActionIconButton
+                  label="Edit"
+                  onClick={onEdit}
+                  icon={<Pencil className="h-4 w-4" aria-hidden />}
+                />
+              )}
+              {onArchive && (
+                <ActionIconButton
+                  label="Archive"
+                  onClick={handleDeleteClick}
+                  icon={<Archive className="h-4 w-4" aria-hidden />}
+                />
+              )}
+            </>
+          )}
+          {status === 'REMOVED' && (
+            <>
+              {onRelist && (
+                <ActionIconButton
+                  label="Republish"
+                  onClick={onRelist}
+                  icon={<RotateCcw className="h-4 w-4" aria-hidden />}
+                />
+              )}
+              {onDelete && (
+                <ActionIconButton
+                  label="Delete"
+                  onClick={handleDeleteClick}
+                  icon={<Trash2 className="h-4 w-4" aria-hidden />}
+                  danger
+                />
+              )}
             </>
           )}
           {/* {status === 'Removed' && <p className="text-red-500">Removed</p>} */}
         </div>
+
+        {authToken && status !== 'REMOVED' && (
+          <SocialPostingPanel
+            productId={productId}
+            token={authToken}
+            initialPrefs={socialPosting}
+            listingVideoUrl={listingVideoUrl}
+          />
+        )}
       </div>
 
       {isConfirmOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
           <div className="bg-white p-6 shadow-lg max-w-sm w-full mx-4">
             <h3 className="h6 font-primary">Are you sure?</h3>
             <p className="text-body-small mt-2">
-              {status === 'DRAFT'
-                ? 'This will permanently delete the product.'
-                : 'This will archive the product.'}
+              {status === 'LIVE'
+                ? 'This will archive the product.'
+                : 'This will permanently delete the product.'}
             </p>
             <div className="flex justify-end gap-4 mt-6">
-              <Button variant="secondary" onClick={handleCancel}>
+              <button
+                type="button"
+                className="h-10 rounded-xl border border-[#E6E3E7] bg-white px-4 text-sm font-semibold text-mono-100"
+                onClick={handleCancel}
+              >
                 No
-              </Button>
-              <Button variant="primary" onClick={handleConfirmAction}>
-                Yes, {status === 'DRAFT' ? 'delete' : 'archive'}
-              </Button>
+              </button>
+              <button
+                type="button"
+                className="h-10 rounded-xl bg-[#611192] px-4 text-sm font-semibold text-white"
+                onClick={handleConfirmAction}
+              >
+                Yes
+              </button>
             </div>
           </div>
         </div>

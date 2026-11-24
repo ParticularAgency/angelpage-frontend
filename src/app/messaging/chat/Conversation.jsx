@@ -1,16 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation'; // Use next/navigation to control routing
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { Button } from '@/components/elements';
-// import { DeleteIcon } from '@/icons';
 import Image from 'next/image';
-// import Link from 'next/link';
-// import BannerSection from './Banner';
+import Link from 'next/link';
+import useMessagingSocket from '@/hooks/useMessagingSocket';
+import StatusBadge from '@/components/dashboard/StatusBadge';
 
-// Helper function for time formatting
 const formatMessageTime = (dateString) => {
   const messageDate = new Date(dateString);
   const today = new Date();
@@ -18,724 +16,467 @@ const formatMessageTime = (dateString) => {
   yesterday.setDate(today.getDate() - 1);
 
   if (messageDate.toDateString() === today.toDateString()) {
-    return messageDate.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
-
   if (messageDate.toDateString() === yesterday.toDateString()) {
-    return `Yesterday ${messageDate.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    })}`;
+    return `Yesterday ${messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   }
-
   return messageDate.toLocaleString('en-GB', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
+    weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
   });
 };
 
-const ConversationPage = () => {
+const getDisplayName = (participant) => {
+  if (!participant) return 'Unknown';
+  return participant.charityName || participant.firstName || participant.userName || 'User';
+};
+
+const ConversationPage = ({ embedded = false }) => {
   const { data: session } = useSession();
   const params = useParams();
-  const conversationId = params?.conversationId; // Explicitly cast to string
+  const routeConversationId = params?.conversationId;
+  const [embeddedConversationId, setEmbeddedConversationId] = useState(null);
+  const conversationId = embedded ? embeddedConversationId : routeConversationId;
+  const router = useRouter();
+
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
   const [otherParticipant, setOtherParticipant] = useState(null);
-  const [selectedConversationId, setSelectedConversationId] = useState(null);
+  const [activeConversation, setActiveConversation] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const router = useRouter();
+  const [isTyping, setIsTyping] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
+  const messagesEndRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
+
+  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  useEffect(() => { scrollToBottom(); }, [messages]);
+
+  const handleNewMessage = useCallback((payload) => {
+    if (payload.conversationId !== conversationId) return;
+    setMessages((prev) => {
+      if (prev.some((m) => m._id === payload.message._id)) return prev;
+      return [...prev, payload.message];
+    });
+    if (payload.message.sender?._id !== session?.user?.id) {
+      markMessagesAsRead([payload.message._id]);
+    }
+  }, [conversationId, session?.user?.id]);
+
+  const handleConversationUpdated = useCallback(() => {
+    if (session?.user?.id) fetchConversations();
+  }, [session?.user?.id]);
+
+  const handleUserTyping = useCallback((payload) => {
+    if (payload.conversationId === conversationId && payload.userId !== session?.user?.id) {
+      setIsTyping(payload.isTyping);
+    }
+  }, [conversationId, session?.user?.id]);
+
+  const { sendTyping } = useMessagingSocket({
+    userId: session?.user?.id,
+    token: session?.token,
+    conversationId,
+    onNewMessage: handleNewMessage,
+    onConversationUpdated: handleConversationUpdated,
+    onUserTyping: handleUserTyping,
+  });
 
   useEffect(() => {
     if (session?.user?.id && session?.user?.role) {
-      fetchUserDetails(session.user.id, session.user.role); // Pass role from session
+      axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/message/user/${session.user.id}/${session.user.role}`,
+        { headers: { Authorization: `Bearer ${session.token}` } }
+      ).then((r) => setUserDetails(r?.data?.user)).catch(() => {});
     }
   }, [session]);
 
-  const fetchUserDetails = async (userId, role) => {
-    setLoading(true);
-    try {
-      console.log('userId:', userId, 'role:', role);
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/message/user/${userId}/${role}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-        }
-      );
-      console.log('Fetched user details:', response?.data?.user);
-      setUserDetails(response?.data?.user);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    if (session?.user?.id) {
-      fetchConversations();
-    }
+    if (session?.user?.id) fetchConversations();
   }, [session?.user?.id]);
 
   const fetchConversations = async () => {
-    setLoading(true);
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/message/messages/recipient/${session.user.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${session.token}` } }
       );
-      console.log(response?.data?.conversations);
-      setConversations(response?.data?.conversations);
-      setLoading(false);
+      setConversations(response?.data?.conversations || []);
     } catch (error) {
       console.error('Error fetching conversations:', error);
-      setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (conversationId && session?.token) {
-      fetchConversationDetails();
-    }
-  }, [conversationId, session]);
+    if (conversationId && session?.token) fetchConversationDetails();
+  }, [conversationId, session?.token]);
 
   const fetchConversationDetails = async () => {
-    if (!session?.token) {
-      console.error('User is not authenticated.');
-      return;
-    }
+    if (!session?.token) return;
     setLoading(true);
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/message/conversations/${conversationId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${session.token}` } }
       );
-
       const { conversation, messages: messagesData } = response.data;
+      setMessages(messagesData || []);
+      setActiveConversation(conversation);
 
-      // Mark messages as 'read'
-      messagesData.forEach(msg => {
-        msg.status = 'read';
-      });
-
-      setMessages(messagesData);
-
-      const participants = conversation.participants || [];
-      const currentUserId = session.user.id;
-
-      const otherParticipantInfo = participants.find(
-        participant => participant.participantId !== currentUserId
+      const other = conversation.participants?.find(
+        (p) => p.participantId?.toString() !== session.user.id?.toString()
       );
-
-      if (otherParticipantInfo) {
-        setOtherParticipant(otherParticipantInfo);
-      } else {
-        console.error('Other participant not found.');
+      if (other) {
+        const detailsRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/message/user/${other.participantId}/${other.participantType}`,
+          { headers: { Authorization: `Bearer ${session.token}` } }
+        ).catch(() => null);
+        setOtherParticipant(detailsRes?.data?.user || other);
       }
-      // Mark messages as read in the backend
-      await markMessagesAsRead(messagesData);
+      await markMessagesAsRead(messagesData?.filter((m) => m.status === 'unread').map((m) => m._id));
     } catch (error) {
-      console.error('Error fetching conversation details:', error);
+      console.error('Error fetching conversation:', error);
     } finally {
       setLoading(false);
     }
   };
-  // Mark all messages in the current conversation as read
-  const markMessagesAsRead = async messagesData => {
-    try {
-      const messageIds = messagesData.map(msg => msg._id);
 
+  const markMessagesAsRead = async (messageIds = []) => {
+    try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/message/messages/mark-as-read`,
-        { messageIds },
-        {
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-        }
+        { conversationId, messageIds },
+        { headers: { Authorization: `Bearer ${session.token}` } }
       );
     } catch (error) {
-      console.error('Error marking messages as read:', error);
+      console.error('Error marking read:', error);
     }
   };
-  const handleSendMessage = async () => {
-    if (!session?.token || !newMessage.trim() || !otherParticipant) {
-      console.error('Missing required fields for sending a message.');
-      return;
-    }
 
+  const handleSendMessage = async () => {
+    if (!session?.token || !newMessage.trim() || !otherParticipant || sending) return;
+    const content = newMessage.trim();
+    setNewMessage('');
+    setSending(true);
+    sendTyping(false);
     try {
+      const recipientId = otherParticipant.participantId || otherParticipant._id;
+      const recipientType = otherParticipant.participantType || (otherParticipant.role === 'CHARITY' ? 'CHARITY' : 'USER');
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/message/messages/send`,
         {
           conversationId,
           senderId: session.user.id,
           senderType: session.user.role === 'USER' ? 'User' : 'Charity',
-          recipientId: otherParticipant.participantId,
-          recipientType:
-            otherParticipant.participantType === 'USER' ? 'User' : 'Charity',
-          content: newMessage,
-          status: 'unread',
+          recipientId,
+          recipientType: recipientType === 'CHARITY' ? 'Charity' : 'User',
+          content,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${session.token}` } }
       );
-
-      // Add new message to the conversation without re-fetching messages
-      setMessages(prevMessages => [...prevMessages, response.data.message]);
-      setNewMessage('');
+      const sentMessage = response.data.data;
+      if (sentMessage) {
+        setMessages((prev) => prev.some((m) => m._id === sentMessage._id) ? prev : [...prev, sentMessage]);
+      }
+      fetchConversations();
     } catch (error) {
-      console.error('Error sending message:', error);
+      setNewMessage(content);
+    } finally {
+      setSending(false);
     }
   };
-  // Function to filter conversations based on search query
-  const filterConversations = () => {
-    return conversations.filter(conversation => {
-      const searchLower = searchQuery.toLowerCase();
 
-      return (
-        (
-          conversation?.lastMessage?.sender?.firstName?.toLowerCase() || ''
-        ).includes(searchLower) ||
-        (
-          conversation?.lastMessage?.sender?.lastName?.toLowerCase() || ''
-        ).includes(searchLower) ||
-        (
-          conversation?.lastMessage?.sender?.userName?.toLowerCase() || ''
-        ).includes(searchLower) ||
-        (
-          conversation?.lastMessage?.sender?.charityName?.toLowerCase() || ''
-        ).includes(searchLower) ||
-        (
-          conversation?.lastMessage?.recipient?.firstName?.toLowerCase() || ''
-        ).includes(searchLower) ||
-        (
-          conversation?.lastMessage?.recipient?.lastName?.toLowerCase() || ''
-        ).includes(searchLower) ||
-        (
-          conversation?.lastMessage?.recipient?.userName?.toLowerCase() || ''
-        ).includes(searchLower) ||
-        (
-          conversation?.lastMessage?.recipient?.charityName?.toLowerCase() || ''
-        ).includes(searchLower)
-      );
-    });
+  const handleInputChange = (e) => {
+    setNewMessage(e.target.value);
+    sendTyping(true);
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => sendTyping(false), 1500);
   };
 
-  // Function to format the date and group messages
-  const groupMessagesByDate = messages => {
-    const groupedMessages = [];
+  const filteredConversations = conversations.filter((c) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    const name = getDisplayName(c.otherParticipant).toLowerCase();
+    const preview = (c.lastMessage?.content || '').toLowerCase();
+    return name.includes(q) || preview.includes(q);
+  });
 
-    messages.forEach(message => {
-      const messageDate = new Date(message.createdAt);
+  const groupMessagesByDate = (msgs) => {
+    const groups = [];
+    msgs.forEach((message) => {
+      const d = new Date(message.createdAt);
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(today.getDate() - 1);
-
-      let dateLabel = '';
-
-      if (messageDate.toDateString() === today.toDateString()) {
-        dateLabel = 'TODAY';
-      } else if (messageDate.toDateString() === yesterday.toDateString()) {
-        dateLabel = 'YESTERDAY';
-      } else {
-        dateLabel = messageDate.toLocaleDateString('en-GB', {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'short',
-        });
-      }
-
-      if (!groupedMessages.some(group => group.date === dateLabel)) {
-        groupedMessages.push({ date: dateLabel, messages: [] });
-      }
-
-      const group = groupedMessages.find(group => group.date === dateLabel);
-      group.messages.push(message);
+      let label = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+      if (d.toDateString() === today.toDateString()) label = 'Today';
+      else if (d.toDateString() === yesterday.toDateString()) label = 'Yesterday';
+      if (!groups.some((g) => g.date === label)) groups.push({ date: label, messages: [] });
+      groups.find((g) => g.date === label).messages.push(message);
     });
-
-    return groupedMessages;
+    return groups;
   };
 
-  // Handle selecting a conversation from the list
-  const handleConversationClick = conversationId => {
-    setSelectedConversationId(conversationId); // Update selected conversation
-    router.push(`/messaging/chat/${conversationId}`); // Update the URL without reloading
-    fetchConversationDetails(); // Fetch new messages based on selected conversation
+  const openConversation = (id) => {
+    if (embedded) {
+      setEmbeddedConversationId(id);
+    } else {
+      router.push(`/messaging/chat/${id}`);
+    }
   };
 
+  const productInfo = activeConversation?.productSnapshot || activeConversation?.productId;
   const groupedMessages = groupMessagesByDate(messages);
-  const filteredConversations = filterConversations();
- 
+  const totalUnread = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+
   return (
-    <>
-      <div className="message-main-wrapper">
-        <div className="message-banner-area">
-          <section className="users-account-banner-section relative py-10 sm:pb-8">
-            <div className="custom-container">
-              <div className="users-account-banner-wrapper  flex items-center justify-between sm:flex-col sm:items-start sm:gap-8">
-                <div className="users-account-left-cont flex items-center gap-4">
-                  {userDetails ? (
-                    <Image
-                      src={
-                        userDetails?.profileImage ||
-                        '/images/icons/elisp-profile-default-img.svg'
-                      }
-                      alt="user profile image"
-                      className="rounded-full w-10 h-10 object-cover"
-                      width={40}
-                      height={40}
-                    />
-                  ) : (
-                    <div className="skeleton bg-mono-40 h-10 w-10 shrink-0 rounded-full"></div>
-                  )}
-
-                  <div className="users-info-cont">
-                    <h1 className="h5 sm:text-[17px]  font-primary user-profile-name whitespace-nowrap text-mono-100 mb-[2px]">
-                      {userDetails ? (
-                        <>
-                          {' '}
-                          {userDetails?.firstName || userDetails?.charityName}
-                        </>
-                      ) : (
-                        <span className="skeleton bg-mono-40 block  h-2 w-20 shrink-0 rounded-full"></span>
-                      )}
-                    </h1>
-                    <p className="user-username body-small">
-                      {' '}
-                      {userDetails ? (
-                        <> {userDetails?.userName || 'username'}</>
-                      ) : (
-                        <span className="skeleton bg-mono-40 block  h-2 w-20 shrink-0 rounded-full"></span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-        <div className="message-content-area pb-20">
-          <div className="custom-container">
-            <div className="message-area-wrapper pt-10 grid grid-cols-12 gap-6">
-              {/* Left panel: Conversation List */}
-              <div className="message-left-area sticky h-[60vh] overflow-hidden col-span-5 sm:col-span-full">
-                <div className="conversation-list-header pt-[15px]">
-                  <div className="converation-title-box flex justify-between items-center mb-4">
-                    <h2 className="eyebrow-large font-secondary text-mono-100 uppercase">
-                      Inbox
-                    </h2>
-                    {/* <Image
-                      src="/images/edit-squer-icon.svg"
-                      alt="edit icons"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6"
-                    /> */}
-                  </div>
-                  <div className="converation-search-box mb-4">
-                    <label className="relative">
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        placeholder="Search by name or username"
-                        className="pl-10 h-9 !bg-[#F6F8FA] w-full text-mono-100 placeholder:!text-[#CDD3DA] body-bold-small"
-                      />
-                      <span className="search-icon absolute top-1 left-4 bottom-0 my-auto">
-                        <Image
-                          src="/images/search.svg"
-                          alt="search icons"
-                          width={16}
-                          height={16}
-                          className="w-4 h-4"
-                        />
-                      </span>
-                    </label>
-                  </div>
-                  <div className="filter-sorting-area"></div>
-                </div>
-
-                <ul className="conversation-lists pr-3 overflow-hidden h-[460px] overflow-y-scroll">
-                  {loading ? (
-                    <>
-                      <li className="conversation-list-item flex justify-between items-center hover:bg-[#F1F1F7] cursor-pointer h-[72px] py-2 pl-[17px] pr-[10px] mb-2">
-                        <div className="conversation-item-cont flex gap-[27px] items-center">
-                          <div className="user-image">
-                            <div className="skeleton bg-mono-40 h-10 w-10 shrink-0 rounded-full"></div>
-                          </div>
-                          <div className="user-info">
-                            <p className="name forms-bold text-mono-100">
-                              <span className="skeleton bg-mono-40 block  h-2 w-20 shrink-0 rounded-full"></span>
-                            </p>
-                            <p className="content forms-bold mt-2">
-                              <span className="skeleton bg-mono-40 block  h-2 w-20 shrink-0 rounded-full"></span>
-                            </p>
-                          </div>
-                        </div>
-                        <div className="right-states-area">
-                          <p className="data-titme-latest-message forms-bold text-mono-50">
-                            <span className="skeleton bg-mono-40 block  h-2 w-8  shrink-0 rounded-full"></span>
-                          </p>
-                        </div>
-                      </li>
-                      <li className="conversation-list-item flex justify-between items-center hover:bg-[#F1F1F7] cursor-pointer h-[72px] py-2 pl-[17px] pr-[10px] mb-2">
-                        <div className="conversation-item-cont flex gap-[27px] items-center">
-                          <div className="user-image">
-                            <div className="skeleton bg-mono-40 h-10 w-10 shrink-0 rounded-full"></div>
-                          </div>
-                          <div className="user-info">
-                            <p className="name forms-bold text-mono-100">
-                              <span className="skeleton bg-mono-40 block  h-2 w-20 shrink-0 rounded-full"></span>
-                            </p>
-                            <p className="content forms-bold mt-2">
-                              <span className="skeleton bg-mono-40 block  h-2 w-20 shrink-0 rounded-full"></span>
-                            </p>
-                          </div>
-                        </div>
-                        <div className="right-states-area">
-                          <p className="data-titme-latest-message forms-bold text-mono-50">
-                            <span className="skeleton bg-mono-40 block  h-2 w-8 shrink-0 rounded-full"></span>
-                          </p>
-                        </div>
-                      </li>
-                      <li className="conversation-list-item flex justify-between items-center hover:bg-[#F1F1F7] cursor-pointer h-[72px] py-2 pl-[17px] pr-[10px] mb-2">
-                        <div className="conversation-item-cont flex gap-[27px] items-center">
-                          <div className="user-image">
-                            <div className="skeleton bg-mono-40 h-10 w-10 shrink-0 rounded-full"></div>
-                          </div>
-                          <div className="user-info">
-                            <p className="name forms-bold text-mono-100">
-                              <span className="skeleton bg-mono-40 block  h-2 w-20 shrink-0 rounded-full"></span>
-                            </p>
-                            <p className="content forms-bold mt-2">
-                              <span className="skeleton bg-mono-40 block  h-2 w-20 shrink-0 rounded-full"></span>
-                            </p>
-                          </div>
-                        </div>
-                        <div className="right-states-area">
-                          <p className="data-titme-latest-message forms-bold text-mono-50">
-                            <span className="skeleton bg-mono-40 block  h-2 w-8 shrink-0 rounded-full"></span>
-                          </p>
-                        </div>
-                      </li>
-                    </>
-                  ) : (
-                    filteredConversations?.map(conversation => (
-                      <li
-                        key={conversation?.conversationId}
-                        className={`conversation-list-item flex justify-between items-center hover:bg-[#F1F1F7] cursor-pointer h-[72px] py-2 pl-[17px] pr-[10px] mb-2 ${selectedConversationId === conversation.conversationId ? 'bg-[#f1f1f7]' : ''} ${conversation?.lastMessage?.status === 'unread' ? 'bg-[#F1F1F7]' : ''}`}
-                        onClick={() =>
-                          handleConversationClick(conversation.conversationId)
-                        }
-                      >
-                        <div className="conversation-item-cont flex gap-[27px] items-center">
-                          <div className="user-image">
-                            <Image
-                              src={
-                                conversation?.lastMessage?.sender?._id ===
-                                session?.user?.id
-                                  ? conversation?.lastMessage?.recipient
-                                      ?.profileImage ||
-                                    '/images/icons/elisp-profile-default-img.svg'
-                                  : conversation?.lastMessage?.sender
-                                      ?.profileImage ||
-                                    '/images/icons/elisp-profile-default-img.svg'
-                              }
-                              alt={
-                                conversation?.lastMessage?.sender?._id ===
-                                session?.user?.id
-                                  ? conversation?.lastMessage?.recepient
-                                      ?.charityName ||
-                                    conversation?.lastMessage?.recepient
-                                      ?.firstName ||
-                                    'User Image'
-                                  : conversation?.lastMessage?.sender
-                                      ?.charityName ||
-                                    conversation?.lastMessage?.sender
-                                      ?.firstName ||
-                                    'User Image'
-                              }
-                              className="min-w-10 max-w-10 min-h-10 max-h-10 object-cover rounded-full"
-                              width={320}
-                              height={480}
-                            />
-                          </div>
-                          <div className="user-info">
-                            <p
-                              className={`name forms-bold text-mono-100 ${conversation?.lastMessage?.status === 'unread' ? 'bold' : ''}`}
-                            >
-                              {conversation?.lastMessage?.sender?._id ===
-                              session?.user?.id
-                                ? conversation?.lastMessage?.recipient
-                                    ?.charityName ||
-                                  conversation?.lastMessage?.recipient
-                                    ?.firstName ||
-                                  ''
-                                : conversation?.lastMessage?.sender
-                                    ?.charityName ||
-                                  conversation?.lastMessage?.sender
-                                    ?.firstName ||
-                                  ''}
-                            </p>
-                            <p
-                              className={`content forms-bold  ${conversation?.lastMessage?.status === 'unread' ? 'text-mono-100' : 'text-mono-50'}`}
-                            >
-                              <span className="bold">
-                                {conversation?.lastMessage?.sender?._id ===
-                                session?.user?.id
-                                  ? 'You :'
-                                  : ''}{' '}
-                              </span>
-                              {conversation?.lastMessage?.content?.slice(
-                                0,
-                                100
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="right-states-area">
-                          {/* <Button
-                            onClick={() =>
-                              handleDeleteConversation(
-                                conversation.conversationId
-                              )
-                            }
-                            variant="accend-link"
-                          >
-                            <DeleteIcon />
-                          </Button> */}
-                          <p className="data-titme-latest-message forms-bold text-mono-50">
-                            {formatMessageTime(
-                              conversation?.lastMessage?.createdAt
-                            )}
-                          </p>
-                        </div>
-                      </li>
-                    ))
-                  )}
-                </ul>
-              </div>
-
-              {/* Right panel: Conversation Details */}
-              <div className="message-right-area col-span-7 sm:col-span-full">
-                <div className="message-main-content-wrapper flex flex-col h-full w-full pt-[17px] pb-[22px] px-12">
-                  <Image
-                    src="/images/logo-message.svg"
-                    alt="message area brand logo"
-                    width={111}
-                    height={35}
-                    className="w-[111px] h-[34px] mx-auto mb-6"
-                  />
-                  <div className="chat-conversion-area">
-                    {loading ? (
-                      <>
-                        <div>
-                          <p className="time-temps-per-day text-center flex items-center justify-center eyebrow-small text-mono-90 uppercase mb-6">
-                            <span className="skeleton bg-mono-40 block  h-2 w-20 shrink-0 rounded-full"></span>
-                          </p>
-                          <div className="sender-message mb-6 max-w-[550px] ml-auto">
-                            <div className="user-info flex items-center flex-row-reverse gap-[11px]">
-                              <div className="user-image">
-                                <div className="skeleton bg-mono-40 block  h-6 w-6 shrink-0 rounded-full"></div>
-                              </div>
-
-                              <div className="user-info flex items-center gap-2 flex-row-reverse">
-                                <p className="name forms-bold text-mono-100">
-                                  <span className="skeleton bg-mono-40 block  h-2 w-6 shrink-0 rounded-full"></span>
-                                </p>
-                                <p className="msg-time forms-bold text-mono-70">
-                                  <span className="skeleton bg-mono-40 block  h-2 w-9 shrink-0 rounded-full"></span>
-                                </p>
-                              </div>
-                            </div>
-                            <div className="message-cont-box flex pr-[35px]">
-                              <p className="message-content inline-block pt-[15px] text-mono-100 forms-bold pr-[26px] pb-7 pl-[25px] bg-[#F6F8FA] ml-auto">
-                                <span className="skeleton bg-mono-40 block  h-10 w-[250px] shrink-0 rounded-[4px]"></span>
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="recipient-message mb-6 max-w-[550px] mr-auto">
-                            <div className="user-info flex items-center  gap-[11px]">
-                              <div className="user-image">
-                                <div className="skeleton bg-mono-40 block  h-6 w-6 shrink-0 rounded-full"></div>
-                              </div>
-
-                              <div className="user-info flex items-center gap-2">
-                                <p className="name forms-bold text-mono-100">
-                                  {' '}
-                                  <span className="skeleton bg-mono-40 block  h-2 w-6 shrink-0 rounded-full"></span>
-                                </p>
-                                <p className="msg-time forms-bold text-mono-70">
-                                  <span className="skeleton bg-mono-40 block  h-2 w-9 shrink-0 rounded-full"></span>
-                                </p>
-                              </div>
-                            </div>
-                            <div className="message-cont-box flex pl-[35px]">
-                              <p className="message-content inline-block pt-[15px] text-mono-100 forms-bold pr-[26px] pb-7 pl-[25px] bg-[#F6F8FA] ">
-                                {' '}
-                                <span className="skeleton bg-mono-40 block  h-10 w-[250px] shrink-0 rounded-[4px]"></span>
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div>
-                          <div className="sender-message mb-6 max-w-[550px] ml-auto">
-                            <div className="user-info flex items-center flex-row-reverse gap-[11px]">
-                              <div className="user-image">
-                                <div className="skeleton bg-mono-40 block  h-6 w-6 shrink-0 rounded-full"></div>
-                              </div>
-
-                              <div className="user-info flex items-center gap-2 flex-row-reverse">
-                                <p className="name forms-bold text-mono-100">
-                                  <span className="skeleton bg-mono-40 block  h-2 w-6 shrink-0 rounded-full"></span>
-                                </p>
-                                <p className="msg-time forms-bold text-mono-70">
-                                  <span className="skeleton bg-mono-40 block  h-2 w-9 shrink-0 rounded-full"></span>
-                                </p>
-                              </div>
-                            </div>
-                            <div className="message-cont-box flex pr-[35px]">
-                              <p className="message-content inline-block pt-[15px] text-mono-100 forms-bold pr-[26px] pb-7 pl-[25px] bg-[#F6F8FA] ml-auto">
-                                <span className="skeleton bg-mono-40 block  h-10 w-[250px] shrink-0 rounded-[4px]"></span>
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        {groupedMessages?.map(group => (
-                          <div key={group.date}>
-                            <p className="time-temps-per-day text-center eyebrow-small text-mono-90 uppercase mb-6">
-                              {group.date}
-                            </p>
-                            {group?.messages.map(message => (
-                              <div
-                                key={message._id}
-                                className={
-                                  message?.sender?._id === session.user.id
-                                    ? 'sender-message mb-6 max-w-[550px] ml-auto'
-                                    : 'recipient-message mb-6 max-w-[550px] mr-auto'
-                                }
-                              >
-                                <div
-                                  className={`user-info flex items-center ${
-                                    message?.sender?._id === session.user.id
-                                      ? 'flex-row-reverse'
-                                      : ''
-                                  } gap-[11px]`}
-                                >
-                                  <div className="user-image">
-                                    <Image
-                                      src={
-                                        message?.sender?.profileImage ||
-                                        '/images/icons/elisp-profile-default-img.svg'
-                                      }
-                                      alt={
-                                        message?.sender?._id === session.user.id
-                                          ? message?.sender?.firstName
-                                          : message?.sender?.charityName
-                                      }
-                                      width={24}
-                                      height={24}
-                                      className="w-6 h-6 object-cover rounded-full"
-                                    />
-                                  </div>
-
-                                  <div
-                                    className={`user-info flex items-center gap-2 ${message?.sender?._id === session.user.id ? 'flex-row-reverse' : ''}`}
-                                  >
-                                    <p className="name forms-bold text-mono-100">
-                                      {message?.sender?._id === session.user.id
-                                        ? 'You'
-                                        : message?.sender?.userName}
-                                    </p>
-                                    <p className="msg-time forms-bold text-mono-70">
-                                      {new Date(
-                                        message?.createdAt
-                                      ).toLocaleString()}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div
-                                  className={`message-cont-box flex ${
-                                    message?.sender?._id === session.user.id
-                                      ? 'pr-[35px]'
-                                      : 'pl-[35px]'
-                                  }`}
-                                >
-                                  <p
-                                    className={`message-content inline-block pt-[15px] text-mono-100 forms-bold pr-[26px] pb-7 pl-[25px] bg-[#F6F8FA] ${
-                                      message?.sender?._id === session.user.id
-                                        ? ' ml-auto'
-                                        : ''
-                                    }`}
-                                  >
-                                    {message?.content}
-                                  </p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
-
-                  <div className="message-input-are relative mt-auto">
-                    <input
-                      type="text"
-                      value={newMessage}
-                      onChange={e => setNewMessage(e.target.value)}
-                      placeholder="Write your message..."
-                      className="pl-[17px] py-2 body-bold-small text-mono-100 placeholder:text-[#CDD3DA] h-9 w-full pr-10 bg-[#F6F8FA] rounded-[24px]"
-                    />
-                    <Button
-                      onClick={handleSendMessage}
-                      variant="accend-link"
-                      className="h-9 absolute top-0 right-0 bottom-0 my-auto"
-                    >
-                      <Image
-                        src="/images/Send.svg"
-                        alt="send icon image"
-                        className="w-[17px] h-[18px] text-mono-70"
-                        width={17}
-                        height={18}
-                      />
-                    </Button>
-                  </div>
-                </div>
-              </div>
+    <div className={embedded ? 'py-2' : 'min-h-[calc(100vh-120px)] bg-[#F6F8FA] py-6 sm:py-8'}>
+      <div className={embedded ? '' : 'custom-container'}>
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-3">
+            <Image
+              src={userDetails?.profileImage || '/images/icons/elisp-profile-default-img.svg'}
+              alt=""
+              width={44}
+              height={44}
+              className="w-11 h-11 rounded-full object-cover ring-2 ring-[#611192]/20"
+            />
+            <div>
+              <h1 className="h5 font-primary text-mono-100">Messages</h1>
+              <p className="caption text-mono-70">
+                {userDetails?.firstName || userDetails?.charityName || 'Your inbox'}
+                {totalUnread > 0 && (
+                  <span className="ml-2 text-[#611192] font-semibold">
+                    · {totalUnread} unread
+                  </span>
+                )}
+              </p>
             </div>
           </div>
         </div>
+
+        {/* Main messaging shell */}
+        <div className="grid grid-cols-12 gap-0 rounded-2xl overflow-hidden border border-[#E6E3E7] shadow-lg bg-white min-h-[70vh]">
+          {/* Sidebar */}
+          <div className="col-span-12 md:col-span-4 lg:col-span-4 border-r border-[#E6E3E7] flex flex-col bg-white">
+            <div className="p-4 bg-linear-to-r from-[#611192] to-[#8B3AB8]">
+              <p className="text-white/80 text-xs font-semibold uppercase tracking-wider mb-2">Inbox</p>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search conversations..."
+                  className="w-full h-10 pl-10 pr-4 rounded-xl bg-white/15 backdrop-blur-sm text-white placeholder:text-white/60 text-sm border border-white/20 focus:outline-hidden focus:ring-2 focus:ring-white/30"
+                />
+                <Image src="/images/search.svg" alt="" width={16} height={16} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-70 invert" />
+              </div>
+            </div>
+
+            <ul className="flex-1 overflow-y-auto p-2 space-y-1 max-h-[calc(70vh-80px)]">
+              {filteredConversations.length === 0 ? (
+                <li className="text-center py-12 px-4">
+                  <p className="body-small text-mono-70">No conversations yet</p>
+                  <p className="caption text-mono-70 mt-1">Message a seller from any product page</p>
+                </li>
+              ) : (
+                filteredConversations.map((conversation) => {
+                  const isActive = conversation.conversationId === conversationId;
+                  const hasUnread = conversation.unreadCount > 0;
+                  const other = conversation.otherParticipant;
+                  return (
+                    <li key={conversation.conversationId}>
+                      <button
+                        type="button"
+                        onClick={() => openConversation(conversation.conversationId)}
+                        className={`w-full text-left flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
+                          isActive
+                            ? 'bg-[#F2E8F8] border border-[#611192]/20'
+                            : 'hover:bg-[#F6F8FA] border border-transparent'
+                        }`}
+                      >
+                        <div className="relative shrink-0">
+                          <Image
+                            src={other?.profileImage || '/images/icons/elisp-profile-default-img.svg'}
+                            alt=""
+                            width={44}
+                            height={44}
+                            className="w-11 h-11 rounded-full object-cover"
+                          />
+                          {hasUnread && (
+                            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-[#611192] rounded-full border-2 border-white" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className={`forms-bold text-sm truncate ${hasUnread ? 'text-mono-100' : 'text-mono-90'}`}>
+                              {getDisplayName(other)}
+                            </p>
+                            <span className="caption text-mono-70 shrink-0">
+                              {conversation.lastMessage?.createdAt
+                                ? formatMessageTime(conversation.lastMessage.createdAt)
+                                : ''}
+                            </span>
+                          </div>
+                          {conversation.productSnapshot?.name && (
+                            <p className="caption text-[#611192] truncate mt-0.5">
+                              Re: {conversation.productSnapshot.name}
+                            </p>
+                          )}
+                          <p className={`caption truncate mt-0.5 ${hasUnread ? 'text-mono-100 font-medium' : 'text-mono-70'}`}>
+                            {conversation.lastMessage?.content || 'Start chatting'}
+                          </p>
+                        </div>
+                      </button>
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+          </div>
+
+          {/* Chat panel */}
+          <div className="col-span-12 md:col-span-8 lg:col-span-8 flex flex-col min-h-[70vh]">
+            {!conversationId ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-linear-to-b from-[#F2E8F8]/30 to-white">
+                <div className="w-16 h-16 rounded-2xl bg-[#F2E8F8] flex items-center justify-center mb-4">
+                  <Image src="/images/logo-message.svg" alt="" width={48} height={32} />
+                </div>
+                <h3 className="body-bold-medium text-mono-100 mb-2">Select a conversation</h3>
+                <p className="body-small text-mono-70 max-w-sm">
+                  Choose a thread from the left or start one from a product page to ask about an item.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Chat header */}
+                <div className="px-5 py-4 border-b border-[#E6E3E7] bg-white flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Image
+                      src={otherParticipant?.profileImage || '/images/icons/elisp-profile-default-img.svg'}
+                      alt=""
+                      width={40}
+                      height={40}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                    <div className="min-w-0">
+                      <p className="forms-bold text-mono-100 truncate">
+                        {getDisplayName(otherParticipant)}
+                      </p>
+                      {isTyping ? (
+                        <p className="caption text-[#611192] animate-pulse">typing...</p>
+                      ) : (
+                        <p className="caption text-mono-70">Active now</p>
+                      )}
+                    </div>
+                  </div>
+                  {productInfo?.name && (
+                    <Link
+                      href={`/product/${activeConversation?.productId?.slug || activeConversation?.productSnapshot?.slug || activeConversation?.productId?._id || activeConversation?.productId}`}
+                      className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-[#F2E8F8] hover:bg-[#611192]/10 transition-colors shrink-0"
+                    >
+                      {productInfo.imageUrl && (
+                        <Image src={productInfo.imageUrl} alt="" width={32} height={32} className="w-8 h-8 rounded-lg object-cover" />
+                      )}
+                      <div className="text-left">
+                        <p className="caption text-mono-100 font-semibold truncate max-w-[120px]">{productInfo.name}</p>
+                        {productInfo.price != null && (
+                          <p className="text-[10px] text-[#611192] font-bold">£{productInfo.price}</p>
+                        )}
+                      </div>
+                    </Link>
+                  )}
+                </div>
+
+                {/* Messages */}
+                <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 bg-[#FAFAFB]">
+                  {loading && messages.length === 0 ? (
+                    <div className="space-y-4">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className={`flex ${i % 2 ? 'justify-end' : 'justify-start'}`}>
+                          <div className="h-14 w-48 bg-mono-40/50 rounded-2xl animate-pulse" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : messages.length === 0 ? (
+                    <div className="text-center py-16">
+                      <p className="body-small text-mono-70">No messages yet</p>
+                      <p className="caption text-mono-70 mt-1">Say hello and ask about the product</p>
+                    </div>
+                  ) : (
+                    groupedMessages.map((group) => (
+                      <div key={group.date}>
+                        <div className="flex items-center gap-3 my-4">
+                          <div className="flex-1 h-px bg-[#E6E3E7]" />
+                          <span className="caption text-mono-70 uppercase tracking-wide text-[10px] font-semibold">
+                            {group.date}
+                          </span>
+                          <div className="flex-1 h-px bg-[#E6E3E7]" />
+                        </div>
+                        {group.messages.map((message) => {
+                          const isOwn = message?.sender?._id === session?.user?.id;
+                          return (
+                            <div key={message._id} className={`flex mb-3 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                              <div className={`max-w-[75%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
+                                <div
+                                  className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                                    isOwn
+                                      ? 'bg-[#611192] text-white rounded-br-md'
+                                      : 'bg-white text-mono-100 border border-[#E6E3E7] rounded-bl-md shadow-xs'
+                                  }`}
+                                >
+                                  {message.content}
+                                </div>
+                                <div className="flex items-center gap-2 px-1">
+                                  <span className="text-[10px] text-mono-70">
+                                    {formatMessageTime(message.createdAt)}
+                                  </span>
+                                  {isOwn && message.status && (
+                                    <StatusBadge status={message.status} size="sm" />
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input */}
+                <div className="p-4 border-t border-[#E6E3E7] bg-white">
+                  <div className="flex items-center gap-2 rounded-2xl bg-[#F6F8FA] border border-[#E6E3E7] px-4 py-2 focus-within:border-[#611192]/40 focus-within:ring-2 focus-within:ring-[#611192]/10 transition-all">
+                    <input
+                      type="text"
+                      value={newMessage}
+                      onChange={handleInputChange}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
+                      placeholder="Write your message..."
+                      disabled={sending}
+                      className="flex-1 bg-transparent body-small text-mono-100 placeholder:text-mono-70 focus:outline-hidden h-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSendMessage}
+                      disabled={!newMessage.trim() || sending}
+                      className="w-10 h-10 rounded-xl bg-[#611192] text-white flex items-center justify-center disabled:opacity-40 hover:bg-[#3B055C] transition-colors shrink-0"
+                    >
+                      <Image src="/images/Send.svg" alt="Send" width={17} height={18} className="invert" />
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

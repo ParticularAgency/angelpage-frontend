@@ -35,7 +35,7 @@ const TimeLineSection = () => {
                 </div>
               </div>
               <div className="flex flex-col items-center mt-6 sm:mt-3">
-                <p className="text-body-large md:text-body-regular font-normal text-center font-primary leading-[135%] tracking-[.2px] text-[#000]">
+                <p className="text-body-large md:text-body-regular font-normal text-center font-primary leading-[135%] tracking-[.2px] text-black">
                   2022
                 </p>
               </div>
@@ -51,7 +51,7 @@ const TimeLineSection = () => {
                 </div>
               </div>
               <div className="flex flex-col items-center mt-6 sm:mt-3">
-                <p className="text-body-large md:text-body-regular font-normal text-center font-primary leading-[135%] tracking-[.2px] text-[#000]">
+                <p className="text-body-large md:text-body-regular font-normal text-center font-primary leading-[135%] tracking-[.2px] text-black">
                   2024
                 </p>
               </div>
@@ -68,7 +68,7 @@ const TimeLineSection = () => {
                 </div>
               </div>
               <div className="flex flex-col items-center mt-6 sm:mt-3">
-                <p className="text-body-large md:text-body-regular font-normal text-center font-primary leading-[135%] tracking-[.2px] text-[#000]">
+                <p className="text-body-large md:text-body-regular font-normal text-center font-primary leading-[135%] tracking-[.2px] text-black">
                   2025
                 </p>
               </div>

@@ -5,7 +5,7 @@ import React from 'react';
 const AngelPageInfoSection = () => {
   return (
     <section className="angelpage-info-section py-[100px] md:py-16 overflow-hidden">
-      <div className="custom-container sm:!px-0">
+      <div className="custom-container sm:px-0!">
         <div className="angelpage-info-sec-wrapper">
           <div className="angelpage-info-title-box sm:px-4 mb-[30px]">
             <h3 className="info-sec-title h3">
@@ -14,8 +14,10 @@ const AngelPageInfoSection = () => {
                 buy, sell, or donate
               </span>{' '}
               a wide variety of goods,{' '}
-              <span className="text-primary-color-100">90% of each sale</span>{' '}
-              goes to the charity
+              <span className="text-primary-color-100">
+                most of each sale
+              </span>{' '}
+              goes to charity — you choose the split
             </h3>
           </div>
           <div className="angelpage-info-cont-area">
@@ -79,8 +81,9 @@ const AngelPageInfoSection = () => {
                   <span className="text-primary-color-100">
                     Charitable Impact:
                   </span>{' '}
-                  90% of the sale proceeds go directly to your chosen charity,
-                  making supporting causes close to your heart easy.
+                  Sellers choose how proceeds are split after a small platform
+                  fee — give 100% to your chosen charity or keep part of the
+                  sale.
                   <br />
                   <br />
                   <span className="text-primary-color-100">

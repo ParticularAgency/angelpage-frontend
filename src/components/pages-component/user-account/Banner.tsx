@@ -25,10 +25,6 @@ const BannerSection = () => {
   const [progress, setProgress] = useState<number>(0);
   const [userData, setUserData] = useState<UserProfile | null>(null);
 
-  // Log session details for debugging
-  console.log('Session:', session);
-  console.log('Session Status:', status);
-
   useEffect(() => {
     const fetchData = async () => {
       if (status === 'authenticated' && session?.token) {
@@ -89,7 +85,7 @@ const BannerSection = () => {
               <Button
                 variant="accend-link"
                 onClick={() => router.push('/auth/verify-email')}
-                className="!underline"
+                className="underline!"
               >
                 Verify Email
               </Button>

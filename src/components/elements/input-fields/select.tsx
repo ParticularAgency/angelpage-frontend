@@ -79,7 +79,7 @@ const Select: React.FC<SelectProps> = ({
         disabled={disabled}
         value={value}
         onChange={onChange}
-        className={`select-field h-10 py-[11px] px-[8px] bg-transparent text-body-caption font-normal leading-[150%] font-secondary text-mono-60 focus-visible:!rounded-none focus-within:!rounded-none focus:text-mono-100 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`select-field h-10 py-[11px] px-[8px] bg-transparent text-body-caption font-normal leading-[150%] font-secondary text-mono-60 focus-visible:rounded-none! focus-within:rounded-none! focus:text-mono-100 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         style={{
           border: `1px solid ${getStatusBorderColor()}`,
           borderRadius: `0px`,

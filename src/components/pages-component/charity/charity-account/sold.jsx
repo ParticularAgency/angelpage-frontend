@@ -8,6 +8,7 @@ import axios from 'axios';
 import { ToastService } from '@/components/elements/notifications/ToastService';
 import Link from 'next/link';
 import LoadingModal from '@/icons/loadingModal';
+import { Copy, Printer } from 'lucide-react';
 
 const SoldItemsPage = () => {
   const { data: session, status } = useSession() || {};
@@ -19,6 +20,56 @@ const SoldItemsPage = () => {
   const [loading, setLoading] = useState(true);
   // const [generateLabelError, setGenerateLabelError] = useState('');
   const [isGeneratingLabel, setIsGeneratingLabel] = useState(false);
+
+  const resolveFulfillmentType = item =>
+    item?.fulfillmentType ||
+    item?.products?.[0]?.fulfillmentType ||
+    item?.product?.fulfillmentType ||
+    item?.productId?.fulfillmentType ||
+    'uk_shipping';
+
+  const requiresShippingLabel = item => resolveFulfillmentType(item) === 'uk_shipping';
+
+  const downloadReceiptPdf = item => {
+    if (!item) return;
+    const safe = (v) => (v == null ? '' : String(v));
+    const html = `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Order receipt</title>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 24px; color: #111; }
+      h1 { font-size: 18px; margin: 0 0 8px; }
+      .meta { font-size: 12px; color: #444; margin-bottom: 16px; }
+      .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin: 12px 0; }
+      .row { display:flex; justify-content:space-between; gap:12px; font-size: 13px; margin: 6px 0; }
+      .label { color:#555; }
+      .value { font-weight: 600; }
+      @media print { button { display:none } }
+    </style>
+  </head>
+  <body>
+    <h1>Order receipt</h1>
+    <div class="meta">Order: ${safe(item.orderId)} · ${new Date(item.orderDate || Date.now()).toLocaleString()}</div>
+    <div class="card">
+      <div class="row"><div class="label">Item</div><div class="value">${safe(item.productName)}</div></div>
+      <div class="row"><div class="label">Price</div><div class="value">£${safe(item.productPrice)}</div></div>
+      <div class="row"><div class="label">Fulfillment</div><div class="value">${safe(resolveFulfillmentType(item))}</div></div>
+      <div class="row"><div class="label">Status</div><div class="value">${safe(item.status)}</div></div>
+      <div class="row"><div class="label">Shipping cost</div><div class="value">£${safe(item.shipmentCost || 0)}</div></div>
+    </div>
+    <script>
+      window.onload = () => { window.print(); };
+    </script>
+  </body>
+</html>`;
+    const w = window.open('', '_blank', 'noopener,noreferrer,width=900,height=700');
+    if (!w) return;
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+  };
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -249,7 +300,7 @@ const SoldItemsPage = () => {
     return (
       <>
         <div className="not-found-screen-design flex flex-col items-center pt-12 pb-12 custom-container">
-          <h5 className="body-bold-medium !text-[18px] text-mono-100 font-medium font-secondary mb-2 text-center">
+          <h5 className="body-bold-medium text-[18px]! text-mono-100 font-medium font-secondary mb-2 text-center">
             No items sold yet
           </h5>
           <p className="body-bold-small font-secondary font-regular text-mono-90 text-center max-w-[620px] w-full mx-auto">
@@ -431,7 +482,7 @@ const SoldItemsPage = () => {
                                   >
                                     <Button
                                       variant="accend-link"
-                                      className="!underline !text-primary-color-100 !py-0 !px-0"
+                                      className="underline! text-primary-color-100! py-0! px-0!"
                                     >
                                       Download order label
                                     </Button>
@@ -454,12 +505,12 @@ const SoldItemsPage = () => {
                                     <div className="mb-3">
                                       <p className="body-bold-small  flex items-center gap-1">
                                         <strong>Order Id:</strong>{' '}
-                                        <span className="!text-primary-color-100">
+                                        <span className="text-primary-color-100!">
                                           {' '}
                                           {selectedItem.shipStationOrderId}{' '}
                                         </span>
                                         <Button
-                                          className=" !py-0 !px-1 !h-6 mt-[-3px]"
+                                          className=" py-0! px-1! h-6! mt-[-3px]"
                                           onClick={() => {
                                             navigator.clipboard.writeText(
                                               selectedItem.shipStationOrderId
@@ -470,18 +521,12 @@ const SoldItemsPage = () => {
                                           }}
                                           variant="accend-link"
                                         >
-                                          <Image
-                                            src="/images/copy-svgrepo-com.svg"
-                                            alt="copy item icon"
-                                            width={24}
-                                            height={24}
-                                            className="w-5 h-5 object-cover"
-                                          />
+                                          <Copy className="h-4 w-4" aria-hidden />
                                         </Button>
                                       </p>
                                       <p className="body-bold-small">
                                         <strong>Shipping cost:</strong>{' '}
-                                        <span className="!text-primary-color-100">
+                                        <span className="text-primary-color-100!">
                                           {' '}
                                           {selectedItem.shipmentCost}
                                         </span>
@@ -495,7 +540,7 @@ const SoldItemsPage = () => {
                                           <p className="body-bold-small flex items-center gap-1">
                                             <strong>Tracking number:</strong>{' '}
                                             {'  '}
-                                            <span className="!text-primary-color-100">
+                                            <span className="text-primary-color-100!">
                                               {' '}
                                               {selectedItem.trackingNumber}
                                             </span>
@@ -509,22 +554,27 @@ const SoldItemsPage = () => {
                                                 );
                                               }}
                                               variant="accend-link"
-                                              className=" !py-0 !px-1 !h-6 mt-[-3px]"
+                                              className=" py-0! px-1! h-6! mt-[-3px]"
                                             >
-                                              <Image
-                                                src="/images/copy-svgrepo-com.svg"
-                                                alt="copy item icon"
-                                                width={24}
-                                                height={24}
-                                                className="w-5 h-5 object-cover"
-                                              />
+                                              <Copy className="h-4 w-4" aria-hidden />
                                             </Button>
                                           </p>
                                         </>
                                       )}
                                     </div>
 
-                                    {selectedItem.status === 'LabelCreated' ? (
+                                    {!requiresShippingLabel(selectedItem) ? (
+                                      <div className="flex flex-wrap gap-2">
+                                        <Button
+                                          variant="primary"
+                                          onClick={() => downloadReceiptPdf(selectedItem)}
+                                          className="inline-flex items-center gap-2"
+                                        >
+                                          <Printer className="h-4 w-4" aria-hidden />
+                                          Download receipt (PDF)
+                                        </Button>
+                                      </div>
+                                    ) : selectedItem.status === 'LabelCreated' ? (
                                       <>
                                         {selectedItem?.label_download ? (
                                           <Link
@@ -556,7 +606,7 @@ const SoldItemsPage = () => {
                                 )}
                               </div>
 
-                              {selectedItem.status === 'LabelCreated' ? (
+                              {requiresShippingLabel(selectedItem) && selectedItem.status === 'LabelCreated' ? (
                                 <div className="bg-mono-0 p-4 w-full">
                                   <p className="body-bold-small">
                                     Item Shipped?
@@ -618,7 +668,7 @@ const SoldItemsPage = () => {
                             className={`w-6 h-6 flex justify-center items-center rounded-full absolute dots-item-indicator left-[-38px] bottom-0 ${
                               selectedItem.status === 'SalesProceeds'
                                 ? 'bg-[#6A0398]'
-                                : 'states-not-complete !left-[-36px]'
+                                : 'states-not-complete left-[-36px]!'
                             }`}
                           >
                             {selectedItem.status === 'SalesProceeds' && (

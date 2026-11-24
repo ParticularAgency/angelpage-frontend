@@ -1,5 +1,5 @@
 'use client';
-import HowItWorksPage from '@/pages/how-it-work/HowItWorks';
+import HowItWorksPage from '@/views/how-it-work/HowItWorks';
 import React from 'react';
 
 const HowItWorks: React.FC = () => {

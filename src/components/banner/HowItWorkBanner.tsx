@@ -9,7 +9,7 @@ const HowItWorkBanner = () => {
             <h1 className="banner-title h1 text-center text-mono-0">
               How it works
             </h1>
-            <p className="desc body-medium sm:body-small  text-center !text-mono-0 mt-6 sm:mt-3 max-w-[820px] mx-auto w-full">
+            <p className="desc body-medium sm:body-small  text-center text-mono-0! mt-6 sm:mt-3 max-w-[820px] mx-auto w-full">
               AngelPage is an innovative online marketplace designed to enable
               individuals and charity shops to sell preloved items, with the
               proceeds supporting UK charities.

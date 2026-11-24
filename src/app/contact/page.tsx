@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button, Input } from '@/components/elements';
 import axios from 'axios';
+import Link from 'next/link';
 import { ToastService } from '@/components/elements/notifications/ToastService';
 
 const Contact = () => {
@@ -56,8 +57,12 @@ const Contact = () => {
           Contact AngelPage
         </h6>
         <p className="body-regular max-w-[433px] w-full">
-          Reach out for information on how to sign up, how the platform works,
-          and potential partnerships.
+          For platform help, please check{' '}
+          <Link href="/how-it-works" className="text-primary-color-100 underline">
+            How it works
+          </Link>{' '}
+          first. This form is for partnership enquiries and issues that cannot
+          be resolved through your account.
         </p>
         <div className="flex justify-between mt-[60px]">
           <div className="mb-2">

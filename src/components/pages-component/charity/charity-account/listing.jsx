@@ -39,8 +39,8 @@ const UsersProductListingArea = () => {
 
   const handleDeleteOrArchive = async (productId, status) => {
     try {
-      if (status === 'DRAFT') {
-        // Permanently delete a draft product
+      if (status === 'DRAFT' || status === 'PENDING_REVIEW' || status === 'REMOVED') {
+        // Permanently delete a non-live product
         await axios.delete(
           `${process.env.NEXT_PUBLIC_API_URL}/products/${productId}`,
           {
@@ -70,6 +70,23 @@ const UsersProductListingArea = () => {
     }
   };
 
+  const handleRelist = async productId => {
+    try {
+      await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/${productId}/relist`,
+        { quantity: 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${session?.token}`,
+          },
+        }
+      );
+      fetchUserProducts();
+    } catch (error) {
+      console.error('Error re-listing product:', error);
+    }
+  };
+
   useEffect(() => {
     if (session?.token) {
       fetchUserProducts();
@@ -81,6 +98,7 @@ const UsersProductListingArea = () => {
   }
 
   const draftProducts = products.filter(product => product.status === 'DRAFT');
+  const pendingProducts = products.filter(product => product.status === 'PENDING_REVIEW');
   const activeProducts = products.filter(product => product.status === 'LIVE');
   const removedProducts = products.filter(
     product => product.status === 'REMOVED'
@@ -159,6 +177,9 @@ const UsersProductListingArea = () => {
                       status="DRAFT"
                       isArchived={false}
                       location={location}
+                      onEdit={() =>
+                        window.location.assign(`/product/post-product?edit=${product.id}`)
+                      }
                       onDelete={() =>
                         handleDeleteOrArchive(product.id, 'DRAFT')
                       }
@@ -170,6 +191,61 @@ const UsersProductListingArea = () => {
               )}
             </div>
           </div>
+
+          {pendingProducts.length > 0 && (
+            <div className="product-listing-type-item pb-[99px] pending-product">
+              <h5 className="product-listing-title eyebrow-medium uppercase mb-8">
+                Pending review
+              </h5>
+              <div className="product-listing-list-area grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-4">
+                {pendingProducts.map(product => {
+                  const sellerUserAddress = product.seller?.address;
+                  const sellerCharityAddress = product.charity?.address;
+                  const sellerAddress = sellerUserAddress || sellerCharityAddress;
+
+                  let countryCode = 'N/A';
+                  if (sellerAddress?.country) {
+                    countryCode =
+                      countries.getAlpha2Code(sellerAddress.country, 'en') || 'N/A';
+                  }
+
+                  const location = sellerAddress
+                    ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
+                    : 'Location Not Available';
+
+                  return (
+                    <ProductCard
+                      key={product.id}
+                      productId={product.id}
+                      charityImageSrc={
+                        product?.charity?.profileImage ||
+                        '/images/icons/elisp-profile-default-img.svg'
+                      }
+                      charityImageAlt={product?.charity?.charityName}
+                      productBrand={product.brand}
+                      productTitle={product.name}
+                      productSize={product.size}
+                      productImageSrc={
+                        product.images[0]?.url ||
+                        '/images/products/card-placeholder-image.webp'
+                      }
+                      productImageAlt={product.images[0]?.altText || ''}
+                      productPrice={`${product.price}`}
+                      status="PENDING_REVIEW"
+                      isArchived={false}
+                      location={location}
+                      onEdit={() =>
+                        window.location.assign(`/product/post-product?edit=${product.id}`)
+                      }
+                      onDelete={() =>
+                        handleDeleteOrArchive(product.id, 'PENDING_REVIEW')
+                      }
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Active Products */}
           <div className="product-listing-type-item pb-[99px] active-product">
@@ -219,6 +295,9 @@ const UsersProductListingArea = () => {
                       status="LIVE"
                       isArchived={false}
                       location={location}
+                      onEdit={() =>
+                        window.location.assign(`/product/post-product?edit=${product.id}`)
+                      }
                       onArchive={() =>
                         handleDeleteOrArchive(product.id, 'LIVE')
                       }
@@ -279,6 +358,8 @@ const UsersProductListingArea = () => {
                       status="REMOVED"
                       location={location}
                       isArchived={true}
+                      onRelist={() => handleRelist(product.id)}
+                      onDelete={() => handleDeleteOrArchive(product.id, 'REMOVED')}
                     />
                   );
                 })

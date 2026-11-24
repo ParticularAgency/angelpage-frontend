@@ -79,7 +79,7 @@ const TestimonialsSection = () => {
                   </p>
                 </div>
               </div>
-              {/* <div className="divider sm:!my-0 h-[61px] sm:h-[2px] sm:w-14 sm:mx-auto w-[2px] bg-mono-50"></div>
+              {/* <div className="divider sm:my-0! h-[61px] sm:h-[2px] sm:w-14 sm:mx-auto w-[2px] bg-mono-50"></div>
               <div className="right-cont max-w-[120px] w-full flex items-center justify-center">
                 
               </div> */}

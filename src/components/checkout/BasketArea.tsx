@@ -3,22 +3,36 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/elements';
 import { ArrowDownIcon } from '@/icons';
+import { calculateProfitSplit } from '@/lib/profitSplit';
 
-interface Product {
+interface CartProduct {
   brand: string;
   name: string;
   price: number;
+  sellerSharePercent?: number;
+  charityProfit?: number;
 }
+
 interface CartItem {
   quantity: number;
-  productId: Product;
+  productId: CartProduct;
 }
+
 interface BasketAreaProps {
   onPay: () => void;
   cartItems: CartItem[];
   isLoading: boolean;
-  shipmentCost: number; // Added shipmentCost as a prop
-  grandTotal: number; // Added grandTotal as a prop
+  shipmentCost: number;
+  grandTotal: number;
+}
+
+function lineSplit(item: CartItem) {
+  const price = item?.productId?.price || 0;
+  const qty = item?.quantity || 0;
+  const total = price * qty;
+  const pct = item?.productId?.sellerSharePercent ?? 0;
+  const split = calculateProfitSplit(total, pct);
+  return split;
 }
 
 const BasketArea: React.FC<BasketAreaProps> = ({
@@ -31,19 +45,27 @@ const BasketArea: React.FC<BasketAreaProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  // Calculate product total, charity profit, and admin fee
   const totalProductPrice = cartItems.reduce((acc, item) => {
-    const price = item?.productId?.price || 0; // Use 0 if price is missing
-    const quantity = item?.quantity || 0; // Use 0 if quantity is missing
+    const price = item?.productId?.price || 0;
+    const quantity = item?.quantity || 0;
     return acc + price * quantity;
   }, 0);
 
-  const charityProfit = totalProductPrice * 0.9; // 90% for charity
-  const adminFee = totalProductPrice * 0.1; // 10% for admin fee
+  const totals = cartItems.reduce(
+    (acc, item) => {
+      const split = lineSplit(item);
+      return {
+        charity: acc.charity + split.charityProfit,
+        platform: acc.platform + split.platformFee,
+        seller: acc.seller + split.sellerProfit,
+      };
+    },
+    { charity: 0, platform: 0, seller: 0 },
+  );
 
   const handlePayClick = async () => {
     setLoading(true);
-    await onPay(); // Triggers payment handler
+    await onPay();
     setLoading(false);
   };
 
@@ -57,7 +79,6 @@ const BasketArea: React.FC<BasketAreaProps> = ({
           </p>
         </div>
 
-        {/* Collapsible Order Details */}
         <div className="order-item-list-box">
           <p
             className={`colaps-title body-regular px-6 mb-4 cursor-pointer flex items-center gap-[4px] ${
@@ -76,8 +97,7 @@ const BasketArea: React.FC<BasketAreaProps> = ({
           {!isCollapsed && (
             <div className="product-list px-6">
               {cartItems.map((item, index) => {
-                const productCharityProfit =
-                  item.quantity * item.productId.price * 0.9; // 90% for charity
+                const split = lineSplit(item);
                 return (
                   <div className="mb-6" key={index}>
                     <p className="eyebrow-medium">{item.productId.brand}</p>
@@ -91,13 +111,19 @@ const BasketArea: React.FC<BasketAreaProps> = ({
                       </p>
                     </div>
                     <div className="flex justify-between caption-bold">
-                      <p className="caption text-mono-80">
-                        Charity profit (90%)
-                      </p>
+                      <p className="caption text-mono-80">Charity</p>
                       <p className="caption text-mono-100 mt-1">
-                        £{productCharityProfit.toFixed(2)}
+                        £{split.charityProfit.toFixed(2)}
                       </p>
                     </div>
+                    {split.sellerProfit > 0 && (
+                      <div className="flex justify-between caption-bold">
+                        <p className="caption text-mono-80">Seller share</p>
+                        <p className="caption text-mono-100 mt-1">
+                          £{split.sellerProfit.toFixed(2)}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -105,15 +131,26 @@ const BasketArea: React.FC<BasketAreaProps> = ({
           )}
         </div>
 
-        {/* Summary Footer */}
         <div className="summary-foot border-t pt-6 px-6">
           <div className="flex justify-between mb-2">
-            <p className="caption text-mono-80">Angelpage admin fee</p>
-            <p className="caption text-mono-100">£{adminFee.toFixed(2)}</p>
+            <p className="caption text-mono-80">Angelpage platform fee</p>
+            <p className="caption text-mono-100">
+              £{totals.platform.toFixed(2)}
+            </p>
           </div>
+          {totals.seller > 0 && (
+            <div className="flex justify-between mb-2">
+              <p className="caption text-mono-80">Seller share</p>
+              <p className="caption text-mono-100">
+                £{totals.seller.toFixed(2)}
+              </p>
+            </div>
+          )}
           <div className="flex justify-between mb-2">
-            <p className="caption text-mono-80">Charity profit (90%)</p>
-            <p className="caption text-mono-100">£{charityProfit.toFixed(2)}</p>
+            <p className="caption text-mono-80">Charity total</p>
+            <p className="caption text-mono-100">
+              £{totals.charity.toFixed(2)}
+            </p>
           </div>
           <div className="flex justify-between mb-2">
             <p className="caption text-mono-80">Shipping cost</p>
@@ -121,7 +158,6 @@ const BasketArea: React.FC<BasketAreaProps> = ({
           </div>
         </div>
 
-        {/* Total Amount */}
         <div className="flex justify-between font-bold px-6 border-t pt-4 mt-4">
           <p className="body-bold-medium product-total-price">Total</p>
           <p className="body-bold-medium sm:text-[16px] text-mono-100">
@@ -129,7 +165,6 @@ const BasketArea: React.FC<BasketAreaProps> = ({
           </p>
         </div>
 
-        {/* Pay Now Button */}
         <div className="pay px-6 mt-3">
           <Button
             className="w-full"

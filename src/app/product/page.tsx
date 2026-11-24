@@ -1,5 +1,5 @@
 'use client';
-import ProductsPage from '@/pages/products/ProductsPage';
+import ProductsPage from '@/components/product/ProductsPage';
 import React from 'react';
 
 const ProductsLists = () => {

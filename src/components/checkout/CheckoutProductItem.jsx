@@ -1,41 +1,83 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import {  useDispatch } from 'react-redux';
 import { MinusIcon, PlusIcon } from '@/icons';
-import { updateItemQuantity, removeItem } from '../../store/cartSlice';
+import {
+  updateItemQuantity,
+  removeItem,
+  updateGuestItemQuantity,
+  removeGuestItem,
+} from '../../store/cartSlice';
+import {
+  calculateProfitSplit,
+  getFulfillmentLabel,
+  PLATFORM_FEE_PERCENT,
+} from '@/lib/profitSplit';
+import { formatProductLocation } from '@/lib/productLocation';
+import { formatMarketMoney } from '@/lib/marketPreference';
+import { useLocale } from '@/i18n/LocaleProvider';
+
+const getProductLocation = product =>
+  formatProductLocation(product?.seller, product?.charity);
 
 const CheckoutProductItem = ({
 isLoading,
   cartItems = [],
 }) => {
   const dispatch = useDispatch();
+  const { locale } = useLocale();
+  const money = amount => formatMarketMoney(amount, locale);
   const { data: session } = useSession() || {};
   const userId = session?.user?.id;
   const token = session?.token;
+  const isGuest = !userId;
 
+  const [loadingItems] = useState([]);
+  const [isPriceSplitOpen, setIsPriceSplitOpen] = useState(false);
+  const [splitItemIndex, setSplitItemIndex] = useState(null);
 
+  const cartSplits = useMemo(
+    () =>
+      cartItems.map(item => {
+        const total = (item.quantity || 0) * (item.productId?.price || 0);
+        const pct = item.productId?.sellerSharePercent ?? 0;
+        return calculateProfitSplit(total, pct);
+      }),
+    [cartItems],
+  );
 
-    const [loadingItems] = useState([]);
-    const [isPriceSplitOpen, setIsPriceSplitOpen] = useState(false);
+  const handleUpdateQuantity = (productId, quantityChange) => {
+    if (isGuest) {
+      dispatch(updateGuestItemQuantity({ productId, quantityChange }));
+      return;
+    }
+    dispatch(
+      updateItemQuantity({ userId, productId, quantityChange, token })
+    );
+  };
 
-      const handleUpdateQuantity = (productId, quantityChange) => {
-        dispatch(
-          updateItemQuantity({ userId, productId, quantityChange, token })
-        );
-      };
-
-      const handleRemoveItem = productId => {
-        dispatch(removeItem({ userId, productId, token }));
-      };
+  const handleRemoveItem = productId => {
+    if (isGuest) {
+      dispatch(removeGuestItem(productId));
+      return;
+    }
+    dispatch(removeItem({ userId, productId, token }));
+  };
 
 
 
   // Handlers for Price Split Modal
-  const handlePriceSplitClick = () => setIsPriceSplitOpen(true);
-  const handleClosePriceSplit = () => setIsPriceSplitOpen(false);
+  const handlePriceSplitClick = index => {
+    setSplitItemIndex(index);
+    setIsPriceSplitOpen(true);
+  };
+  const handleClosePriceSplit = () => {
+    setIsPriceSplitOpen(false);
+    setSplitItemIndex(null);
+  };
 
 if (!cartItems.length) {
   return (
@@ -85,10 +127,21 @@ if (!cartItems.length) {
         <h2 className="h5 font-primary text-mono-100 mb-4">Items</h2>
         {cartItems.length > 0 ? (
           <div className="basket-added-product-items">
-            {cartItems.map(item => (
+            {cartItems.map((item, index) => {
+              const productId = item.productId?._id || item.productId;
+              const split = cartSplits[index];
+              const fulfillmentType = item.productId?.fulfillmentType || 'uk_shipping';
+              const sellAreas = item.productId?.sellAreas || [];
+              const deliveryLabel =
+                fulfillmentType === 'uk_shipping'
+                  ? 'Est. 5–7 business days'
+                  : fulfillmentType === 'personal_delivery'
+                    ? 'Personal delivery'
+                    : getFulfillmentLabel(fulfillmentType, sellAreas);
+              return (
               <div
-                className="basket-added-product-item"
-                key={item.productId._id}
+                className="basket-added-product-item mb-4 rounded-2xl border border-[#E6E3E7] bg-white p-4"
+                key={productId}
               >
                 <div className="basket-product-item-head gap-[23px] flex  items-center">
                   <div className="seller-info-box flex items-center gap-[13px] sm:gap-2 pb-4">
@@ -107,7 +160,9 @@ if (!cartItems.length) {
                         <div className="seller-info-cont">
                           <p className="caption mb-[2px]">Donated by</p>
                           <p className="eyebrow-medium text-black">
-                            {item.productId?.seller?.firstName || 'Unknown'}
+                            {item.productId?.seller?.firstName ||
+                              item.productId?.seller?.charityName ||
+                              'Unknown'}
                           </p>
                         </div>
                       </>
@@ -134,7 +189,7 @@ if (!cartItems.length) {
                   </div>
                   <div className="delivery-timeline  pb-4">
                     <span className="p-2 body-bold-small sm:text-[12px] whitespace-nowrap bg-[#FCF2FF] text-primary-color-100 rounded-[24px]">
-                      5-7 business days
+                      {deliveryLabel}
                     </span>
                   </div>
                 </div>
@@ -154,7 +209,7 @@ if (!cartItems.length) {
                       <p className="product-brand sm:whitespace-nowrap eyebrow-medium text-mono-100">
                         {item.productId?.brand || 'Unknown Brand'}
                       </p>
-                      <p className="product-title sm:whitespace-nowrap !h-auto caption-bold mt-[3px] text-mono-70">
+                      <p className="product-title sm:whitespace-nowrap h-auto! caption-bold mt-[3px] text-mono-70">
                         {item.productId.name || 'Product Name'}
                       </p>
                       <p className="product-specification sm:whitespace-nowrap caption mt-2">
@@ -163,48 +218,32 @@ if (!cartItems.length) {
                           : `Height: ${item.productId?.dimensions?.height || 'N/A'} | Width: ${item.productId?.dimensions?.width || 'N/A'}`}
                       </p>
                       <p className="flex items-center gap-[13px] mt-[13px] caption">
-                        <Image
-                          src="/images/icons/location.svg"
-                          alt="location icons"
-                          width={10}
-                          height={12}
-                        />{' '}
-                        {item.productId?.seller?.addresses ? (
+                        {getProductLocation(item.productId) && (
                           <>
-                            {item.productId?.seller?.addresses[0]?.city ||
-                              (item.productId?.seller?.addresses[0]
-                                ?.country && (
-                                <>
-                                  {item.productId?.seller?.addresses[0]?.city ||
-                                    'Unknown City'}
-                                  ,{' '}
-                                  {item.productId?.seller?.addresses[0]
-                                    ?.country || 'Unknown Country'}
-                                </>
-                              ))}
-                          </>
-                        ) : (
-                          <>
-                            {item.productId?.charity?.addresses[0]?.city ||
-                              (item.productId?.charity?.addresses[0]
-                                ?.country && (
-                                <>
-                                  {item.productId?.charity?.addresses[0]
-                                    ?.city || 'Unknown City'}
-                                  ,{' '}
-                                  {item.productId?.charity?.addresses[0]
-                                    ?.country || 'Unknown Country'}
-                                </>
-                              ))}
+                            <Image
+                              src="/images/icons/location.svg"
+                              alt="location icons"
+                              width={10}
+                              height={12}
+                            />{' '}
+                            {getProductLocation(item.productId)}
                           </>
                         )}
                       </p>
+                      {split && (
+                        <p className="mt-2 text-[11px] font-medium text-[#611192]">
+                          {money(split.charityProfit)} to charity
+                          {split.sellerProfit > 0
+                            ? ` · ${money(split.sellerProfit)} to seller`
+                            : ''}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="product-quantity-area w-full sm:hidden  flex gap-[4px] items-center justify-between max-w-[90px] h-[26px] p-[6px] border border-mono-100">
                     <button
                       onClick={() =>
-                        handleUpdateQuantity(item.productId._id, -1)
+                        handleUpdateQuantity(productId, -1)
                       }
                       disabled={item.quantity <= 1}
                     >
@@ -221,7 +260,7 @@ if (!cartItems.length) {
                     </span>
                     <button
                       onClick={() =>
-                        handleUpdateQuantity(item.productId._id, 1)
+                        handleUpdateQuantity(productId, 1)
                       }
                     >
                       <PlusIcon />
@@ -231,7 +270,7 @@ if (!cartItems.length) {
                     <div className="product-quantity-area w-full   gap-[4px] items-center hidden sm:flex mb-3 justify-between max-w-[90px] h-[26px] p-[6px] border border-mono-100">
                       <button
                         onClick={() =>
-                          handleUpdateQuantity(item.productId._id, -1)
+                          handleUpdateQuantity(productId, -1)
                         }
                         disabled={item.quantity <= 1}
                       >
@@ -248,7 +287,7 @@ if (!cartItems.length) {
                       </span>
                       <button
                         onClick={() =>
-                          handleUpdateQuantity(item.productId._id, 1)
+                          handleUpdateQuantity(productId, 1)
                         }
                       >
                         <PlusIcon />
@@ -262,27 +301,28 @@ if (!cartItems.length) {
                       ) : (
                         <>
                           {' '}
-                          £{(item.quantity * item.productId?.price).toFixed(2)}
+                          {money(item.quantity * item.productId?.price)}
                         </>
                       )}
                     </p>
                     <button
-                      className="caption mt-2 block ml-auto text-primary-color-100 !underline"
-                      onClick={handlePriceSplitClick}
+                      className="caption mt-2 block ml-auto text-primary-color-100 underline!"
+                      onClick={() => handlePriceSplitClick(index)}
                     >
                       Price split
                     </button>
                     <button
-                      className="caption block ml-auto btn-styles !px-0 accent-btn  text-primary-color-100 !underline"
-                      onClick={() => handleRemoveItem(item.productId._id)}
-                      disabled={loadingItems.includes(item.productId._id)}
+                      className="caption block ml-auto btn-styles px-0! accent-btn  text-primary-color-100 underline!"
+                      onClick={() => handleRemoveItem(productId)}
+                      disabled={loadingItems.includes(productId)}
                     >
                       Remove
                     </button>
                   </div>
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         ) : (
           <p className="text-mono-70">No items in your basket.</p>
@@ -290,8 +330,8 @@ if (!cartItems.length) {
       </div>
 
       {/* Price Split Modal */}
-      {isPriceSplitOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 px-4">
+      {isPriceSplitOpen && splitItemIndex != null && cartItems[splitItemIndex] && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
           <div className="bg-mono-0 w-full max-w-md pt-[27px] pr-4 pb-16 pl-[23px] sm:pt-7 sm:px-4 sm:pb-9 relative">
             <button
               className="absolute top-4 right-4 p-[9.5px] text-gray-500 hover:text-gray-700"
@@ -302,42 +342,46 @@ if (!cartItems.length) {
             <h3 className="h6 font-primary mb-[23px] text-mono-100 text-center">
               Price split
             </h3>
-            <div className="flex items-start gap-[9px]">
-              <Image
-                src="/images/icons/hand-help.svg"
-                alt="info icon image"
-                className="mt-[2px]"
-                width={13}
-                height={13}
-              />
-              <div>
-                <h4 className="body-bold-small mb-[5px] text-primary-color-100">
-                  Charity profit:
-                </h4>
-                <p className="body-small text-mono-90">
-                  The charity hosting the item will receive 90% of the item's
-                  total cost.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-[9px] mt-[29px]">
-              <Image
-                src="/images/icons/Info-quare.svg"
-                alt="info icon image"
-                className="mt-[2px]"
-                width={13}
-                height={13}
-              />
-              <div>
-                <h4 className="body-bold-small mb-[5px] text-primary-color-100">
-                  Administration fees:
-                </h4>
-                <p className="body-small text-mono-90">
-                  Angelpage retains 10% of each item's cost to support platform
-                  operations.
-                </p>
-              </div>
-            </div>
+            <p className="body-small text-mono-70 mb-4 text-center">
+              {cartItems[splitItemIndex].productId?.name}
+            </p>
+            {(() => {
+              const split = cartSplits[splitItemIndex];
+              const lineTotal =
+                cartItems[splitItemIndex].quantity *
+                cartItems[splitItemIndex].productId?.price;
+              return (
+                <div className="space-y-3 rounded-lg border border-[#E8D4F4]/60 bg-[#FAF9FC] p-4 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-mono-70">Item total</span>
+                    <span className="font-medium">{money(lineTotal)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-mono-70">
+                      Platform ({PLATFORM_FEE_PERCENT}%)
+                    </span>
+                    <span>{money(split.platformFee)}</span>
+                  </div>
+                  {split.sellerProfit > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-mono-70">
+                        Seller ({split.sellerSharePercent}%)
+                      </span>
+                      <span>{money(split.sellerProfit)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between border-t border-[#E8D4F4]/60 pt-2 font-semibold text-[#611192]">
+                    <span>Charity ({split.charitySharePercent}%)</span>
+                    <span>{money(split.charityProfit)}</span>
+                  </div>
+                </div>
+              );
+            })()}
+            <p className="body-small text-mono-90 mt-4">
+              Each listing sets its own split when posted. Angelpage keeps{' '}
+              {PLATFORM_FEE_PERCENT}% as a platform fee; the rest is shared
+              between seller and charity as shown above.
+            </p>
           </div>
         </div>
       )}

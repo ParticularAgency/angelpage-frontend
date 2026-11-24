@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { requestPasswordReset } from '@/utils/api';
 import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
+import CaptchaWidget from '@/components/auth/CaptchaWidget';
 import {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
@@ -20,6 +21,7 @@ const RequestPasswordReset = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState('');
 
   const handleRequestReset = async () => {
     if (!email) {
@@ -32,7 +34,7 @@ const RequestPasswordReset = () => {
     setMessage('');
 
     try {
-      const response = await requestPasswordReset(email, role);
+      const response = await requestPasswordReset(email, role, captchaToken);
       const successMessage =
         response.message ||
         'Password reset email sent. Please check your inbox.';
@@ -41,7 +43,7 @@ const RequestPasswordReset = () => {
       setEmail('');
     } catch (error) {
       const errorMessage =
-        error.response?.message ||
+        error?.response?.data?.message ||
         'Error requesting password reset. Please try again.';
       setError(errorMessage);
       ToastService.error(errorMessage);
@@ -99,6 +101,16 @@ const RequestPasswordReset = () => {
                 ))}
               </select>
             </div>
+
+            <p className="caption text-mono-70 mb-2">
+              Select the account type you used when signing up (User, Charity, or
+              Admin).
+            </p>
+
+            <CaptchaWidget
+              onVerify={setCaptchaToken}
+              onExpire={() => setCaptchaToken('')}
+            />
 
             <Button
               variant="primary"

@@ -1,5 +1,5 @@
 'use client';
-import InternalHome from '@/pages/homepage/internal-home/InternalHome';
+import InternalHome from '@/views/homepage/internal-home/InternalHome';
 import React from 'react';
 
 const InternalHomePage = () => {

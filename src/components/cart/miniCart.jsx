@@ -2,17 +2,32 @@
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCart, updateItemQuantity, removeItem } from '@/store/cartSlice';
+import {
+  fetchCart,
+  updateItemQuantity,
+  removeItem,
+  hydrateGuestCart,
+  updateGuestItemQuantity,
+  removeGuestItem,
+} from '@/store/cartSlice';
+import {
+  hydrateAffiliateCart,
+  removeAffiliateItem,
+} from '@/store/affiliateCartSlice';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { CartIcon, MinusIcon, PlusIcon, CloseIcon } from '@/icons';
 import Link from 'next/link';
 import { Button } from '@/components/elements';
+import { useLocale } from '@/i18n/LocaleProvider';
+import { formatMarketMoney } from '@/lib/marketPreference';
 
 const MiniCart = () => {
   const { data: session } = useSession() || {};
+  const { t, locale } = useLocale();
   const userId = session?.user?.id;
   const token = session?.token;
+  const isGuest = !userId;
 
   const dispatch = useDispatch();
   const {
@@ -20,27 +35,41 @@ const MiniCart = () => {
     totalItems,
     status,
   } = useSelector(state => state.cart);
+  const affiliateItems = useSelector(state => state.affiliateCart.items);
+  const affiliateCount = affiliateItems.length;
+  const badgeCount = totalItems + affiliateCount;
 
   useEffect(() => {
+    dispatch(hydrateAffiliateCart());
     if (userId && token) {
       dispatch(fetchCart({ userId, token }));
+    } else {
+      dispatch(hydrateGuestCart());
     }
   }, [userId, token, dispatch]);
 
   const handleUpdateQuantity = (productId, quantityChange) => {
+    if (isGuest) {
+      dispatch(updateGuestItemQuantity({ productId, quantityChange }));
+      return;
+    }
     dispatch(updateItemQuantity({ userId, productId, quantityChange, token }));
   };
 
   const handleRemoveItem = productId => {
+    if (isGuest) {
+      dispatch(removeGuestItem(productId));
+      return;
+    }
     dispatch(removeItem({ userId, productId, token }));
   };
-console.log('cart item response:' , cartItems)
-const totalPrice = cartItems.reduce((acc, item) => {
-  const price = item?.productId?.price || 0; // Use 0 if price is missing
-  const quantity = item?.quantity || 0; // Use 0 if quantity is missing
-  return acc + price * quantity;
-}, 0);
 
+  const totalPrice = cartItems.reduce((acc, item) => {
+    const price = item?.productId?.price || 0;
+    const quantity = item?.quantity || 0;
+    return acc + price * quantity;
+  }, 0);
+  const money = amount => formatMarketMoney(amount, locale);
 
   return (
     <div className="cart-box flex items-center">
@@ -50,163 +79,186 @@ const totalPrice = cartItems.reduce((acc, item) => {
           <div className="drawer-content">
             <label
               htmlFor="my-drawer-4"
-              className="drawer-button -top-[2px] relative btn !bg-transparent !p-0 !border-none"
+              className="drawer-button top-[-2px] relative btn bg-transparent! p-0! border-none!"
             >
-              {status === 'loading' ? (
-                <span className="absolute top-[1px] w-5 h-5 right-[-10px] sm:right-[-8px] bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
+              {status === 'loading' && !isGuest ? (
+                <span className="absolute top-px right-[-10px] flex h-5 w-5 items-center justify-center rounded-full bg-[#611192] p-1 text-[11px] text-white sm:right-[-8px]">
                   ...
                 </span>
-              ) : totalItems > 0 ? (
-                <span className="absolute top-[1px] w-5 h-5 right-[-9px] sm:right-[-8px] bg-red-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
-                  {totalItems}
+              ) : badgeCount > 0 ? (
+                <span className="absolute top-px right-[-9px] flex h-5 w-5 items-center justify-center rounded-full bg-[#611192] p-1 text-[11px] text-white sm:right-[-8px]">
+                  {badgeCount}
                 </span>
               ) : null}
               <CartIcon />
             </label>
           </div>
-          <div className="drawer-side">
+          <div className="drawer-side z-[10040]">
             <label htmlFor="my-drawer-4" className="drawer-overlay"></label>
-            <div className="menu offcanvas-main-wrapper bg-mono-0 text-base-content min-h-full max-w-[439px] w-full p-0">
-              <div className="offcanvas-head mini-cart-header-and-main-wrea min-h-full">
-                <div className="minicart-header px-6">
-                  <div className="cart-head-top border-b pt-8 pb-5 flex justify-between items-center border-b-mono-60">
-                    <p className="eyebrow-large">Cart</p>
-                    <label
-                      htmlFor="my-drawer-4"
-                      className="close-btn w-8 h-8 flex items-center justify-center cursor-pointer"
-                    >
-                      <CloseIcon />
-                    </label>
-                  </div>
+            <div className="flex h-full min-h-full w-full max-w-[420px] flex-col bg-white p-0 text-[#0B0112]">
+              <div className="flex items-center justify-between border-b border-[#E6E3E7] px-6 py-5">
+                <div>
+                  <p className="font-primary text-[26px] leading-none">
+                    {t('cart.title')}
+                  </p>
+                  {badgeCount > 0 ? (
+                    <p className="mt-1 text-[12px] text-[#6B686E]">
+                      {badgeCount}
+                    </p>
+                  ) : null}
                 </div>
-                <div className="minicart-body-product-info px-6">
-                  {cartItems.length === 0 ? (
-                    <div className="empty-cart-message my-auto py-12">
-                      <p className="font-secondary font-medium text-body-caption text-center text-mono-100">
-                        Your cart is empty.
-                      </p>
-                    </div>
-                  ) : (
-                    cartItems.map(item => (
-                      <div
-                        className="cart-add-product-item-wrapper"
-                        key={item?.productId?._id}
-                      >
-                        <div className="cart-add-product-item flex items-start gap-5 py-5">
+                <label
+                  htmlFor="my-drawer-4"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-[#F2E8F8]"
+                >
+                  <CloseIcon />
+                </label>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-6">
+                {cartItems.length === 0 && affiliateItems.length === 0 ? (
+                  <div className="py-16 text-center">
+                    <p className="text-[15px] text-[#6B686E]">{t('cart.empty')}</p>
+                    <Link
+                      href="/product"
+                      className="mt-4 inline-block text-[14px] font-semibold text-[#611192]"
+                    >
+                      {t('cart.browse')}
+                    </Link>
+                  </div>
+                ) : (
+                  <>
+                    {cartItems.map(item => {
+                      const productId = item?.productId?._id || item?.productId;
+                      const charityName =
+                        item?.productId?.selectedCharityName ||
+                        item?.productId?.charity?.charityName;
+                      return (
+                        <div
+                          key={productId}
+                          className="flex items-start gap-4 border-b border-[#F2E8F8] py-5"
+                        >
                           <Image
                             src={
                               item?.productId?.images?.[0]?.url ||
-                              '/placeholder.png'
+                              '/images/products/card-placeholder-image.webp'
                             }
-                            width={116}
-                            height={110}
-                            alt="Product"
-                            className="object-cover"
+                            width={88}
+                            height={88}
+                            alt={item?.productId?.name || 'Product'}
+                            className="h-[88px] w-[88px] rounded-2xl bg-[#FCF2FF] object-cover"
                           />
-                          <div className="minicart-product-info w-full">
-                            <h5 className="body-medium sm:!text-[16px]">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[11px] font-medium tracking-[0.12em] text-[#6B686E] uppercase">
                               {item?.productId?.brand}
-                            </h5>
-                            <p className="body-small text-mono-100 mt-1">
+                            </p>
+                            <p className="mt-1 line-clamp-2 text-[15px] leading-snug">
                               {item?.productId?.name}
                             </p>
-                            <p className="body-small text-mono-100 mt-1">
-                              Charity:{' '}
-                              {item?.productId?.selectedCharityName ||
-                                item?.productId?.charity?.charityName}
-                            </p>
-                            <div className="minicart-states mt-4 flex items-center justify-between gap-2">
-                              <div className="minicart-states-group flex items-center gap-3">
-                                <div className="product-inc-dsc-states relative p-[6px] max-w-[90px] w-full h-[26px] border border-mono-100 flex items-center justify-between">
-                                  <button
-                                    className="dsc-btn"
-                                    onClick={() =>
-                                      handleUpdateQuantity(
-                                        item?.productId?._id,
-                                        -1
-                                      )
-                                    }
-                                    disabled={item.quantity <= 1}
-                                  >
-                                    <MinusIcon />
-                                  </button>
-                                  {status === 'loading' ? (
-                                    <>
-                                      <div className="skeleton h-2 w-[45px] px-2 bg-mono-40"></div>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <input
-                                        value={item.quantity}
-                                        type="text"
-                                        readOnly
-                                        className="max-w-[90px] px-2 w-full text-center"
-                                      />
-                                    </>
-                                  )}
-
-                                  <button
-                                    className="inc-btn"
-                                    onClick={() =>
-                                      handleUpdateQuantity(
-                                        item?.productId?._id,
-                                        1
-                                      )
-                                    }
-                                  >
-                                    <PlusIcon />
-                                  </button>
-                                </div>
-                                <p className="product-current-price caption">
-                                  Price: <br /> £
-                                  {(
-                                    item.quantity * item.productId?.price
-                                  ).toFixed(2)}
-                                </p>
+                            {charityName ? (
+                              <p className="mt-1 text-[12px] text-[#611192]">
+                                {t('cart.charity')}: {charityName}
+                              </p>
+                            ) : null}
+                            <div className="mt-3 flex items-center justify-between gap-2">
+                              <div className="flex h-8 items-center gap-2 rounded-full border border-[#E6E3E7] px-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateQuantity(productId, -1)}
+                                  disabled={item.quantity <= 1}
+                                  className="flex h-6 w-6 items-center justify-center"
+                                >
+                                  <MinusIcon />
+                                </button>
+                                <span className="min-w-4 text-center text-[13px]">
+                                  {item.quantity}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateQuantity(productId, 1)}
+                                  className="flex h-6 w-6 items-center justify-center"
+                                >
+                                  <PlusIcon />
+                                </button>
                               </div>
-                              <Button
-                                variant="accend-link"
-                                className="!underline !px-0"
-                                onClick={() =>
-                                  handleRemoveItem(item?.productId?._id)
-                                }
-                              >
-                                Remove
-                              </Button>
+                              <p className="text-[14px] font-semibold text-[#611192]">
+                                {money((item.quantity || 0) * (item.productId?.price || 0))}
+                              </p>
                             </div>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveItem(productId)}
+                              className="mt-2 text-[12px] text-[#6B686E] underline"
+                            >
+                              {t('cart.remove')}
+                            </button>
                           </div>
                         </div>
+                      );
+                    })}
+                    {affiliateItems.length > 0 && (
+                      <div className="mt-2 border-t border-[#E6E3E7] pt-5">
+                        <p className="text-[14px] font-semibold">{t('cart.affiliate')}</p>
+                        <p className="mt-1 text-[12px] text-[#6B686E]">
+                          {t('cart.affiliateNote')}
+                        </p>
+                        {affiliateItems.map(item => (
+                          <div
+                            key={item.productId}
+                            className="flex items-start gap-4 py-4"
+                          >
+                            {item.image && (
+                              <img
+                                src={item.image}
+                                alt=""
+                                className="h-[72px] w-[72px] rounded-2xl object-cover"
+                              />
+                            )}
+                            <div className="flex-1">
+                              <p className="text-[14px]">{item.name}</p>
+                              <p className="mt-1 text-[13px] font-semibold text-[#611192]">
+                                {money(item.price || 0)}
+                              </p>
+                              <button
+                                type="button"
+                                className="mt-2 text-[12px] underline"
+                                onClick={() =>
+                                  dispatch(removeAffiliateItem(item.productId))
+                                }
+                              >
+                                {t('cart.remove')}
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        <Link href="/checkout/affiliate" className="mt-2 block">
+                          <Button variant="secondary" className="h-11! w-full rounded-full">
+                            {t('cart.affiliateCheckout')}
+                          </Button>
+                        </Link>
                       </div>
-                    ))
-                  )}
-                </div>
+                    )}
+                  </>
+                )}
               </div>
-              <div className="offcanvas-main footer-mini-cart-area min-h-full mt-auto">
-                <div className="cart-footer-area px-6 pt-[46px] pb-12 sm:py-7">
-                  <div className="totat-price flex items-center justify-between">
-                    <p className="body-bold-small">Total</p>
-                    <p className="body-small">
-                      {status === 'loading' ? (
-                        <>
-                          <div className="skeleton h-2 w-20 px-2 bg-mono-40"></div>
-                        </>
-                      ) : (
-                        <>£{totalPrice.toFixed(2)}</>
-                      )}
-                    </p>
-                  </div>
-                  <p className="info-text forms-bold mt-[9px]">
-                    Tax and shipping are calculated at checkout.
+
+              <div className="mt-auto border-t border-[#E6E3E7] bg-[#FCF2FF] px-6 py-5">
+                <div className="flex items-center justify-between">
+                  <p className="text-[14px] font-semibold">{t('cart.total')}</p>
+                  <p className="font-primary text-[22px] text-[#611192]">
+                    {status === 'loading' && !isGuest ? '…' : money(totalPrice)}
                   </p>
-                  <Link href="/checkout" className="block">
-                    <Button
-                      variant="primary"
-                      className="max-w-full w-full rounded-[50px] mt-4 !h-12 !body-bold-small !text-mono-0"
-                    >
-                      Checkout
-                    </Button>
-                  </Link>
                 </div>
+                <p className="mt-1 text-[12px] text-[#6B686E]">{t('cart.taxNote')}</p>
+                <Link href="/checkout" className="mt-4 block">
+                  <Button
+                    variant="primary"
+                    className="h-12! w-full rounded-full"
+                    disabled={cartItems.length === 0}
+                  >
+                    {t('cart.checkout')}
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

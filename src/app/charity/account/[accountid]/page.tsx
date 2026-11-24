@@ -5,7 +5,7 @@ import React from 'react';
 
 const CharityAccountPage = () => {
   return (
-    <ProtectedRoute allowedRoles={['CHARITY']}>
+    <ProtectedRoute allowedRoles={['CHARITY', 'CHARITY_STAFF']}>
       <div className="charity-account-page-wrapper-main">
         <CharityAccountMain />
       </div>

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Checkmark, ShearIcon } from '@/icons';
+import { useParams } from 'next/navigation';
+import { Checkmark } from '@/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../elements';
@@ -11,130 +11,113 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectFade, FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { ToastService } from '@/components/elements/notifications/ToastService';
 import { useSelector, useDispatch } from 'react-redux';
-import { addOrUpdateProduct } from '@/store/cartSlice';
+import { addOrUpdateProduct, addGuestProduct } from '@/store/cartSlice';
+import { openMiniCart } from '@/components/cart/openMiniCart';
+import { addAffiliateProduct, hydrateAffiliateCart } from '@/store/affiliateCartSlice';
 import { useSession } from 'next-auth/react';
+import { useGetProductDetailsQuery } from '@/store/api/angelpageApi';
 
-import axios from 'axios';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
-import 'swiper/swiper-bundle.css';
 
 import PreLoader from '../common/pre-loader/PreLoader';
-import countries from 'i18n-iso-countries';
 import FavoriteButton from '../elements/button/FavoriteButton';
-import enLocale from 'i18n-iso-countries/langs/en.json';
+import ShareProductButtons from './ShareProductButtons';
+import ProductReviewsSection from './ProductReviewsSection';
+import ProductFulfillmentBadge from '@/components/product/ProductFulfillmentBadge';
+import { calculateProfitSplit, getFulfillmentSpecLabel } from '@/lib/profitSplit';
+import { formatProductLocation } from '@/lib/productLocation';
+import { formatMarketMoney } from '@/lib/marketPreference';
+import { useLocale } from '@/i18n/LocaleProvider';
 import MessageButton from '@/app/messaging/chat/startChat';
-// import type { Swiper as SwiperInstance } from 'swiper';
+import { ChevronRight } from 'lucide-react';
 
-countries.registerLocale(enLocale);
-
-const ProductSinglepage = () => {
+const ProductSinglepage = ({ productSlug: productSlugProp, initialProduct } = {}) => {
   const dispatch = useDispatch();
-  const router = useRouter();
+  const { locale } = useLocale();
   const { data: session } = useSession() || {};
   const userId = session?.user?.id;
   const token = session?.token;
   const cartItems = useSelector(state => state.cart.items);
+  const affiliateCartItems = useSelector(state => state.affiliateCart.items);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const params = useParams();
 
-  // Safely parse product ID
-  const productid = params?.productid;
-  const [product, setProduct] = useState(null);
+  const productSlug = productSlugProp || params?.slug;
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const {
+    data: fetchedProduct,
+    isLoading: loading,
+    isError,
+  } = useGetProductDetailsQuery(productSlug, {
+    skip: !productSlug,
+  });
+  const product = fetchedProduct ?? initialProduct;
+  const resolvedProductId = product?.id || product?._id;
+  const error = isError ? 'Failed to load product details.' : null;
 
   useEffect(() => {
-    const productInCart = cartItems.some(item => item.productId === productid);
-    setIsAddedToCart(productInCart);
-  }, [cartItems, productid]);
+    dispatch(hydrateAffiliateCart());
+  }, [dispatch]);
 
   useEffect(() => {
-    if (!productid) return;
+    if (!resolvedProductId) return;
+    const productInCart = cartItems.some(item => {
+      const id = item.productId?._id || item.productId;
+      return String(id) === String(resolvedProductId);
+    });
+    const inAffiliateCart = affiliateCartItems.some(
+      item => String(item.productId) === String(resolvedProductId),
+    );
+    setIsAddedToCart(productInCart || inAffiliateCart);
+  }, [cartItems, affiliateCartItems, resolvedProductId]);
 
-    const fetchProductDetails = async () => {
-      try {
-        setLoading(true);
-
-        const headers = {};
-        if (session?.token) {
-          headers.Authorization = `Bearer ${session.token}`;
-        }
-
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/details/${productid}`,
-          {
-            params: { isArchived: false },
-            headers,
-          }
-        );
-        console.log('product details response', response.data.product);
-        setProduct(response.data.product);
-      } catch (err) {
-        setError('Failed to load product details.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProductDetails();
-  }, [productid, session]);
+  const affiliateUrl = product?.affiliateUrl || product?.ebayAffiliateUrl;
+  const isAffiliateCheckout =
+    (product?.checkoutMode === 'ebay_redirect' ||
+      product?.checkoutMode === 'affiliate_redirect') &&
+    affiliateUrl;
 
   const handleAddToCart = async () => {
+    if (isAffiliateCheckout) {
+      dispatch(addAffiliateProduct({ product, affiliateUrl }));
+      ToastService.success('Added to affiliate cart!');
+      setIsAddedToCart(true);
+      openMiniCart();
+      return;
+    }
+
     if (!token) {
-      ToastService.error('Please log in to add products to your cart.');
-      router.push('/auth/login');
+      dispatch(addGuestProduct({ product, quantity: 1 }));
+      ToastService.success('Product added to cart!');
+      setIsAddedToCart(true);
+      openMiniCart();
       return;
     }
 
     try {
-      // Dispatch Redux action to add or update product in the cart
       await dispatch(
         addOrUpdateProduct({
           userId,
-          productId: productid,
+          productId: resolvedProductId,
           token,
         })
       );
       ToastService.success('Product added to cart!');
       setIsAddedToCart(true);
+      openMiniCart();
     } catch (error) {
       ToastService.error('Failed to add product to cart.');
       console.error('Error adding product to cart:', error);
     }
   };
 
-  const handleShareProduct = () => {
-    const productUrl = window.location.href;
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard
-        .writeText(productUrl)
-        .then(() => {
-          ToastService.success('Product link copied to clipboard!');
-        })
-        .catch(() => {
-          ToastService.error('Failed to copy URL.');
-        });
-    } else {
-      // Fallback: use an input element to copy text
-      const tempInput = document.createElement('input');
-      tempInput.value = productUrl;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      try {
-        document.execCommand('copy');
-        ToastService.success('Product link copied to clipboard!');
-      } catch (err) {
-        ToastService.error('Failed to copy URL.');
-      }
-      document.body.removeChild(tempInput);
-    }
-  };
+  const isEbayCheckout =
+    product?.checkoutMode === 'ebay_redirect' && product?.ebayAffiliateUrl;
 
   if (loading) {
     return <PreLoader />;
@@ -149,55 +132,75 @@ const ProductSinglepage = () => {
   }
 
   // Safely extract location
-  const sellerUserAddress = product.seller?.address;
-  const sellerCharityAddress = product.charity?.address;
+  const location = formatProductLocation(product.seller, product.charity);
+  const showLocation = location.length > 0;
 
-  // Determine which address to use (User or Charity)
-  const sellerAddress = sellerUserAddress || sellerCharityAddress;
+  const isOwnListing =
+    userId &&
+    product &&
+    [product.seller?.id, product.seller?._id, product.charity?.id]
+      .filter(Boolean)
+      .some(id => String(id) === String(userId));
 
-  let countryCode = 'N/A';
-  if (sellerAddress?.country) {
-    countryCode = countries.getAlpha2Code(sellerAddress.country, 'en') || 'N/A';
-  }
-
-  const location = sellerAddress
-    ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
-    : 'Location not available';
+  const priceNum = Number(product.price) || 0;
+  const sellerSharePct = product.sellerSharePercent ?? 0;
+  const split = calculateProfitSplit(priceNum, sellerSharePct);
+  const fulfillmentType = product.fulfillmentType || 'uk_shipping';
+  const sellAreas = product.sellAreas || [];
+  const images = Array.isArray(product.images)
+    ? product.images.filter(image => image?.url)
+    : [];
+  const categoryHref = product.category
+    ? `/product?category=${encodeURIComponent(String(product.category).toLowerCase())}`
+    : '/product';
+  const charityName =
+    product.charity?.charityName ||
+    product.selectedCharityName ||
+    product.selectCharityName ||
+    '';
+  const money = amount => formatMarketMoney(Number(amount) || 0, locale);
+  const specs = [
+    ['Condition', product.condition],
+    ['Brand', product.brand],
+    ['Material', product.material],
+    ['Colour', product.color],
+    ['Size', product.size],
+    ['Fulfillment', getFulfillmentSpecLabel(fulfillmentType, sellAreas)],
+    ['Height', product.dimensions?.height],
+    ['Width', product.dimensions?.width],
+    ['Depth', product.dimensions?.depth],
+  ].filter(([, value]) => {
+    const text = String(value || '').trim();
+    return text && text !== 'undefined' && text !== 'null' && !text.startsWith('Local:');
+  });
 
   return (
-    <section className="product-singlepage-section">
-      <div className="custom-container max-w-[960px] w-full">
-        <div className="product-breadcrumb-area pt-4 pb-10 sm:pb-4">
-          <ul className="breadcrumb-area flex items-center justify-center gap-[10px]">
-            <li className="breadcrumb-item body-caption prev-pages flex items-center gap-[10px]">
-              <Link className="body-caption capitalize text-mono-100" href="/">
-                Home
-              </Link>
-              <span className="angle">{'>'}</span>
-            </li>
-            <li className="breadcrumb-item body-caption prev-pages flex items-center gap-[10px]">
-              <Link
-                className="body-caption capitalize text-mono-100"
-                href={`/category/${product.category}`}
-              >
-                {product.category}
-              </Link>
-              <span className="angle">{'>'}</span>
-            </li>
-            <li className="breadcrumb-item body-caption current-page text-mono-70 flex items-center gap-[10px]">
-              <span className="body-caption text-mono-70">{product.name}</span>
-            </li>
-          </ul>
-        </div>
+    <section className="product-singlepage-section bg-[#FCF2FF] pb-16">
+      <div className="custom-container w-full pt-6">
+        <ul className="flex flex-wrap items-center gap-2 text-sm text-[#5C5560]">
+          <li className="flex items-center gap-2">
+            <Link className="hover:text-[#611192]" href="/">
+              Home
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+          </li>
+          <li className="flex items-center gap-2">
+            <Link className="capitalize hover:text-[#611192]" href={categoryHref}>
+              {product.category || 'Shop'}
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+          </li>
+          <li className="max-w-[280px] truncate text-[#0B0112]">{product.name}</li>
+        </ul>
 
-        <div className="product-singlepage-cont-wrapper w-full max-w-[895px] flex items-start justify-between gap-[92px] lg:gap-14 md:gap-10 sm:gap-12 pb-[83px] sm:pb-12 sm:flex-col">
-          <div className="product-singlepage-left-cont max-w-[415px] w-full">
+        <div className="mt-6 grid grid-cols-12 items-start gap-8 pb-16 sm:grid-cols-1 sm:pb-10">
+          <div className="col-span-7 sm:col-span-full">
             <div className="swiper-product-slider-area">
               <div className="swiper-slider-view w-full relative">
                 <Swiper
                   spaceBetween={10}
                   effect="fade"
-                  loop
+                  loop={images.length > 1}
                   thumbs={{ swiper: thumbsSwiper }}
                   modules={[EffectFade, FreeMode, Navigation, Thumbs]}
                   breakpoints={{
@@ -205,17 +208,17 @@ const ProductSinglepage = () => {
                     768: { slidesPerView: 1 },
                     1024: { slidesPerView: 1 },
                   }}
-                  className="thumbs w-full rounded-lg"
+                  className="thumbs overflow-hidden rounded-3xl border border-[#E6E3E7] bg-white"
                 >
-                  {product.images.map((image, index) => (
+                  {images.map((image, index) => (
                     <SwiperSlide key={index}>
-                      <div className="slide-view-item">
+                      <div className="slide-view-item bg-[#FCF2FF]">
                         <Image
                           src={image.url}
-                          className="w-full max-w-full sm:h-[340px] h-[452px] object-cover"
+                          className="aspect-square w-full object-cover"
                           alt={image.altText || 'Product Image'}
-                          width={359}
-                          height={452}
+                          width={720}
+                          height={720}
                         />
                       </div>
                     </SwiperSlide>
@@ -242,15 +245,15 @@ const ProductSinglepage = () => {
                     1024: { slidesPerView: 6, spaceBetween: 12 },
                   }}
                 >
-                  {product.images.map((image, index) => (
+                  {images.map((image, index) => (
                     <SwiperSlide key={index}>
-                      <div className="slide-tab-item w-14 h-14">
+                      <div className="slide-tab-item h-16 w-16 overflow-hidden rounded-xl border border-[#E6E3E7]">
                         <Image
                           src={image.url}
-                          className="w-14 h-14 object-cover cursor-pointer"
+                          className="h-16 w-16 cursor-pointer object-cover"
                           alt={image.altText || 'Product Image'}
-                          width={48}
-                          height={48}
+                          width={64}
+                          height={64}
                         />
                       </div>
                     </SwiperSlide>
@@ -260,7 +263,7 @@ const ProductSinglepage = () => {
             </div>
           </div>
 
-          <div className="product-singlepage-right-cont max-w-[388px] w-full">
+          <div className="product-singlepage-right-cont col-span-5 rounded-3xl border border-[#E6E3E7] bg-white p-6 sm:col-span-full sm:p-5">
             <div className="product-info-header flex mb-6 items-center gap-3 justify-between">
               <div className="product-posted-user-info flex items-center gap-[13px]">
                 {product.sellerType === 'USER' ? (
@@ -299,23 +302,47 @@ const ProductSinglepage = () => {
               <div className="product-states flex items-center gap-2">
                 {!!session?.token && (
                   <MessageButton
-                    sellerId={product.seller?.id || product.charity?.id}
-                    sellerType={product.sellerType}
+                    sellerId={
+                      product.seller?._id ||
+                      product.seller?.id ||
+                      product.charity?._id ||
+                      product.charity?.id
+                    }
+                    sellerType={product.sellerType || 'USER'}
+                    productId={product.id || product._id}
+                    productName={product.name}
                   />
                 )}
 
                 <div className="product-favorite-btn cursor-pointer">
                   <FavoriteButton
-                    itemId={product.id.toString()}
+                    itemId={String(resolvedProductId)}
                     type="Product"
                   />
                 </div>
-                <div
-                  className="current-product-social-share-link cursor-pointer"
-                  onClick={handleShareProduct}
-                >
-                  <ShearIcon />
-                </div>
+                <ShareProductButtons
+                  product={{
+                    productId: String(resolvedProductId || ''),
+                    slug: product.slug || productSlug,
+                    name: product.name,
+                    price: Number(product.price) || 0,
+                    charityProfit: Number(product.charityProfit) || 0,
+                    sellerSharePercent: product.sellerSharePercent ?? 0,
+                    charityName:
+                      product.charity?.charityName ||
+                      product.selectCharityName ||
+                      product.selectedCharityName,
+                    description:
+                      product.additionalInfo || product.description || '',
+                    condition: product.condition,
+                    brand: product.brand,
+                    material: product.material,
+                    color: product.color,
+                    size: product.size,
+                    category: product.category,
+                    imageUrl: product.images?.[0]?.url,
+                  }}
+                />
               </div>
             </div>
 
@@ -323,36 +350,94 @@ const ProductSinglepage = () => {
               <li className="product-highlight-info-item product-condition caption py-[4px] px-2 rounded-[16px] bg-primary-color-70 text-primary-color-100">
                 {product.condition}
               </li>
+              {product.reviewSummary?.trustLabel && (
+                <li className="product-highlight-info-item caption py-[4px] px-2 rounded-[16px] bg-[#FCF2FF] text-primary-color-100">
+                  {product.reviewSummary.trustLabel}
+                </li>
+              )}
+              {product.reviewSummary?.reviewCount > 0 && (
+                <li className="product-highlight-info-item caption py-[4px] px-2 rounded-[16px] bg-primary-color-70 text-primary-color-100">
+                  {product.reviewSummary.averageRating}★ ({product.reviewSummary.reviewCount})
+                </li>
+              )}
+              {showLocation && (
               <li className="product-highlight-info-item product-shipping-from caption py-[4px] px-2 rounded-[16px] bg-primary-color-70 text-primary-color-100">
-                Shipping from {location}
+                {fulfillmentType === 'self_collect'
+                  ? `Collect from ${location}`
+                  : fulfillmentType === 'personal_delivery'
+                    ? `Delivered around ${location}`
+                    : `From ${location}`}
               </li>
-              <li className="product-highlight-info-item product-delivery-type caption py-[4px] px-2 rounded-[16px] bg-primary-color-70 text-primary-color-100">
-                5-7 business days
+              )}
+              <li className="product-highlight-info-item caption py-[4px] px-2 rounded-[16px] bg-primary-color-70 text-primary-color-100">
+                <ProductFulfillmentBadge
+                  fulfillmentType={fulfillmentType}
+                  sellAreas={sellAreas}
+                  className="bg-transparent! px-0! py-0! text-inherit!"
+                />
               </li>
+              {fulfillmentType === 'uk_shipping' && (
+                <li className="product-highlight-info-item product-delivery-type caption py-[4px] px-2 rounded-[16px] bg-primary-color-70 text-primary-color-100">
+                  Est. 5–7 business days
+                </li>
+              )}
             </ul>
 
-            <h5 className="product-title h5 font-primary mb-[26px]">
+            <h1 className="product-title font-primary mb-3 text-[2.4rem] leading-none text-[#0B0112]">
               {product.name}
-            </h5>
+            </h1>
+            <p className="font-primary text-[2rem] leading-none text-[#611192]">
+              {money(priceNum)}
+            </p>
 
-            <div className="product-price-group flex items-end gap-2 mb-6 max-w-[306px] sm:max-w-[375px] w-full">
-              <div className="product-price-box max-w-[103px] w-full">
-                <span className="forms text-mono-100">Price</span>
-                <p className="input-type-text body-bold-small py-[9.5px] px-2 w-full h-10 bg-[#f1f1f1]">
-                  £{product.price}
-                </p>
-              </div>
-              <div className="product-price-item charity-profit-received max-w-full w-full">
-                <span className="forms text-mono-100">Charity receives</span>
-                <p className="input-type-text body-bold-small flex items-center py-[9.5px] px-2 w-full h-10 bg-[#f1f1f1] text-[#6A0398]">
-                  £{product.charityProfit}
-                  <span className="text-mono-70 text-[11px]"> /90%</span>
-                </p>
+            <div className="my-6 rounded-3xl bg-[#FCF2FF] p-4 text-sm">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#611192]">
+                Where your money goes
+              </p>
+              {charityName && (
+                <p className="mt-2 text-sm text-[#0B0112]">{charityName}</p>
+              )}
+              <div className="mt-3 space-y-1.5">
+                <div className="flex justify-between text-[#5C5560]">
+                  <span>Platform ({split.platformFeePercent}%)</span>
+                  <span>{money(split.platformFee)}</span>
+                </div>
+                {split.sellerProfit > 0 && (
+                  <div className="flex justify-between text-[#5C5560]">
+                    <span>Seller ({split.sellerSharePercent}%)</span>
+                    <span>{money(split.sellerProfit)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between border-t border-[#E6E3E7] pt-2 font-medium text-[#611192]">
+                  <span>Charity ({split.charitySharePercent}%)</span>
+                  <span>{money(split.charityProfit)}</span>
+                </div>
               </div>
             </div>
 
-            <div className="product-cta-box flex flex-col gap-4 mb-6 max-w-[306px] sm:max-w-[375px] w-full">
-              {/* {!!session?.token && ( */}
+            <div className="product-cta-box mb-6 flex flex-col gap-3">
+              {isOwnListing ? (
+                <div className="rounded-lg border border-primary-color-100 bg-[#FCF2FF] px-4 py-3 text-center">
+                  <p className="body-small text-primary-color-100 font-medium">
+                    This is your listing
+                  </p>
+                  <p className="text-mono-70 text-xs mt-1">
+                    You cannot purchase your own product.
+                  </p>
+                </div>
+              ) : isAffiliateCheckout ? (
+                <Button
+                  className="add-to-basket-btn w-full"
+                  variant="primary"
+                  onClick={handleAddToCart}
+                >
+                  {isAddedToCart
+                    ? 'In affiliate cart'
+                    : isEbayCheckout
+                      ? 'Add to cart — buy on eBay'
+                      : 'Add to affiliate cart'}
+                </Button>
+              ) : (
               <div className="product-card-btn-states">
                 {isAddedToCart ? (
                   <Button
@@ -372,69 +457,59 @@ const ProductSinglepage = () => {
                   </Button>
                 )}
               </div>
-              {/* )} */}
+              )}
 
-              <Link
-                href={`/charity/store/${product.charity?.storefrontId}`}
-                className="block w-full"
-              >
-                <Button
-                  className="link-to-charity-storefront-btn w-full !text-primary-color-100 !border-primary-color-100"
-                  variant="secondary"
+              {product.charity?.storefrontId && (
+                <Link
+                  href={`/charity/store/${product.charity.storefrontId}`}
+                  className="block w-full"
                 >
-                  View charity storefront
-                </Button>
-              </Link>
+                  <Button
+                    className="link-to-charity-storefront-btn w-full rounded-full! border-[#611192]! text-[#611192]!"
+                    variant="secondary"
+                  >
+                    View charity storefront
+                  </Button>
+                </Link>
+              )}
             </div>
 
-            <div className="product-specification-box">
-              <p className="body-small mb-3">Product Specifications</p>
-              <ul className="product-specification-lists flex flex-col gap-3">
-                {[
-                  { label: 'Condition', value: `${product.condition}` },
-                  { label: 'Brand', value: `${product?.brand}` },
-                  { label: 'Material', value: `${product.material}` },
-                  { label: 'Colour', value: `${product.color}` },
-                  { label: 'Size', value: `${product.size}` },
-                  {
-                    label: 'Height',
-                    value: `${product.dimensions?.height || ''}`,
-                  },
-                  {
-                    label: 'Width',
-                    value: `${product.dimensions?.width || ''}`,
-                  },
-                ]
-                  .filter(spec => spec.value)
-                  .map((spec, index) => (
-                    <li
-                      key={index}
-                      className="specification-items flex items-center gap-2"
-                    >
-                      <span className="specification-title body-bold-small empty:!hidden">
-                        {spec.label}
-                      </span>
-                      <span className="specification-info body-small">
-                        {spec.value}
-                      </span>
-                    </li>
+            {specs.length > 0 && (
+              <div className="product-specification-box border-t border-[#E6E3E7] pt-5">
+                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#611192]">
+                  Details
+                </p>
+                <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3">
+                  {specs.map(([label, value]) => (
+                    <div key={label}>
+                      <dt className="text-[11px] uppercase tracking-wide text-[#8B888C]">{label}</dt>
+                      <dd className="text-sm capitalize text-[#0B0112]">{value}</dd>
+                    </div>
                   ))}
-                <li className="specification-items mt-0">
-                  <p className="caption text-mono-90">
-                    {product.additionalInfo}
-                  </p>
-                </li>
-              </ul>
-            </div>
+                </dl>
+              </div>
+            )}
+            {product.additionalInfo && (
+              <p className="mt-5 text-sm leading-6 text-[#5C5560]">{product.additionalInfo}</p>
+            )}
           </div>
         </div>
       </div>
 
       <RelatedCategoryProducts
-        secClassName="bg-[#f1f1f7] pt-[35px] pb-5"
+        secClassName="bg-white pt-12 pb-8"
         category={product.category}
-        currentProductId={product.id}
+        currentProductId={resolvedProductId}
       />
+
+      <div className="custom-container">
+        <div className="rounded-3xl border border-[#E6E3E7] bg-white px-6 py-6 sm:px-4">
+          <ProductReviewsSection
+            productId={String(resolvedProductId || '')}
+            initialSummary={product.reviewSummary}
+          />
+        </div>
+      </div>
     </section>
   );
 };

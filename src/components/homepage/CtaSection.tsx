@@ -6,16 +6,16 @@ import Link from 'next/link';
 
 const CtaSection = () => {
   return (
-    <section className="cta-section pb-[60px] laptop-x:pb-0 laptop-x:h-[533px] md:!p-0 md:h-auto">
+    <section className="cta-section pb-[60px] laptop-x:pb-0 laptop-x:h-[533px] md:p-0! md:h-auto">
       <div className="cta-sec-wrapper pt-[60px] md:pt-12 h-full">
-        <div className="custom-container-fluid md:!px-0 h-full">
-          <div className="cta-sec-cont-area  grid grid-cols-12 gap-0 sm:grid-cols-6 h-full !pl-20 !pr-[60px] laptop-m:!px-12 md:!px-0">
+        <div className="custom-container-fluid md:px-0! h-full">
+          <div className="cta-sec-cont-area  grid grid-cols-12 gap-0 sm:grid-cols-6 h-full pl-20! pr-[60px]! laptop-m:px-12! md:px-0!">
             <div className="cta-sec-left-cont-wrap  md:h-[490px] sm:h-[320px] col-span-3 md:col-span-full  laptop-x:col-span-7 sm:col-span-full">
               <div className="cta-section-left-cont md:px-5 md:h-full">
                 <h2 className="h2 cta-title font-primary max-w-[341px] sm:max-w-[282px] w-full mb-4">
                   Giving has never been easier
                 </h2>
-                <p className="body-regular sm:max-w-[205px] !font-light">
+                <p className="body-regular sm:max-w-[205px] font-light!">
                   Start donating to a Charity today!
                 </p>
               </div>
@@ -32,7 +32,7 @@ const CtaSection = () => {
               <h3 className="h3 cta-title max-w-[460px] w-full mb-4">
                 Transform Your Transactions into Acts of Kindness
               </h3>
-              <p className="body-regular max-w-[465px] !font-light">
+              <p className="body-regular max-w-[465px] font-light!">
                 Welcome to AngelPage, where commerce meets compassion.
                 <br />
                 <br />
@@ -45,7 +45,7 @@ const CtaSection = () => {
                   <Button variant="primary">Start selling for free</Button>
                 </Link>
                 <Link href="/product">
-                  <Button variant="accend-link" className="!underline">
+                  <Button variant="accend-link" className="underline!">
                     Browse items
                   </Button>
                 </Link>

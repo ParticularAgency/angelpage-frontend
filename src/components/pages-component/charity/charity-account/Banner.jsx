@@ -5,6 +5,7 @@ import Image from 'next/image';
 import axios from 'axios';
 import { fetchCharityData, fetchCharityProfileData } from '@utils/api';
 import { useRouter } from 'next/navigation';
+import FullScreenLoader from '@/components/common/loading/FullScreenLoader';
 import { Button, ProgressBar } from '@/components/elements';
 import { ToastService } from '@/components/elements/notifications/ToastService';
 
@@ -16,6 +17,7 @@ const BannerSection = () => {
   const [profileData, setProfileData] = useState(null);
    const [dashboardData, setDashboardData] = useState(null); 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [progress, setProgress] = useState(0);
   const [userData, setUserData] = useState(null);
   const [image, setImage] = useState(
@@ -147,7 +149,7 @@ const BannerSection = () => {
   }, [session, status, router]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <FullScreenLoader />;
   }
 
   if (!profileData) {
@@ -169,7 +171,7 @@ const BannerSection = () => {
                   <Button
                     variant="accend-link"
                     onClick={() => router.push('/auth/verify-email')}
-                    className="!underline"
+                    className="underline!"
                   >
                     Verify Email
                   </Button>
@@ -198,7 +200,7 @@ const BannerSection = () => {
           </div>
         )}
         <div className="charity-account-banner-wrapper grid grid-cols-12 gap-2 sm:block sm:h-[320px] sm:relative sm:bg-mono-100">
-          <div className="col-span-5 w-full pr-[57px] laptop-x:pr-[103px] laptop-m:pr-14 py-[42px] flex flex-col justify-end sm:absolute sm:z-[999] bottom-0 left-0 sm:bg-mono-100 sm:pb-6 sm:pt-5 sm:px-6">
+          <div className="col-span-5 w-full pr-[57px] laptop-x:pr-[103px] laptop-m:pr-14 py-[42px] flex flex-col justify-end sm:absolute sm:z-999 bottom-0 left-0 sm:bg-mono-100 sm:pb-6 sm:pt-5 sm:px-6">
             <div className="charity-account-banner-cont max-w-[385px] ml-auto">
               {userData ? (
                 <Image
@@ -211,7 +213,7 @@ const BannerSection = () => {
               ) : (
                 <span className="skeleton bg-mono-40 h-10 w-10 rounded-full"></span>
               )}
-              <h1 className="h3 charity-account-banner-tittle !text-mono-0">
+              <h1 className="h3 charity-account-banner-tittle text-mono-0!">
                 {userData?.charityName || 'Please add your charity name'}
               </h1>
               <ul className="list-info flex items-center gap-3 justify-start">
@@ -237,7 +239,7 @@ const BannerSection = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
-                      className="mt-0 w-full opacity-0 cursor-pointer !h-10 absolute left-0 bottom-0"
+                      className="mt-0 w-full opacity-0 cursor-pointer h-10! absolute left-0 bottom-0"
                     />
                   </Button>
                 )}

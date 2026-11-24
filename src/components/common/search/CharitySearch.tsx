@@ -52,7 +52,7 @@ const CharitySearch: React.FC<CharitySearchProps> = ({ onSearch, onClear }) => {
         <input
           type="text"
           placeholder="Search a charity"
-          className="text-[12px] search-border py-2 px-2 w-full max-w-full focus:outline-none"
+          className="text-[12px] search-border py-2 px-2 w-full max-w-full focus:outline-hidden"
           value={searchTerm} // Controlled input
           onChange={handleInputChange} // Handle input change
           onKeyPress={handleKeyPress} // Handle key press for Enter

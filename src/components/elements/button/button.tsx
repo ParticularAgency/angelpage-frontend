@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'accend-link';
+type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'accent' | 'accend-link';
 
 interface ButtonProps {
   variant: ButtonVariant;

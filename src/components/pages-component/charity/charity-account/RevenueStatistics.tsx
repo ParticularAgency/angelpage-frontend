@@ -125,7 +125,7 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
         )}
 
         {/* Period Selection Buttons */}
-        <div className="bg-gray-200 flex items-center rounded">
+        <div className="bg-gray-200 flex items-center rounded-sm">
           {['Week', 'Month', 'Year'].map(p => (
             <button
               key={p}
@@ -150,7 +150,7 @@ const RevenueStatistics: React.FC<RevenueStatisticsProps> = ({
             <BarChart data={data}>
               <XAxis dataKey="label" />
               <YAxis />
-              <Tooltip formatter={value => `${value.toLocaleString()}`} />
+              <Tooltip formatter={(value) => `${Number(value ?? 0).toLocaleString()}`} />
               <Legend />
               <Bar dataKey="orders" stackId="a" fill="#6A0398" />
               <Bar dataKey="revenue" stackId="a" fill="#C9C8CA" />

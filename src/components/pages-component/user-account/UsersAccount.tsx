@@ -1,6 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import FullScreenLoader from '@/components/common/loading/FullScreenLoader';
+import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import BannerSection from './Banner';
 import DeleteAccount from './delete-account';
@@ -11,14 +13,71 @@ import UsersProductListingArea from './listing';
 import SoldItemsPage from './sold';
 import BoughtItemsPage from './bought';
 import LogoutButton from '@/components/elements/button/LogoutButton';
+import AccountMessagingPanel from '@/components/account/AccountMessagingPanel';
+import NotificationsCentre from '@/components/account/NotificationsCentre';
+import UserEarningsPanel from '@/components/account/UserEarningsPanel';
+import AffiliateDashboard from '@/components/affiliate/AffiliateDashboard';
+import SocialDashboard from '@/components/social/SocialDashboard';
+import GalleryPanel from '@/components/gallery/GalleryPanel';
+import AccountTabNav, {
+  type AccountTab,
+  type AccountTabGroup,
+} from '@/components/account/AccountTabNav';
+
 interface ProductResponse {
-  products: Product[]; // Adjust the product structure as needed
+  products: Product[];
 }
+
+const USER_TABS: AccountTab[] = [
+  { id: 'analytics', label: 'Analytics' },
+  { id: 'account', label: 'Account' },
+  { id: 'listings', label: 'Listings' },
+  { id: 'affiliate', label: 'Affiliate' },
+  { id: 'gallery', label: 'Gallery' },
+  { id: 'social', label: 'Social' },
+  { id: 'sold', label: 'Sold' },
+  { id: 'bought', label: 'Bought' },
+  { id: 'messages', label: 'Messages' },
+  { id: 'notifications', label: 'Notifications' },
+  { id: 'earnings', label: 'Earnings' },
+  { id: 'delete', label: 'Delete account' },
+];
+
+const USER_TAB_GROUPS: AccountTabGroup[] = [
+  {
+    id: 'selling',
+    label: 'Selling',
+    tabIds: ['listings', 'affiliate', 'sold', 'bought', 'earnings'],
+  },
+  {
+    id: 'content',
+    label: 'Content',
+    tabIds: ['gallery', 'social'],
+  },
+  {
+    id: 'inbox',
+    label: 'Inbox',
+    tabIds: ['messages', 'notifications'],
+  },
+];
+
 const UsersAccount = () => {
-  const [activeTab, setActiveTab] = useState<number>(0);
+  const searchParams = useSearchParams();
+  const tabFromUrl = searchParams?.get('tab');
+  const initialTab =
+    tabFromUrl && USER_TABS.some(t => t.id === tabFromUrl)
+      ? tabFromUrl
+      : 'analytics';
+  const [activeTabId, setActiveTabId] = useState(initialTab);
   const { data: session } = useSession() || {};
   const [productsCount, setProductsCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (tabFromUrl && USER_TABS.some(t => t.id === tabFromUrl)) {
+      setActiveTabId(tabFromUrl);
+    }
+  }, [tabFromUrl]);
 
   const fetchUserProducts = async () => {
     try {
@@ -27,9 +86,7 @@ const UsersAccount = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/products/listings`,
         {
           params: { role: 'USER' },
-          headers: {
-            Authorization: `Bearer ${session?.token}`,
-          },
+          headers: { Authorization: `Bearer ${session?.token}` },
         }
       );
       setProductsCount(response.data.products.length);
@@ -39,18 +96,22 @@ const UsersAccount = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
-    if (session?.token) {
-      fetchUserProducts();
-    }
+    if (session?.token) fetchUserProducts();
   }, [session?.token]);
 
   if (!session) {
     return <p>Please log in to view your account listing products.</p>;
   }
   if (loading) {
-    return <p>Loading...</p>;
+    return <FullScreenLoader />;
   }
+
+  const tabsWithBadges: AccountTab[] = USER_TABS.map(tab =>
+    tab.id === 'listings' ? { ...tab, badge: productsCount } : tab,
+  );
+
   return (
     <div className="charity-account-main-wrapper">
       <BannerSection />
@@ -58,115 +119,56 @@ const UsersAccount = () => {
         <div className="storefront-tabs-area">
           <div className="storefront-tabs-box">
             <div className="custom-container">
-              <div className="storefront-tabs-btn-box pt-[51px] pb-[17px] flex justify-between items-center gap-6 sm:pb-0 sm:pt-8">
-                <ul className="tabs-btn-items flex items-center sm:overflow-hidden sm:pb-6 sm:overflow-x-auto  gap-6 md:gap-y-4 sm:gap-3">
-                  {/* Tab buttons */}
-                  <li
-                    className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
-                      activeTab === 0
-                        ? 'bg-[#FCF2FF] text-primary-color-100'
-                        : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
-                    }`}
-                    onClick={() => setActiveTab(0)}
-                  >
-                    Analytics
-                  </li>
-                  <li
-                    className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
-                      activeTab === 1
-                        ? 'bg-[#FCF2FF] text-primary-color-100'
-                        : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
-                    }`}
-                    onClick={() => setActiveTab(1)} // Set active tab to "Account"
-                  >
-                    Account
-                  </li>
-                  <li
-                    className={`tabs-btn-list body-small relative whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
-                      activeTab === 2
-                        ? 'bg-[#FCF2FF] text-primary-color-100'
-                        : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
-                    }`}
-                    onClick={() => setActiveTab(2)} // Set active tab to "Listings"
-                  >
-                    Listings{' '}
-                    {productsCount && (
-                      <span className="absolute -top-3 sm:top-0 -right-[14px] sm:-right-2 w-[17px] h-6 flex items-center justify-center bg-error forms-bold font-medium text-mono-0 rounded-[8px] ">
-                        {productsCount}
-                      </span>
-                    )}
-                  </li>
-                  <li
-                    className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
-                      activeTab === 3
-                        ? 'bg-[#FCF2FF] text-primary-color-100'
-                        : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
-                    }`}
-                    onClick={() => setActiveTab(3)} // Set active tab to "Sold"
-                  >
-                    Sold
-                  </li>
-                  <li
-                    className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
-                      activeTab === 4
-                        ? 'bg-[#FCF2FF] text-primary-color-100'
-                        : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
-                    }`}
-                    onClick={() => setActiveTab(4)} // Set active tab to "Sold"
-                  >
-                    Bought
-                  </li>
-                  <li
-                    className={`tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer ${
-                      activeTab === 5
-                        ? 'bg-[#FCF2FF] text-primary-color-100'
-                        : 'hover:bg-[#FCF2FF] hover:text-primary-color-100'
-                    }`}
-                    onClick={() => setActiveTab(5)} // Set active tab to "Delete Account"
-                  >
-                    Delete account
-                  </li>
-                  <li className="tabs-btn-list body-small whitespace-nowrap px-[17px] py-2 rounded-[20px] cursor-pointer">
-                    <LogoutButton />
-                  </li>
-                </ul>
+              <div className="custom-container pt-[51px] pb-[17px] sm:pb-0 sm:pt-8">
+                <AccountTabNav
+                  tabs={tabsWithBadges}
+                  groups={USER_TAB_GROUPS}
+                  activeTabId={activeTabId}
+                  onTabChange={setActiveTabId}
+                  trailing={<LogoutButton />}
+                />
               </div>
             </div>
           </div>
 
-          {/* Tab content */}
           <div className="charity-account-tabs-cont-area pb-20">
             <div className="custom-container">
               <ul className="tabs-content-area">
-                {activeTab === 0 && (
-                  <li className="tabs-cont-item">
-                    <AnalyticsPage />
-                  </li>
+                {activeTabId === 'analytics' && (
+                  <li className="tabs-cont-item"><AnalyticsPage /></li>
                 )}
-                {activeTab === 1 && (
-                  <li className="tabs-cont-item">
-                    <UsersAccountInfoMain />
-                  </li>
+                {activeTabId === 'account' && (
+                  <li className="tabs-cont-item"><UsersAccountInfoMain /></li>
                 )}
-                {activeTab === 2 && (
-                  <li className="tabs-cont-item">
-                    <UsersProductListingArea />
-                  </li>
+                {activeTabId === 'listings' && (
+                  <li className="tabs-cont-item"><UsersProductListingArea /></li>
                 )}
-                {activeTab === 3 && (
-                  <li className="tabs-cont-item">
-                    <SoldItemsPage />
-                  </li>
+                {activeTabId === 'affiliate' && (
+                  <li className="tabs-cont-item"><AffiliateDashboard /></li>
                 )}
-                {activeTab === 4 && (
-                  <li className="tabs-cont-item">
-                    <BoughtItemsPage />
-                  </li>
+                {activeTabId === 'gallery' && (
+                  <li className="tabs-cont-item"><GalleryPanel /></li>
                 )}
-                {activeTab === 5 && (
-                  <li className="tabs-cont-item">
-                    <DeleteAccount />
-                  </li>
+                {activeTabId === 'social' && (
+                  <li className="tabs-cont-item"><SocialDashboard /></li>
+                )}
+                {activeTabId === 'sold' && (
+                  <li className="tabs-cont-item"><SoldItemsPage /></li>
+                )}
+                {activeTabId === 'bought' && (
+                  <li className="tabs-cont-item"><BoughtItemsPage /></li>
+                )}
+                {activeTabId === 'messages' && (
+                  <li className="tabs-cont-item"><AccountMessagingPanel /></li>
+                )}
+                {activeTabId === 'notifications' && (
+                  <li className="tabs-cont-item"><NotificationsCentre /></li>
+                )}
+                {activeTabId === 'earnings' && (
+                  <li className="tabs-cont-item"><UserEarningsPanel /></li>
+                )}
+                {activeTabId === 'delete' && (
+                  <li className="tabs-cont-item"><DeleteAccount /></li>
                 )}
               </ul>
             </div>

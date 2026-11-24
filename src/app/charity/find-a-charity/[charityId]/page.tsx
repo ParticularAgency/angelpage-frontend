@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import Link from 'next/link'; 
+import Link from 'next/link';
+import FullScreenLoader from '@/components/common/loading/FullScreenLoader'; 
 interface Charity {
   charityBannerImage?: string;
   charityName?: string;
@@ -42,7 +43,7 @@ const CharityDetails = () => {
   }, [charityid]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <FullScreenLoader />;
   }
 
   if (!charity) {
@@ -66,7 +67,7 @@ const CharityDetails = () => {
     <section className="bg-[#F1F1F7]">
       <div className="flex md:flex-col md:w-full">
         {/* Left Image Section */}
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <Image
             src={
               charity?.charityBannerImage ||
@@ -96,7 +97,7 @@ const CharityDetails = () => {
                 width={16}
                 height={16}
               />
-              <span className="text-[#000]">
+              <span className="text-black">
                 {charity.phoneNumber || 'N/A'}
               </span>
             </div>
@@ -112,12 +113,12 @@ const CharityDetails = () => {
                   href={charity.websiteLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#000]"
+                  className="text-black"
                 >
                   {charity.websiteLink}
                 </a>
               ) : (
-                <span className="text-[#000]">N/A</span>
+                <span className="text-black">N/A</span>
               )}
             </div>
           </div>

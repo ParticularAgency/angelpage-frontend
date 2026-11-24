@@ -26,7 +26,7 @@ const ProductCategoryCardV1: React.FC<ProductCategoryCardV1Props> = ({
           width={150}
           height={150}
         />
-        <div className="product-btn absolute left-0 right-0 top-0 bottom-0 w-full h-full z-[999] flex items-center justify-center p-2">
+        <div className="product-btn absolute left-0 right-0 top-0 bottom-0 w-full h-full z-999 flex items-center justify-center p-2">
           <Link href={productCategory || ''}>
             <Button
               variant="primary"

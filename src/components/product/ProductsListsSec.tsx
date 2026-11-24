@@ -6,18 +6,17 @@ import FilterSidebar from '@/components/elements/search/FilterSidebar';
 import Sorting from '@/components/elements/search/Sorting';
 import ProductList from '@/components/product/ProductList';
 import Pagination from '@/components/elements/Pagination';
-import { useSession } from 'next-auth/react';
-import axios from 'axios';
+import {
+  useGetAllProductsQuery,
+  useGetCategoryProductsQuery,
+} from '@/store/api/angelpageApi';
 import { CloseIcon, FilterIcon } from '@/icons';
 import ProductSkeletonCard from '../common/cards/product/productskeletonCard';
 import { Product } from '@/types/productTypes';
 import { Button } from '@/components/elements';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
-interface ProductsResponse {
-  products: Product[];
-  isLoggedIn: boolean;
-}
 interface Filters {
   category: string[];
   subCategory: string[];
@@ -30,10 +29,33 @@ interface ProductsListsSecProps {
 }
 
 const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
-  const { data: session } = useSession() || {};
+  const { status } = useSession() || {};
+  const isLoggedIn = status === 'authenticated';
   const searchParams = useSearchParams();
   const category = searchParams?.get('category') || '';
   const subcategory = searchParams?.get('subcategory') || '';
+  const hasCategoryFilter = !!(category || subcategory);
+
+  const {
+    data: categoryProducts = [],
+    isLoading: loadingCategory,
+    isError: categoryError,
+  } = useGetCategoryProductsQuery(
+    { category, subcategory, status: 'LIVE' },
+    { skip: !hasCategoryFilter }
+  );
+  const {
+    data: allProducts = [],
+    isLoading: loadingAll,
+    isError: allError,
+  } = useGetAllProductsQuery({ status: 'LIVE' }, { skip: hasCategoryFilter });
+
+  const fetchedProducts = hasCategoryFilter ? categoryProducts : allProducts;
+  const loading = hasCategoryFilter ? loadingCategory : loadingAll;
+  const error =
+    categoryError || allError
+      ? 'Failed to load products. Please try again.'
+      : null;
 
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -46,50 +68,21 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
     condition: [],
   });
   const [sort, setSort] = useState<string>('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [errorState, setErrorState] = useState<string | null>(null);
 
   const productsPerPage = 12;
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const headers: Record<string, string> = {};
-        if (session?.token) {
-          headers.Authorization = `Bearer ${session.token}`;
-        }
-        const endpoint =
-          category || subcategory
-            ? `${process.env.NEXT_PUBLIC_API_URL}/products/category`
-            : `${process.env.NEXT_PUBLIC_API_URL}/products/all`;
-
-        const response = await axios.get<ProductsResponse>(endpoint, {
-          params: { category, subcategory, status: 'LIVE' },
-          headers,
-        });
-
-        const productsData = response.data.products || [];
-        setProducts(productsData);
-        setFilteredProducts(productsData);
-        setTotalPages(Math.ceil(productsData.length / productsPerPage));
-        setCurrentPage(1); // Reset to first page
-      } catch (err: unknown) {
-        setError('Failed to load products. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [category, subcategory]);
+    setProducts(fetchedProducts);
+    setFilteredProducts(fetchedProducts);
+    setTotalPages(Math.ceil(fetchedProducts.length / productsPerPage));
+    setCurrentPage(1);
+    setErrorState(error);
+  }, [fetchedProducts, error]);
 
   useEffect(() => {
     filterAndSortProducts(filters, sort);
-    setTotalPages(Math.ceil(filteredProducts.length / productsPerPage));
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1);
   }, [filters, sort, products]);
 
   const handleFilterChange = (newFilters: Filters) => {
@@ -164,7 +157,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
     startIndex + productsPerPage
   );
 
-  if (error) {
+  if (errorState) {
     return (
       <>
         <div className="not-found-screen-design flex flex-col items-center pt-12 pb-12 custom-container">
@@ -200,7 +193,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
                 <div className="drawer-content">
                   <label
                     htmlFor="my-drawer-filter"
-                    className="drawer-button btn !outline-none !shadow-none !bg-transparent !p-0 !border-none"
+                    className="drawer-button btn outline-hidden! shadow-none! bg-transparent! p-0! border-none!"
                   >
                     Filter <FilterIcon />
                   </label>
@@ -219,7 +212,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
                           <label
                             htmlFor="my-drawer-filter"
                             aria-label="close sidebar"
-                            className="close-btn !border-0 !outline-none !shadow-none w-8 h-8 flex items-center justify-center cursor-pointer"
+                            className="close-btn border-0! outline-hidden! shadow-none! w-8 h-8 flex items-center justify-center cursor-pointer"
                           >
                             <CloseIcon />
                           </label>
@@ -302,7 +295,7 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
           </div>
 
           <div className="products-lists-main-cont flex items-start md:flex-col gap-6">
-            <div className="products-list-main-left-cont overflow-hidden overflow-y-scroll h-[100vh] sticky md:relative md:h-auto top-9 max-w-[220px] md:max-w-[160px] w-full md:hidden">
+            <div className="products-list-main-left-cont overflow-hidden overflow-y-scroll h-screen sticky md:relative md:h-auto top-9 max-w-[220px] md:max-w-[160px] w-full md:hidden">
               <FilterSidebar
                 availableProducts={products.map(product => ({
                   ...product,
@@ -324,34 +317,26 @@ const ProductsListsSec: React.FC<ProductsListsSecProps> = () => {
                   ))}
                 </div>
               ) : (
-                <ProductList
-                  isLoggedIn={!!session?.token}
-                  products={currentProducts}
-                />
+                <ProductList products={currentProducts} isLoggedIn={isLoggedIn} />
               )}
-              <div className="product-lists-footer mt-[38px] md:mt-6 flex md:flex-row-reverse md:justify-between sm:flex-col sm:mt-4 items-center">
-                <div className="pagination-wrapper ml-auto mr-auto md:mx-0">
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
-                </div>
-                <div className="showing-current-product">
-                  <span className="caption pr-3 md:pr-1">Showing</span>{' '}
-                  <span className="caption">
-                    {startIndex + 1} to{' '}
-                    {Math.min(
-                      startIndex + productsPerPage,
-                      filteredProducts.length
-                    )}{' '}
-                    of
-                  </span>
-                  {'  '}
-                  <span className="caption-bold">
-                    {filteredProducts.length} products
-                  </span>
-                </div>
+              <div className="mt-10 flex items-center justify-between gap-4 rounded-3xl border border-[#E6E3E7] bg-[#FCF2FF] px-5 py-4 sm:flex-col sm:items-stretch">
+                <p className="text-sm text-[#5C5560]">
+                  Showing{' '}
+                  <span className="font-medium text-[#0B0112]">
+                    {filteredProducts.length === 0 ? 0 : startIndex + 1}–
+                    {Math.min(startIndex + productsPerPage, filteredProducts.length)}
+                  </span>{' '}
+                  of{' '}
+                  <span className="font-medium text-[#0B0112]">
+                    {filteredProducts.length}
+                  </span>{' '}
+                  products
+                </p>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
               </div>
             </div>
           </div>

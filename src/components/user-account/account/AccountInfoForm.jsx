@@ -126,7 +126,7 @@ const AccountInfoForm = () => {
                 Email
               </span>{' '}
               <span className="inline-block">
-                {accountInfo ? accountInfo.email : 'Loading...'}
+                {accountInfo ? accountInfo.email : <span className="inline-block h-3 w-24 animate-pulse rounded-full bg-[#E6E3E7]" />}
               </span>
             </p>
             <p className="personal-info-item body-small">
@@ -134,7 +134,7 @@ const AccountInfoForm = () => {
                 Username
               </span>{' '}
               <span className="inline-block">
-                {accountInfo ? accountInfo.userName : 'Loading...'}
+                {accountInfo ? accountInfo.userName : <span className="inline-block h-3 w-24 animate-pulse rounded-full bg-[#E6E3E7]" />}
               </span>
             </p>
             <p className="personal-info-item body-small">

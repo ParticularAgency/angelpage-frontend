@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { ChevronRight } from 'lucide-react';
 
 const ProductBannerSec = ({
   category,
@@ -17,7 +18,7 @@ const ProductBannerSec = ({
               <a className="body-caption text-mono-100" href="/">
                 Home
               </a>
-              <span className="angle">{'>'}</span>
+              <ChevronRight className="h-3.5 w-3.5 text-mono-70" aria-hidden />
             </li>
             {subcategory ? (
               <>
@@ -28,7 +29,7 @@ const ProductBannerSec = ({
                   >
                     {category}
                   </a>
-                  <span className="angle">{'>'}</span>
+                  <ChevronRight className="h-3.5 w-3.5 text-mono-70" aria-hidden />
                 </li>
                 <li className="breadcrumb-item body-caption capitalize text-mono-70">
                   {subcategory}

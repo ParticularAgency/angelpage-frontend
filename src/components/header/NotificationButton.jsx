@@ -6,7 +6,7 @@ import { NotificationIcon } from '@/icons';
 import { fetchNotifications } from '@/store/notificationSlice';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import io from 'socket.io-client';
+import { connectSocket, getSocket } from '@/utils/socketClient';
 
 const NotificationButton = ({ toggleDropdown, notificationBtnClass }) => {
   const { data: session, status } = useSession();
@@ -21,23 +21,31 @@ const NotificationButton = ({ toggleDropdown, notificationBtnClass }) => {
   // Initialize Socket.IO client and listen for new notifications
   useEffect(() => {
     if (status === 'authenticated' && session?.token) {
-      // Fetch notifications on initial load
       dispatch(fetchNotifications(session.token));
     }
 
-    // Establish Socket.IO connection
-    const socket = io('http://localhost:5000'); // Connect to Socket.IO server
+    if (!session?.user?.id) return;
 
-    // Listen for 'new-notification' event and trigger fetch
-    socket.on('new-notification', () => {
+    if (!session?.user?.id) return;
+
+    const socket = connectSocket(session.user.id, session.token);
+
+    const handleNewNotification = () => {
       if (session?.token) {
-        dispatch(fetchNotifications(session.token)); // Fetch the latest notifications immediately
+        dispatch(fetchNotifications(session.token));
       }
-    });
+    };
 
-    // Cleanup socket on component unmount
+    const handleConversationUpdated = () => {
+      fetchUnreadMessages(session.user.id);
+    };
+
+    socket.on('new-notification', handleNewNotification);
+    socket.on('conversation-updated', handleConversationUpdated);
+
     return () => {
-      socket.disconnect(); // Cleanup when the component unmounts
+      socket.off('new-notification', handleNewNotification);
+      socket.off('conversation-updated', handleConversationUpdated);
     };
   }, [dispatch, session, status]);
 
@@ -72,15 +80,13 @@ const NotificationButton = ({ toggleDropdown, notificationBtnClass }) => {
       console.log('Fetched test messages:', response.data);
 
       if (response.data.success) {
-        setMessagesCount(response.data.messages.length || []);
-      } else {
-        setMessages([]);
+        setMessagesCount(response.data.count ?? response.data.messages?.length ?? 0);
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
 
       if (error.response?.status === 404) {
-        setMessages([]);
+        setMessagesCount(0);
         setError('No messages found for this user.');
       } else {
         setError('Failed to load messages.');

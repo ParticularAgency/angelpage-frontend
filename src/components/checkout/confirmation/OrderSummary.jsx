@@ -1,11 +1,23 @@
 'use client';
 
-import React, {  useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ArrowDownIcon } from '@/icons';
 import Image from 'next/image';
 
-const OrderSummary  = ({order}) => {
-   const [isCollapsed, setIsCollapsed] = useState(true);
+const OrderSummary = ({ order }) => {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  const totals = useMemo(() => {
+    const products = order?.products || [];
+    return products.reduce(
+      (acc, item) => ({
+        charity: acc.charity + (item.charityProfit || 0),
+        platform: acc.platform + (item.adminFee || 0),
+        seller: acc.seller + (item.sellerProfit || 0),
+      }),
+      { charity: 0, platform: 0, seller: 0 },
+    );
+  }, [order?.products]);
 
   return (
     <div className="basket-page-right-cont">
@@ -27,7 +39,6 @@ const OrderSummary  = ({order}) => {
           </p>
         </div>
 
-        {/* Collapsible Order Details */}
         <div className="order-item-list-box">
           <p
             className={`colaps-title body-regular px-6 mb-4 cursor-pointer flex items-center gap-[4px] ${
@@ -50,7 +61,7 @@ const OrderSummary  = ({order}) => {
                   <div className="mb-6" key={index}>
                     <p className="eyebrow-medium">{item.name || ''}</p>
                     <p className="caption-bold text-mono-80">
-                      {item?.productId.brand || ''}
+                      {item?.productId?.brand || ''}
                     </p>
                     <div className="flex justify-between caption-bold pl-[21px]">
                       <p className="caption text-mono-80">Price</p>
@@ -59,13 +70,19 @@ const OrderSummary  = ({order}) => {
                       </p>
                     </div>
                     <div className="flex justify-between caption-bold pl-[21px]">
-                      <p className="caption text-mono-80">
-                        Charity profit (90%)
-                      </p>
+                      <p className="caption text-mono-80">Charity</p>
                       <p className="caption text-mono-100 mt-1">
-                        £{item?.charityProfit.toFixed(2) || ''}
+                        £{item?.charityProfit?.toFixed(2) || '0.00'}
                       </p>
                     </div>
+                    {(item?.sellerProfit || 0) > 0 && (
+                      <div className="flex justify-between caption-bold pl-[21px]">
+                        <p className="caption text-mono-80">Seller share</p>
+                        <p className="caption text-mono-100 mt-1">
+                          £{item.sellerProfit.toFixed(2)}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -73,24 +90,23 @@ const OrderSummary  = ({order}) => {
           )}
         </div>
 
-        {/* Summary Footer */}
         <div className="summary-foot border-t pt-6 px-6">
           <div className="flex justify-between mb-2">
-            <p className="caption text-mono-80">Angelpage admin fee</p>
-            <p className="caption text-mono-100">
-              £
-              {order?.products
-                .reduce((sum, item) => sum + item.adminFee, 0)
-                .toFixed(2)}
-            </p>
+            <p className="caption text-mono-80">Angelpage platform fee</p>
+            <p className="caption text-mono-100">£{totals.platform.toFixed(2)}</p>
           </div>
+          {totals.seller > 0 && (
+            <div className="flex justify-between mb-2">
+              <p className="caption text-mono-80">Seller share</p>
+              <p className="caption text-mono-100">
+                £{totals.seller.toFixed(2)}
+              </p>
+            </div>
+          )}
           <div className="flex justify-between mb-2">
-            <p className="caption text-mono-80">Charity profit (90%)</p>
+            <p className="caption text-mono-80">Charity total</p>
             <p className="caption text-mono-100">
-              £
-              {order?.products
-                .reduce((sum, item) => sum + item.charityProfit, 0)
-                .toFixed(2)}
+              £{totals.charity.toFixed(2)}
             </p>
           </div>
           <div className="flex justify-between mb-2">
@@ -101,18 +117,15 @@ const OrderSummary  = ({order}) => {
           </div>
         </div>
 
-        {/* Total Amount */}
         <div className="flex justify-between font-bold px-6 border-t pt-4 mt-4">
           <p className="body-bold-medium product-total-price">Total</p>
           <p className="body-bold-medium text-mono-100">
             £{order?.grandTotal.toFixed(2) || ''}
           </p>
         </div>
-        {/* <p className="body-small !text-[11px] text-center px-6 mt-1">NOTE: Shipping cost can be recalculate, it can be increased the total cost</p> */}
       </div>
     </div>
   );
 };
 
 export default OrderSummary;
-

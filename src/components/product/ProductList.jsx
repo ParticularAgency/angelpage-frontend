@@ -1,43 +1,28 @@
 'use client';
 import React from 'react';
 import ProductCard from '@/components/common/cards/product/productCard';
-import countries from 'i18n-iso-countries';
-import enLocale from 'i18n-iso-countries/langs/en.json';
 import { Button } from '../elements';
 import Link from 'next/link';
-countries.registerLocale(enLocale);
+import { formatProductLocation } from '@/lib/productLocation';
 
 const ProductList = ({ products, isLoggedIn }) => {
   return (
     <>
       {products && products.length > 0 ? (
 
-    <div className="product-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="product-list grid grid-cols-1 items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3">
        { products.map((product, index) => {
           if (!product) {
             return null;
           }
-          // Safely extract location
-          const sellerUserAddress = product.seller?.address;
-          const sellerCharityAddress = product.charity?.address;
 
-          // Determine which address to use (User or Charity)
-          const sellerAddress = sellerUserAddress || sellerCharityAddress;
-
-          let countryCode = 'N/A';
-          if (sellerAddress?.country) {
-            countryCode =
-              countries.getAlpha2Code(sellerAddress.country, 'en') || 'N/A';
-          }
-
-          const location = sellerAddress
-            ? `${sellerAddress.city || 'Unknown City'}, ${countryCode}`
-            : 'Not Available';
+          const location = formatProductLocation(product.seller, product.charity);
 
           return (
             <ProductCard
-              key={product.id || `product-${index}`} // Use index as fallback key
-              id={product._id} // Use `product.id` instead of `item.id`
+              key={product.id || `product-${index}`}
+              id={product._id}
+              slug={product.slug}
               charityImageSrc={
                 product.charity?.profileImage ||
                 '/images/icons/elisp-profile-default-img.svg'
@@ -50,9 +35,13 @@ const ProductList = ({ products, isLoggedIn }) => {
               name={product.name || 'Untitled Product'}
               size={product.size || ''}
               price={`${product.price || '0.00'}`}
+              charityProfit={product.charityProfit}
+              sellerSharePercent={product.sellerSharePercent ?? 0}
+              fulfillmentType={product.fulfillmentType || 'uk_shipping'}
+              sellAreas={product.sellAreas || []}
               location={location}
-              dimensionHeight={product.dimensions?.height || '0in'}
-              dimensionWidth={product.dimensions?.width || '0in'}
+              dimensionHeight={product.dimensions?.height || ''}
+              dimensionWidth={product.dimensions?.width || ''}
               status={product.status}
               isLoggedIn={isLoggedIn}
             />

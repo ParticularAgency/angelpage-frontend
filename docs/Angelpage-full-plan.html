@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Angelpage — client model and full scope</title>
+<style>
+  @page { size: A4; margin: 12mm 12mm 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; color: #1a1a1a; font-size: 10.5pt; line-height: 1.38; margin: 0; }
+  h1 { font-size: 18.5pt; line-height: 1.15; margin: 0 0 6px; }
+  h2 { font-size: 13pt; margin: 13px 0 4px; color: #3d0b5c; }
+  h3 { font-size: 11pt; margin: 8px 0 3px; }
+  p { margin: 0 0 6px; }
+  ol { margin: 2px 0 8px; padding-left: 18px; }
+  li { margin: 0 0 3px; }
+  .brand { letter-spacing: 0.08em; text-transform: uppercase; color: #611192; font-size: 9.5pt; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin: 4px 0 8px; }
+  th, td { border: 1px solid #ddd; padding: 4px 6px; vertical-align: top; text-align: left; font-size: 9pt; }
+  th { background: #f4eef8; color: #3d0b5c; font-weight: 650; }
+  .bar { display: flex; width: 100%; height: 26px; margin: 6px 0 3px; color: #fff; font-size: 9pt; font-weight: 700; }
+  .bar span { display: flex; align-items: center; justify-content: center; }
+  .fee { width: 10%; background: #3d0b5c; }
+  .seller { width: 18%; background: #8a5a00; }
+  .cause { width: 72%; background: #611192; }
+  .box { border: 1px solid #e4d4ef; background: #faf7fc; padding: 8px 10px; margin: 6px 0 8px; }
+  .small { font-size: 8.5pt; color: #444; }
+  .now { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<p class="brand">Angelpage · client model</p>
+<h1>The model, the full feature scope, and the delivery plan</h1>
+<p>One document to send. It recommends how the business should run, then lists every feature with a scope: <strong>Now</strong> (in the first agreement, already in the product), <strong>Setup</strong> (in the product, works after keys or legal text), or <strong>Next</strong> (a later agreement, not promised in the first one). Country and currency are set for each client. Ages below are planning guides, not something the product collects.</p>
+
+<h2>1. The model we recommend</h2>
+<div class="box">
+<p><strong>A community shop for a cause.</strong> People sell pre-loved and surplus goods. Each listing names a cause. Shoppers pay by card. The cause does not join only to receive a transfer. The cause joins to publish a shop link, campaigns, and stories, and to bring its own people in. The payout is the proof that those people acted.</p>
+<ol>
+  <li><strong>Fee.</strong> On every 100 of item price, the platform keeps 10. That 10 pays for the shop, review, checkout, the hold, and support.</li>
+  <li><strong>Share.</strong> The other 90 is shared by the seller. Default is 0 to the seller and 90 to the cause. The seller may keep part of the 90. The example below keeps 18 and gives 72.</li>
+  <li><strong>Shipping</strong> is charged on top. It is not inside the 10 or the 90.</li>
+  <li><strong>Hold.</strong> Card money waits 14 days, then releases if nobody opened a dispute. Operations can release sooner or keep a disputed order on hold.</li>
+  <li><strong>Shoppers are not charged a membership.</strong> A guest can pay with a name and email.</li>
+  <li><strong>Optional seller tools</strong> (a paid spotlight, a social pack, volume tools) are extra fees. They are never taken out of the cause’s share.</li>
+  <li><strong>First agreement</strong> is everything marked Now and the Setup items you choose to turn on. Everything marked Next is a later phase.</li>
+</ol>
+</div>
+<div class="bar" aria-label="Example on a sale of 100">
+  <span class="fee">10</span>
+  <span class="seller">18</span>
+  <span class="cause">72 to the cause</span>
+</div>
+<p class="small">Example on a sale of 100, if the seller keeps 20% of the 90. If the seller keeps nothing, the cause receives 90 and the middle block is 0. The platform block stays 10.</p>
+<table>
+  <thead><tr><th>Who</th><th>Why they join</th><th>What they get in the first agreement</th><th>What they can add later</th></tr></thead>
+  <tbody>
+    <tr><td>Cause</td><td>A public home and a community, plus the money that community raises</td><td>Storefront link, staff, stories, events, reels, supporters listing into their shop, payout</td><td>Followers, tracked links, impact page, QR, embed on their own site</td></tr>
+    <tr><td>Seller</td><td>Clear items and choose where the value goes</td><td>Listing, split, messages, label, earnings</td><td>Paid spotlight, social pack, price hint, volume tools</td></tr>
+    <tr><td>Shopper</td><td>Buy something useful and see the cause</td><td>Browse, guest or account pay, tracking, messages</td><td>Follow a cause, phone alerts, give even when the item is the wrong size</td></tr>
+    <tr><td>Brand</td><td>Move surplus stock without building a shop</td><td>Spreadsheet or shop connection, cause named on each item</td><td>Photos in the file, a notice when an item sells</td></tr>
+  </tbody>
+</table>
+
+<h2>2. How to read the scope</h2>
+<table>
+  <thead><tr><th>Mark</th><th>Meaning for the client</th><th>In the first agreement?</th></tr></thead>
+  <tbody>
+    <tr><td class="now">Now</td><td>Built. A pilot can use it once the shop has real products.</td><td>Yes</td></tr>
+    <tr><td class="now">Setup</td><td>Built. It stays quiet until an account, a key, or a legal text is in place.</td><td>Yes, if you turn that key on. Name it in the pilot checklist.</td></tr>
+    <tr><td class="now">Next</td><td>Not in this release. Designed, not promised, until a later phase is signed.</td><td>No</td></tr>
+  </tbody>
+</table>
+
+<h2>3. Who it is for</h2>
+<table>
+  <thead><tr><th>Client in the room</th><th>Person</th><th>Age we plan around</th><th>What we expect on the first visit</th><th>Done when</th></tr></thead>
+  <tbody>
+    <tr><td>Cause</td><td>Manager</td><td>30–65</td><td>Paste a shop address and open the storefront</td><td>Draft products exist and they can copy a public link</td></tr>
+    <tr><td>Cause</td><td>Volunteer</td><td>16–25 or 55–75</td><td>Photograph one item, or pack one order</td><td>One listing is submitted, or one label is downloaded</td></tr>
+    <tr><td>Brand</td><td>Stock owner</td><td>30–55</td><td>Send a catalogue and name a cause</td><td>They can see what sold and what the cause is owed</td></tr>
+    <tr><td>Community group</td><td>Organiser</td><td>30–70</td><td>Publish an event and take one card gift</td><td>The goal moves and there is a receipt</td></tr>
+    <tr><td>Supporter</td><td>Clearing a home</td><td>25–55</td><td>Open an account, pick a cause, list one item</td><td>The listing is in review with the split saved</td></tr>
+    <tr><td>Shopper</td><td>Parent</td><td>28–45</td><td>Filter children or home, check size, pay</td><td>The confirmation names the item and the cause</td></tr>
+    <tr><td>Shopper</td><td>On a phone</td><td>18–35</td><td>Open a reel or a category and buy or save</td><td>The reel or rail opens a real product</td></tr>
+    <tr><td>Shopper</td><td>Will not install an app</td><td>55–80</td><td>Find a known cause and pay as a guest</td><td>No account was required. The receipt reopens with their email</td></tr>
+    <tr><td>Board</td><td>Finance</td><td>35–70</td><td>Look at the hold and who can release it</td><td>They can point at 14 days and at the finance role</td></tr>
+    <tr><td>Household</td><td>Young person with an adult</td><td>13–17</td><td>Look. The adult pays</td><td>We do not open a seller account for them in the demo</td></tr>
+  </tbody>
+</table>
+<p class="small">We expect the first live users to be causes that already have supporters and stock. A wide fashion audience comes after the photos are real. An empty home page loses every age group.</p>
+
+<h2>4. Full feature scope</h2>
+<h3>Shop and checkout</h3>
+<table>
+  <thead><tr><th>Feature</th><th>What the person gets</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td>Home, signed out and signed in</td><td>Split message, value line, promoted items, category rails, events, stories</td><td>Now</td></tr>
+    <tr><td>Catalogue and filters</td><td>Women, men, children, clothing, shoes, bags, accessories, jewellery, home, books, electronics, plus price, condition, and size</td><td>Now</td></tr>
+    <tr><td>Product page</td><td>Up to 10 photos, optional video, condition, brand, size, colour, and the cause amount</td><td>Now</td></tr>
+    <tr><td>Favourites, share, cart, stock limit</td><td>Save, send the link, buy only what is in stock. The seller can be told an item was saved</td><td>Now</td></tr>
+    <tr><td>Guest checkout</td><td>Name, email, and card. No account</td><td>Now</td></tr>
+    <tr><td>Account checkout and saved address</td><td>Shorter repeat purchase</td><td>Now</td></tr>
+    <tr><td>Order confirmation and bought history</td><td>Cause amount on the receipt. A guest can reopen it with the same email</td><td>Now</td></tr>
+    <tr><td>Product reviews</td><td>Shoppers review. Staff approve or reject</td><td>Now</td></tr>
+    <tr><td>Search by photo or by a plain sentence</td><td>Find an item they cannot name</td><td>Setup. Needs the AI key</td></tr>
+    <tr><td>Give on an event without buying an item</td><td>Goal, receipt</td><td>Now</td></tr>
+    <tr><td>Give from a product page when the size is wrong</td><td>The cause still receives the person</td><td>Next</td></tr>
+    <tr><td>Follow a cause</td><td>New items and events from causes they chose</td><td>Next</td></tr>
+    <tr><td>Public thank-you after a clean delivery</td><td>The next shopper sees people, not only stock</td><td>Next</td></tr>
+  </tbody>
+</table>
+
+<h3>Selling</h3>
+<table>
+  <thead><tr><th>Feature</th><th>What the seller gets</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td>Account, show-password, email signup</td><td>In the shop in about a minute</td><td>Now</td></tr>
+    <tr><td>List an item</td><td>Photos, cause, split, courier or drop-off or collection or local only. Draft, then review, then live</td><td>Now</td></tr>
+    <tr><td>Nothing goes public before review</td><td>A bad listing does not hit the storefront</td><td>Now</td></tr>
+    <tr><td>Bulk spreadsheet, up to 50 rows</td><td>A stockroom does not type all day. Photos are added after</td><td>Now</td></tr>
+    <tr><td>Partner bulk API, 50 per call</td><td>Their system pushes drafts</td><td>Now</td></tr>
+    <tr><td>Sold orders, shipped, delivered, earnings</td><td>Held, seller share, and cause share shown as three numbers. Charts count paid orders only</td><td>Now</td></tr>
+    <tr><td>Shipping label</td><td>Download a courier label on a paid order</td><td>Setup. Needs the shipping account</td></tr>
+    <tr><td>AI draft from a photo, or a rewrite</td><td>Faster titles and descriptions. The seller still edits and submits</td><td>Setup. Needs the AI key</td></tr>
+    <tr><td>Staff can feature a listing</td><td>It can sit on the promoted rail</td><td>Now. The seller cannot buy this yet</td></tr>
+    <tr><td>Spotlight the seller pays for</td><td>A set number of days on the rail. Fee is extra, not taken from the 90</td><td>Next</td></tr>
+    <tr><td>Social pack</td><td>Schedule a post to networks they already use</td><td>Setup if tokens exist. A paid pack is Next</td></tr>
+    <tr><td>Price hint from similar sales</td><td>A suggestion, not a forced price</td><td>Next</td></tr>
+    <tr><td>Volume tools</td><td>More than 50 rows, photos inside the file, a notice when an item sells</td><td>Next</td></tr>
+    <tr><td>Make an offer</td><td>Buyer bids, seller counters</td><td>Next. Checkout today is the listed price</td></tr>
+  </tbody>
+</table>
+
+<h3>Cause, community, and links</h3>
+<p>This is why a cause joins. The link is the product. The payout follows.</p>
+<table>
+  <thead><tr><th>Feature</th><th>The link or the result</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td>Directory and profile</td><td>Sellers find a real cause instead of typing a name</td><td>Now</td></tr>
+    <tr><td>Public storefront</td><td>The address they put in a newsletter</td><td>Now</td></tr>
+    <tr><td>Supporters list into that shop</td><td>People who will not give cash can still bring stock</td><td>Now</td></tr>
+    <tr><td>Finish registration</td><td>Registration number and public profile. Kept short on purpose</td><td>Now</td></tr>
+    <tr><td>Staff</td><td>Owner sees payouts. Manager adds analytics. Staff can be limited to listings, orders, messages, and community</td><td>Now</td></tr>
+    <tr><td>Payout details</td><td>The owner records where money should go</td><td>Now</td></tr>
+    <tr><td>Stories</td><td>Impact, guides, sustainability, fashion, community, news. A cause can be allowed to publish</td><td>Now</td></tr>
+    <tr><td>Events</td><td>Cover, dates, moving goal, fund split, poll, optional live link, card gift, receipt</td><td>Now</td></tr>
+    <tr><td>Reels and gallery</td><td>A short video or photo that opens the product or the cause</td><td>Now</td></tr>
+    <tr><td>Featured on the home page</td><td>Staff can place their event or products in front of new shoppers</td><td>Now</td></tr>
+    <tr><td>Paste a shop and import</td><td>See section 5. Drafts, then a person approves</td><td>Now, with Setup where a key is required</td></tr>
+    <tr><td>Followers</td><td>The next event already has an audience</td><td>Next</td></tr>
+    <tr><td>Campaign link</td><td>They see which newsletter, talk, or poster brought people</td><td>Next</td></tr>
+    <tr><td>Ambassador link</td><td>A volunteer’s own code. Not paid from the cause share</td><td>Next</td></tr>
+    <tr><td>Supporter wall</td><td>First names, only if the person agrees</td><td>Next</td></tr>
+    <tr><td>Impact page</td><td>Items listed, items sold, gifts, followers. Money is one line</td><td>Next</td></tr>
+    <tr><td>Note to followers</td><td>New stock, an event, a result. A person approves before it sends</td><td>Next</td></tr>
+    <tr><td>QR code</td><td>Counter, poster, or hall, landing on the right page</td><td>Next</td></tr>
+    <tr><td>Embed</td><td>A strip of their products on the website they already run</td><td>Next</td></tr>
+    <tr><td>Month challenge</td><td>A public target, such as ten items this month</td><td>Next</td></tr>
+    <tr><td>Partner bench</td><td>Invite a shop, a school group, or another cause onto one event</td><td>Next</td></tr>
+  </tbody>
+</table>
+<div class="box"><strong>Pilot success for a cause.</strong> Import or list ten items, publish one event or one story, put the storefront link in a newsletter, and name two staff. Success is a supporter using that link. A payout alone is not the success test.</div>
+
+<h3>Money, trust, and admin</h3>
+<table>
+  <thead><tr><th>Feature</th><th>What it protects</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td>10 platform fee and seller-chosen split of the 90</td><td>The commercial rule</td><td>Now</td></tr>
+    <tr><td>Card checkout. Card numbers are not stored</td><td>Payment safety</td><td>Now. Needs the live card account (Setup)</td></tr>
+    <tr><td>14-day hold, early release, dispute</td><td>The buyer can receive the item before money moves</td><td>Now</td></tr>
+    <tr><td>Guest order lookup</td><td>A receipt without an account</td><td>Now</td></tr>
+    <tr><td>Four admin seats</td><td>Full admin, operations, content, finance. Public admin signup is closed</td><td>Now</td></tr>
+    <tr><td>Listing review, promoted items, audit log, failed payments</td><td>A record of who changed what</td><td>Now</td></tr>
+    <tr><td>Self-serve returns</td><td>A button in the account</td><td>Next. Needs signed terms first. Until then, refunds are handled in the card dashboard and the order is marked</td></tr>
+  </tbody>
+</table>
+<p>Admin screens, all on one console: analytics, account, review listings, product reviews, promoted, operations, cause import, affiliate, gallery, social, stories, events, team, finance, audit. A full admin sees every screen. Other seats see only their job.</p>
+
+<h3>Messages and alerts</h3>
+<table>
+  <thead><tr><th>Feature</th><th>What the person gets</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td>Chat on a product</td><td>Photo, price, and the thread stay together. Shopper and cause accounts. Admin is not in the chat</td><td>Now</td></tr>
+    <tr><td>Typing and read, while the site is open</td><td>No refresh to see a reply</td><td>Now</td></tr>
+    <tr><td>In-app bell</td><td>New message, purchased, sold, shipped, delivered, new listing, listing assigned to a cause, favourite, hold, release</td><td>Now</td></tr>
+    <tr><td>Email journeys</td><td>Signed up, paid, shipped, delivered, hold released, listing approved, cart left, seller gone quiet</td><td>Setup. Needs the email provider</td></tr>
+    <tr><td>Password reset and verify email</td><td>The account email actually arrives</td><td>Setup. Needs the sending domain</td></tr>
+    <tr><td>Photos in chat, staff joining a dispute</td><td>Clearer after-sale evidence</td><td>Next</td></tr>
+    <tr><td>Alert when the phone is locked</td><td>Sold, shipped, delivered, new message, hold released</td><td>Next</td></tr>
+  </tbody>
+</table>
+
+<h3>AI</h3>
+<p>AI writes a draft. A person publishes. It does not approve a listing, send a payout, or post a story by itself.</p>
+<table>
+  <thead><tr><th>Feature</th><th>Who</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td>Photo becomes a listing draft</td><td>Seller, volunteer. They still check brand, size, and price</td><td>Setup</td></tr>
+    <tr><td>Rewrite title and description</td><td>Seller. They can reject it</td><td>Setup</td></tr>
+    <tr><td>Story headline</td><td>Cause. Content review still applies</td><td>Setup</td></tr>
+    <tr><td>Suggest an event from a sentence</td><td>Cause. They set the real date and goal</td><td>Setup</td></tr>
+    <tr><td>Search by words or by photo</td><td>Shopper. Results are real listings only</td><td>Setup</td></tr>
+    <tr><td>Alt text, price hint, match an item to a cause</td><td>Seller and shopper. Hints, not decisions</td><td>Next</td></tr>
+    <tr><td>Flag a listing for a person to review</td><td>Content admin. AI does not press Approve</td><td>Next</td></tr>
+    <tr><td>Reply ideas in chat</td><td>Seller or cause. They send the message</td><td>Next</td></tr>
+    <tr><td>Impact note from real order totals</td><td>Cause. Numbers come from orders</td><td>Next</td></tr>
+    <tr><td>Draft a follower update</td><td>Cause. They approve before it sends</td><td>Next. Needs followers</td></tr>
+    <tr><td>Translate a listing</td><td>Useful if one client runs more than one language. The original stays</td><td>Next</td></tr>
+  </tbody>
+</table>
+
+<h2>5. Shop connections</h2>
+<p>The manager pastes a shop address, reads what was detected, runs Sync, and approves drafts. The first import does not publish itself.</p>
+<table>
+  <thead><tr><th>Source</th><th>What they do</th><th>Result</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td>Public Shopify catalogue</td><td>Paste the address</td><td>Products come in without a password</td><td>Now</td></tr>
+    <tr><td>Private Shopify</td><td>Paste, then an API key</td><td>Same import after one setup</td><td>Setup</td></tr>
+    <tr><td>WooCommerce or WordPress</td><td>Paste. Add a key and secret if the public catalogue is closed</td><td>Repeat Sync after the first setup. Auto-sync can be switched on after a clean import</td><td>Now once keys are saved</td></tr>
+    <tr><td>Any other website</td><td>Paste</td><td>Imported when the pages expose products. A clear failure when they do not</td><td>Now</td></tr>
+    <tr><td>Spreadsheet</td><td>Upload up to 50 rows</td><td>Listings. Photos afterwards</td><td>Now</td></tr>
+    <tr><td>Their own software</td><td>Call the bulk API with a login</td><td>Up to 50 drafts per call</td><td>Now</td></tr>
+    <tr><td>eBay</td><td>A separate connection, with eBay credentials</td><td>A feed can be imported. It is not the same button as Shopify</td><td>Setup, and still a beta. One-step eBay login is Next</td></tr>
+    <tr><td>Amazon</td><td>No working login</td><td>The screen can be labelled Amazon. No catalogue is pulled. We do not scrape Amazon</td><td>Next, after Amazon approves an app</td></tr>
+    <tr><td>Stock updates with no second click</td><td>The shop notifies us</td><td>The webhook address exists. It does not rewrite the listing yet</td><td>Next</td></tr>
+    <tr><td>Partner told when an item is approved or paid</td><td>Their system stays in step</td><td>Not sent yet</td><td>Next</td></tr>
+  </tbody>
+</table>
+<p class="small">If a product is an affiliate item, the shopper may leave this site to pay. That sale does not use the 14-day hold. Say that when the catalogue is a feed.</p>
+
+<h2>6. Every page</h2>
+<table>
+  <thead><tr><th>Page</th><th>Who</th><th>Purpose</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td>/</td><td>Visitor</td><td>First impression: split, values, products, events</td><td>Now. One line of old copy still overstates the gift. Say the 10 in the meeting</td></tr>
+    <tr><td>/</td><td>Signed in</td><td>The shop: rails, poll, gifts, stories</td><td>Now</td></tr>
+    <tr><td>/about</td><td>Director</td><td>People and brands supporting a cause</td><td>Now</td></tr>
+    <tr><td>/how-it-works</td><td>Careful buyer</td><td>Seller steps and buyer steps</td><td>Now. Offer wording must be removed before a public link. Offers are Next</td></tr>
+    <tr><td>/contact</td><td>Manager, board</td><td>A person replies</td><td>Now</td></tr>
+    <tr><td>/privacy-policy, /terms-of-service</td><td>Lawyer</td><td>Legal text. Privacy mentions phone alerts early</td><td>Now. Alerts themselves are Next. Returns text is Setup</td></tr>
+    <tr><td>/product</td><td>Shopper</td><td>Catalogue and filters</td><td>Now</td></tr>
+    <tr><td>/product/[slug]</td><td>Shopper</td><td>Item, cause amount, save, share, cart</td><td>Now</td></tr>
+    <tr><td>/product/post-product</td><td>Seller</td><td>Create a listing</td><td>Now</td></tr>
+    <tr><td>/product/bulk-list</td><td>Brand, stockroom</td><td>Spreadsheet upload</td><td>Now</td></tr>
+    <tr><td>/favourite</td><td>Shopper</td><td>Saved items</td><td>Now</td></tr>
+    <tr><td>/checkout</td><td>Guest or account</td><td>Pay</td><td>Now</td></tr>
+    <tr><td>/checkout/affiliate</td><td>Shopper</td><td>Leave to pay on a partner site. Not the 14-day hold</td><td>Now</td></tr>
+    <tr><td>/checkout/confirmation/[order]</td><td>Shopper</td><td>Receipt</td><td>Now</td></tr>
+    <tr><td>/charity/find-a-charity and the profile</td><td>Seller, supporter</td><td>Find a real cause</td><td>Now</td></tr>
+    <tr><td>/charity/store/[id]</td><td>Supporter</td><td>That cause’s public shop</td><td>Now</td></tr>
+    <tr><td>/charity/complete-registrations</td><td>Cause</td><td>Finish the profile</td><td>Now</td></tr>
+    <tr><td>/charity/account/[id]</td><td>Cause</td><td>Sync, listings, community, team, payouts</td><td>Now</td></tr>
+    <tr><td>/blog and /blog/[slug]</td><td>Reader</td><td>Stories</td><td>Now</td></tr>
+    <tr><td>/events, event page, donate, receipt</td><td>Giver</td><td>Campaign and receipt</td><td>Now</td></tr>
+    <tr><td>/reels</td><td>Phone shopper</td><td>Video that opens a product</td><td>Now. Leave it out of a demo if it is empty</td></tr>
+    <tr><td>/messaging/chat and a conversation</td><td>Buyer, cause</td><td>Talk about that product</td><td>Now</td></tr>
+    <tr><td>/user/account/[id]</td><td>Seller and buyer</td><td>Analytics, account, listings, affiliate, gallery, social, sold, bought, messages, notifications, earnings, delete</td><td>Now</td></tr>
+    <tr><td>/auth/login and /auth/register</td><td>New person</td><td>Email account. Social buttons only if they work</td><td>Now. Social login is Setup</td></tr>
+    <tr><td>Verify email and reset password</td><td>Account holder</td><td>Mail must arrive</td><td>Setup</td></tr>
+    <tr><td>/admin/login and /admin</td><td>Staff</td><td>The four seats</td><td>Now</td></tr>
+    <tr><td>/admin/register</td><td>Nobody</td><td>Sends people to login. New admins are created by a full admin</td><td>Now</td></tr>
+    <tr><td>/internal-home</td><td>Build team</td><td>Layout check. Not a client page</td><td>Now, and kept off every client link</td></tr>
+  </tbody>
+</table>
+
+<h2>7. Delivery plan</h2>
+<table>
+  <thead><tr><th>Phase</th><th>The client receives</th><th>Scope marks</th><th>Not in this phase</th></tr></thead>
+  <tbody>
+    <tr><td>1. Pilot</td><td>The shop, guest pay, review before publish, one real storefront, one event or story, messages, the 14-day hold. Paste-a-shop only on an address already tested. Mail and card accounts turned on</td><td>All Now, plus the Setup rows you tick</td><td>Followers, paid spotlight, phone alerts, Amazon, offers, self-serve returns</td></tr>
+    <tr><td>2. Community</td><td>Follow, campaign links, ambassador links, supporter wall, impact page, notes to followers, QR, embed, month challenge</td><td>Next, cause growth</td><td>This is the phase that makes a cause stay</td></tr>
+    <tr><td>3. Seller tools</td><td>Spotlight they can buy, social pack as a paid option, price hint, photos in the spreadsheet, partner notices</td><td>Next, seller extras</td><td>Fees stay outside the cause share</td></tr>
+    <tr><td>4. Phone</td><td>Add to home screen and alerts for message, shipped, delivered, and funds released. Then a store app: camera listing, pay, orders, chat. Admin and payouts stay on the website</td><td>Next</td><td>People under 35 will ask in month one. People over 60 will not, if guest pay and email receipts work</td></tr>
+    <tr><td>5. Deeper connections</td><td>eBay login, Amazon after approval, stock that updates without another click</td><td>Next</td><td>Only when that client’s stock actually lives there</td></tr>
+  </tbody>
+</table>
+<p>On a recent iPhone, a browser alert works after the icon is installed. A store app is the reliable alert for everyone else. One person should get one alert, not two, if they have both.</p>
+
+<h2>8. What a 20-minute meeting shows</h2>
+<ol>
+  <li>Home on a phone. State the 10, then the seller’s choice on the 90.</li>
+  <li>One live product with a cause amount.</li>
+  <li>Guest pay, only if the card test is ready.</li>
+  <li>The cause storefront. Paste a shop address only if that address has been tried.</li>
+  <li>One reel only if a real video is published. One event only if the goal is real.</li>
+  <li>Messages on that product. The hold and payouts only if finance is in the room.</li>
+</ol>
+<p><strong>Say.</strong> Join to grow a community you can link to. Paste your Shopify, WooCommerce, or shop website and approve what we pull in. You choose the cause. After a fee of 10, you choose how the rest is shared. Shoppers can pay as a guest. The money is held for 14 days.</p>
+<p><strong>Do not include in the first agreement.</strong> The whole payment is donated. Make an offer. One click from Amazon. eBay with no setup. Every website will import. Phone alerts. Download the app. A cause is here only to receive money.</p>
+<p class="small">Prepared from the Angelpage product as built, 3 November 2026. Now means it is in the product. Setup means it needs a key or a legal text. Next means a later phase. Example seller fees are for each client to set. They are not a price list.</p>
+
+</body>
+</html>

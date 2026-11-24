@@ -4,9 +4,11 @@ import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { getProviders } from 'next-auth/react';
 import  {
   ToastService,
 } from '@/components/elements/notifications/ToastService';
+import CaptchaWidget from '@/components/auth/CaptchaWidget';
 
 const Login = () => {
   const { data: session } = useSession();
@@ -15,9 +17,48 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeRole, setActiveRole] = useState('USER'); // State to manage selected role
+  const [oauthProviders, setOauthProviders] = useState<string[]>([]);
+  const [captchaToken, setCaptchaToken] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
  const callbackUrl = searchParams?.get('callbackUrl') || '/';
+
+  useEffect(() => {
+    getProviders().then(providers => {
+      if (!providers) return;
+      setOauthProviders(
+        Object.keys(providers).filter(p => p !== 'credentials')
+      );
+    });
+  }, []);
+
+  const handleOAuthSignIn = async (provider: 'google' | 'facebook') => {
+    if (!oauthProviders.includes(provider)) {
+      ToastService.error(
+        `${provider === 'google' ? 'Google' : 'Facebook'} login is not set up yet. Please use email and password.`
+      );
+      return;
+    }
+
+    try {
+      await fetch('/api/auth/oauth-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: activeRole }),
+      });
+    } catch {
+      /* continue */
+    }
+
+    signIn(provider, { callbackUrl: callbackUrl || '/' });
+  };
+
+  useEffect(() => {
+    const emailParam = searchParams?.get('email');
+    if (emailParam) {
+      setEmail(emailParam);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,6 +70,7 @@ const Login = () => {
       email,
       password,
       role: activeRole,
+      captchaToken,
       callbackUrl: callbackUrl || '/',
     });
 
@@ -36,7 +78,10 @@ const Login = () => {
       let errorMessage = result.error;
 
       if (result.error === 'CredentialsSignin') {
-        errorMessage = 'Invalid email or password. Please try again.';
+        errorMessage =
+          activeRole === 'CHARITY'
+            ? 'Invalid email or password. Charity owners and staff both use Charity/Brand login.'
+            : 'Invalid email or password. Please try again.';
       }
       setError(errorMessage);
       ToastService.error(errorMessage);
@@ -44,37 +89,9 @@ const Login = () => {
       return;
     }
 
-    // Wait for session to update
-    const updatedSession = await fetch('/api/auth/session').then(res =>
-      res.json()
-    );
-    const userRole = updatedSession?.user?.role;
-    const userId = updatedSession?.user?.id;
-    // If login succeeds, redirect to callbackUrl
-    if (result?.url) {
-      router.push(result.url);
-    }
-    if (userRole && userId) {
-      if (userRole === activeRole) {
-        ToastService.success('Login successful! Redirecting...');
-        setTimeout(() => {
-          if (userRole === 'USER') {
-            router.push(`/`);
-          } else if (userRole === 'CHARITY') {
-            router.push(`/`);
-          }
-          setIsSubmitting(false);
-        }, 2000);
-      } else {
-        setError(
-          `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
-        );
-        ToastService.error(
-          `Only ${activeRole === 'USER' ? 'User' : 'Charity'} accounts can log in here.`
-        );
-        setIsSubmitting(false);
-      }
-    }
+    ToastService.success('Login successful! Redirecting...');
+    router.push(callbackUrl || '/');
+    setIsSubmitting(false);
   };
 
   useEffect(() => {
@@ -82,10 +99,13 @@ const Login = () => {
       const userRole = session.user.role;
       // ToastService.success('Login successful! Redirecting to account...');
       setTimeout(() => {
-        if (userRole === 'USER') {
+        if (userRole === 'USER' || userRole === 'CHARITY') {
           router.push(`/`);
-        } else if (userRole === 'CHARITY') {
-          router.push(`/`);
+        } else if (userRole === 'CHARITY_STAFF') {
+          const charityId = (session?.user as { charityId?: string })?.charityId;
+          router.push(
+            charityId ? `/charity/account/${charityId}` : `/`
+          );
         }
       }, 2000);
     }
@@ -134,6 +154,11 @@ const Login = () => {
               Charity/Brand
             </button>
           </div>
+          {activeRole === 'CHARITY' && (
+            <p className="text-center body-caption text-mono-70 mb-4 -mt-6">
+              Owners and staff use this same login. Staff access is set by your charity admin.
+            </p>
+          )}
           {error && <p className="text-error text-body-small mb-4">{error}</p>}
 
           <form onSubmit={handleSubmit}>
@@ -170,6 +195,10 @@ const Login = () => {
                 Forgot Password?
               </a>
             </div>
+            <CaptchaWidget
+              onVerify={setCaptchaToken}
+              onExpire={() => setCaptchaToken('')}
+            />
             <Button
               type="submit"
               variant="tertiary"
@@ -178,7 +207,40 @@ const Login = () => {
             >
               {isSubmitting ? 'Logging in...' : 'Login'}
             </Button>
-            <p className="text-body-small">
+
+            {activeRole === 'USER' || activeRole === 'CHARITY' ? (
+              <>
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-mono-40" />
+                  </div>
+                  <p className="relative flex justify-center text-body-small text-mono-70 bg-white px-3">
+                    Or continue with
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => handleOAuthSignIn('google')}
+                  >
+                    Continue with Google
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => handleOAuthSignIn('facebook')}
+                  >
+                    Continue with Facebook
+                  </Button>
+                </div>
+              </>
+            ) : null}
+
+            <p className="text-body-small mt-6">
               New here?{' '}
               <a
                 href="/auth/register"

@@ -2,49 +2,47 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import StoreFrontBanner from './banner';
 import AboutInfoComponent from './about';
 import CharityStoreListing from './listing';
 import FavoriteButton from '@/components/elements/button/FavoriteButton';
-import { ToastService } from '@/components/elements/notifications/ToastService';
 import Loading from '@/app/loading';
 
+const CharityStorefront = () => {
+  const params = useParams();
+  const storefrontid = Array.isArray(params?.storefrontid)
+    ? params.storefrontid[0]
+    : params?.storefrontid;
 
-const CharityStorefront = ({
-  storefrontid,
-}) => {
   const [charityData, setCharityData] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
   const [productCount, setProductCount] = useState(0);
   const [loading, setLoading] = useState(true);
-const router = useRouter();
+  const [notFound, setNotFound] = useState(false);
+  const router = useRouter();
+
   useEffect(() => {
+    if (!storefrontid) {
+      return;
+    }
+
     const fetchCharityData = async () => {
-      if (!storefrontid) {
-        console.error('Storefront ID is missing.');
-         router.push('/');
-         ToastService.error(
-           'Store not available. Redirecting to home page...'
-         );
-        return;
-      }
-      console.log('Fetching storefront with id:', storefrontid);
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/storefront/${storefrontid}`
         );
-         if (!response.data.charity) {
-           setLoading(false);
-           setCharityData(null);
-           router.push('/');
-           return;
-         }
+        if (!response.data?.charity) {
+          setNotFound(true);
+          setCharityData(null);
+          return;
+        }
         setCharityData(response.data.charity);
-        console.log('charity response data' , response.data.charity);
+        setNotFound(false);
       } catch (error) {
-        console.log('Error fetching charity data:', error);
-        router.push('/');
+        console.error('Error fetching charity data:', error);
+        setNotFound(true);
+        setCharityData(null);
       }
     };
 
@@ -58,13 +56,9 @@ const router = useRouter();
           throw new Error('Failed to fetch products');
         }
         const data = await response.json();
-        setProductCount(data.charity.listedProducts?.length || 0);
-        console.log('list product:', data.charity.listedProducts);
-        console.log('total product:', data.charity.listedProducts?.length || 0);
-        // ToastService.success('Products loaded successfully.');
+        setProductCount(data.charity?.listedProducts?.length || 0);
       } catch (error) {
         console.error('Error fetching products:', error);
-        // ToastService.error('Error loading products.');
       } finally {
         setLoading(false);
       }
@@ -74,9 +68,45 @@ const router = useRouter();
     fetchProducts();
   }, [storefrontid]);
 
-    if (loading && !charityData) {
-      return <Loading />;
-    }
+  if (!storefrontid) {
+    return (
+      <div className="custom-container py-16 text-center">
+        <h1 className="h4 text-mono-100 mb-2">Storefront not available</h1>
+        <p className="body-regular text-mono-70 mb-6">
+          Invalid storefront link.
+        </p>
+        <button
+          type="button"
+          className="rounded-full bg-primary-color-100 px-6 py-2 text-mono-0"
+          onClick={() => router.push('/')}
+        >
+          Return home
+        </button>
+      </div>
+    );
+  }
+
+  if (loading && !charityData && !notFound) {
+    return <Loading />;
+  }
+
+  if (notFound || !charityData) {
+    return (
+      <div className="custom-container py-16 text-center">
+        <h1 className="h4 text-mono-100 mb-2">Storefront not available</h1>
+        <p className="body-regular text-mono-70 mb-6">
+          This charity storefront could not be found.
+        </p>
+        <button
+          type="button"
+          className="rounded-full bg-primary-color-100 px-6 py-2 text-mono-0"
+          onClick={() => router.push('/')}
+        >
+          Return home
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="charity-storefront-main-page-wrapper">
@@ -131,7 +161,7 @@ const router = useRouter();
             <ul className="tabs-content-area">
               {activeTab === 0 && (
                 <li className="tabs-cont-item">
-                  <div className="storefront-shop-tabs-cont bg-[#F1F1F7] sm:!py-0">
+                  <div className="storefront-shop-tabs-cont bg-[#F1F1F7] sm:py-0!">
                     <CharityStoreListing storefrontid={storefrontid} />
                   </div>
                 </li>

@@ -1,3 +1,10 @@
+/** Category taxonomy — fallback only. Prefer GET /api/categories (backend source of truth). */
+export const PLATFORM_LISTING_POLICY = {
+  tangibleProductsOnly: true,
+  ukShippingOnly: true,
+  adminReviewRequired: true,
+} as const;
+
 export const categoriesData = {
   categories: [
     {

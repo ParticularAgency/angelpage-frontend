@@ -152,7 +152,7 @@ const AdminInfoForm = () => {
             </p>
             {/* <Button
               variant="accend-link"
-              className="underline !text-primary-color-100"
+              className="underline text-primary-color-100!"
             >
               Forgot password
             </Button> */}
@@ -222,7 +222,7 @@ const AdminInfoForm = () => {
             </p>
             {/* <Button
               variant="accend-link"
-              className="underline !text-primary-color-100"
+              className="underline text-primary-color-100!"
             >
               Forgot password
             </Button> */}

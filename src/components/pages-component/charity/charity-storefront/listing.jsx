@@ -169,7 +169,7 @@ const CharityStoreListing = ({
       <div className="custom-container">
         <div className="products-lists-wrapper">
           <div className="products-lists-main-cont flex items-start md:flex-col gap-6">
-            <div className="products-list-main-left-cont h-[100vh] sticky md:relative md:h-auto top-9 max-w-[220px] md:max-w-[160px] w-full md:hidden">
+            <div className="products-list-main-left-cont h-screen sticky md:relative md:h-auto top-9 max-w-[220px] md:max-w-[160px] w-full md:hidden">
               <FilterSidebar
                 availableProducts={products.map(product => ({
                   ...product,
@@ -195,7 +195,7 @@ const CharityStoreListing = ({
                       <div className="drawer-content">
                         <label
                           htmlFor="my-drawer-filter"
-                          className="drawer-button btn !outline-none !shadow-none !bg-transparent !p-0 !border-none"
+                          className="drawer-button btn outline-hidden! shadow-none! bg-transparent! p-0! border-none!"
                         >
                           Filter <FilterIcon />
                         </label>
@@ -214,7 +214,7 @@ const CharityStoreListing = ({
                                 <label
                                   htmlFor="my-drawer-filter"
                                   aria-label="close sidebar"
-                                  className="close-btn !border-0 !outline-none !shadow-none w-8 h-8 flex items-center justify-center cursor-pointer"
+                                  className="close-btn border-0! outline-hidden! shadow-none! w-8 h-8 flex items-center justify-center cursor-pointer"
                                 >
                                   <CloseIcon />
                                 </label>

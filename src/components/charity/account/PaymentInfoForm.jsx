@@ -7,6 +7,29 @@ import axios from 'axios';
 import Link from 'next/link';
 // import Image from 'next/image';
 
+const emptyPayment = () => ({
+  nameAccountHolder: '',
+  billingAddress: {
+    name: '',
+    address: '',
+    city: '',
+    country: '',
+    postCode: '',
+  },
+});
+
+const sanitizePaymentPayload = (payment, billingAddress, useShippingAsBilling) => {
+  const payload = {
+    nameAccountHolder: payment.nameAccountHolder || '',
+    billingAddress,
+    useShippingAsBilling: Boolean(useShippingAsBilling),
+  };
+  if (payment.stripePaymentMethodId) {
+    payload.stripePaymentMethodId = payment.stripePaymentMethodId;
+  }
+  return payload;
+};
+
 const PaymentInfoForm = () => {
   const { data: session, status } = useSession() || {};
   const [paymentMethods, setPaymentMethods] = useState([]);
@@ -22,19 +45,7 @@ const PaymentInfoForm = () => {
   const [onboardingUrl, setOnboardingUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [newPayment, setNewPayment] = useState({
-    nameAccountHolder: '',
-    accountNumber: '',
-    expiryDate: '',
-    cvvNumber: '',
-    billingAddress: {
-      name: '',
-      address: '',
-      city: '',
-      country: '',
-      postCode: '',
-    },
-  });
+  const [newPayment, setNewPayment] = useState(emptyPayment);
 
   // Fetch payment methods and addresses on component mount
   useEffect(() => {
@@ -62,19 +73,7 @@ const PaymentInfoForm = () => {
   }, [session, status]);
 
   const handleAddNewClick = () => {
-    setNewPayment({
-      nameAccountHolder: '',
-      accountNumber: '',
-      expiryDate: '',
-      cvvNumber: '',
-      billingAddress: {
-        name: '',
-        address: '',
-        city: '',
-        country: '',
-        postCode: '',
-      },
-    });
+    setNewPayment(emptyPayment());
     setIsAdding(true);
     setEditingIndex(null);
     setUseShippingAsBilling(false);
@@ -82,10 +81,21 @@ const PaymentInfoForm = () => {
   };
 
   const handleEditClick = index => {
-    setNewPayment(paymentMethods[index]);
+    const method = paymentMethods[index] || {};
+    setNewPayment({
+      nameAccountHolder: method.nameAccountHolder || '',
+      stripePaymentMethodId: method.stripePaymentMethodId,
+      billingAddress: {
+        name: method.billingAddress?.name || '',
+        address: method.billingAddress?.address || '',
+        city: method.billingAddress?.city || '',
+        country: method.billingAddress?.country || '',
+        postCode: method.billingAddress?.postCode || '',
+      },
+    });
     setEditingIndex(index);
     setIsAdding(true);
-    setUseShippingAsBilling(false);
+    setUseShippingAsBilling(Boolean(method.useShippingAsBilling));
     setSelectedShippingAddressId(null);
   };
 
@@ -113,10 +123,11 @@ const PaymentInfoForm = () => {
         }
       }
 
-      const payment = {
-        ...newPayment,
+      const payment = sanitizePaymentPayload(
+        newPayment,
         billingAddress,
-      };
+        useShippingAsBilling
+      );
 
       if (editingIndex !== null) {
         // Update existing payment method
@@ -154,19 +165,7 @@ const PaymentInfoForm = () => {
 
       // Reset form after saving
       setIsAdding(false);
-      setNewPayment({
-        nameAccountHolder: '',
-        accountNumber: '',
-        expiryDate: '',
-        cvvNumber: '',
-        billingAddress: {
-          name: '',
-          address: '',
-          city: '',
-          country: '',
-          postCode: '',
-        },
-      });
+      setNewPayment(emptyPayment());
     } catch (error) {
       console.error('Error saving payment method:', error);
     }
@@ -246,14 +245,14 @@ const PaymentInfoForm = () => {
 
   return (
     <div className="payment-section pt-6 pb-0">
-      <div className="title-line-area-section flex pb-[13px] items-center gap-3 w-full !border-0">
+      <div className="title-line-area-section flex pb-[13px] items-center gap-3 w-full border-0!">
         <p className="body-bold-regular whitespace-nowrap w-full">
           Payment Methods
         </p>
         <div className="btn-box flex flex-col items-end">
           <Button
             variant="accend-link"
-            className="underline !text-primary-color-100"
+            className="underline text-primary-color-100!"
             onClick={handleAddNewClick}
           >
             Add new payment method
@@ -271,14 +270,14 @@ const PaymentInfoForm = () => {
                       href={onboardingUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="!underline body-small !text-primary-color-100"
+                      className="underline! body-small text-primary-color-100!"
                     >
                       Complete your Stripe setup
                     </Link>
                   </div>
                 ) : (
                   <Button
-                    className="!underline !text-primary-color-100"
+                    className="underline! text-primary-color-100!"
                     onClick={handleOnboard}
                     disabled={loading}
                   >
@@ -293,12 +292,17 @@ const PaymentInfoForm = () => {
         </div>
       </div>
 
+      <p className="body-small text-mono-80 mb-4">
+        Card payments are processed securely by Stripe at checkout. Do not enter
+        card numbers here.
+      </p>
+
       {isAdding && (
         <div className="my-6 adding-payment-methods-area">
           <div className="flex justify-end space-x-4 mt-4 payment-methods-head">
             <Button
               variant="accend-link"
-              className="!text-primary-color-100"
+              className="text-primary-color-100!"
               onClick={handleSave}
             >
               Save <SaveIcon />
@@ -313,32 +317,6 @@ const PaymentInfoForm = () => {
               onChange={handleChange}
               className="w-full max-w-[386px] sm:max-w-full px-3 forms py-2 border rounded-md flex-col"
             />
-            <Input
-              label="Card number"
-              type="text"
-              name="accountNumber"
-              value={newPayment.accountNumber}
-              onChange={handleChange}
-              className="w-full max-w-[386px] sm:max-w-full px-3 forms py-2 border rounded-md flex-col"
-            />
-            <div className="date-and-csv flex items-center gap-6 sm:flex-col px-3">
-              <Input
-                label="Expiry date"
-                type="text"
-                name="expiryDate"
-                value={newPayment.expiryDate}
-                onChange={handleChange}
-                className="w-full forms max-w-[120px] sm:max-w-full py-2 !px-0 border rounded-md flex-col"
-              />
-              <Input
-                label="CVV"
-                type="text"
-                name="cvvNumber"
-                value={newPayment.cvvNumber}
-                onChange={handleChange}
-                className="w-full forms max-w-[80px] sm:max-w-full py-2 !px-0 border rounded-md flex-col"
-              />
-            </div>
             <div className="p-4">
               <Checkbox
                 name="billingCheckbox"
@@ -423,24 +401,21 @@ const PaymentInfoForm = () => {
           </div>
           <div className="payment-details">
             <p className="body-bold-small">{method.nameAccountHolder}</p>
-            <p className="body-bold-small">
-              **** **** **** {method.accountNumber.slice(-4)}
-            </p>
             <p className="forms-bold text-mono-80 mb-2">Billing address</p>
             <p className="body-small text-mono-100">
-              {method.billingAddress.name}
+              {method.billingAddress?.name}
             </p>
             <p className="body-small text-mono-100">
-              {method.billingAddress.address}
+              {method.billingAddress?.address}
             </p>
             <p className="body-small text-mono-100">
-              {method.billingAddress.city}
+              {method.billingAddress?.city}
             </p>
             <p className="body-small text-mono-100">
-              {method.billingAddress.country}
+              {method.billingAddress?.country}
             </p>
             <p className="body-small text-mono-100">
-              {method.billingAddress.postCode}
+              {method.billingAddress?.postCode}
             </p>
             <button
               onClick={() => handleDeleteConfirmation(method._id)}
@@ -453,7 +428,7 @@ const PaymentInfoForm = () => {
       ))}
 
       {isConfirmOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
           <div className="bg-white p-6 shadow-lg max-w-sm w-full mx-4">
             <h3 className="h6 font-primary">Are you sure?</h3>
             <p className="text-body-small mt-2">

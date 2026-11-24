@@ -226,13 +226,14 @@ export const fetchAdminInfo = async (token) => {
  * @param {string} role - The user's role to specify (e.g., "USER", "CHARITY", "ADMIN").
  * @returns {Object} - The response data from the password reset request.
  */
-export const requestPasswordReset = async (email, role) => {
+export const requestPasswordReset = async (email, role, captchaToken) => {
   try {
     const response = await axios.post(
       `${API_URL}/auth/request-password-reset`,
       {
         email,
-        role, // Pass the role along with the email
+        role,
+        ...(captchaToken ? { captchaToken } : {}),
       }
     );
     console.log('Password reset email sent:', response.data);

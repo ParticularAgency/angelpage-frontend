@@ -5,6 +5,24 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+const GUEST_CART_KEY = 'angelpage_guest_cart';
+
+const readGuestCart = () => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(GUEST_CART_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeGuestCart = (items) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(GUEST_CART_KEY, JSON.stringify(items));
+  }
+};
+
 // Thunks
 export const fetchCart = createAsyncThunk(
   'cart/fetchCart',
@@ -85,7 +103,97 @@ const cartSlice = createSlice({
     status: 'idle',
     error: null,
   },
-  reducers: {},
+  reducers: {
+    hydrateGuestCart(state) {
+      state.items = readGuestCart();
+      state.totalItems = state.items.reduce(
+        (sum, item) => sum + (item.quantity || 0),
+        0
+      );
+      state.status = 'succeeded';
+    },
+    addGuestProduct(state, action) {
+      const { product, quantity = 1 } = action.payload;
+      const productId = product.id || product._id;
+      const normalizedProduct = {
+        ...product,
+        _id: productId,
+        charity: product.charity
+          ? {
+              ...product.charity,
+              _id: product.charity._id || product.charity.id,
+            }
+          : undefined,
+        seller: product.seller
+          ? {
+              ...product.seller,
+              _id: product.seller._id || product.seller.id,
+            }
+          : undefined,
+      };
+      const existing = state.items.find(
+        (item) => (item.productId?._id || item.productId) === productId
+      );
+      let nextItems;
+      if (existing) {
+        nextItems = state.items.map((item) =>
+          (item.productId?._id || item.productId) === productId
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      } else {
+        nextItems = [
+          ...state.items,
+          {
+            productId: normalizedProduct,
+            quantity,
+          },
+        ];
+      }
+      state.items = nextItems;
+      state.totalItems = nextItems.reduce(
+        (sum, item) => sum + (item.quantity || 0),
+        0
+      );
+      writeGuestCart(nextItems);
+    },
+    clearGuestCart(state) {
+      state.items = [];
+      state.totalItems = 0;
+      writeGuestCart([]);
+    },
+    updateGuestItemQuantity(state, action) {
+      const { productId, quantityChange } = action.payload;
+      const nextItems = state.items
+        .map((item) => {
+          const id = item.productId?._id || item.productId;
+          if (id !== productId) return item;
+          const newQty = (item.quantity || 0) + quantityChange;
+          if (newQty <= 0) return null;
+          return { ...item, quantity: newQty };
+        })
+        .filter(Boolean);
+      state.items = nextItems;
+      state.totalItems = nextItems.reduce(
+        (sum, item) => sum + (item.quantity || 0),
+        0
+      );
+      writeGuestCart(nextItems);
+    },
+    removeGuestItem(state, action) {
+      const productId = action.payload;
+      const nextItems = state.items.filter((item) => {
+        const id = item.productId?._id || item.productId;
+        return id !== productId;
+      });
+      state.items = nextItems;
+      state.totalItems = nextItems.reduce(
+        (sum, item) => sum + (item.quantity || 0),
+        0
+      );
+      writeGuestCart(nextItems);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCart.pending, (state) => {
@@ -112,4 +220,11 @@ const cartSlice = createSlice({
   },
 });
 
+export const {
+  hydrateGuestCart,
+  addGuestProduct,
+  clearGuestCart,
+  updateGuestItemQuantity,
+  removeGuestItem,
+} = cartSlice.actions;
 export default cartSlice.reducer;

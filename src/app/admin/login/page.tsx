@@ -1,10 +1,24 @@
 'use client';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, useSession, getProviders, getSession } from 'next-auth/react';
 import { Button, Input } from '@/components/elements';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ToastService } from '@/components/elements/notifications/ToastService';
+import { isAdminRole } from '@/constants/adminPanels';
+import CaptchaWidget from '@/components/auth/CaptchaWidget';
+import FullScreenLoader from '@/components/common/loading/FullScreenLoader';
+
+const waitForAdminSession = async (maxAttempts = 8) => {
+  for (let i = 0; i < maxAttempts; i += 1) {
+    const session = await getSession();
+    if (session?.user?.id && isAdminRole(session.user.role)) {
+      return session;
+    }
+    await new Promise(resolve => setTimeout(resolve, 250));
+  }
+  return null;
+};
 
 const Login = () => {
   const { data: session, status } = useSession() || {};
@@ -12,76 +26,89 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeRole, setActiveRole] = useState('ADMIN'); // State to manage selected role
+  const [activeRole, setActiveRole] = useState('ADMIN');
+  const [oauthProviders, setOauthProviders] = useState<string[]>([]);
+  const [captchaToken, setCaptchaToken] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    getProviders().then(providers => {
+      if (!providers) return;
+      setOauthProviders(
+        Object.keys(providers).filter(p => p !== 'credentials')
+      );
+    });
+  }, []);
+
+  const handleOAuthSignIn = async (provider: 'google' | 'facebook') => {
+    if (!oauthProviders.includes(provider)) {
+      ToastService.error(
+        `${provider === 'google' ? 'Google' : 'Facebook'} login is not set up yet.`
+      );
+      return;
+    }
+    try {
+      await fetch('/api/auth/oauth-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'ADMIN' }),
+      });
+    } catch {
+      /* continue */
+    }
+    signIn(provider, { callbackUrl: '/admin' });
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
 
-    const result = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-      role: activeRole,
-    });
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+        role: activeRole,
+        ...(captchaToken ? { captchaToken } : {}),
+      });
 
-    if (result?.error) {
-      let errorMessage = result.error;
+      if (result?.error) {
+        let errorMessage = result.error;
 
-      if (result.error === 'CredentialsSignin') {
-        errorMessage = 'Invalid email or password. Please try again.';
+        if (result.error === 'CredentialsSignin') {
+          errorMessage = 'Invalid email or password. Please try again.';
+        }
+        setError(errorMessage);
+        ToastService.error(errorMessage);
+        return;
       }
-      setError(errorMessage);
-      ToastService.error(errorMessage);
-      setIsSubmitting(false);
-      return;
-    }
 
-    // Wait for session to update
-    const updatedSession = await fetch('/api/auth/session').then(res =>
-      res.json()
-    );
-    const userRole = updatedSession?.user?.role;
-    const userId = updatedSession?.user?.id;
+      const updatedSession = await waitForAdminSession();
 
-    if (userRole && userId) {
-      if (userRole === activeRole) {
+      if (updatedSession?.user?.role && updatedSession.user.id) {
         ToastService.success('Login successful! Redirecting...');
-        setTimeout(() => {
-          if (userRole === 'ADMIN') {
-            router.push(`/admin/`);
-          }
-          setIsSubmitting(false);
-        }, 2000);
-      } else {
-        setError(
-          `Only ${activeRole === 'ADMIN' ? 'User' : 'Charity'} accounts can log in here.`
-        );
-        ToastService.error(
-          `Only ${activeRole === 'ADMIN' ? 'User' : 'Charity'} accounts can log in here.`
-        );
-        setIsSubmitting(false);
+        router.push('/admin');
+        return;
       }
+
+      const message =
+        'Login succeeded but the admin session could not be loaded. Please try again.';
+      setError(message);
+      ToastService.error(message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   useEffect(() => {
-    if (session?.user?.role && session?.user?.id) {
-      const userRole = session.user.role;
-      ToastService.success('Login successful! Redirecting to account...');
-      setTimeout(() => {
-        if (userRole === 'ADMIN') {
-          router.push(`/admin/`);
-        }
-      }, 2000);
+    if (session?.user?.role && session?.user?.id && isAdminRole(session.user.role)) {
+      router.replace('/admin');
     }
-  }, [session, status, router]);
+  }, [session, router]);
 
   if (status === 'loading') {
-    // If session is still loading, you can return a loading indicator
-    return <div>Loading...</div>;
+    return <FullScreenLoader />;
   }
   return (
     <div className="flex md:flex-col gap-[143px] lg:gap-14 md:gap-0">
@@ -102,10 +129,15 @@ const Login = () => {
 
       <div className="w-1/2 md:w-full md:flex sm:order-1 md:justify-center md:px-10 pt-[103px] sm:pt-14 sm:pb-20 pb-[260px] md:pb-[160px]">
         <div className="w-full max-w-md">
-          <h4 className="text-center mb-[18px]">Login</h4>
+          <h4 className="text-center mb-[18px]">Admin team login</h4>
+          <p className="text-center body-caption text-mono-70 mb-6 max-w-sm mx-auto">
+            Super Admin, Operations, Content, and Finance roles all use this
+            page. Sub-admins are created by Super Admin under the Team tab.
+          </p>
 
           <div className="flex space-x-2 justify-center mb-[54px] sm:mb-9">
             <button
+              type="button"
               className={`p-2 text-body-small rounded-3xl ${
                 activeRole === 'ADMIN'
                   ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold'
@@ -113,18 +145,8 @@ const Login = () => {
               }`}
               onClick={() => setActiveRole('ADMIN')}
             >
-              Individual
+              Admin team
             </button>
-            {/* <button
-              className={`text-body-small p-2 rounded-3xl ${
-                activeRole === 'CHARITY'
-                  ? 'bg-[#FAF2FF] text-primary-color-100 font-semibold'
-                  : 'bg-transparent text-mono-100'
-              }`}
-              onClick={() => setActiveRole('CHARITY')}
-            >
-              Charity/Brand
-            </button> */}
           </div>
           {error && <p className="text-error text-body-small mb-4">{error}</p>}
 
@@ -162,6 +184,12 @@ const Login = () => {
                 Forgot Password?
               </a>
             </div>
+
+            <CaptchaWidget
+              onVerify={setCaptchaToken}
+              onExpire={() => setCaptchaToken('')}
+            />
+
             <Button
               type="submit"
               variant="tertiary"
@@ -170,14 +198,41 @@ const Login = () => {
             >
               {isSubmitting ? 'Logging in...' : 'Login'}
             </Button>
-            <p className="text-body-small">
-              New here?{' '}
-              <a
-                href="/admin/register"
-                className="text-primary-color-100 underline"
-              >
-                Create an account
-              </a>
+
+            {oauthProviders.length > 0 && (
+              <>
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-mono-40" />
+                  </div>
+                  <p className="relative flex justify-center text-body-small text-mono-70 bg-white px-3">
+                    Or continue with
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => handleOAuthSignIn('google')}
+                  >
+                    Continue with Google
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => handleOAuthSignIn('facebook')}
+                  >
+                    Continue with Facebook
+                  </Button>
+                </div>
+              </>
+            )}
+
+            <p className="text-body-small mt-6 text-mono-80">
+              Admin accounts are provisioned by a Super Admin (Team panel) or
+              bootstrap seed — public registration is disabled.
             </p>
           </form>
         </div>

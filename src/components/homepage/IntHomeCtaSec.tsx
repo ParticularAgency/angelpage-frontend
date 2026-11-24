@@ -7,7 +7,7 @@ import Link from 'next/link';
 const IntHomeCtaSec = () => {
   return (
     <section className="inthome-cta-section ">
-      <div className="custom-container-full laptop-x:px-6 !pr-0 sm:!px-0">
+      <div className="custom-container-full laptop-x:px-6 pr-0! sm:px-0!">
         <div className="inthome-cta-wrapper  grid grid-cols-12 gap-1 sm:grid-cols-6">
           <div className="inthome-cta-cont-box bg-mono-100 px-4 col-span-5 sm:col-span-full py-[50px] pr-[60px] md:py-8">
             <div className="inthome-cta-cont max-w-[410px] w-full ml-auto">
@@ -19,10 +19,7 @@ const IntHomeCtaSec = () => {
                 quam.
               </p>
               <Link href="/product/">
-                <Button
-                  variant="secondary"
-                  className="!text-mono-0 !border-mono-0 mt-8"
-                >
+                <Button variant="primary" className="mt-8">
                   Shop now
                 </Button>
               </Link>

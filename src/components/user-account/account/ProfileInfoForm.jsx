@@ -112,7 +112,7 @@ const ProfileInfoForm = () => {
                 First name
               </span>{' '}
               <span className="inline-block">
-                {personalInfo ? personalInfo.firstName : 'Loading...'}
+                {personalInfo ? personalInfo.firstName : <span className="inline-block h-3 w-24 animate-pulse rounded-full bg-[#E6E3E7]" />}
               </span>
             </p>
             <p className="personal-info-item body-small">
@@ -120,7 +120,7 @@ const ProfileInfoForm = () => {
                 Last name
               </span>{' '}
               <span className="inline-block">
-                {personalInfo ? personalInfo.lastName : 'Loading...'}
+                {personalInfo ? personalInfo.lastName : <span className="inline-block h-3 w-24 animate-pulse rounded-full bg-[#E6E3E7]" />}
               </span>
             </p>
             <p className="personal-info-item body-small">
@@ -128,7 +128,7 @@ const ProfileInfoForm = () => {
                 Date of birth
               </span>{' '}
               <span className="inline-block">
-                {personalInfo ? personalInfo.dateBirth : 'Loading...'}
+                {personalInfo ? personalInfo.dateBirth : <span className="inline-block h-3 w-24 animate-pulse rounded-full bg-[#E6E3E7]" />}
               </span>
             </p>
           </>

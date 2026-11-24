@@ -163,11 +163,11 @@ const AddressForm = () => {
 
   return (
     <div className="address-section pt-[23px] pb-0">
-      <div className="title-line-area-section flex pb-[13px] justify-between items-center gap-3 w-full !border-0">
+      <div className="title-line-area-section flex pb-[13px] justify-between items-center gap-3 w-full border-0!">
         <p className="body-bold-regular">Addresses</p>
         <Button
           variant="accend-link"
-          className="underline !text-primary-color-100"
+          className="underline text-primary-color-100!"
           onClick={handleAddNewAddress}
         >
           Add new address
@@ -302,7 +302,7 @@ const AddressForm = () => {
                 <div className="flex justify-start mt-2">
                   <Button
                     variant="accend-link"
-                    className="flex items-center gap-2 !text-primary-color-100 !underline"
+                    className="flex items-center gap-2 text-primary-color-100! underline!"
                     onClick={() => {
                       if (address._id) {
                         handleDeleteConfirmation(address._id);
@@ -319,7 +319,7 @@ const AddressForm = () => {
       ))}
 
       {isConfirmOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
           <div className="bg-white p-6 shadow-lg max-w-sm w-full mx-4">
             <h3 className="h6 font-primary">Are you sure?</h3>
             <p className="text-body-small mt-2">

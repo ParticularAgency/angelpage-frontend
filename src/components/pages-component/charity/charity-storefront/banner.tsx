@@ -48,14 +48,14 @@ const StoreFrontBanner: React.FC<StoreFrontBannerProps> = ({
               ) : (
                 <span className="skeleton bg-mono-40 h-10 w-10 rounded-full"></span>
               )}
-              <h1 className="h3 storefront-banner-tittle !capitalize !text-mono-0">
+              <h1 className="h3 storefront-banner-tittle capitalize! text-mono-0!">
                 {charityStore ? (
                   charityStore.charityName
                 ) : (
                   <span className="skeleton bg-mono-40 h-2 w-20"></span>
                 )}
               </h1>
-              <p className="available-product-total-number body-small mt-2 sm:mt-1 !text-mono-0">
+              <p className="available-product-total-number body-small mt-2 sm:mt-1 text-mono-0!">
                 {productCount || '0'} items for sale
               </p>
             </div>
@@ -74,7 +74,7 @@ const StoreFrontBanner: React.FC<StoreFrontBannerProps> = ({
                   height={387}
                 />
               ) : (
-                <div className="skeleton bg-mono-40 !rounded-none h-full w-full"></div>
+                <div className="skeleton bg-mono-40 rounded-none! h-full w-full"></div>
               )}
             </div>
           </div>

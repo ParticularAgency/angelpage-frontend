@@ -21,6 +21,8 @@ import FavoriteOutlineSecondaryIcon from './favoriteOutlineSecondary';
 import SaveIcon from './save';
 import EditIcon from './edit';
 import DeleteIcon from './delete';
+import TikTokIcon from './tiktok';
+import WhatsAppIcon from './whatsapp';
 import CheckmarkBlack from './checkmarkBlack';
 
 export {
@@ -48,4 +50,6 @@ export {
   EditIcon,
   DeleteIcon,
   CheckmarkBlack,
+  TikTokIcon,
+  WhatsAppIcon,
 };

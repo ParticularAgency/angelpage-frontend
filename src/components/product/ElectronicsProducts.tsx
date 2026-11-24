@@ -65,7 +65,7 @@ const ElectronicsTopCategoryProducts: React.FC<
           </div>
         </div>
       </div>
-      <div className="custom-container md:!pr-0">
+      <div className="custom-container md:pr-0!">
         <div className="product-category-area sm:pr-8 sm:pl-4 overflow-hidden">
           <div className="product-category-wrapper">
             <Swiper
@@ -78,7 +78,7 @@ const ElectronicsTopCategoryProducts: React.FC<
               breakpoints={{
                 640: { slidesPerView: 2, spaceBetween: 10 },
                 768: { slidesPerView: 3, spaceBetween: 15 },
-                1024: { slidesPerView: 5, spaceBetween: 19 },
+                1024: { slidesPerView: 4.3, spaceBetween: 19 },
               }}
             >
               {electronicsCategories.map(item => (

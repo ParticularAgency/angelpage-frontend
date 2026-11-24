@@ -31,7 +31,7 @@ const HowItWorkSection = () => {
               <Link href="/how-it-works">
                 <Button
                   variant="accend-link"
-                  className="!text-mono-0 inline-block w-auto max-w-max underline !px-0"
+                  className="text-mono-0! inline-block w-auto max-w-max underline px-0!"
                 >
                   Learn more
                 </Button>
@@ -44,7 +44,7 @@ const HowItWorkSection = () => {
               <h4 className="h4 card-title max-w-[220px] w-full mb-4 text-mono-0 font-primary">
                 ...and buyers are Givers
               </h4>
-              <p className="body-small !text-mono-0  max-w-[320px]">
+              <p className="body-small text-mono-0!  max-w-[320px]">
                 AngelPage partners with over 1,200 charities, we give 100% what
                 you spend to a cause of your choice. You only cover the shipping
                 costs.

@@ -119,7 +119,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {type === 'password' && (
             <button
               type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-mono-60 hover:text-mono-100 focus:outline-none"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-mono-60 hover:text-mono-100 focus:outline-hidden"
               onClick={togglePasswordVisibility}
             >
               {passwordVisible ? (

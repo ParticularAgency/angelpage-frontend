@@ -1,108 +1,147 @@
 'use client';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, ReactNode } from 'react';
+import { useEffect, useRef, ReactNode } from 'react';
 import axios from 'axios';
+import FullScreenLoader from '@/components/common/loading/FullScreenLoader';
+import {
+  isAccessTokenExpired,
+  refreshBackendTokens,
+} from '@/lib/authTokens';
 
 interface ProtectedRouteProps {
   children: ReactNode;
   allowedRoles: string[];
 }
 
+const getLoginPath = (allowedRoles: string[]) => {
+  const adminRoles = [
+    'ADMIN',
+    'OPS_ADMIN',
+    'CONTENT_ADMIN',
+    'FINANCE_ADMIN',
+  ];
+  if (allowedRoles.some(role => adminRoles.includes(role))) {
+    return '/admin/login';
+  }
+  return '/auth/login';
+};
+
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
-  const { data: session, status } = useSession() || {};
+  const { data: session, status, update } = useSession() || {};
   const router = useRouter();
+  const loginPath = getLoginPath(allowedRoles);
+  const refreshInFlight = useRef(false);
 
   useEffect(() => {
     if (status === 'loading') return;
 
-    const checkBackendToken = async () => {
+    const handleAuthFailure = () => {
+      signOut({ callbackUrl: loginPath });
+      router.push(loginPath);
+    };
+
+    const tryRefreshSession = async (): Promise<boolean> => {
+      if (!session?.refreshToken || refreshInFlight.current) {
+        return false;
+      }
+
+      refreshInFlight.current = true;
       try {
-        await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/check-token`, {
-          headers: { Authorization: `Bearer ${session?.token}` },
+        const refreshed = await refreshBackendTokens(session.refreshToken);
+        await update({
+          token: refreshed.accessToken,
+          refreshToken: refreshed.refreshToken,
         });
+        return true;
       } catch {
-        signOut({ callbackUrl: '/' });
+        return false;
+      } finally {
+        refreshInFlight.current = false;
       }
     };
 
-    if (
-      status === 'unauthenticated' ||
-      !allowedRoles.includes(session?.user?.role || '')
-    ) {
-      // router.push(
-      //   `/auth/login?callbackUrl=${encodeURIComponent(router.asPath)}`
-      // );
-      signOut({ callbackUrl: '/' });
+    const checkBackendToken = async () => {
+      const accessToken = session?.token;
+      const refreshToken = session?.refreshToken;
+
+      if (!accessToken && !refreshToken) {
+        handleAuthFailure();
+        return;
+      }
+
+      if (!accessToken || isAccessTokenExpired(accessToken)) {
+        const refreshed = await tryRefreshSession();
+        if (!refreshed) {
+          handleAuthFailure();
+        }
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/check-token`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
+
+        const tokenRole = response.data?.role;
+        if (tokenRole && !allowedRoles.includes(tokenRole)) {
+          handleAuthFailure();
+        }
+      } catch {
+        const refreshed = await tryRefreshSession();
+        if (!refreshed) {
+          handleAuthFailure();
+        }
+      }
+    };
+
+    if (status === 'unauthenticated') {
+      router.push(loginPath);
       return;
     }
 
-    const interval = setInterval(checkBackendToken, 30000);
-    return () => clearInterval(interval);
-  }, [status, session, router, allowedRoles]);
+    if (status === 'authenticated' && !session?.user?.role) {
+      return;
+    }
 
-  if (status === 'loading') return <p>Loading...</p>;
+    if (
+      status === 'authenticated' &&
+      session?.user?.role &&
+      !allowedRoles.includes(session.user.role)
+    ) {
+      handleAuthFailure();
+      return;
+    }
+
+    if (status !== 'authenticated' || !session?.user?.role) {
+      return;
+    }
+
+    if (!session?.token && !session?.refreshToken) {
+      return;
+    }
+
+    checkBackendToken();
+    const interval = setInterval(checkBackendToken, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [status, session, router, allowedRoles, loginPath, update]);
+
+  if (status === 'loading') {
+    return <FullScreenLoader />;
+  }
+
+  if (status === 'unauthenticated') {
+    return <FullScreenLoader />;
+  }
+
+  if (!session?.user?.role || !allowedRoles.includes(session.user.role)) {
+    return <FullScreenLoader />;
+  }
 
   return <>{children}</>;
 };
 
- export default ProtectedRoute;
-// 'use client';
-
-// import { useSession, signOut } from 'next-auth/react';
-// import { useRouter } from 'next/navigation';
-// import { useEffect, ReactNode } from 'react';
-// import axios from 'axios';
-
-// interface ProtectedRouteProps {
-//   children: ReactNode;
-//   allowedRoles: string[];
-// }
-
-// const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
-//   const { data: session, status } = useSession();
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     if (status === 'loading') return;
-
-//     const handleLogout = () => {
-//       signOut({ callbackUrl: '/' }); // Redirects to homepage
-//       router.push('/'); // Ensures the frontend navigates to the homepage
-//     };
-
-//     const checkBackendToken = async () => {
-//       try {
-//         const response = await axios.get(
-//           `${process.env.NEXT_PUBLIC_API_URL}/auth/check-token`,
-//           {
-//             headers: { Authorization: `Bearer ${session?.token}` },
-//           }
-//         );
-
-//         if (!response.data?.valid) {
-//           handleLogout();
-//         }
-//       } catch {
-//         handleLogout();
-//       }
-//     };
-
-//     if (
-//       status === 'unauthenticated' ||
-//       !allowedRoles.includes(session?.user?.role || '')
-//     ) {
-//       handleLogout();
-//       return;
-//     }
-
-//     const interval = setInterval(checkBackendToken, 30000); // Check every 30 seconds
-//     return () => clearInterval(interval);
-//   }, [status, session, router, allowedRoles]);
-
-//   if (status === 'loading') return <p>Loading...</p>;
-
-//   return <>{children}</>;
-// };
-
-// export default ProtectedRoute;
+export default ProtectedRoute;

@@ -5,9 +5,30 @@ import { Button, Checkbox, Input, Select } from '@/components/elements';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
+const emptyPayment = () => ({
+  nameAccountHolder: '',
+  billingAddress: {
+    name: '',
+    address: '',
+    city: '',
+    country: '',
+    postCode: '',
+  },
+});
 
+const sanitizePaymentPayload = (payment, billingAddress, useShippingAsBilling) => {
+  const payload = {
+    nameAccountHolder: payment.nameAccountHolder || '',
+    billingAddress,
+    useShippingAsBilling: Boolean(useShippingAsBilling),
+  };
+  if (payment.stripePaymentMethodId) {
+    payload.stripePaymentMethodId = payment.stripePaymentMethodId;
+  }
+  return payload;
+};
 
-const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
+const PaymentInfoForm = ({ setSelectedPaymentMethod, selectedShippingAddress }) => {
   const { data: session, status } = useSession() || {};
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [addresses, setAddresses] = useState([]);
@@ -20,19 +41,7 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
   const [paymentToDelete, setPaymentToDelete] = useState(null);
   const [selectedPaymentIndex, setSelectedPaymentIndex] = useState(0);
 
-  const [newPayment, setNewPayment] = useState({
-    nameAccountHolder: '',
-    accountNumber: '',
-    expiryDate: '',
-    cvvNumber: '',
-    billingAddress: {
-      name: '',
-      address: '',
-      city: '',
-      country: '',
-      postCode: '',
-    },
-  });
+  const [newPayment, setNewPayment] = useState(emptyPayment);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -67,19 +76,7 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
     };
 
   const handleAddNewClick = () => {
-    setNewPayment({
-      nameAccountHolder: '',
-      accountNumber: '',
-      expiryDate: '',
-      cvvNumber: '',
-      billingAddress: {
-        name: '',
-        address: '',
-        city: '',
-        country: '',
-        postCode: '',
-      },
-    });
+    setNewPayment(emptyPayment());
     setIsAdding(true);
     setEditingIndex(null);
     setUseShippingAsBilling(false);
@@ -87,15 +84,26 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
   };
 
   const handleEditClick = index => {
-    setNewPayment(paymentMethods[index]);
+    const method = paymentMethods[index] || {};
+    setNewPayment({
+      nameAccountHolder: method.nameAccountHolder || '',
+      stripePaymentMethodId: method.stripePaymentMethodId,
+      billingAddress: {
+        name: method.billingAddress?.name || '',
+        address: method.billingAddress?.address || '',
+        city: method.billingAddress?.city || '',
+        country: method.billingAddress?.country || '',
+        postCode: method.billingAddress?.postCode || '',
+      },
+    });
     setEditingIndex(index);
     setIsAdding(true);
-    setUseShippingAsBilling(false);
+    setUseShippingAsBilling(Boolean(method.useShippingAsBilling));
     setSelectedShippingAddressId(null);
   };
 
   const handleSave = async () => {
-    if (!newPayment.billingAddress.postCode) {
+    if (!newPayment.billingAddress.postCode && !useShippingAsBilling) {
       alert('Please provide a postal code for the billing address.');
       return;
     }
@@ -112,7 +120,10 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
             address: selectedShippingAddress.address,
             city: selectedShippingAddress.city,
             country: selectedShippingAddress.country,
-            postCode: selectedShippingAddress.postCode,
+            postCode:
+              selectedShippingAddress.postcode ||
+              selectedShippingAddress.postCode ||
+              '',
           };
         } else {
           console.error('Selected shipping address not found');
@@ -120,7 +131,11 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
         }
       }
 
-      const payment = { ...newPayment, billingAddress };
+      const payment = sanitizePaymentPayload(
+        newPayment,
+        billingAddress,
+        useShippingAsBilling
+      );
 
       if (editingIndex !== null) {
         const paymentId = paymentMethods[editingIndex]._id;
@@ -171,19 +186,7 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
     setIsAdding(false);
     setEditingIndex(null);
     setUseShippingAsBilling(false);
-    setNewPayment({
-      nameAccountHolder: '',
-      accountNumber: '',
-      expiryDate: '',
-      cvvNumber: '',
-      billingAddress: {
-        name: '',
-        address: '',
-        city: '',
-        country: '',
-        postCode: '',
-      },
-    });
+    setNewPayment(emptyPayment());
   };
 
   const handleDeleteConfirmation = id => {
@@ -216,23 +219,28 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
 
   return (
     <div className="payment-section pt-6 pb-0">
-      <div className="title-line-area-section flex pb-[13px] justify-between items-center gap-3 w-full !border-0">
+      <div className="title-line-area-section flex pb-[13px] justify-between items-center gap-3 w-full border-0!">
         <p className="body-bold-regular">Payment Methods</p>
         <Button
           variant="accend-link"
-          className="underline !text-primary-color-100"
+          className="underline text-primary-color-100!"
           onClick={handleAddNewClick}
         >
           Add new payment method
         </Button>
       </div>
 
+      <p className="body-small text-mono-80 mb-4">
+        Card payments are processed securely by Stripe at checkout. Do not enter
+        card numbers here.
+      </p>
+
       {isAdding && (
         <div className="my-6 adding-payment-methods-area">
           <div className="flex justify-end space-x-4 mt-4 payment-methods-head">
             <Button
               variant="accend-link"
-              className="!text-primary-color-100"
+              className="text-primary-color-100!"
               onClick={handleSave}
             >
               Save <SaveIcon />
@@ -247,32 +255,6 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
               onChange={handleChange}
               className="w-full max-w-[386px] sm:max-w-full px-3 forms py-2 border rounded-md flex-col"
             />
-            <Input
-              label="Card number"
-              type="text"
-              name="accountNumber"
-              value={newPayment.accountNumber}
-              onChange={handleChange}
-              className="w-full max-w-[386px] sm:max-w-full px-3 forms py-2 border rounded-md flex-col"
-            />
-            <div className="date-and-csv flex items-center gap-6 sm:flex-col px-3">
-              <Input
-                label="Expiry date"
-                type="text"
-                name="expiryDate"
-                value={newPayment.expiryDate}
-                onChange={handleChange}
-                className="w-full forms max-w-[120px] sm:max-w-full py-2 !px-0 border rounded-md flex-col"
-              />
-              <Input
-                label="CVV"
-                type="text"
-                name="cvvNumber"
-                value={newPayment.cvvNumber}
-                onChange={handleChange}
-                className="w-full forms max-w-[80px] sm:max-w-full py-2 !px-0 border rounded-md flex-col"
-              />
-            </div>
             <div className="p-4">
               <Checkbox
                 name="billingCheckbox"
@@ -291,7 +273,7 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
                 options={[
                   { label: 'Select an address', value: '' },
                   ...addresses.map(address => ({
-                    label: `${address.name}, ${address.address}, ${address.city}, ${address.country}, ${address.postCode}`,
+                    label: `${address.name}, ${address.address}, ${address.city}, ${address.country}, ${address.postcode || address.postCode || ''}`,
                     value: address._id,
                   })),
                 ]}
@@ -358,7 +340,7 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
             <div className="flex space-x-4">
               <Button
                 variant="accend-link"
-                className="!underline !text-primary-color-100 flex items-center gap-2"
+                className="underline! text-primary-color-100! flex items-center gap-2"
                 onClick={() => handleEditClick(index)}
               >
                 Edit <EditIcon />
@@ -367,24 +349,21 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
           </div>
           <div className="payment-details">
             <p className="body-bold-small">{method.nameAccountHolder}</p>
-            <p className="body-bold-small">
-              **** **** **** {method.accountNumber.slice(-4)}
-            </p>
             <p className="forms-bold text-mono-80 mb-2">Billing address</p>
             <p className="body-small text-mono-100">
-              {method.billingAddress.name}
+              {method.billingAddress?.name}
             </p>
             <p className="body-small text-mono-100">
-              {method.billingAddress.address}
+              {method.billingAddress?.address}
             </p>
             <p className="body-small text-mono-100">
-              {method.billingAddress.city}
+              {method.billingAddress?.city}
             </p>
             <p className="body-small text-mono-100">
-              {method.billingAddress.country}
+              {method.billingAddress?.country}
             </p>
             <p className="body-small text-mono-100">
-              {method.billingAddress.postCode}
+              {method.billingAddress?.postCode}
             </p>
             <button
               onClick={() => handleDeleteConfirmation(method._id)}
@@ -397,7 +376,7 @@ const PaymentInfoForm = ({ setSelectedPaymentMethod }) => {
       ))}
 
       {isConfirmOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
           <div className="bg-white p-6 shadow-lg max-w-sm w-full mx-4">
             <h3 className="h6 font-primary">Are you sure?</h3>
             <p className="text-body-small mt-2">

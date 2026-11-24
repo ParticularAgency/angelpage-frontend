@@ -13,7 +13,7 @@ const HomeLandingBanner = () => {
   const slides = [
     {
       eyebrow: "Giving has never been easier",
-      title: "90% of purchase proceedings go straight to your chosen charity",
+      title: "You choose the split — give 100% to charity or share the sale",
       imageSrc: "/images/home/home-banner-modal-1.jpg",
       alt: "banner slides modal image 1"
     },
@@ -43,16 +43,19 @@ const HomeLandingBanner = () => {
             spaceBetween={50}
             slidesPerView={1}
             effect="fade"
-            onSlideChange={swiper => setActiveIndex(swiper.activeIndex)}
+            loop
+            speed={700}
+            onSlideChange={swiper => setActiveIndex(swiper.realIndex)}
             autoplay={{
-              delay: 5000,
+              delay: 4000,
               disableOnInteraction: false,
+              pauseOnMouseEnter: true,
             }}
             onSwiper={setSwiperInstance} // Capture swiper instance
           >
             {slides.map((slide, index) => (
               <SwiperSlide key={index}>
-                <div className="banner-slider-items sm:!mt-2 sm:!mb-10 relative w-full grid grid-cols-12 sm:grid-col-6 sm:flex sm:flex-col-reverse gap-0">
+                <div className="banner-slider-items sm:mt-2! sm:mb-10! relative w-full grid grid-cols-12 sm:grid-col-6 sm:flex sm:flex-col-reverse gap-0">
                   <div className="banner-slider-left-cont bg-mono-100 max-w-[650px] w-full ml-auto col-span-5 sm:col-span-full pt-[51px] pr-[33px] pb-[52px] pl-10 sm:px-4 sm:pt-[33px] sm:pb-4 relative transition-opacity duration-500 ease-in-out">
                     <div className="banner-content-wrapper h-full opacity-100 transition-opacity duration-500 ease-in-out">
                       <p className="eyebrow-medium mb-[6px] text-mono-0">
@@ -61,40 +64,47 @@ const HomeLandingBanner = () => {
                       <h1 className="banner-title mb-[26px] sm:mb-2 font-primary font-normal text-mono-0 text-[32px] sm:max-w-[313px] sm:text-[20px] sm:leading-[135%] leading-[155%] tracking-[.32px] max-w-[534px] w-full">
                         {slide.title}
                       </h1>
-                      <Link href="/auth/register">
-                        <Button
-                          variant="secondary"
-                          className="!text-mono-0 sm:!hidden !border-mono-0 hover:!text-mono-100"
-                          onClick={() => console.log('Should not click')}
-                        >
-                          Start giving
-                        </Button>
-                        <Button
-                          variant="secondary"
-                          className="!text-mono-0 !mt-2 !border-mono-0  !hidden sm:!flex sm:items-center sm:gap-2  hover:!text-mono-100"
-                          onClick={() => console.log('Should not click')}
-                        >
-                          Start giving{' '}
-                          <Image
-                            src="/images/arrow-right-angle.svg"
-                            alt="arrow angle image"
-                            className="w-6 h-6 sm:w-5 sm:h-5"
-                            width={24}
-                            height={24}
-                          />
-                        </Button>
-                      </Link>
+                      <div className="flex flex-wrap gap-3 mt-1">
+                        <Link href="/auth/register?intent=sell">
+                          <Button variant="primary" className="sm:hidden!">
+                            Start selling
+                          </Button>
+                        </Link>
+                        <Link href="/auth/register">
+                          <Button variant="accent" className="sm:hidden!">
+                            Start giving
+                          </Button>
+                        </Link>
+                        <Link href="/auth/register?intent=sell" className="sm:flex! hidden!">
+                          <Button
+                            variant="primary"
+                            className="mt-2! flex! sm:items-center sm:gap-2 w-full"
+                          >
+                            Start selling
+                            <Image
+                              src="/images/arrow-right-angle.svg"
+                              alt=""
+                              className="w-6 h-6 sm:w-5 sm:h-5"
+                              width={24}
+                              height={24}
+                            />
+                          </Button>
+                        </Link>
+                      </div>
                     </div>
                     {/* Custom Indicators */}
                     <div className="slides-indicator gap-[2px] flex justify-start mt-4">
                       {slides.map((_, idx) => (
                         <div
                           key={idx}
-                          className={`slide-indicator-item w-[46px] h-1 rounded-full cursor-pointer ${activeIndex === idx ? 'current-indicator bg-[#474748]' : 'bg-[#474748]'}`}
+                          className={`slide-indicator-item w-[46px] h-1 rounded-full cursor-pointer transition-colors ${
+                            activeIndex === idx
+                              ? 'current-indicator bg-primary-color-100'
+                              : 'bg-mono-50'
+                          }`}
                           onClick={() => {
-                            setActiveIndex(idx);
                             if (swiperInstance) {
-                              swiperInstance.slideTo(idx); // Use swiper instance to navigate
+                              swiperInstance.slideToLoop(idx);
                             }
                           }}
                         />

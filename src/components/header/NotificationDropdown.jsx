@@ -14,7 +14,7 @@ import Image from 'next/image';
 import { Button } from '../elements';
 import { ToastService } from '../elements/notifications/ToastService';
 import Link from 'next/link';
-import io from 'socket.io-client';
+import { connectSocket } from '@/utils/socketClient';
 
 
 const NotificationDropdown = ({ isDropdownOpen, toggleDropdown }) => {
@@ -94,18 +94,28 @@ const NotificationDropdown = ({ isDropdownOpen, toggleDropdown }) => {
     }
 
     // Establish Socket.IO connection
-    const socket = io('http://localhost:5000'); // Connect to Socket.IO server
+    if (!session?.user?.id) return;
 
-    // Listen for 'new-notification' event and trigger fetch
-    socket.on('new-notification', () => {
+    const socket = connectSocket(session.user.id, session.token);
+
+    const handleNewNotification = () => {
       if (session?.token) {
-        dispatch(fetchNotifications(session.token)); // Fetch the latest notifications immediately
+        dispatch(fetchNotifications(session.token));
       }
-    });
+    };
 
-    // Cleanup socket on component unmount
+    const handleConversationUpdated = () => {
+      if (session?.user?.id) {
+        fetchUnreadMessages(session.user.id);
+      }
+    };
+
+    socket.on('new-notification', handleNewNotification);
+    socket.on('conversation-updated', handleConversationUpdated);
+
     return () => {
-      socket.disconnect(); // Cleanup when the component unmounts
+      socket.off('new-notification', handleNewNotification);
+      socket.off('conversation-updated', handleConversationUpdated);
     };
   }, [dispatch, session, status]);
 
@@ -146,7 +156,7 @@ const NotificationDropdown = ({ isDropdownOpen, toggleDropdown }) => {
   return (
     <div ref={dropdownRef}>
       {isDropdownOpen && (
-        <div className="alert-dropdown-screen notification-main-wrapper w-[362px] top-[52px] sm:w-full sm:top-20 absolute right-0 z-[999] bg-mono-0">
+        <div className="alert-dropdown-screen notification-main-wrapper w-[362px] top-[52px] sm:w-full sm:top-20 absolute right-0 z-999 bg-mono-0">
           <div className="tabs notification-main-tab-header relative flex gap-0 sm:pt-8">
             <button
               type="button"
@@ -165,11 +175,11 @@ const NotificationDropdown = ({ isDropdownOpen, toggleDropdown }) => {
             >
               Messages
               {loading ? (
-                <span class="relative left-auto w-5 h-5 bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
+                <span className="relative left-auto w-5 h-5 bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
                   ...
                 </span>
               ) : messagesCount > 0 ? (
-                <span class="relative left-auto w-5 h-5 bg-red-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
+                <span className="relative left-auto w-5 h-5 bg-red-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
                   {messagesCount}
                 </span>
               ) : null}
@@ -184,11 +194,11 @@ const NotificationDropdown = ({ isDropdownOpen, toggleDropdown }) => {
             >
               Notifications
               {notificationsStatus === 'loading' ? (
-                <span class="relative left-auto w-5 h-5 bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
+                <span className="relative left-auto w-5 h-5 bg-gray-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
                   ...
                 </span>
               ) : unreadCount > 0 ? (
-                <span class="relative left-auto w-5 h-5 bg-red-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
+                <span className="relative left-auto w-5 h-5 bg-red-500 text-white text-[11px] flex items-center justify-center rounded-full p-1">
                   {unreadCount}
                 </span>
               ) : null}
@@ -232,7 +242,7 @@ const NotificationDropdown = ({ isDropdownOpen, toggleDropdown }) => {
                             </div>
                             <Button
                               variant="accend-link"
-                              className="link-btn-msg-area text-[10px] !p-0 !underline !text-primary-color-100"
+                              className="link-btn-msg-area text-[10px] p-0! underline! text-primary-color-100!"
                               onClick={() =>
                                 router.push(
                                   `/messaging/chat/${message.conversationId}`
@@ -250,7 +260,7 @@ const NotificationDropdown = ({ isDropdownOpen, toggleDropdown }) => {
                     <Link href="/messaging/chat">
                       <Button
                         variant="accend-link"
-                        className="caption text-center !p-0 !h-auto text-[#575757]"
+                        className="caption text-center p-0! h-auto! text-[#575757]"
                         // onClick={markAllNotificationAsRead}
                       >
                         View all Message
@@ -353,7 +363,7 @@ const NotificationDropdown = ({ isDropdownOpen, toggleDropdown }) => {
                 <div className="notification-alert-area-footer w-full flex justify-center py-3 px-5 sm:py-2">
                   <Button
                     variant="accend-link"
-                    className="caption text-center !p-0 !h-auto text-[#575757]"
+                    className="caption text-center p-0! h-auto! text-[#575757]"
                     onClick={handleMarkAllNotificationsAsRead}
                   >
                     Mark all as read

@@ -172,7 +172,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   {category.subCategories.map(subCategory => (
                     <li key={subCategory}>
                       <label className="flex items-center capitalize gap-2 caption">
-                        {/* <input type="checkbox" className="!bg-[#fff]" /> */}
+                        {/* <input type="checkbox" className="bg-white!" /> */}
                         <Checkbox
                           checked={selectedFilters.subCategory.includes(
                             subCategory
@@ -216,7 +216,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             {brands.map(brand => (
               <li key={brand}>
                 <label className="flex items-center capitalize gap-2 caption">
-                  {/* <input type="checkbox" className="!bg-[#fff]" /> */}
+                  {/* <input type="checkbox" className="bg-white!" /> */}
                   <Checkbox
                     checked={selectedFilters.brand.includes(brand)}
                     onChange={() => handleFilterChange('brand', brand)}

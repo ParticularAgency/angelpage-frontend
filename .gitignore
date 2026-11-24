@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# too large for GitHub (180 MB)
+/public/images/video/angelpage-new.mp4

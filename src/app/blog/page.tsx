@@ -1,26 +1,20 @@
-'use client';
-import BlogList from '@/components/common/cards/blog/blogCards';
-import { blogData } from '@/libs/blogs';
 import React from 'react';
+import BlogListClient from '@/components/features/blog/BlogListClient';
+import { fetchBlogPosts } from '@/lib/server-api';
+import HydrateQuery from '@/store/HydrateQuery';
 
-const FindCharity: React.FC = () => {
+export const revalidate = 300;
+
+export default async function BlogPage() {
+  const initialPosts = await fetchBlogPosts();
   return (
-    <div>
-      <div className="custom-container py-[74px]">
-        <h3 className="text-[|#000] mb-3">Blog</h3>
-        <p className=" text-[#0B0112] text-[14px]">
-          Stay updated with the latest news, tips, and stories from Angelpage.
-          Learn more about sustainable living, charitable giving,{' '}
-          <br className="sm:hidden" /> and the impact of your contributions.
-        </p>
-      </div>
-      <div className="bg-[#F9F9F9] pt-[75px] pb-[71px]">
-        <div className="custom-container">
-          <BlogList blogData={blogData} />
-        </div>
-      </div>
-    </div>
+    <>
+      <HydrateQuery
+        entries={[
+          { endpointName: 'getBlogPosts', arg: {}, data: initialPosts },
+        ]}
+      />
+      <BlogListClient initialPosts={initialPosts} />
+    </>
   );
-};
-
-export default FindCharity;
+}
