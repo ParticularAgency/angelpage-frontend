@@ -1,0 +1,19 @@
+{
+  "name": "Angelpage",
+  "short_name": "Angelpage",
+  "description": "Charity marketplace starting in the United States, also selling in Canada and the United Kingdom.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FCF2FF",
+  "theme_color": "#611192",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/images/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

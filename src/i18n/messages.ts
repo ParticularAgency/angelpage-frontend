@@ -32,7 +32,9 @@ const en = {
     blog: 'Blog',
     events: 'Events',
     products: 'Products',
+    faq: 'FAQ',
     privacy: 'Privacy policy',
+    cookies: 'Cookie policy',
     terms: 'Terms of use',
     joinTitle: 'Join the Angelpage community',
     joinBody:
@@ -82,6 +84,27 @@ const en = {
     choose: 'Select',
     continue: 'Continue',
   },
+  cookies: {
+    title: 'Cookies',
+    body: 'Necessary cookies run the shop. Analytics and marketing cookies stay off until you allow them.',
+    accept: 'Accept all',
+    reject: 'Reject optional',
+    customize: 'Customize',
+    save: 'Save choices',
+    necessary: 'Necessary',
+    necessaryBody:
+      'Required for sign-in, checkout, language, your market, and this choice.',
+    analytics: 'Analytics',
+    analyticsBody:
+      'Helps us see how the shop is used, including Google Analytics.',
+    marketing: 'Marketing',
+    marketingBody: 'Used to measure ads and show more relevant messages.',
+    alwaysOn: 'Always on',
+    policy: 'Cookie policy',
+    settings: 'Cookie settings',
+    open: 'Cookie settings',
+    saved: 'Your cookie choices are saved.',
+  },
 };
 
 const fr: typeof en = {
@@ -114,7 +137,9 @@ const fr: typeof en = {
     blog: 'Blogue',
     events: 'Événements',
     products: 'Produits',
+    faq: 'FAQ',
     privacy: 'Politique de confidentialité',
+    cookies: 'Politique de cookies',
     terms: 'Conditions d’utilisation',
     joinTitle: 'Rejoignez la communauté Angelpage',
     joinBody:
@@ -164,6 +189,28 @@ const fr: typeof en = {
     choose: 'Choisir',
     continue: 'Continuer',
   },
+  cookies: {
+    title: 'Cookies',
+    body: 'Les cookies nécessaires font fonctionner la boutique. Les cookies d’analyse et de marketing restent désactivés tant que vous ne les autorisez pas.',
+    accept: 'Tout accepter',
+    reject: 'Refuser les optionnels',
+    customize: 'Personnaliser',
+    save: 'Enregistrer',
+    necessary: 'Nécessaires',
+    necessaryBody:
+      'Requis pour la connexion, le paiement, la langue, votre marché et ce choix.',
+    analytics: 'Analyse',
+    analyticsBody:
+      'Nous aide à voir comment la boutique est utilisée, y compris Google Analytics.',
+    marketing: 'Marketing',
+    marketingBody:
+      'Sert à mesurer les publicités et à proposer des messages plus pertinents.',
+    alwaysOn: 'Toujours actifs',
+    policy: 'Politique de cookies',
+    settings: 'Réglages des cookies',
+    open: 'Réglages des cookies',
+    saved: 'Vos choix de cookies sont enregistrés.',
+  },
 };
 
 export const messages = { en, fr };
@@ -173,7 +220,7 @@ export type MessageTree = typeof en;
 export function translate(
   locale: Locale,
   path: string,
-  vars?: Record<string, string | number>,
+  vars?: Record<string, string | number>
 ) {
   const parts = path.split('.');
   let node: unknown = messages[locale];
@@ -185,6 +232,6 @@ export function translate(
   if (!vars) return node;
   return Object.entries(vars).reduce(
     (text, [key, value]) => text.replaceAll(`{${key}}`, String(value)),
-    node,
+    node
   );
 }

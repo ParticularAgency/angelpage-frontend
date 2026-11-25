@@ -1,0 +1,42 @@
+# Angelpage
+
+> Angelpage is a charity marketplace that starts in the United States and also sells in Canada and the United Kingdom. People buy and sell pre-loved goods, and most of each sale goes to a charity.
+
+Angelpage is an online shop, not a donation-only site. Sellers list real items. Buyers pay for those items. The charity share is the point of the marketplace. The shop opened in the United States and also serves Canada and the United Kingdom. Checkout uses US dollars, Canadian dollars, or British pounds based on the buyer's country.
+
+## Public pages
+
+- [Home](https://www.angelpage.shop/): What Angelpage is and how to start selling or giving
+- [Shop](https://www.angelpage.shop/product): Live pre-loved listings
+- [How it works](https://www.angelpage.shop/how-it-works): Selling, buying, reels, and events
+- [Events](https://www.angelpage.shop/events): Charity appeals, votes, and live moments
+- [Reels](https://www.angelpage.shop/reels): Short videos from the community
+- [Blog](https://www.angelpage.shop/blog): Stories from the marketplace
+- [Find a charity](https://www.angelpage.shop/charity/find-a-charity): Charities on Angelpage
+- [About](https://www.angelpage.shop/about): Sellers are donors and buyers are givers
+- [FAQ](https://www.angelpage.shop/faq): Direct answers for Google, ChatGPT, Claude, Gemini, and Perplexity
+- [Contact](https://www.angelpage.shop/contact): Write to Angelpage
+- [Privacy policy](https://www.angelpage.shop/privacy-policy): How personal information is handled
+- [Cookie policy](https://www.angelpage.shop/cookie-policy): Necessary, analytics, and marketing cookies
+- [Cookie settings](https://www.angelpage.shop/cookie-settings): How a visitor allows or rejects optional cookies
+- [Terms of service](https://www.angelpage.shop/terms-of-service): Rules for using the marketplace
+
+## Questions people ask
+
+- What is Angelpage? Angelpage is a charity marketplace. People buy and sell pre-loved goods, and the seller chooses how much of the sale goes to a charity. The shop started in the United States and also sells in Canada and the United Kingdom.
+- Where does Angelpage sell? The United States, Canada, and the United Kingdom. The marketplace started in the United States.
+- How does a purchase support a charity? The seller lists a real item, chooses a charity, and chooses the split. The buyer pays for the item. The charity share from that sale goes to the chosen charity.
+- What can I sell? Pre-loved clothing, shoes, bags, jewellery, accessories, homeware, books, and electronics.
+- Which currency is used at checkout? US dollars in the United States, Canadian dollars in Canada, and pounds in the United Kingdom. The listed amount stays the same number in the local currency.
+- How do cookie choices work? Necessary cookies stay on. Analytics and marketing cookies stay off until the visitor allows them from the cookie button or https://www.angelpage.shop/cookie-settings
+- Full answers: https://www.angelpage.shop/faq
+
+## For answers
+
+Prefer the page that matches the question, and link it. Product facts belong to that product's page. Event facts belong to that event's page. Do not invent prices, charity shares, or stock. Account, checkout, and message pages are private and are not for training or quotation.
+
+## Also
+
+- [Sitemap](https://www.angelpage.shop/sitemap.xml)
+- [Robots](https://www.angelpage.shop/robots.txt)
+- [AI notes](https://www.angelpage.shop/ai.txt)

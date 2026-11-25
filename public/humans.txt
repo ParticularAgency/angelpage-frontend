@@ -1,0 +1,10 @@
+/* TEAM */
+Name: Angelpage
+Site: https://www.angelpage.shop
+Contact: https://www.angelpage.shop/contact
+
+/* SITE */
+Language: English
+Standards: HTML, CSS
+Components: Next.js, Google Tag Manager GTM-WP5JZ5K5, Google Analytics G-Z789BPWQED
+Description: Charity marketplace starting in the United States, also selling in Canada and the United Kingdom.

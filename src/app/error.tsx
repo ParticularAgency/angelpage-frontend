@@ -1,6 +1,7 @@
-'use client'; 
+'use client';
 
 import { useEffect } from 'react';
+import { reportError } from '@/lib/reportError';
 
 export default function Error({
   error,
@@ -10,8 +11,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error('Error occurred:', error);
+    reportError(error);
   }, [error]);
 
   return (
@@ -28,7 +28,7 @@ export default function Error({
         style={{
           marginTop: '10px',
           padding: '10px 20px',
-          backgroundColor: '#0070f3',
+          backgroundColor: '#611192',
           color: '#fff',
           border: 'none',
           cursor: 'pointer',

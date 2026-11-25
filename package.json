@@ -13,11 +13,21 @@
     "dev:webpack": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "check": "lint-staged && npm run test && npm run typecheck && npm run build",
+    "verify": "npm run format:check && npm run test && npm run typecheck && npm run build && npm run test:e2e",
+    "prepare": "husky"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.15.0",
     "@sendgrid/mail": "^8.1.6",
+    "@sentry/nextjs": "^11.17.0",
     "@stripe/react-stripe-js": "^7.1.0",
     "@stripe/stripe-js": "^10.3.0",
     "axios": "^1.21.1",
@@ -52,6 +62,7 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/postcss": "^4.3.5",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
@@ -61,10 +72,17 @@
     "eslint-config-next": "^16.4.6",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.7",
+    "husky": "^9.1.7",
+    "jsdom": "^31.0.1",
+    "lint-staged": "^17.6.2",
     "postcss": "^8.5.33",
     "prettier": "^3.10.1",
     "tailwindcss": "^4.3.5",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,md,json,mjs,mts}": "prettier --write"
   },
   "overrides": {
     "next-auth": {

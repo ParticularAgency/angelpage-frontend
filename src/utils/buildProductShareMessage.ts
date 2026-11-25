@@ -1,4 +1,5 @@
 import { calculateProfitSplit } from '@/lib/profitSplit';
+import { SITE_URL } from '@/lib/siteSeo';
 
 export type ProductShareDetails = {
   productId: string;
@@ -49,13 +50,7 @@ const buildProductUrl = (details: ProductShareDetails | string) => {
 export const buildProductUrlForSlug = (slug: string) => {
   if (!slug) return '';
 
-  const origin = (
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.NEXTAUTH_URL ||
-    'https://www.angelpage.co.uk'
-  ).replace(/\/$/, '');
-
-  return `${origin}/product/${slug}`;
+  return `${SITE_URL}/product/${slug}`;
 };
 
 /** @deprecated Use buildProductUrlForSlug */
@@ -78,10 +73,9 @@ const resolveCharityLine = (details: ProductShareDetails) => {
   const charityName = details.charityName || 'charity';
   const split = calculateProfitSplit(
     details.price,
-    details.sellerSharePercent ?? 0,
+    details.sellerSharePercent ?? 0
   );
-  const profit =
-    details.charityProfit ?? split.charityProfit;
+  const profit = details.charityProfit ?? split.charityProfit;
   const pct = split.charitySharePercent;
 
   if (split.sellerSharePercent === 0) {
@@ -113,10 +107,9 @@ export const buildSharePayload = (
   const description = details.description?.trim();
   const split = calculateProfitSplit(
     details.price,
-    details.sellerSharePercent ?? 0,
+    details.sellerSharePercent ?? 0
   );
-  const profit =
-    details.charityProfit ?? split.charityProfit;
+  const profit = details.charityProfit ?? split.charityProfit;
   const url = buildProductUrl(details);
   const charityLine = resolveCharityLine({ ...details, charityName });
 

@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
 import React from 'react';
+import { pageMetadata } from '@/lib/siteSeo';
+
+export const metadata: Metadata = pageMetadata({
+  title: 'Terms of service',
+  description:
+    'The terms for buying, selling, and giving on the Angelpage charity marketplace.',
+  path: '/terms-of-service',
+  keywords: ['Angelpage terms of service', 'marketplace rules'],
+});
 
 export const revalidate = 86_400;
 
@@ -11,7 +21,7 @@ const TermServicePage = () => {
             <h1 className="font-primary md:text-[36px] sm:text-[39px] text-center font-normal text-mono-100">
               Angelpage Terms of Service
             </h1>
-          </div> 
+          </div>
           <div className="terms-page-content-area pb-[66px]">
             <div className="term-info-item">
               <h4 className="body-large md:body-medium font-bold! mb-4">
@@ -216,7 +226,7 @@ const TermServicePage = () => {
                 Users may not sell or list items that are unsafe, illegal, or restricted under UK law or 
                 Angelpage’s policies. This includes, but is not limited to: 
               </p>
-              <ul className='pl-6'>
+              <ul className="pl-6">
                 <li className="body-large md:body-medium font-normal! list-disc! w-full mb-1">
                   Counterfeit goods or fake branded items 
                 </li>
@@ -241,7 +251,7 @@ const TermServicePage = () => {
                 Users must not engage in
                 fraudulent or misleading practices, such as: 
               </p>
-              <ul className='pl-6'>
+              <ul className="pl-6">
                 <li className="body-large md:body-medium font-normal! list-disc! w-full mb-1">
                   Providing false or incomplete descriptions of item condition (e.g., hiding defects or damage) 
                 </li>
@@ -259,7 +269,7 @@ const TermServicePage = () => {
                 <br />
                 Users must not engage in activities that breach legal regulations or conflict with the platform’s mission of sustainability and charitable giving. Examples include: 
               </p>
-              <ul className='pl-6'>
+              <ul className="pl-6">
                 <li className="body-large md:body-medium font-normal! list-disc! w-full mb-1">
                   Posting or selling items that encourage illegal activity (e.g., drug paraphernalia) 
                 </li>

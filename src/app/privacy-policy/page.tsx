@@ -1,4 +1,15 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
 import React from 'react';
+import { pageMetadata } from '@/lib/siteSeo';
+
+export const metadata: Metadata = pageMetadata({
+  title: 'Privacy policy',
+  description:
+    'How Angelpage collects, uses, and protects personal information on the charity marketplace.',
+  path: '/privacy-policy',
+  keywords: ['Angelpage privacy policy', 'personal information'],
+});
 
 export const revalidate = 86_400;
 
@@ -51,7 +62,11 @@ const PrivacyPolicyPage = () => {
                 We also use cookies and similar technologies, which are small
                 files stored on your device that help us enhance your
                 experience. For more details on how and why we use cookies,
-                please refer to our Cookies and Similar Technologies Policy.
+                please refer to our{' '}
+                <Link href="/cookie-policy" className="underline">
+                  Cookies and Similar Technologies Policy
+                </Link>
+                .
               </p>
             </div>
 
@@ -1781,7 +1796,9 @@ const PrivacyPolicyPage = () => {
                 contact us at support@angelpage.co.uk.
               </p>
               <p className="body-large md:body-medium font-bold! w-full inline-block mt-8">
-                Cookies and Similar Technologies Policy
+                <Link href="/cookie-policy" className="underline">
+                  Cookies and Similar Technologies Policy
+                </Link>
               </p>
             </div>
 
@@ -1969,60 +1986,137 @@ const PrivacyPolicyPage = () => {
               </p>
             </div>
             <div className="term-info mt-8">
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Third-Party Cookies and Technologies </p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Name</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1"> Use</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Privacy Policy</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Facebook Connect</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Enables login via Facebook </p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Facebook Privacy Policy</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1"> Google Analytics</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1"> Tracks usage for performance and marketing analytics</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1"> Google Privacy Policy</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1"> Branch</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Tracks referral links to the App</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Branch Privacy Policy</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Stripe</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Facilitates payment transactions</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Stripe Privacy Policy</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">2. Purposes</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Angelpage uses cookies and similar technologies to:</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Security and Authentication</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Third-Party Cookies and Technologies{' '}
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Name
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                {' '}
+                Use
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Privacy Policy
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Facebook Connect
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Enables login via Facebook{' '}
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Facebook Privacy Policy
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                {' '}
+                Google Analytics
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                {' '}
+                Tracks usage for performance and marketing analytics
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                {' '}
+                Google Privacy Policy
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                {' '}
+                Branch
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Tracks referral links to the App
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Branch Privacy Policy
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Stripe
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Facilitates payment transactions
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Stripe Privacy Policy
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                2. Purposes
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Angelpage uses cookies and similar technologies to:
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Security and Authentication
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
                 Essential cookies ensure functionality, including maintaining
                 security, login processes, and secure transaction capabilities.
               </p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Account and User Preferences</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Account and User Preferences
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
                 {' '}
                 Cookies remember user preferences such as login details,
                 language settings, and region preferences for a customised
                 experience.
               </p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1"> Performance and Analytics</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                {' '}
+                Performance and Analytics
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
                 Cookies collect anonymous data about Site and App performance to
                 identify bugs, optimise features, and improve the user
                 experience.
               </p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">3. Services in the Apps (SDKs)</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                3. Services in the Apps (SDKs)
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
                 Angelpage’s App includes third-party SDKs to support analytics,
                 social media integration, and marketing.
               </p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1"> Library Name</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Details</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Privacy Policy</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Adjust</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Tracks marketing effectiveness</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Adjust Privacy Policy</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Stripe Facilitates payment transactions</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Stripe Privacy Policy</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Firebase </p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Tracks bugs and crashes </p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">Firebase Privacy Policy</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">4. Managing Your Cookie Technology Preferences</p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">You can manage cookies through:</p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                {' '}
+                Library Name
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Details
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Privacy Policy
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Adjust
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Tracks marketing effectiveness
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Adjust Privacy Policy
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Stripe Facilitates payment transactions
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Stripe Privacy Policy
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Firebase{' '}
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Tracks bugs and crashes{' '}
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                Firebase Privacy Policy
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                4. Managing Your Cookie Technology Preferences
+              </p>
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                You can manage cookies through:
+              </p>
               <ul className="pl-8">
                 <li className="body-large md:body-medium font-normal! list-disc! w-full mt-1">
                   Browser Settings: Adjust settings in browsers like Chrome,
@@ -2038,12 +2132,14 @@ const PrivacyPolicyPage = () => {
                   browser plug-in.
                 </li>
               </ul>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
                 Note: Disabling cookies may limit certain functionalities on
                 Angelpage.
               </p>
-               <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">5. Contact Us</p>
-               <p className="body-large md:body-medium font-normal! w-full inline-block mt-1">
+              <p className="body-large md:body-medium font-bold! w-full inline-block mt-1">
+                5. Contact Us
+              </p>
+              <p className="body-large md:body-medium font-normal! w-full inline-block mt-1">
                 For questions about our use of cookies and tracking
                 technologies, refer to the Get in Touch section of our Privacy
                 Policy.
